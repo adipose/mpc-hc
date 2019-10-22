@@ -39,7 +39,7 @@ CPPageOutput::CPPageOutput()
     , m_iQTVideoRendererType(VIDRNDT_QT_DEFAULT)
     , m_iAPSurfaceUsage(0)
     , m_iAudioRendererType(0)
-    , m_lastSubrenderer{false, CAppSettings::SubtitleRenderer::INTERNAL}
+    , m_lastSubrenderer(CAppSettings::SubtitleRenderer::INTERNAL)
     , m_iDX9Resizer(0)
     , m_fVMR9MixerMode(FALSE)
     , m_fD3DFullscreen(FALSE)
@@ -116,6 +116,10 @@ BOOL CPPageOutput::OnInitDialog()
     m_iDSVideoRendererType  = s.iDSVideoRendererType;
     m_iRMVideoRendererType  = s.iRMVideoRendererType;
     m_iQTVideoRendererType  = s.iQTVideoRendererType;
+
+    if (m_iDSVideoRendererType == VIDRNDT_DS_VMR9RENDERLESS || m_iDSVideoRendererType == VIDRNDT_DS_EVR_CUSTOM || m_iDSVideoRendererType == VIDRNDT_DS_SYNC || m_iDSVideoRendererType == VIDRNDT_DS_DXR || m_iDSVideoRendererType == VIDRNDT_DS_MADVR || m_iDSVideoRendererType == VIDRNDT_DS_MPCVR) {
+        m_lastSubrenderer = s.GetSubtitleRenderer();
+    }
 
     m_APSurfaceUsageCtrl.AddString(ResStr(IDS_PPAGE_OUTPUT_SURF_OFFSCREEN));
     m_APSurfaceUsageCtrl.AddString(ResStr(IDS_PPAGE_OUTPUT_SURF_2D));
@@ -297,6 +301,9 @@ BOOL CPPageOutput::OnInitDialog()
             case VIDRNDT_DS_SYNC:
                 resName = IDS_PPAGE_OUTPUT_SYNC;
                 break;
+            case VIDRNDT_DS_MPCVR:
+                resName = IDS_PPAGE_OUTPUT_MPCVR;
+                break;
             default:
                 ASSERT(FALSE);
                 return;
@@ -313,19 +320,21 @@ BOOL CPPageOutput::OnInitDialog()
     CComboBox& m_iDSVRTC = m_iDSVideoRendererTypeCtrl;
     m_iDSVRTC.SetRedraw(FALSE); // Do not draw the control while we are filling it with items
     addRenderer(VIDRNDT_DS_DEFAULT);
-    addRenderer(VIDRNDT_DS_OLDRENDERER);
-    addRenderer(VIDRNDT_DS_OVERLAYMIXER);
-    addRenderer(VIDRNDT_DS_VMR9WINDOWED);
-    addRenderer(VIDRNDT_DS_VMR9RENDERLESS);
     addRenderer(VIDRNDT_DS_EVR);
     addRenderer(VIDRNDT_DS_EVR_CUSTOM);
     addRenderer(VIDRNDT_DS_SYNC);
-    addRenderer(VIDRNDT_DS_DXR);
+    addRenderer(VIDRNDT_DS_VMR9RENDERLESS);
+    addRenderer(VIDRNDT_DS_VMR9WINDOWED);
     addRenderer(VIDRNDT_DS_MADVR);
+    addRenderer(VIDRNDT_DS_MPCVR);
+    addRenderer(VIDRNDT_DS_DXR);
+    addRenderer(VIDRNDT_DS_OLDRENDERER);
+    addRenderer(VIDRNDT_DS_OVERLAYMIXER);
     addRenderer(VIDRNDT_DS_NULL_COMP);
     addRenderer(VIDRNDT_DS_NULL_UNCOMP);
 
-    for (int j = 0; j < m_iDSVRTC.GetCount(); ++j) {
+    m_iDSVRTC.SetCurSel(0);
+    for (int j = 1; j < m_iDSVRTC.GetCount(); ++j) {
         if ((UINT)m_iDSVideoRendererType == m_iDSVRTC.GetItemData(j)) {
             m_iDSVRTC.SetCurSel(j);
             break;
@@ -440,8 +449,7 @@ BOOL CPPageOutput::OnApply()
 
     if (m_SubtitleRendererCtrl.IsWindowEnabled()) {
         auto subrenderer = static_cast<CAppSettings::SubtitleRenderer>(m_SubtitleRendererCtrl.GetItemData(m_SubtitleRendererCtrl.GetCurSel()));
-        m_lastSubrenderer.first = true;
-        m_lastSubrenderer.second = subrenderer;
+        m_lastSubrenderer = subrenderer;
         s.SetSubtitleRenderer(subrenderer);
     }
 
@@ -620,6 +628,11 @@ void CPPageOutput::OnDSRendererChange()
             m_iDSSaveImageSupport.SetIcon(m_tick);
             m_wndToolTip.UpdateTipText(ResStr(IDC_DSDXR), GetDlgItem(IDC_VIDRND_COMBO));
             break;
+        case VIDRNDT_DS_MPCVR:
+            m_iDSDXVASupport.SetIcon(m_tick);
+            m_iDSSaveImageSupport.SetIcon(m_tick);
+            m_wndToolTip.UpdateTipText(ResStr(IDC_DSMPCVR), GetDlgItem(IDC_VIDRND_COMBO));
+            break;
     }
 
     m_iDSDXVASupport.SetRedraw(TRUE);
@@ -690,8 +703,7 @@ void CPPageOutput::OnSubtitleRendererChange()
     UpdateSubtitleSupport();
     SetModified();
 
-    m_lastSubrenderer.first = true;
-    m_lastSubrenderer.second = static_cast<CAppSettings::SubtitleRenderer>(m_SubtitleRendererCtrl.GetItemData(m_SubtitleRendererCtrl.GetCurSel()));
+    m_lastSubrenderer = static_cast<CAppSettings::SubtitleRenderer>(m_SubtitleRendererCtrl.GetItemData(m_SubtitleRendererCtrl.GetCurSel()));
 }
 
 void CPPageOutput::OnFullscreenCheck()
@@ -763,11 +775,12 @@ void CPPageOutput::UpdateSubtitleRendererList()
     addSubtitleRenderer(CAppSettings::SubtitleRenderer::XY_SUB_FILTER);
     addSubtitleRenderer(CAppSettings::SubtitleRenderer::ASS_FILTER);
     m_SubtitleRendererCtrl.SetCurSel(0);
-    auto subrenderer = m_lastSubrenderer.first ? m_lastSubrenderer.second : s.GetSubtitleRenderer();
-    for (int j = 0; j < m_SubtitleRendererCtrl.GetCount(); ++j) {
-        if ((UINT)subrenderer == m_SubtitleRendererCtrl.GetItemData(j)) {
-            m_SubtitleRendererCtrl.SetCurSel(j);
-            break;
+    if (m_SubtitleRendererCtrl.IsWindowEnabled()) {
+        for (int j = 0; j < m_SubtitleRendererCtrl.GetCount(); ++j) {
+            if ((UINT)m_lastSubrenderer == m_SubtitleRendererCtrl.GetItemData(j)) {
+                m_SubtitleRendererCtrl.SetCurSel(j);
+                break;
+            }
         }
     }
     m_SubtitleRendererCtrl.EnableWindow(m_SubtitleRendererCtrl.GetCount() > 1);
