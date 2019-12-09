@@ -2,7 +2,7 @@
  * (C) 2003-2006 Gabest
  * (C) 2006-2014 see Authors.txt
  *
- * This file is part of MPC-HC.
+ * This film_liste is part of MPC-HC.
  *
  * MPC-HC is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,8 @@ private:
     int m_counter;
 
     CMPCThemePlayerListCtrl m_list;
+    int sortColumn = -1;
+    int sortDirection;
     BOOL m_fWinLirc;
     CString m_WinLircAddr;
     CMPCThemeEdit m_WinLircEdit;
@@ -60,8 +62,9 @@ private:
     BOOL m_fUIce;
     CString m_UIceAddr;
     CMPCThemeEdit m_UIceEdit;
+    CMPCThemeEdit filterEdit;
     CMPCThemeStaticLink m_UIceLink;
-    UINT_PTR m_nStatusTimerID;
+    UINT_PTR m_nStatusTimerID, filterTimerID;
     BOOL m_fGlobalMedia;
 
     static CString MakeAccelModLabel(BYTE fVirt);
@@ -69,7 +72,7 @@ private:
     static CString MakeMouseButtonLabel(UINT mouse);
     static CString MakeAppCommandLabel(UINT id);
 
-    void SetupList();
+    void SetupList(bool allowResize=true);
 
 public:
     DECLARE_DYNAMIC(CPPageAccelTbl)
@@ -81,6 +84,7 @@ public:
     enum { IDD = IDD_PPAGEACCELTBL };
 
     static CString MakeAccelShortcutLabel(UINT id);
+    int CompareFunc(LPARAM lParam1, LPARAM lParam2);
 
 protected:
     virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -89,14 +93,18 @@ protected:
     virtual BOOL PreTranslateMessage(MSG* pMsg);
     virtual BOOL OnSetActive();
     virtual BOOL OnKillActive();
+    void UpdateHeaderSort(int column, int sort);
+    void FilterList();
 
     DECLARE_MESSAGE_MAP()
 
     afx_msg void OnBeginListLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnDoListLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
+    afx_msg void OnListColumnClick(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnEndListLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnBnClickedSelectAll();
     afx_msg void OnBnClickedReset();
+    afx_msg void OnChangeFilterEdit();
     afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
     afx_msg void OnTimer(UINT_PTR nIDEvent);
 
