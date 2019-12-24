@@ -9763,7 +9763,7 @@ void CMainFrame::ToggleD3DFullscreen(bool fSwitchScreenResWhenHasTo)
             }
 
             MoveVideoWindow();
-
+            PostMessage(WM_RESET_DEVICE);
             m_eventc.FireEvent(MpcEvent::SWITCHED_TO_FULLSCREEN_D3D);
         }
     }
