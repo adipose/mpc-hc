@@ -1607,7 +1607,7 @@ LRESULT CMainFrame::OnDpiChanged(WPARAM wParam, LPARAM lParam)
     m_dpi.Override(LOWORD(wParam), HIWORD(wParam));
     m_eventc.FireEvent(MpcEvent::DPI_CHANGED);
     CMPCThemeMenu::clearDimensions();
-    if (!restoringWindowRect) {
+    if (!restoringWindowRect) { //do not adjust for DPI if restoring saved window position
         MoveWindow(reinterpret_cast<RECT*>(lParam));
     }
     RecalcLayout();
