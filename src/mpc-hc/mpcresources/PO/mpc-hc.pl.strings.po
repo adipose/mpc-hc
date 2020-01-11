@@ -2,17 +2,16 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# kasper93, 2013-2016
-# M T <michtrz@gmail.com>, 2013-2017
-# Peter Korowacki <piotr.korowacki@gmail.com>, 2016
-# Rafał Urbanek <urbis92@gmail.com>, 2015
+# MPC HC <adiposegithub@gmail.com>, 2020
+# Michał Trzebiatowski <michtrz@gmail.com>, 2020
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2017-08-01 20:44:32+0000\n"
-"PO-Revision-Date: 2017-08-01 21:08+0000\n"
-"Last-Translator: kasper93\n"
-"Language-Team: Polish (http://www.transifex.com/mpc-hc/mpc-hc/language/pl/)\n"
+"POT-Creation-Date: 2019-12-17 06:27:41+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Michał Trzebiatowski <michtrz@gmail.com>, 2020\n"
+"Language-Team: Polish (https://www.transifex.com/mpchc/teams/106126/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -22,6 +21,10 @@ msgstr ""
 msgctxt "IDS_INFOBAR_LOCATION"
 msgid "Location"
 msgstr "Położenie"
+
+msgctxt "IDS_INFOBAR_LOCATION"
+msgid "Location"
+msgstr ""
 
 msgctxt "IDS_INFOBAR_VIDEO"
 msgid "Video"
@@ -149,15 +152,15 @@ msgstr "Odtwarzanie ciągłe"
 
 msgctxt "IDS_PPAGE_CAPTURE_FG0"
 msgid "Never"
-msgstr ""
+msgstr "Nigdy"
 
 msgctxt "IDS_PPAGE_CAPTURE_FG1"
 msgid "Only when switching different video types"
-msgstr ""
+msgstr "Tylko podczas przełączania różnych typów wideo"
 
 msgctxt "IDS_PPAGE_CAPTURE_FG2"
 msgid "Always (default)"
-msgstr ""
+msgstr "Zawsze (domyślnie)"
 
 msgctxt "IDS_PPAGE_CAPTURE_FGDESC0"
 msgid "Not supported by some devices. Two video decoders always present in the filter graph."
@@ -173,7 +176,7 @@ msgstr "Nigdy, jeśli to możliwe (najszybsze, ale nie wspierane przez większo�
 
 msgctxt "IDS_PPAGE_CAPTURE_SFG1"
 msgid "Only when switching different video types"
-msgstr ""
+msgstr "Tylko podczas przełączania różnych typów wideo"
 
 msgctxt "IDS_PPAGE_CAPTURE_SFG2"
 msgid "Always (may be required by some devices)"
@@ -605,7 +608,7 @@ msgstr "&Kanały"
 
 msgctxt "IDS_PPAGE_OUTPUT_MPCVR"
 msgid "MPC Video Renderer"
-msgstr ""
+msgstr "Renderer wideo MPC"
 
 msgctxt "IDD_PPAGEACCELTBL"
 msgid "Player::Keys"
@@ -677,7 +680,7 @@ msgstr "Działa tak samo jak „EVR”, ponadto z modyfikacjami umożliwiającym
 
 msgctxt "IDC_DSMADVR"
 msgid "High-quality renderer, requires a GPU that supports D3D9 or later."
-msgstr "Renderer oferujacy mozliwie najlepszą jakość obrazu. Wymaga karty graficznej, która obsługuje D3D9 lub nowszy."
+msgstr "Wysoka jakość renderowania, wymaga procesora graficznego, który obsługuje D3D9 lub nowszej."
 
 msgctxt "IDC_DSSYNC"
 msgid "Same as the EVR (CP), but offers several options to synchronize the video frame rate with the display refresh rate to eliminate skipped or duplicated video frames."
@@ -721,7 +724,7 @@ msgstr "Ustawia filtr „VMR-9 (renderless)” w tryb nakładki. Oznacza to, że
 
 msgctxt "IDC_DSMPCVR"
 msgid "High-quality renderer, requires a GPU that supports D3D9 or later."
-msgstr ""
+msgstr "Wysoka jakość renderowania, wymaga procesora graficznego, który obsługuje D3D9 lub nowszej."
 
 msgctxt "IDS_PPAGE_OUTPUT_SYNC"
 msgid "Sync Renderer"
@@ -2349,7 +2352,7 @@ msgstr "Miniatury są zbyt małe, nie można utworzyć pliku.\n\nSpróbuj zmniej
 
 msgctxt "IDS_CANNOT_LOAD_SUB"
 msgid "To load subtitles you have to change the video renderer type and reopen the file.\n- DirectShow: EVR (Custom Presenter), Sync, VMR-9 (renderless), madVR, MPC VR, or Haali VR\n- RealMedia: Special renderer for RealMedia, or open it through DirectShow\n- QuickTime: DX7 or DX9 renderer for QuickTime\n- ShockWave: n/a"
-msgstr ""
+msgstr "Aby załadować napisy, musisz zmienić typ renderera wideo i ponownie otworzyć plik.\n- DirectShow: EVR (niestandardowy prezenter), Sync, VMR-9 (bez renderowania), madVR, MPC VR lub Haali VR\n- RealMedia: specjalny renderer dla RealMedia lub otwórz go przez DirectShow\n- QuickTime: renderer DX7 lub DX9 dla QuickTime\n- ShockWave: nie dotyczy"
 
 msgctxt "IDS_SUBTITLE_FILES_FILTER"
 msgid "Subtitle files"
@@ -3917,23 +3920,23 @@ msgstr "/volume N\tUstawia głośność, gdzie N jest zakresem od 0 do 100"
 
 msgctxt "IDS_YOUTUBEDL_NOT_FOUND"
 msgid "Youtube-dl failed to launch. Make sure youtube-dl is in PATH."
-msgstr ""
+msgstr "Uruchomienie youtube-dl nie powiodło się. Upewnij się, że youtube-dl znajduje się w zmiennej środowiskowej."
 
 msgctxt "IDS_CONTROLS_YOUTUBEDL"
 msgid "Calling youtube-dl..."
-msgstr ""
+msgstr "Wywołanie youtube-dl..."
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_TOP"
 msgid "Align Top"
-msgstr ""
+msgstr "Wyrównaj do góry"
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_MIDDLE"
 msgid "Align Middle"
-msgstr ""
+msgstr "Wyrównaj do środka"
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_BOTTOM"
 msgid "Align Bottom"
-msgstr ""
+msgstr "Wyrównaj do dołu"
 
 msgctxt "IDS_CMD_FULLSCREEN"
 msgid "/fullscreen\tStart in fullscreen mode"
@@ -4001,29 +4004,33 @@ msgstr "/shaderpreset „Pr”\tWybieranie konkretnego profilu shaderów"
 
 msgctxt "IDS_MESSAGEBOX_CANCEL"
 msgid "Cancel"
-msgstr ""
+msgstr "Anuluj"
 
 msgctxt "IDS_MESSAGEBOX_ABORT"
 msgid "&Abort"
-msgstr ""
+msgstr "&Przerwij"
 
 msgctxt "IDS_MESSAGEBOX_RETRY"
 msgid "&Retry"
-msgstr ""
+msgstr "&Ponów"
 
 msgctxt "IDS_MESSAGEBOX_IGNORE"
 msgid "&Ignore"
-msgstr ""
+msgstr "&Ignoruj"
 
 msgctxt "IDS_MESSAGEBOX_OK"
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgctxt "IDS_MESSAGEBOX_CONTINUE"
 msgid "&Continue"
+msgstr "&Kontyntynuj"
+
+msgctxt "IDS_AG_TOGGLE_DEFAULT_SUBTITLE_STYLE"
+msgid "Toggle Default Subtitle Style"
 msgstr ""
 
 msgctxt "IDS_AG_TOGGLE_MPCTHEME"
 msgid "Toggle Dark Theme"
-msgstr ""
+msgstr "Przełącz ciemny motyw"
 

@@ -2,14 +2,16 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# Xabier Aramendi <azpidatziak@gmail.com>, 2013-2017
+# MPC HC <adiposegithub@gmail.com>, 2020
+# Xabier Aramendi <azpidatziak@gmail.com>, 2020
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2017-08-01 20:44:32+0000\n"
-"PO-Revision-Date: 2017-08-02 07:49+0000\n"
-"Last-Translator: Xabier Aramendi <azpidatziak@gmail.com>\n"
-"Language-Team: Basque (http://www.transifex.com/mpc-hc/mpc-hc/language/eu/)\n"
+"POT-Creation-Date: 2019-12-17 06:27:41+0000\n"
+"PO-Revision-Date: 2020-01-02 00:34+0000\n"
+"Last-Translator: Xabier Aramendi <azpidatziak@gmail.com>, 2020\n"
+"Language-Team: Basque (https://www.transifex.com/mpchc/teams/106126/eu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,6 +21,10 @@ msgstr ""
 msgctxt "IDS_INFOBAR_LOCATION"
 msgid "Location"
 msgstr "Helbidea"
+
+msgctxt "IDS_INFOBAR_LOCATION"
+msgid "Location"
+msgstr ""
 
 msgctxt "IDS_INFOBAR_VIDEO"
 msgid "Video"
@@ -146,15 +152,15 @@ msgstr "Berregin Etengabe"
 
 msgctxt "IDS_PPAGE_CAPTURE_FG0"
 msgid "Never"
-msgstr ""
+msgstr "Inoiz ez"
 
 msgctxt "IDS_PPAGE_CAPTURE_FG1"
 msgid "Only when switching different video types"
-msgstr ""
+msgstr "Bideo mota ezberdinen artean aldatzean bakarrik"
 
 msgctxt "IDS_PPAGE_CAPTURE_FG2"
 msgid "Always (default)"
-msgstr ""
+msgstr "Betik (berezkoa)"
 
 msgctxt "IDS_PPAGE_CAPTURE_FGDESC0"
 msgid "Not supported by some devices. Two video decoders always present in the filter graph."
@@ -170,7 +176,7 @@ msgstr "Inoiz ez ahal bada (azkarrena, baina ez dago sostengatua iragazki gehien
 
 msgctxt "IDS_PPAGE_CAPTURE_SFG1"
 msgid "Only when switching different video types"
-msgstr ""
+msgstr "Bideo mota ezberdinen artean aldatzean bakarrik"
 
 msgctxt "IDS_PPAGE_CAPTURE_SFG2"
 msgid "Always (may be required by some devices)"
@@ -602,7 +608,7 @@ msgstr "&Bideak"
 
 msgctxt "IDS_PPAGE_OUTPUT_MPCVR"
 msgid "MPC Video Renderer"
-msgstr ""
+msgstr "MPC Bideo Aurkezlea"
 
 msgctxt "IDD_PPAGEACCELTBL"
 msgid "Player::Keys"
@@ -718,7 +724,7 @@ msgstr "VMR-9 (aurkezgabe) nahastzaile modu barnean jartzen du, honek esanahi du
 
 msgctxt "IDC_DSMPCVR"
 msgid "High-quality renderer, requires a GPU that supports D3D9 or later."
-msgstr ""
+msgstr "Ontasun-Handiko aurkezlea, D3D9 edo berriagoa sostengatzen duen GPU behar da."
 
 msgctxt "IDS_PPAGE_OUTPUT_SYNC"
 msgid "Sync Renderer"
@@ -2346,7 +2352,7 @@ msgstr "Txikirudiak txikiegiak dira, ezinezkoa agiria sortzea.\n\nSaiatu txikiru
 
 msgctxt "IDS_CANNOT_LOAD_SUB"
 msgid "To load subtitles you have to change the video renderer type and reopen the file.\n- DirectShow: EVR (Custom Presenter), Sync, VMR-9 (renderless), madVR, MPC VR, or Haali VR\n- RealMedia: Special renderer for RealMedia, or open it through DirectShow\n- QuickTime: DX7 or DX9 renderer for QuickTime\n- ShockWave: n/a"
-msgstr ""
+msgstr "Azpidatziak gertatzeko bideo aurkezle mota aldatu eta agiria berriro ireki behar duzu.\n- DirectShow: EVR (Norbere Aurkezlea), Sync, VMR-9 (renderless), madVR, MPC VR, edo Haali VR\n- RealMedia: Aurkezle bereiza RealMedia-rako, edo ireki hura DirectShow bidez\n- QuickTime: DX7 edo DX9 aurkezlea QuickTime-rako\n- ShockWave: e/g"
 
 msgctxt "IDS_SUBTITLE_FILES_FILTER"
 msgid "Subtitle files"
@@ -3914,23 +3920,23 @@ msgstr "/volume N\tEzarri Bolume, non N da 0 eta 100 arteko maila."
 
 msgctxt "IDS_YOUTUBEDL_NOT_FOUND"
 msgid "Youtube-dl failed to launch. Make sure youtube-dl is in PATH."
-msgstr ""
+msgstr "Youtube-dl huts egin du abiaraztean. Zihurtatu youtube-dl HELBURUAN dagoela."
 
 msgctxt "IDS_CONTROLS_YOUTUBEDL"
 msgid "Calling youtube-dl..."
-msgstr ""
+msgstr "Youtube-dl deitzen..."
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_TOP"
 msgid "Align Top"
-msgstr ""
+msgstr "Lerrokatu Goren"
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_MIDDLE"
 msgid "Align Middle"
-msgstr ""
+msgstr "Lerrokatu Erdian"
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_BOTTOM"
 msgid "Align Bottom"
-msgstr ""
+msgstr "Lerrokatu Beheren"
 
 msgctxt "IDS_CMD_FULLSCREEN"
 msgid "/fullscreen\tStart in fullscreen mode"
@@ -3998,29 +4004,33 @@ msgstr "/shaderpreset \"Pr\"\tHasi \"Pr\" itzal aurrezarpena erabiliz"
 
 msgctxt "IDS_MESSAGEBOX_CANCEL"
 msgid "Cancel"
-msgstr ""
+msgstr "Ezeztatu"
 
 msgctxt "IDS_MESSAGEBOX_ABORT"
 msgid "&Abort"
-msgstr ""
+msgstr "&Utzi"
 
 msgctxt "IDS_MESSAGEBOX_RETRY"
 msgid "&Retry"
-msgstr ""
+msgstr "&Bersaiatu"
 
 msgctxt "IDS_MESSAGEBOX_IGNORE"
 msgid "&Ignore"
-msgstr ""
+msgstr "E&ziikusi"
 
 msgctxt "IDS_MESSAGEBOX_OK"
 msgid "OK"
-msgstr ""
+msgstr "Ongi"
 
 msgctxt "IDS_MESSAGEBOX_CONTINUE"
 msgid "&Continue"
+msgstr "&Jarraitu"
+
+msgctxt "IDS_AG_TOGGLE_DEFAULT_SUBTITLE_STYLE"
+msgid "Toggle Default Subtitle Style"
 msgstr ""
 
 msgctxt "IDS_AG_TOGGLE_MPCTHEME"
 msgid "Toggle Dark Theme"
-msgstr ""
+msgstr "Aldatu Azalgai Iluna"
 

@@ -178,6 +178,7 @@ private:
         TIMER_STATS,
         TIMER_UNLOAD_UNUSED_EXTERNAL_OBJECTS,
         TIMER_32HZ,
+        TIMER_WINDOW_FULLSCREEN,
         TIMER_ONETIME_START,
         TIMER_ONETIME_END = TIMER_ONETIME_START + 127,
     };
@@ -345,6 +346,8 @@ private:
     bool m_bBuffering;
 
     bool m_fLiveWM;
+
+    bool delayingFullScreen;
 
     void SendStatusMessage(CString msg, int nTimeOut);
     CString m_playingmsg, m_closingmsg;
@@ -935,6 +938,7 @@ public:
     afx_msg void OnPlayShadersPresetPrev();
     afx_msg void OnPlayShadersPresets(UINT nID);
     afx_msg void OnPlayAudio(UINT nID);
+    afx_msg void OnSubtitlesDefaultStyle();
     afx_msg void OnPlaySubtitles(UINT nID);
     afx_msg void OnPlayVideoStreams(UINT nID);
     afx_msg void OnPlayFiltersStreams(UINT nID);

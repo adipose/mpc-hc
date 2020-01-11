@@ -2,16 +2,16 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# Arzach4, 2016-2017
-# Jean van Kasteel <vankasteelj@gmail.com>, 2016
-# Underground78, 2013-2016
+# MPC HC <adiposegithub@gmail.com>, 2020
+# Cyril Provence <ywa78408@eveav.com>, 2020
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2017-08-01 20:44:32+0000\n"
-"PO-Revision-Date: 2017-08-01 21:08+0000\n"
-"Last-Translator: kasper93\n"
-"Language-Team: French (http://www.transifex.com/mpc-hc/mpc-hc/language/fr/)\n"
+"POT-Creation-Date: 2019-12-17 06:27:41+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Cyril Provence <ywa78408@eveav.com>, 2020\n"
+"Language-Team: French (https://www.transifex.com/mpchc/teams/106126/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,6 +21,10 @@ msgstr ""
 msgctxt "IDS_INFOBAR_LOCATION"
 msgid "Location"
 msgstr "Emplacement"
+
+msgctxt "IDS_INFOBAR_LOCATION"
+msgid "Location"
+msgstr ""
 
 msgctxt "IDS_INFOBAR_VIDEO"
 msgid "Video"
@@ -148,15 +152,15 @@ msgstr "Répéter indéfiniment"
 
 msgctxt "IDS_PPAGE_CAPTURE_FG0"
 msgid "Never"
-msgstr ""
+msgstr "Jamais"
 
 msgctxt "IDS_PPAGE_CAPTURE_FG1"
 msgid "Only when switching different video types"
-msgstr ""
+msgstr "Seulement lorsque le type de vidéo diffère"
 
 msgctxt "IDS_PPAGE_CAPTURE_FG2"
 msgid "Always (default)"
-msgstr ""
+msgstr "Toujours (par défaut)"
 
 msgctxt "IDS_PPAGE_CAPTURE_FGDESC0"
 msgid "Not supported by some devices. Two video decoders always present in the filter graph."
@@ -172,7 +176,7 @@ msgstr "Jamais si possible (le plus rapide mais le plus souvent non supporté)"
 
 msgctxt "IDS_PPAGE_CAPTURE_SFG1"
 msgid "Only when switching different video types"
-msgstr ""
+msgstr "Seulement lorsque le type de vidéo diffère"
 
 msgctxt "IDS_PPAGE_CAPTURE_SFG2"
 msgid "Always (may be required by some devices)"
@@ -604,7 +608,7 @@ msgstr "&Chaînes"
 
 msgctxt "IDS_PPAGE_OUTPUT_MPCVR"
 msgid "MPC Video Renderer"
-msgstr ""
+msgstr "MPC Video Renderer"
 
 msgctxt "IDD_PPAGEACCELTBL"
 msgid "Player::Keys"
@@ -640,7 +644,7 @@ msgstr "Informations"
 
 msgctxt "IDC_DSSYSDEF"
 msgid "Default video renderer filter for DirectShow. Others will fall back to this one when they can't be loaded for some reason."
-msgstr ""
+msgstr "Filtre de rendu vidéo par défaut pour DirectShow. Utilisé comme solution de repli pour les autres filtres lorsque leur chargement échoue."
 
 msgctxt "IDC_DSOLD"
 msgid "This is the default renderer of Windows 9x/me/2k. Depending on the visibility of the video window and your video card's abilities, it will switch between GDI, DirectDraw, Overlay rendering modes dynamically."
@@ -656,7 +660,7 @@ msgstr "Disponible uniquement si DirectX 9 est installé. Très stable mais il n
 
 msgctxt "IDC_DSVMR9REN"
 msgid "Same as the VMR-9 (windowed), but with the Allocator-Presenter plugin of MPC-HC for subtitling. Overlay video mirroring MIGHT work. \"True Color\" desktop color space recommended."
-msgstr ""
+msgstr "Identique au VMR-9 (fenêtré), mais avec le plugin Présentation/Allocation de MPC-HC pour les sous-titres. La duplication vidéo Overlay est susceptible de fonctionner. L'espace de couleurs \"couleurs vraies\" est recommandé."
 
 msgctxt "IDC_DSDXR"
 msgid "Same as the VMR-9 (renderless), but uses a true two-pass bicubic resizer."
@@ -672,7 +676,7 @@ msgstr "Identique au moteur de rendu précédent, mais ne se connectera qu'à de
 
 msgctxt "IDC_DSEVR_CUSTOM"
 msgid "Same as the EVR, but with the Allocator-Presenter of MPC-HC for subtitling and postprocessing. Recommended."
-msgstr ""
+msgstr "Identique à l'EVR, mais avec le plugin Présentation/Allocation de MPC-HC pour les sous-titres et le post-traitement. Recommandé."
 
 msgctxt "IDC_DSMADVR"
 msgid "High-quality renderer, requires a GPU that supports D3D9 or later."
@@ -720,7 +724,7 @@ msgstr "Configure VMR-9 (sans rendu) en mode \"mélangeur\", cela signifie que l
 
 msgctxt "IDC_DSMPCVR"
 msgid "High-quality renderer, requires a GPU that supports D3D9 or later."
-msgstr ""
+msgstr "Moteur de rendu haute qualité, nécessite une carte graphique supportant D3D9 ou ultérieur."
 
 msgctxt "IDS_PPAGE_OUTPUT_SYNC"
 msgid "Sync Renderer"
@@ -2348,7 +2352,7 @@ msgstr "Impossible de créer le fichier, les miniatures seraient trop petites.\n
 
 msgctxt "IDS_CANNOT_LOAD_SUB"
 msgid "To load subtitles you have to change the video renderer type and reopen the file.\n- DirectShow: EVR (Custom Presenter), Sync, VMR-9 (renderless), madVR, MPC VR, or Haali VR\n- RealMedia: Special renderer for RealMedia, or open it through DirectShow\n- QuickTime: DX7 or DX9 renderer for QuickTime\n- ShockWave: n/a"
-msgstr ""
+msgstr "Pour charger les sous-titres, vous devez changer de type de moteur de rendu vidéo, et rouvrir le fichier.\n- DirectShow: EVR (custom presenter), Sync, VMR-9 (sans rendu), madVR, MPC VR ou Haali VR\n- RealMedia: moteur de rendu propre à RealMedia, ou ouvrez-le via DirectShow\n- Quicktime: moteur de rendu DX7 ou DX9 pour QuickTime\n- ShockWave: n/a"
 
 msgctxt "IDS_SUBTITLE_FILES_FILTER"
 msgid "Subtitle files"
@@ -3704,11 +3708,11 @@ msgstr "Utiliser la barre d'outils existante au lieu de la nouvelle vectorisé."
 
 msgctxt "IDS_SUBTITLE_RENDERER_ASS_FILTER"
 msgid "AssFilter"
-msgstr ""
+msgstr "AssFilter"
 
 msgctxt "IDS_SUBMENU_COPYURL"
 msgid "Copy URL"
-msgstr ""
+msgstr "Copier l'URL"
 
 msgctxt "IDS_SUBUL_DLG_STATUS_NOTIMPLEMENTED"
 msgid "Not implemented."
@@ -3904,35 +3908,35 @@ msgstr "/playnext\t\tOuvre le fichier suivant dans le répertoire après la lect
 
 msgctxt "IDS_CMD_VIEWPRESET"
 msgid "/viewpreset N\tStart with specific preset,\n\t\twhere N is either \"1\" Minimal, \"2\" Compact or \"3\" Normal"
-msgstr ""
+msgstr "/viewpreset N\tDémarre avec un pré-réglage particulier,\n\t\toù N est soit \"1\" Minimal, \"2\" Compact ou \"3\" Normal"
 
 msgctxt "IDS_CMD_MUTE"
 msgid "/mute\t\tMute the audio"
-msgstr ""
+msgstr "/mute\t\tCoupe le son"
 
 msgctxt "IDS_CMD_VOLUME"
 msgid "/volume N\tSet Volume, where N is a range from 0 to 100"
-msgstr ""
+msgstr "/volume N\tRègle le Volume, avec N compris entre 1 et 100"
 
 msgctxt "IDS_YOUTUBEDL_NOT_FOUND"
 msgid "Youtube-dl failed to launch. Make sure youtube-dl is in PATH."
-msgstr ""
+msgstr "Le lancement de Youtube-dl a échoué. Assurez-vous que youtube-dl figure dans PATH."
 
 msgctxt "IDS_CONTROLS_YOUTUBEDL"
 msgid "Calling youtube-dl..."
-msgstr ""
+msgstr "Appel de youtube-dl en cours..."
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_TOP"
 msgid "Align Top"
-msgstr ""
+msgstr "Aligner en haut"
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_MIDDLE"
 msgid "Align Middle"
-msgstr ""
+msgstr "Aligner au milieu"
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_BOTTOM"
 msgid "Align Bottom"
-msgstr ""
+msgstr "Aligner en bas"
 
 msgctxt "IDS_CMD_FULLSCREEN"
 msgid "/fullscreen\tStart in fullscreen mode"
@@ -4000,29 +4004,33 @@ msgstr "/shaderpreset \"Pr\"\tUtiliser la présélection d'effets vidéo \"Pr\""
 
 msgctxt "IDS_MESSAGEBOX_CANCEL"
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 msgctxt "IDS_MESSAGEBOX_ABORT"
 msgid "&Abort"
-msgstr ""
+msgstr "&Abandonner"
 
 msgctxt "IDS_MESSAGEBOX_RETRY"
 msgid "&Retry"
-msgstr ""
+msgstr "&Réessayer"
 
 msgctxt "IDS_MESSAGEBOX_IGNORE"
 msgid "&Ignore"
-msgstr ""
+msgstr "&Ignorer"
 
 msgctxt "IDS_MESSAGEBOX_OK"
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgctxt "IDS_MESSAGEBOX_CONTINUE"
 msgid "&Continue"
+msgstr "&Continuer"
+
+msgctxt "IDS_AG_TOGGLE_DEFAULT_SUBTITLE_STYLE"
+msgid "Toggle Default Subtitle Style"
 msgstr ""
 
 msgctxt "IDS_AG_TOGGLE_MPCTHEME"
 msgid "Toggle Dark Theme"
-msgstr ""
+msgstr "Activer/désactiver le thème sombre"
 
