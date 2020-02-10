@@ -912,34 +912,44 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
     EnableDocking(CBRS_ALIGN_ANY);
 
-    m_wndSubresyncBar.Create(this, AFX_IDW_DOCKBAR_TOP, &m_csSubLock);
-    m_wndSubresyncBar.SetBarStyle(m_wndSubresyncBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-    m_wndSubresyncBar.EnableDocking(CBRS_ALIGN_ANY);
-    m_wndSubresyncBar.SetHeight(200);
-    m_controls.m_panels[CMainFrameControls::Panel::SUBRESYNC] = &m_wndSubresyncBar;
-
-    m_wndPlaylistBar.Create(this, AFX_IDW_DOCKBAR_BOTTOM);
-    m_wndPlaylistBar.SetBarStyle(m_wndPlaylistBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-    m_wndPlaylistBar.EnableDocking(CBRS_ALIGN_ANY);
-    m_wndPlaylistBar.SetHeight(100);
-    m_controls.m_panels[CMainFrameControls::Panel::PLAYLIST] = &m_wndPlaylistBar;
-    //m_wndPlaylistBar.LoadPlaylist(GetRecentFile()); //adipose 2019-11-12; do this later after activating the frame
-
-    m_wndEditListEditor.Create(this, AFX_IDW_DOCKBAR_RIGHT);
-    m_wndEditListEditor.SetBarStyle(m_wndEditListEditor.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-    m_wndEditListEditor.EnableDocking(CBRS_ALIGN_ANY);
-    m_controls.m_panels[CMainFrameControls::Panel::EDL] = &m_wndEditListEditor;
-    m_wndEditListEditor.SetHeight(100);
-
-    m_wndCaptureBar.Create(this, AFX_IDW_DOCKBAR_LEFT);
-    m_wndCaptureBar.SetBarStyle(m_wndCaptureBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-    m_wndCaptureBar.EnableDocking(CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT);
-    m_controls.m_panels[CMainFrameControls::Panel::CAPTURE] = &m_wndCaptureBar;
-
-    m_wndNavigationBar.Create(this, AFX_IDW_DOCKBAR_LEFT);
-    m_wndNavigationBar.SetBarStyle(m_wndNavigationBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-    m_wndNavigationBar.EnableDocking(CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT);
-    m_controls.m_panels[CMainFrameControls::Panel::NAVIGATION] = &m_wndNavigationBar;
+    bResult = m_wndSubresyncBar.Create(this, AFX_IDW_DOCKBAR_TOP, &m_csSubLock);
+    if (bResult) {
+        m_wndSubresyncBar.SetBarStyle(m_wndSubresyncBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndSubresyncBar.EnableDocking(CBRS_ALIGN_ANY);
+        m_wndSubresyncBar.SetHeight(200);
+        m_controls.m_panels[CMainFrameControls::Panel::SUBRESYNC] = &m_wndSubresyncBar;
+    }
+    bResult = bResult && m_wndPlaylistBar.Create(this, AFX_IDW_DOCKBAR_BOTTOM);
+    if (bResult) {
+        m_wndPlaylistBar.SetBarStyle(m_wndPlaylistBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndPlaylistBar.EnableDocking(CBRS_ALIGN_ANY);
+        m_wndPlaylistBar.SetHeight(100);
+        m_controls.m_panels[CMainFrameControls::Panel::PLAYLIST] = &m_wndPlaylistBar;
+        //m_wndPlaylistBar.LoadPlaylist(GetRecentFile()); //adipose 2019-11-12; do this later after activating the frame
+    }
+    bResult = bResult && m_wndEditListEditor.Create(this, AFX_IDW_DOCKBAR_RIGHT);
+    if (bResult) {
+        m_wndEditListEditor.SetBarStyle(m_wndEditListEditor.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndEditListEditor.EnableDocking(CBRS_ALIGN_ANY);
+        m_controls.m_panels[CMainFrameControls::Panel::EDL] = &m_wndEditListEditor;
+        m_wndEditListEditor.SetHeight(100);
+    }
+    bResult = bResult && m_wndCaptureBar.Create(this, AFX_IDW_DOCKBAR_LEFT);
+    if (bResult) {
+        m_wndCaptureBar.SetBarStyle(m_wndCaptureBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndCaptureBar.EnableDocking(CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT);
+        m_controls.m_panels[CMainFrameControls::Panel::CAPTURE] = &m_wndCaptureBar;
+    }
+    bResult = bResult && m_wndNavigationBar.Create(this, AFX_IDW_DOCKBAR_LEFT);
+    if (bResult) {
+        m_wndNavigationBar.SetBarStyle(m_wndNavigationBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndNavigationBar.EnableDocking(CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT);
+        m_controls.m_panels[CMainFrameControls::Panel::NAVIGATION] = &m_wndNavigationBar;
+    }
+    if (!bResult) {
+        TRACE(_T("Failed to create all dockable bars\n"));
+        return -1;
+    }
 
     // Hide all controls initially
     for (const auto& pair : m_controls.m_toolbars) {
@@ -1802,35 +1812,37 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
                 switch (GetPlaybackMode()) {
                     case PM_FILE:
                         g_bExternalSubtitleTime = false;
-                        m_pMS->GetCurrentPosition(&rtNow);
-                        m_pMS->GetDuration(&rtDur);
+                        if (m_pMS) {
+                            m_pMS->GetCurrentPosition(&rtNow);
+                            m_pMS->GetDuration(&rtDur);
 
-                        if (m_bRememberFilePos && !m_fEndOfStream) {
-                            CFilePositionList& fp = AfxGetAppSettings().filePositions;
-                            FILE_POSITION* filePosition = fp.GetLatestEntry();
-                            if (filePosition) {
-                                bool bSave = std::abs(filePosition->llPosition - rtNow) > 300000000;
-                                filePosition->llPosition = rtNow;
-                                if (bSave) {
-                                    fp.SaveLatestEntry();
+                            if (m_bRememberFilePos && !m_fEndOfStream) {
+                                CFilePositionList& fp = AfxGetAppSettings().filePositions;
+                                FILE_POSITION* filePosition = fp.GetLatestEntry();
+                                if (filePosition) {
+                                    bool bSave = std::abs(filePosition->llPosition - rtNow) > 300000000;
+                                    filePosition->llPosition = rtNow;
+                                    if (bSave) {
+                                        fp.SaveLatestEntry();
+                                    }
                                 }
                             }
-                        }
 
-                        // Casimir666 : autosave subtitle sync after play
-                        if (m_nCurSubtitle >= 0 && m_rtCurSubPos != rtNow) {
-                            if (m_lSubtitleShift) {
-                                if (m_wndSubresyncBar.SaveToDisk()) {
-                                    m_OSD.DisplayMessage(OSD_TOPLEFT, ResStr(IDS_AG_SUBTITLES_SAVED), 500);
-                                } else {
-                                    m_OSD.DisplayMessage(OSD_TOPLEFT, ResStr(IDS_MAINFRM_4));
+                            // Casimir666 : autosave subtitle sync after play
+                            if (m_nCurSubtitle >= 0 && m_rtCurSubPos != rtNow) {
+                                if (m_lSubtitleShift) {
+                                    if (m_wndSubresyncBar.SaveToDisk()) {
+                                        m_OSD.DisplayMessage(OSD_TOPLEFT, ResStr(IDS_AG_SUBTITLES_SAVED), 500);
+                                    } else {
+                                        m_OSD.DisplayMessage(OSD_TOPLEFT, ResStr(IDS_MAINFRM_4));
+                                    }
                                 }
+                                m_nCurSubtitle = -1;
+                                m_lSubtitleShift = 0;
                             }
-                            m_nCurSubtitle = -1;
-                            m_lSubtitleShift = 0;
-                        }
 
-                        m_wndStatusBar.SetStatusTimer(rtNow, rtDur, IsSubresyncBarVisible(), GetTimeFormat());
+                            m_wndStatusBar.SetStatusTimer(rtNow, rtDur, IsSubresyncBarVisible(), GetTimeFormat());
+                        }
                         break;
                     case PM_DVD:
                         g_bExternalSubtitleTime = true;
@@ -1861,7 +1873,9 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
                             if (m_wndCaptureBar.m_capdlg.m_pMux) {
                                 CComQIPtr<IMediaSeeking> pMuxMS = m_wndCaptureBar.m_capdlg.m_pMux;
                                 if (!pMuxMS || FAILED(pMuxMS->GetCurrentPosition(&rtNow))) {
-                                    m_pMS->GetCurrentPosition(&rtNow);
+                                    if (m_pMS) {
+                                        m_pMS->GetCurrentPosition(&rtNow);
+                                    }
                                 }
                             }
                             if (m_rtDurationOverride >= 0) {
@@ -10099,9 +10113,13 @@ void CMainFrame::MoveVideoWindow(bool fShowStats/* = false*/, bool bSetStoppedVi
             m_pCAP->SetVideoAngle(v);
             UpdateSubAspectRatioCompensation();
         } else  {
-            m_pBV->SetDefaultSourcePosition();
-            m_pBV->SetDestinationPosition(videoRect.left, videoRect.top, videoRect.Width(), videoRect.Height());
-            m_pVW->SetWindowPosition(windowRect.left, windowRect.top, windowRect.Width(), windowRect.Height());
+            if (m_pBV) {
+                m_pBV->SetDefaultSourcePosition();
+                m_pBV->SetDestinationPosition(videoRect.left, videoRect.top, videoRect.Width(), videoRect.Height());
+            }
+            if (m_pVW) {
+                m_pVW->SetWindowPosition(windowRect.left, windowRect.top, windowRect.Width(), windowRect.Height());
+            }
 
             if (m_pMFVDC) {
                 m_pMFVDC->SetVideoPosition(nullptr, &windowRect);
