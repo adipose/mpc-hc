@@ -128,7 +128,7 @@ void CSubPicAllocatorPresenterImpl::InitMaxSubtitleTextureSize(int maxSize, CSiz
     m_curSubtitleTextureSize = m_maxSubtitleTextureSize;
 }
 
-void CSubPicAllocatorPresenterImpl::AlphaBltSubPic(const CRect& windowRect,
+HRESULT CSubPicAllocatorPresenterImpl::AlphaBltSubPic(const CRect& windowRect,
                                                    const CRect& videoRect,
                                                    SubPicDesc* pTarget /*= nullptr*/,
                                                    const double videoStretchFactor /*= 1.0*/,
@@ -139,9 +139,11 @@ void CSubPicAllocatorPresenterImpl::AlphaBltSubPic(const CRect& windowRect,
         CRect rcSource, rcDest;
         if (SUCCEEDED(pSubPic->GetSourceAndDest(windowRect, videoRect, rcSource, rcDest,
                                                 videoStretchFactor, xOffsetInPixels))) {
-            pSubPic->AlphaBlt(rcSource, rcDest, pTarget);
+            return pSubPic->AlphaBlt(rcSource, rcDest, pTarget);
         }
     }
+
+    return E_FAIL;
 }
 
 // ISubPicAllocatorPresenter
