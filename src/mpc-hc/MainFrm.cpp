@@ -10605,8 +10605,8 @@ void CMainFrame::OpenCreateGraphObject(OpenMediaData* pOMD)
 
         CStringA ct = GetContentType(pOpenFileData->fns.GetHead());
 
-        if (ct == "video/x-ms-asf") {
-            // TODO: put something here to make the windows media source filter load later
+        if (ct == "application/x-shockwave-flash") {
+            engine = ShockWave;
 #ifndef _WIN64
         } else if (ct == "audio/x-pn-realaudio"
                    || ct == "audio/x-pn-realaudio-plugin"
@@ -10617,18 +10617,18 @@ void CMainFrame::OpenCreateGraphObject(OpenMediaData* pOMD)
                    || ct.Find("realaudio") >= 0
                    || ct.Find("realvideo") >= 0) {
             engine = RealMedia;
-#endif
-        } else if (ct == "application/x-shockwave-flash") {
-            engine = ShockWave;
-#ifndef _WIN64
-        } else if (ct == "video/quicktime"
-                   || ct == "application/x-quicktimeplayer") {
+        }
+        else if (ct == "application/x-quicktimeplayer") {
             engine = QuickTime;
+#endif
+#if 0
+        } else if (ct == "video/x-ms-asf") {
+            // TODO: put something here to make the windows media source filter load later
 #endif
         }
 
 #ifdef _WIN64
-        // override
+        // override unsupported frameworks
         if (engine == RealMedia || engine == QuickTime) {
             engine = DirectShow;
         }
@@ -10637,8 +10637,21 @@ void CMainFrame::OpenCreateGraphObject(OpenMediaData* pOMD)
         HRESULT hr = E_FAIL;
         CComPtr<IUnknown> pUnk;
 
-        if (engine == RealMedia) {
+        if (engine == ShockWave) {
+            pUnk = (IUnknown*)(INonDelegatingUnknown*)DEBUG_NEW DSObjects::CShockwaveGraph(m_pVideoWnd->m_hWnd, hr);
+            if (!pUnk) {
+                throw (UINT)IDS_AG_OUT_OF_MEMORY;
+            }
+
+            if (SUCCEEDED(hr)) {
+                m_pGB = CComQIPtr<IGraphBuilder>(pUnk);
+            }
+            if (FAILED(hr) || !m_pGB) {
+                throw (UINT)IDS_MAINFRM_77;
+            }
+            m_fShockwaveGraph = true;
 #ifndef _WIN64
+        } else if (engine == RealMedia) {
             // TODO : see why Real SDK crash here ...
             //if (!IsRealEngineCompatible(p->fns.GetHead()))
             //  throw ResStr(IDS_REALVIDEO_INCOMPATIBLE);
@@ -10654,24 +10667,7 @@ void CMainFrame::OpenCreateGraphObject(OpenMediaData* pOMD)
                     m_fRealMediaGraph = true;
                 }
             }
-#endif
-        } else if (engine == ShockWave) {
-            pUnk = (IUnknown*)(INonDelegatingUnknown*)DEBUG_NEW DSObjects::CShockwaveGraph(m_pVideoWnd->m_hWnd, hr);
-            if (!pUnk) {
-                throw (UINT)IDS_AG_OUT_OF_MEMORY;
-            }
-
-            if (SUCCEEDED(hr)) {
-                m_pGB = CComQIPtr<IGraphBuilder>(pUnk);
-            }
-            if (FAILED(hr) || !m_pGB) {
-                throw (UINT)IDS_MAINFRM_77;
-            }
-            m_fShockwaveGraph = true;
         } else if (engine == QuickTime) {
-#ifdef _WIN64   // TODOX64
-            //MessageBox (ResStr(IDS_MAINFRM_78), _T(""), MB_OK);
-#else
             pUnk = (IUnknown*)(INonDelegatingUnknown*)DEBUG_NEW DSObjects::CQuicktimeGraph(m_pVideoWnd->m_hWnd, hr);
             if (!pUnk) {
                 throw (UINT)IDS_AG_OUT_OF_MEMORY;
@@ -13315,7 +13311,7 @@ void CMainFrame::SetupJumpToSubMenus(CMenu* parentMenu /*= nullptr*/, int iInser
         if (m_wndPlaylistBar.GetCount() > 1) {
             menuStartRadioSection();
             POSITION pos = m_wndPlaylistBar.m_pl.GetHeadPosition();
-            while (pos) {
+            while (pos && id < ID_NAVIGATE_JUMPTO_SUBITEM_START + 128) {
                 UINT flags = MF_BYCOMMAND | MF_STRING | MF_ENABLED;
                 if (pos == m_wndPlaylistBar.m_pl.GetPos()) {
                     idSelected = id;
