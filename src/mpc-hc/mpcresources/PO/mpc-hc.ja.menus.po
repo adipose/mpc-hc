@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2020-02-23 05:32:01+0000\n"
+"POT-Creation-Date: 2020-02-25 18:25:51+0000\n"
 "PO-Revision-Date: 2020-01-02 07:46+0000\n"
 "Last-Translator: ever_green, 2020\n"
 "Language-Team: Japanese (https://www.transifex.com/mpchc/teams/106126/ja/)\n"
@@ -173,6 +173,10 @@ msgstr "全画面表示(&U)"
 msgctxt "POPUP"
 msgid "&Zoom"
 msgstr "拡大(&Z)"
+
+msgctxt "ID_VIEW_ZOOM_25"
+msgid "&25%"
+msgstr ""
 
 msgctxt "ID_VIEW_ZOOM_50"
 msgid "&50%"
@@ -500,19 +504,19 @@ msgstr "中央へ戻す(&T)"
 
 msgctxt "ID_PANSCAN_ROTATEZM"
 msgid "Rotate Cloc&kwise"
-msgstr ""
+msgstr "時計回りに回転(&K)"
 
 msgctxt "ID_PANSCAN_ROTATEZ270"
 msgid "Rotate Counter-Clock&wise"
-msgstr ""
+msgstr "反時計回りに回転(&W)"
 
 msgctxt "ID_PANSCAN_ROTATEXM"
 msgid "&Flip Vertically"
-msgstr ""
+msgstr "上下反転(&F)"
 
 msgctxt "ID_PANSCAN_ROTATEYM"
 msgid "&Mirror"
-msgstr ""
+msgstr "左右反転(&M)"
 
 msgctxt "ID_VIEW_RESET"
 msgid "Re&set"

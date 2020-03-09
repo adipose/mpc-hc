@@ -139,6 +139,7 @@ BOOL CPPagePlayback::OnInitDialog()
     m_audiosLanguageOrder = s.strAudiosLanguageOrder;
     m_fAllowOverridingExternalSplitterChoice = s.bAllowOverridingExternalSplitterChoice;
 
+    m_zoomlevelctrl.AddString(ResStr(IDS_ZOOM_25));
     m_zoomlevelctrl.AddString(ResStr(IDS_ZOOM_50));
     m_zoomlevelctrl.AddString(ResStr(IDS_ZOOM_100));
     m_zoomlevelctrl.AddString(ResStr(IDS_ZOOM_200));

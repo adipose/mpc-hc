@@ -1537,6 +1537,7 @@ BEGIN
         MENUITEM "F&ull Screen",                ID_VIEW_FULLSCREEN
         POPUP "&Zoom"
         BEGIN
+            MENUITEM "&25%",                        ID_VIEW_ZOOM_25
             MENUITEM "&50%",                        ID_VIEW_ZOOM_50
             MENUITEM "&100%",                       ID_VIEW_ZOOM_100
             MENUITEM "&200%",                       ID_VIEW_ZOOM_200
@@ -1784,6 +1785,7 @@ BEGIN
         MENUITEM "F&ull Screen",                ID_VIEW_FULLSCREEN
         POPUP "&Zoom"
         BEGIN
+            MENUITEM "&25%",                        ID_VIEW_ZOOM_25
             MENUITEM "&50%",                        ID_VIEW_ZOOM_50
             MENUITEM "&100%",                       ID_VIEW_ZOOM_100
             MENUITEM "&200%",                       ID_VIEW_ZOOM_200
@@ -2038,6 +2040,7 @@ BEGIN
             MENUITEM "F&ull Screen",                ID_VIEW_FULLSCREEN
             POPUP "&Zoom"
             BEGIN
+                MENUITEM "&25%",                        ID_VIEW_ZOOM_25
                 MENUITEM "&50%",                        ID_VIEW_ZOOM_50
                 MENUITEM "&100%",                       ID_VIEW_ZOOM_100
                 MENUITEM "&200%",                       ID_VIEW_ZOOM_200
@@ -3093,6 +3096,7 @@ BEGIN
     IDS_SUBDL_DLG_SUBS_AVAIL "%d subtitle(s) available."
     IDS_UPDATE_CONFIG_AUTO_CHECK 
                             "Do you want to check periodically for MPC-HC updates?\n\nThis feature can be disabled later from the Miscellaneous options page."
+    IDS_ZOOM_25             "25%"
     IDS_ZOOM_50             "50%"
     IDS_ZOOM_100            "100%"
     IDS_ZOOM_200            "200%"
@@ -3359,6 +3363,7 @@ BEGIN
     IDS_AG_TOGGLE_PLAYLIST  "Toggle Playlist Bar"
     IDS_AG_TOGGLE_CAPTURE   "Toggle Capture Bar"
     IDS_AG_TOGGLE_DEBUGSHADERS "Toggle Debug Shaders"
+    IDS_AG_ZOOM_25          "Zoom 25%"
     IDS_AG_ZOOM_50          "Zoom 50%"
     IDS_AG_ZOOM_100         "Zoom 100%"
     IDS_AG_ZOOM_200         "Zoom 200%"

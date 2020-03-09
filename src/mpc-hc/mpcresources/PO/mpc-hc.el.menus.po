@@ -173,6 +173,10 @@ msgctxt "POPUP"
 msgid "&Zoom"
 msgstr "&Μεγέθυνση"
 
+msgctxt "ID_VIEW_ZOOM_25"
+msgid "&25%"
+msgstr ""
+
 msgctxt "ID_VIEW_ZOOM_50"
 msgid "&50%"
 msgstr "&50%"

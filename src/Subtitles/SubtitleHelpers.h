@@ -42,7 +42,8 @@ namespace Subtitle
         XSS,
         TXT,
         RT,
-        SUP
+        SUP,
+        VTT
     };
 
     enum HearingImpairedType {

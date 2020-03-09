@@ -28,10 +28,11 @@
 
 namespace
 {
-    constexpr std::array<LPCTSTR, 12> subTypesExt = {
+    constexpr std::array<LPCTSTR, 13> subTypesExt = {
         _T("srt"), _T("sub"), _T("smi"), _T("psb"),
         _T("ssa"), _T("ass"), _T("idx"), _T("usf"),
-        _T("xss"), _T("txt"), _T("rt"), _T("sup")
+        _T("xss"), _T("txt"), _T("rt"), _T("sup"),
+        _T("vtt")
     };
 
     LPCTSTR separators = _T(".\\-_");

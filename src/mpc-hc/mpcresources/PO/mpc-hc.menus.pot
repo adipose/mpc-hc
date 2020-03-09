@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2020-02-25 18:25:51+0000\n"
+"POT-Creation-Date: 2020-03-08 21:28:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -167,6 +167,10 @@ msgstr ""
 
 msgctxt "POPUP"
 msgid "&Zoom"
+msgstr ""
+
+msgctxt "ID_VIEW_ZOOM_25"
+msgid "&25%"
 msgstr ""
 
 msgctxt "ID_VIEW_ZOOM_50"

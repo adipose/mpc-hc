@@ -1856,6 +1856,10 @@ msgctxt "IDS_UPDATE_CONFIG_AUTO_CHECK"
 msgid "Do you want to check periodically for MPC-HC updates?\n\nThis feature can be disabled later from the Miscellaneous options page."
 msgstr "ਕੀ ਤੁਸੀਂ MPC-HC ਲਈ ਨਿਯਮਤ ਰੂਪ ਵਿੱਚ ਅੱਪਡੇਟ ਵਾਸਤੇ ਚੈਕ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?\n\nਇਹ ਫੀਚਰ ਨੂੰ ਫੁਟਕਲ ਚੋਣ ਸਫ਼ੇ ਤੋਂ ਕਿਸੇ ਵੀ ਸਮੇਂ ਬੰਦ ਕਰ ਸਕਦੇ ਹੋ।"
 
+msgctxt "IDS_ZOOM_25"
+msgid "25%"
+msgstr ""
+
 msgctxt "IDS_ZOOM_50"
 msgid "50%"
 msgstr "50%"
@@ -2627,6 +2631,10 @@ msgstr "ਕੈਪਚਰ ਪੱਟੀ ਬਦਲੋ"
 msgctxt "IDS_AG_TOGGLE_DEBUGSHADERS"
 msgid "Toggle Debug Shaders"
 msgstr "ਡੀਬੱਗ ਸ਼ੇਡਰ ਬਦਲੋ"
+
+msgctxt "IDS_AG_ZOOM_25"
+msgid "Zoom 25%"
+msgstr ""
 
 msgctxt "IDS_AG_ZOOM_50"
 msgid "Zoom 50%"

@@ -29,7 +29,7 @@
 #include "USFSubtitles.h"
 
 #include "../DSUtil/PathUtils.h"
-
+#include <regex>
 
 struct htmlcolor {
     LPCTSTR name;
@@ -463,6 +463,81 @@ static CStringW SubRipper2SSA(CStringW str, int CharSet)
 
     return str;
 }
+
+static bool OpenVTT(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet) {
+    CStringW buff, start, end;
+
+    file->ReadString(buff);
+    if (buff.Left(6).Compare(L"WEBVTT") != 0) {
+        return false;
+    }
+
+    auto readTimeCode = [](LPCWSTR str, int& hh, int& mm, int& ss, int& ms) {
+        WCHAR sep;
+        int c = swscanf_s(str, L"%d%c%d%c%d%c%d",
+            &hh, &sep, 1, &mm, &sep, 1, &ss, &sep, 1, &ms);
+        // Check if ms was present
+        if (c == 5) {
+            ms = 0;
+        }
+        return (c == 5 || c == 7);
+    };
+
+
+    while (file->ReadString(buff)) {
+        FastTrimRight(buff);
+        if (buff.IsEmpty()) {
+            continue;
+        }
+        int len = buff.GetLength();
+        int c = swscanf_s(buff, L"%s --> %s", start.GetBuffer(len), len, end.GetBuffer(len), len);
+        start.ReleaseBuffer();
+        end.ReleaseBuffer();
+
+
+        int hh1, mm1, ss1, ms1, hh2, mm2, ss2, ms2;
+
+        //very lazy: if we found a cue we will process it.  everything else gets skipped for now
+        if (c == 2
+            && readTimeCode(start, hh1, mm1, ss1, ms1)
+            && readTimeCode(end, hh2, mm2, ss2, ms2)) {
+
+            CStringW str, tmp;
+
+            while (file->ReadString(tmp)) {
+                FastTrimRight(tmp);
+                if (tmp.IsEmpty()) {
+                    break;
+                }
+
+                CT2CA pszConvertedAnsiString(tmp);
+                std::string stdTmp(pszConvertedAnsiString);
+                //remove tags we don't support
+                stdTmp = std::regex_replace(stdTmp, std::regex("<c[.\\w\\d]*>"), "");
+                stdTmp = std::regex_replace(stdTmp, std::regex("</c>"), "");
+                stdTmp = std::regex_replace(stdTmp, std::regex("<\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d>"), "");
+                stdTmp = std::regex_replace(stdTmp, std::regex("<v[ .][^>]*>"), "");
+                stdTmp = std::regex_replace(stdTmp, std::regex("</v>"), "");
+                stdTmp = std::regex_replace(stdTmp, std::regex("<lang[^>]*>"), "");
+                stdTmp = std::regex_replace(stdTmp, std::regex("</lang>"), "");
+
+                CString tmp2(stdTmp.c_str());
+                
+                str += tmp2 + '\n';
+            }
+
+            ret.Add(SubRipper2SSA(str, CharSet),
+                file->IsUnicode(),
+                MS2RT((((hh1 * 60i64 + mm1) * 60i64) + ss1) * 1000i64 + ms1),
+                MS2RT((((hh2 * 60i64 + mm2) * 60i64) + ss2) * 1000i64 + ms2));
+        } else {
+            continue;
+        }
+    }
+
+    return !ret.IsEmpty();
+}
+
 
 static bool OpenSubRipper(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet)
 {
@@ -1806,6 +1881,7 @@ static OpenFunctStruct OpenFuncts[] = {
     OpenRealText, TIME, Subtitle::RT,
     OpenSami, TIME, Subtitle::SMI,
     OpenUSF, TIME, Subtitle::USF,
+    OpenVTT, TIME, Subtitle::VTT,
 };
 
 static int nOpenFuncts = _countof(OpenFuncts);

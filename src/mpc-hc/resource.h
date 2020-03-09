@@ -86,6 +86,7 @@
 #define ID_FILE_SUBTITLES_SAVE          810
 #define ID_FILE_SUBTITLES_UPLOAD        811
 #define ID_FILE_SUBTITLES_DOWNLOAD      812
+#define ID_VIEW_ZOOM_25                 813
 #define ID_FILE_PROPERTIES              814
 #define ID_VIEW_OPTIONS                 815
 #define ID_FILE_EXIT                    816
@@ -1051,6 +1052,7 @@
 #define ID_PLAY_REPEAT_FOREVER          33449
 #define ID_PLAY_REPEAT_ONEFILE          33450
 #define ID_PLAY_REPEAT_WHOLEPLAYLIST    33451
+#define IDS_AG_ZOOM_25                  33452
 #define IDS_MFMT_AVI                    39001
 #define IDS_MFMT_MPEG                   39002
 #define IDS_MFMT_MPEGTS                 39003
@@ -1357,6 +1359,7 @@
 #define IDS_ICONS_REASSOC_DLG_CONTENT   41411
 #define IDS_PPAGE_OUTPUT_OLDRENDERER    41412
 #define IDS_PPAGE_OUTPUT_OVERLAYMIXER   41413
+#define IDS_ZOOM_25                     41414
 #define IDS_PPAGE_OUTPUT_VMR9WINDOWED   41415
 #define IDS_PPAGE_OUTPUT_VMR9RENDERLESS 41417
 #define IDS_PPAGE_OUTPUT_EVR            41418
@@ -1621,7 +1624,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        20067
-#define _APS_NEXT_COMMAND_VALUE         33452
+#define _APS_NEXT_COMMAND_VALUE         33453
 #define _APS_NEXT_CONTROL_VALUE         22087
 #define _APS_NEXT_SYMED_VALUE           24052
 #endif

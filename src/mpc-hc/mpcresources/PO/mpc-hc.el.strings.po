@@ -1857,6 +1857,10 @@ msgctxt "IDS_UPDATE_CONFIG_AUTO_CHECK"
 msgid "Do you want to check periodically for MPC-HC updates?\n\nThis feature can be disabled later from the Miscellaneous options page."
 msgstr "Θέλετε να γίνεται έλεγχος περιοδικά για ενημερώσεις του MPC-HC;\n\nΑυτή η δυνατότητα μπορεί να απενεργοποιηθεί αργότερα από τη σελίδα επιλογών «Διάφορα»."
 
+msgctxt "IDS_ZOOM_25"
+msgid "25%"
+msgstr ""
+
 msgctxt "IDS_ZOOM_50"
 msgid "50%"
 msgstr "50%"
@@ -2628,6 +2632,10 @@ msgstr "Εναλλαγή σε γραμμή καταγραφής"
 msgctxt "IDS_AG_TOGGLE_DEBUGSHADERS"
 msgid "Toggle Debug Shaders"
 msgstr "Εναλλαγή εντοπισμού σφαλμάτων σκιάσεων"
+
+msgctxt "IDS_AG_ZOOM_25"
+msgid "Zoom 25%"
+msgstr ""
 
 msgctxt "IDS_AG_ZOOM_50"
 msgid "Zoom 50%"
