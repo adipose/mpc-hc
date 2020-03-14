@@ -56,7 +56,7 @@ CMPCThemeComboBox::~CMPCThemeComboBox()
 void CMPCThemeComboBox::themeDropDown()
 {
     if (AfxGetAppSettings().bMPCThemeLoaded) {
-        if (CMPCThemeUtil::canUseWin10DarkTheme() && false == isThemedDropDown) {
+        if (CMPCThemeUtil::canUseWin10DarkTheme() && !isThemedDropDown) {
             COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
             if (GetComboBoxInfo(&info)) {
                 SetWindowTheme(info.hwndList, L"DarkMode_Explorer", NULL);
@@ -124,19 +124,27 @@ void CMPCThemeComboBox::OnPaint()
         CString strText;
         GetWindowText(strText);
 
-        CBrush fb;
-        bool isFocused = (GetFocus() == this);
-        bool drawDotted = false;
-        if (isFocused) {
-            //unless edit exists, no inner border -- fixme if edit combobox needed
-            //fb.CreateSolidBrush(CMPCTheme::ButtonBorderInnerFocusedColor);
-            fb.CreateSolidBrush(CMPCTheme::ButtonBorderInnerColor);
-            drawDotted = true;
-        } else {
-            fb.CreateSolidBrush(CMPCTheme::ButtonBorderInnerColor);
-        }
         COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
         GetComboBoxInfo(&info);
+        CWnd* pCBEdit = GetDlgItem(1001);
+
+        CBrush fb;
+        bool isFocused, drawDotted = false;
+
+        if (pCBEdit) {
+            isFocused = (nullptr != info.hwndItem && ::GetFocus() == info.hwndItem);
+            if (isFocused) {
+                fb.CreateSolidBrush(CMPCTheme::ButtonBorderInnerFocusedColor);
+            } else {
+                fb.CreateSolidBrush(CMPCTheme::ButtonBorderInnerColor);
+            }
+        } else {
+            isFocused = (GetFocus() == this);
+            if (isFocused) {
+                drawDotted = true;
+            }
+            fb.CreateSolidBrush(CMPCTheme::ButtonBorderInnerColor);
+        }
 
         COLORREF bkColor, fgColor = CMPCTheme::TextFGColor, arrowColor = CMPCTheme::ComboboxArrowColor;
         if ((nullptr != info.hwndList && ::IsWindowVisible(info.hwndList)) || info.stateButton == STATE_SYSTEM_PRESSED) { //always looks the same once the list is open
@@ -154,7 +162,17 @@ void CMPCThemeComboBox::OnPaint()
 
         rBG = r;
         rBG.DeflateRect(1, 1);
-        dc.FillSolidRect(rBG, bkColor);
+        if (pCBEdit) {
+            CRect tB(info.rcButton);
+            dc.FillSolidRect(tB, bkColor);
+            rBG.right = info.rcButton.left - 1;
+            CMPCThemeUtil::drawParentDialogBGClr(this, &dc, rBG, true);
+            rBG.left = rBG.right;
+            rBG.right += 1;
+            dc.FillSolidRect(rBG, CMPCTheme::ButtonBorderInnerColor);
+        } else {
+            dc.FillSolidRect(rBG, bkColor);
+        }
 
         rText = r;
         rText.right = info.rcItem.right;
@@ -181,10 +199,18 @@ void CMPCThemeComboBox::OnSetFocus(CWnd* pOldWnd)
 void CMPCThemeComboBox::checkHover(UINT nFlags, CPoint point, bool invalidate)
 {
     CRect r;
-    GetClientRect(r);
     bool oldHover = isHover;
     CPoint ptScreen = point;
     ClientToScreen(&ptScreen);
+
+    CWnd* pCBEdit = GetDlgItem(1001);
+    if (pCBEdit) { //we only hover on the button, because the edit covers most of the combobox (except one pixel, which we don't want to check, as it causes flicker)
+        COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
+        GetComboBoxInfo(&info);
+        r = info.rcButton;
+    } else {
+        GetClientRect(r);
+    }
 
     if (r.PtInRect(point) && WindowFromPoint(ptScreen)->GetSafeHwnd() == GetSafeHwnd()) {
         isHover = true;

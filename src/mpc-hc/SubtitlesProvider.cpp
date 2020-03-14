@@ -95,7 +95,7 @@ SRESULT OpenSubtitles::Login(const std::string& sUserName, const std::string& sP
         if (result["status"].getType() == XmlRpcValue::Type::TypeString) {
             if (result["status"] == std::string("200 OK")) {
                 token = result["token"];
-            } else if (result["status"] == std::string("401 Unauthorized")) {
+            } else if (result["status"] == std::string("401 Unauthorized") && !UserName().empty()) {
                 // Notify user that User/Pass provided are invalid.
                 CString msg;
                 msg.FormatMessage(IDS_SUB_CREDENTIALS_ERROR, Name().c_str(), UserName().c_str());
