@@ -573,6 +573,10 @@
 #define IDS_PLAYLOOP_FOREVER_ON         14205
 #define IDS_PLAYLOOP_FOREVER_OFF        14206
 #define IDS_PLAYLOOP_FOREVER            14207
+#define IDS_PLAYLOOPMODE_AB             14208
+#define IDS_PLAY_LOOPMODE_AB            14209
+#define IDS_PLAYLOOPMODE_AB_MARK_A      14210
+#define IDS_PLAYLOOPMODE_AB_MARK_B      14211
 #define IDD_TUNER_SCAN                  20002
 #define IDS_OSD_DISPLAY_RENDERER_STATS  20003
 #define IDS_OSD_RESET_RENDERER_STATS    20004
@@ -1053,6 +1057,9 @@
 #define ID_PLAY_REPEAT_ONEFILE          33450
 #define ID_PLAY_REPEAT_WHOLEPLAYLIST    33451
 #define IDS_AG_ZOOM_25                  33452
+#define ID_PLAY_REPEAT_AB               33453
+#define ID_PLAY_REPEAT_AB_MARK_A        33454
+#define ID_PLAY_REPEAT_AB_MARK_B        33455
 #define IDS_MFMT_AVI                    39001
 #define IDS_MFMT_MPEG                   39002
 #define IDS_MFMT_MPEGTS                 39003
@@ -1624,7 +1631,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        20067
-#define _APS_NEXT_COMMAND_VALUE         33453
+#define _APS_NEXT_COMMAND_VALUE         33456
 #define _APS_NEXT_CONTROL_VALUE         22087
 #define _APS_NEXT_SYMED_VALUE           24052
 #endif

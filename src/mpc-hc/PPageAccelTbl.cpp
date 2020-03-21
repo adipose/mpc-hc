@@ -605,13 +605,13 @@ CString CPPageAccelTbl::MakeAccelShortcutLabel(const ACCEL& a)
             str = _T("`");
             break;
         case VK_OEM_4:
-            str = _T("OEM 4");
+            str = _T("[");
             break;
         case VK_OEM_5:
             str = _T("OEM 5");
             break;
         case VK_OEM_6:
-            str = _T("OEM 6");
+            str = _T("]");
             break;
         case VK_OEM_7:
             str = _T("OEM 7");

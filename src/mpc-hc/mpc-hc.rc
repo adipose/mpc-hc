@@ -1679,6 +1679,10 @@ BEGIN
             MENUITEM SEPARATOR
             MENUITEM "&File",                       ID_PLAY_REPEAT_ONEFILE
             MENUITEM "&Playlist",                   ID_PLAY_REPEAT_WHOLEPLAYLIST
+            MENUITEM SEPARATOR
+            MENUITEM "A-B (&Reset)",                ID_PLAY_REPEAT_AB
+            MENUITEM "A-B (Mark &A)",               ID_PLAY_REPEAT_AB_MARK_A
+            MENUITEM "A-B (Mark &B)",               ID_PLAY_REPEAT_AB_MARK_B
         END
         MENUITEM SEPARATOR
         MENUITEM "&Decrease Rate",              ID_PLAY_DECRATE
@@ -1780,6 +1784,10 @@ BEGIN
             MENUITEM SEPARATOR
             MENUITEM "&File",                       ID_PLAY_REPEAT_ONEFILE
             MENUITEM "&Playlist",                   ID_PLAY_REPEAT_WHOLEPLAYLIST
+            MENUITEM SEPARATOR
+            MENUITEM "A-B (&Reset)",                ID_PLAY_REPEAT_AB
+            MENUITEM "A-B (Mark &A)",               ID_PLAY_REPEAT_AB_MARK_A
+            MENUITEM "A-B (Mark &B)",               ID_PLAY_REPEAT_AB_MARK_B
         END
         MENUITEM SEPARATOR
         MENUITEM "F&ull Screen",                ID_VIEW_FULLSCREEN
@@ -2182,6 +2190,10 @@ BEGIN
                 MENUITEM SEPARATOR
                 MENUITEM "&File",                       ID_PLAY_REPEAT_ONEFILE
                 MENUITEM "&Playlist",                   ID_PLAY_REPEAT_WHOLEPLAYLIST
+                MENUITEM SEPARATOR
+                MENUITEM "A-B (&Reset)",                ID_PLAY_REPEAT_AB
+                MENUITEM "A-B (Mark &A)",               ID_PLAY_REPEAT_AB_MARK_A
+                MENUITEM "A-B (Mark &B)",               ID_PLAY_REPEAT_AB_MARK_B
             END
             MENUITEM SEPARATOR
             MENUITEM "&Decrease Rate",              ID_PLAY_DECRATE
@@ -2424,6 +2436,7 @@ BEGIN
     IDS_PLAY_LOOPMODE_FILE  "File"
     IDS_SUBTITLES_DEFAULT_STYLE "&Default Style"
     IDS_PLAY_LOOPMODE_PLAYLIST "Playlist"
+    IDS_PLAY_LOOPMODE_AB    "A-B"
     IDS_FAVFILES            "Files"
     IDS_FAVDVDS             "DVDs"
 END
@@ -2444,6 +2457,9 @@ BEGIN
                             "If the rendering target is left undefined, SSA/ASS subtitles will be rendered relative to the video frame while all other text subtitles will be rendered relative to the window."
     IDS_PLAYLOOPMODE_PLAYLIST "Repeat Mode: Playlist"
     IDS_PLAYLOOPMODE_FILE   "Repeat Mode: File"
+    IDS_PLAYLOOPMODE_AB     "A-B Repeat: Reset Positions"
+    IDS_PLAYLOOPMODE_AB_MARK_A "A-B Repeat: Mark A Position"
+    IDS_PLAYLOOPMODE_AB_MARK_B "A-B Repeat: Mark B Position"
     IDS_PLAYLOOP_FOREVER_ON "Repeat Forever: On"
     IDS_PLAYLOOP_FOREVER_OFF "Repeat Forever: Off"
     IDS_PLAYLOOP_FOREVER    "Repeat Forever"

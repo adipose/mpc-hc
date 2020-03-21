@@ -515,6 +515,18 @@ void CPlayerSeekBar::OnPaint()
     light  = GetSysColor(COLOR_3DHILIGHT),
     bkg    = GetSysColor(COLOR_BTNFACE);
 
+    const CRect channelRect(GetChannelRect());
+    auto funcMarkChannel = [&](REFERENCE_TIME pos, long verticalPadding, COLORREF markColor) {
+        long markPos = channelRect.left + ChannelPointFromPosition(pos);
+        CRect r(markPos, channelRect.top + verticalPadding, markPos + 1, channelRect.bottom - verticalPadding);
+        if (r.right < channelRect.right) {
+            r.right++;
+        }
+        ASSERT(r.right <= channelRect.right);
+        dc.FillSolidRect(&r, markColor);
+        dc.ExcludeClipRect(&r);
+    };
+
     const CAppSettings& s = AfxGetAppSettings();
     if (s.bMPCThemeLoaded) {
         // Thumb
@@ -543,8 +555,6 @@ void CPlayerSeekBar::OnPaint()
             m_lastThumbRect = r;
         }
 
-        const CRect channelRect(GetChannelRect());
-
         // Chapters
         if (m_bHasDuration) {
             CAutoLock lock(&m_csChapterBag);
@@ -552,17 +562,20 @@ void CPlayerSeekBar::OnPaint()
                 for (DWORD i = 0; i < m_pChapterBag->ChapGetCount(); i++) {
                     REFERENCE_TIME rtChap;
                     if (SUCCEEDED(m_pChapterBag->ChapGet(i, &rtChap, nullptr))) {
-                        long chanPos = channelRect.left + ChannelPointFromPosition(rtChap);
-                        CRect r(chanPos, channelRect.top + 1, chanPos + 1, channelRect.bottom - 1);
-                        if (r.right < channelRect.right) {
-                            r.right++;
-                        }
-                        ASSERT(r.right <= channelRect.right);
-                        dc.FillSolidRect(&r, CMPCTheme::ScrollChapterColor);
-                        dc.ExcludeClipRect(&r);
+                        funcMarkChannel(rtChap, 1, CMPCTheme::SeekbarChapterColor);
                     } else {
                         ASSERT(FALSE);
                     }
+                }
+            }
+            REFERENCE_TIME aPos, bPos;
+            bool aEnabled, bEnabled;
+            if (m_pMainFrame->CheckABRepeat(aPos, bPos, aEnabled, bEnabled)) {
+                if (aEnabled) {
+                    funcMarkChannel(aPos, 1, CMPCTheme::SeekbarABColor);
+                }
+                if (bEnabled) {
+                    funcMarkChannel(bPos, 1, CMPCTheme::SeekbarABColor);
                 }
             }
         }
@@ -620,8 +633,6 @@ void CPlayerSeekBar::OnPaint()
             m_lastThumbRect = r;
         }
 
-        const CRect channelRect(GetChannelRect());
-
         // Chapters
         if (m_bHasDuration) {
             CAutoLock lock(&m_csChapterBag);
@@ -629,18 +640,22 @@ void CPlayerSeekBar::OnPaint()
                 for (DWORD i = 0; i < m_pChapterBag->ChapGetCount(); i++) {
                     REFERENCE_TIME rtChap;
                     if (SUCCEEDED(m_pChapterBag->ChapGet(i, &rtChap, nullptr))) {
-                        long chanPos = channelRect.left + ChannelPointFromPosition(rtChap);
-                        CRect r(chanPos, channelRect.top, chanPos + 1, channelRect.bottom);
-                        if (r.right < channelRect.right) {
-                            r.right++;
-                        }
-                        ASSERT(r.right <= channelRect.right);
-                        dc.FillSolidRect(&r, dark);
-                        dc.ExcludeClipRect(&r);
+                        funcMarkChannel(rtChap, 0, dark);
                     } else {
                         ASSERT(FALSE);
                     }
                 }
+            }
+        }
+
+        REFERENCE_TIME aPos, bPos;
+        bool aEnabled, bEnabled;
+        if (m_pMainFrame->CheckABRepeat(aPos, bPos, aEnabled, bEnabled)) {
+            if (aEnabled) {
+                funcMarkChannel(aPos, 0, CMPCTheme::SeekbarABColor);
+            }
+            if (bEnabled) {
+                funcMarkChannel(bPos, 0, CMPCTheme::SeekbarABColor);
             }
         }
 

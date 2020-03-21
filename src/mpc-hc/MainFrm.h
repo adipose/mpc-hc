@@ -325,6 +325,8 @@ private:
     void AddTextPassThruFilter();
 
     int m_nLoops;
+    REFERENCE_TIME abRepeatPositionA, abRepeatPositionB;
+    bool abRepeatPositionAEnabled, abRepeatPositionBEnabled;
     UINT m_nLastSkipDirection;
 
     bool m_fCustomGraph;
@@ -376,6 +378,7 @@ private:
 
     CString m_currentCoverAuthor;
     CString m_currentCoverPath;
+    bool currentCoverIsFileArt = false;
 
     CAutoPtr<SkypeMoodMsgHandler> m_pSkypeMoodMsgHandler;
     void SendNowPlayingToSkype();
@@ -582,6 +585,10 @@ public:
     // DVB capture
     void UpdateCurrentChannelInfo(bool bShowOSD = true, bool bShowInfoBar = false);
     LRESULT OnCurrentChannelInfoUpdated(WPARAM wParam, LPARAM lParam);
+
+    bool CheckABRepeat(REFERENCE_TIME& aPos, REFERENCE_TIME& bPos, bool& aEnabled, bool& bEnabled);
+    void PerformABRepeat();
+    void DisableABRepeat();
 
     struct DVBState {
         struct EITData {
@@ -955,6 +962,8 @@ public:
     afx_msg void OnUpdateAfterplayback(CCmdUI* pCmdUI);
     afx_msg void OnPlayRepeat(UINT nID);
     afx_msg void OnUpdatePlayRepeat(CCmdUI* pCmdUI);
+    afx_msg void OnABRepeat(UINT nID);
+    afx_msg void OnUpdateABRepeat(CCmdUI* pCmdUI);
     afx_msg void OnPlayRepeatForever();
     afx_msg void OnUpdatePlayRepeatForever(CCmdUI* pCmdUI);
 

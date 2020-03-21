@@ -422,6 +422,7 @@ bool CPlayerPlaylistBar::ParseM3UPlayList(CString fn) {
                     if (f.ReadString(str)) {
                         pli.m_label = value.Mid(findDelim + 1);
                         pli.m_fns.RemoveAll();
+                        str = CombinePath(base, str);
                         pli.m_fns.AddTail(str);
                         m_pl.AddTail(pli);
                         success = true;
@@ -437,6 +438,7 @@ bool CPlayerPlaylistBar::ParseM3UPlayList(CString fn) {
         if (str.Find(_T("#EXT")) != 0) { //discard all ^#EXT.* indiscriminately
             pli.m_label = _T("");
             pli.m_fns.RemoveAll();
+            str = CombinePath(base, str);
             pli.m_fns.AddTail(str);
             m_pl.AddTail(pli);
             success = true;
