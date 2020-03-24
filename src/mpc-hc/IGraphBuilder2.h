@@ -57,5 +57,5 @@ interface __declspec(uuid("546E72B3-66A1-4A58-A99B-56530B3E2FFF"))
     STDMETHOD(SetFrequency)(ULONG ulFrequency, ULONG ulBandwidth) PURE;
     STDMETHOD(Scan)(ULONG ulFrequency, ULONG ulBandwidth, HWND hWnd) PURE;
     STDMETHOD(GetStats)(BOOLEAN& bPresent, BOOLEAN& bLocked, LONG& lDbStrength, LONG& lPercentQuality) PURE;
-    STDMETHOD(UpdatePSI)(const class CDVBChannel* pChannel, struct EventDescriptor& NowNext) PURE;
+    STDMETHOD(UpdatePSI)(const class CBDAChannel* pChannel, struct EventDescriptor& NowNext) PURE;
 };

@@ -132,7 +132,7 @@ public:
 
     DECLARE_IUNKNOWN;
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
-    STDMETHODIMP UpdatePSI(const CDVBChannel* pChannel, EventDescriptor& NowNext);
+    STDMETHODIMP UpdatePSI(const CBDAChannel* pChannel, EventDescriptor& NowNext);
 
 private:
 
@@ -143,23 +143,23 @@ private:
     CComQIPtr<IBDA_SignalStatistics>     m_pBDADemodStats;
     CComPtr<IBDA_AutoDemodulate>         m_pBDAAutoDemulate;
     DVB_RebuildFilterGraph m_nDVBRebuildFilterGraph;
-    CAtlMap<DVB_STREAM_TYPE, CDVBStream> m_DVBStreams;
+    CAtlMap<BDA_STREAM_TYPE, CDVBStream> m_DVBStreams;
 
-    DVB_STREAM_TYPE m_nCurVideoType;
-    DVB_STREAM_TYPE m_nCurAudioType;
+    BDA_STREAM_TYPE m_nCurVideoType;
+    BDA_STREAM_TYPE m_nCurAudioType;
     bool            m_fHideWindow;
     CComPtr<IBaseFilter> m_pDemux;
 
     HRESULT         CreateKSFilter(IBaseFilter** ppBF, CLSID KSCategory, const CStringW& DisplayName);
     HRESULT         ConnectFilters(IBaseFilter* pOutFiter, IBaseFilter* pInFilter);
     HRESULT         CreateMicrosoftDemux(CComPtr<IBaseFilter>& pMpeg2Demux);
-    HRESULT         SetChannelInternal(CDVBChannel* pChannel);
-    HRESULT         SwitchStream(DVB_STREAM_TYPE nOldType, DVB_STREAM_TYPE nNewType);
+    HRESULT         SetChannelInternal(CBDAChannel* pChannel);
+    HRESULT         SwitchStream(BDA_STREAM_TYPE nOldType, BDA_STREAM_TYPE nNewType);
     HRESULT         ChangeState(FILTER_STATE nRequested);
     HRESULT         ClearMaps();
     FILTER_STATE    GetState();
-    void UpdateMediaType(VIDEOINFOHEADER2* NewVideoHeader, CDVBChannel* pChannel);
-    HRESULT Flush(DVB_STREAM_TYPE nVideoType, DVB_STREAM_TYPE nAudioType);
+    void UpdateMediaType(VIDEOINFOHEADER2* NewVideoHeader, CBDAChannel* pChannel);
+    HRESULT Flush(BDA_STREAM_TYPE nVideoType, BDA_STREAM_TYPE nAudioType);
 
     template <class ITF>
     HRESULT SearchIBDATopology(const CComPtr<IBaseFilter>& pTuner, CComPtr<ITF>& pItf) {

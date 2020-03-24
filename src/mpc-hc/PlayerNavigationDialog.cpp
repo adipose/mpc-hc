@@ -216,9 +216,9 @@ void CPlayerNavigationDialog::OnContextMenu(CWnd* pWnd, CPoint point)
         M_REMOVE_ALL
     };
 
-    auto findChannelByItemNumber = [this](std::vector<CDVBChannel>& c, int nItem) {
+    auto findChannelByItemNumber = [this](std::vector<CBDAChannel>& c, int nItem) {
         int nPrefNumber = (int)m_channelList.GetItemData(nItem);
-        return find_if(c.begin(), c.end(), [&](CDVBChannel const & channel) {
+        return find_if(c.begin(), c.end(), [&](CBDAChannel const & channel) {
             return channel.GetPrefNumber() == nPrefNumber;
         });
     };
@@ -291,7 +291,7 @@ void CPlayerNavigationDialog::OnContextMenu(CWnd* pWnd, CPoint point)
                 const int nRemovedPrefNumber = it->GetPrefNumber();
                 s.m_DVBChannels.erase(it);
                 // Update channels pref number
-                for (CDVBChannel& channel : s.m_DVBChannels) {
+                for (CBDAChannel& channel : s.m_DVBChannels) {
                     const int nPrefNumber = channel.GetPrefNumber();
                     ASSERT(nPrefNumber != nRemovedPrefNumber);
                     if (nPrefNumber > nRemovedPrefNumber) {

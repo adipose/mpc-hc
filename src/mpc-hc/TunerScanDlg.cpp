@@ -133,7 +133,7 @@ void CTunerScanDlg::OnBnClickedSave()
 
     for (int i = 0; i < m_ChannelList.GetItemCount(); i++) {
         try {
-            CDVBChannel channel(m_ChannelList.GetItemText(i, TSCC_CHANNEL));
+            CBDAChannel channel(m_ChannelList.GetItemText(i, TSCC_CHANNEL));
             auto it = std::find(std::begin(DVBChannels), std::end(DVBChannels), channel);
             if (it != DVBChannels.end()) {
                 // replace existing channel
@@ -223,7 +223,7 @@ LRESULT CTunerScanDlg::OnStats(WPARAM wParam, LPARAM lParam)
 LRESULT CTunerScanDlg::OnNewChannel(WPARAM wParam, LPARAM lParam)
 {
     try {
-        CDVBChannel channel((LPCTSTR)lParam);
+        CBDAChannel channel((LPCTSTR)lParam);
         if (!m_bIgnoreEncryptedChannels || !channel.IsEncrypted()) {
             CString strTemp;
             int nItem, nChannelNumber;
@@ -252,9 +252,9 @@ LRESULT CTunerScanDlg::OnNewChannel(WPARAM wParam, LPARAM lParam)
             m_ChannelList.SetItemText(nItem, TSCC_FREQUENCY, strTemp);
 
             m_ChannelList.SetItemText(nItem, TSCC_ENCRYPTED, ResStr(channel.IsEncrypted() ? IDS_YES : IDS_NO));
-            if (channel.GetVideoType() == DVB_H264) {
+            if (channel.GetVideoType() == BDA_H264) {
                 strTemp = _T("H.264");
-            } else if (channel.GetVideoType() == DVB_HEVC) {
+            } else if (channel.GetVideoType() == BDA_HEVC) {
                 strTemp = _T("HEVC");
             } else if (channel.GetVideoPID()) {
                 strTemp = _T("MPEG-2");

@@ -25,17 +25,17 @@
 #include "mplayerc.h"
 
 
-LCID DVBStreamInfo::GetLCID() const
+LCID BDAStreamInfo::GetLCID() const
 {
     return ISOLang::ISO6392ToLcid(CStringA(sLanguage));
 };
 
-CDVBChannel::CDVBChannel(CString strChannel)
+CBDAChannel::CBDAChannel(CString strChannel)
 {
     FromString(strChannel);
 }
 
-void CDVBChannel::FromString(CString strValue)
+void CBDAChannel::FromString(CString strValue)
 {
     int i = 0;
 
@@ -63,7 +63,7 @@ void CDVBChannel::FromString(CString strValue)
     m_ulPMT       = _tstol(strValue.Tokenize(_T("|"), i));
     m_ulPCR       = _tstol(strValue.Tokenize(_T("|"), i));
     m_ulVideoPID  = _tstol(strValue.Tokenize(_T("|"), i));
-    m_nVideoType  = (DVB_STREAM_TYPE) _tstol(strValue.Tokenize(_T("|"), i));
+    m_nVideoType  = (BDA_STREAM_TYPE) _tstol(strValue.Tokenize(_T("|"), i));
     m_nAudioCount = _tstol(strValue.Tokenize(_T("|"), i));
     if (nVersion > FORMAT_VERSION_1) {
         m_nDefaultAudio = _tstol(strValue.Tokenize(_T("|"), i));
@@ -75,28 +75,28 @@ void CDVBChannel::FromString(CString strValue)
 
     for (int j = 0; j < m_nAudioCount; j++) {
         m_Audios[j].ulPID     = _tstol(strValue.Tokenize(_T("|"), i));
-        m_Audios[j].nType     = (DVB_STREAM_TYPE)_tstol(strValue.Tokenize(_T("|"), i));
+        m_Audios[j].nType     = (BDA_STREAM_TYPE)_tstol(strValue.Tokenize(_T("|"), i));
         m_Audios[j].nPesType  = (PES_STREAM_TYPE)_tstol(strValue.Tokenize(_T("|"), i));
         m_Audios[j].sLanguage = strValue.Tokenize(_T("|"), i);
     }
 
     for (int j = 0; j < m_nSubtitleCount; j++) {
         m_Subtitles[j].ulPID     = _tstol(strValue.Tokenize(_T("|"), i));
-        m_Subtitles[j].nType     = (DVB_STREAM_TYPE)_tstol(strValue.Tokenize(_T("|"), i));
+        m_Subtitles[j].nType     = (BDA_STREAM_TYPE)_tstol(strValue.Tokenize(_T("|"), i));
         m_Subtitles[j].nPesType  = (PES_STREAM_TYPE)_tstol(strValue.Tokenize(_T("|"), i));
         m_Subtitles[j].sLanguage = strValue.Tokenize(_T("|"), i);
     }
 
     if (nVersion > FORMAT_VERSION_3) {
-        m_nVideoFps    = (DVB_FPS_TYPE)_tstol(strValue.Tokenize(_T("|"), i));
-        m_nVideoChroma = (DVB_CHROMA_TYPE)_tstol(strValue.Tokenize(_T("|"), i));
+        m_nVideoFps    = (BDA_FPS_TYPE)_tstol(strValue.Tokenize(_T("|"), i));
+        m_nVideoChroma = (BDA_CHROMA_TYPE)_tstol(strValue.Tokenize(_T("|"), i));
         m_nVideoWidth  = _tstol(strValue.Tokenize(_T("|"), i));
         m_nVideoHeight = _tstol(strValue.Tokenize(_T("|"), i));
-        m_nVideoAR     = (DVB_AspectRatio_TYPE)_tstol(strValue.Tokenize(_T("|"), i));
+        m_nVideoAR     = (BDA_AspectRatio_TYPE)_tstol(strValue.Tokenize(_T("|"), i));
     }
 }
 
-CString CDVBChannel::ToString() const
+CString CBDAChannel::ToString() const
 {
     auto substituteEmpty = [](const CString & lang) -> CString {
         if (lang.IsEmpty())
@@ -146,7 +146,7 @@ CString CDVBChannel::ToString() const
     return strValue;
 }
 
-CStringA CDVBChannel::ToJSON() const
+CStringA CBDAChannel::ToJSON() const
 {
     CStringA jsonChannel;
     jsonChannel.Format("{ \"index\" : %d, \"name\" : \"%s\" }",
@@ -155,20 +155,20 @@ CStringA CDVBChannel::ToJSON() const
     return jsonChannel;
 }
 
-void CDVBChannel::AddStreamInfo(ULONG ulPID, DVB_STREAM_TYPE nType, PES_STREAM_TYPE nPesType, LPCTSTR strLanguage)
+void CBDAChannel::AddStreamInfo(ULONG ulPID, BDA_STREAM_TYPE nType, PES_STREAM_TYPE nPesType, LPCTSTR strLanguage)
 {
     switch (nType) {
-        case DVB_MPV:
-        case DVB_H264:
-        case DVB_HEVC:
+        case BDA_MPV:
+        case BDA_H264:
+        case BDA_HEVC:
             m_ulVideoPID = ulPID;
             m_nVideoType = nType;
             break;
-        case DVB_MPA:
-        case DVB_AC3:
-        case DVB_EAC3:
-        case DVB_LATM:
-            if (m_nAudioCount < DVB_MAX_AUDIO) {
+        case BDA_MPA:
+        case BDA_AC3:
+        case BDA_EAC3:
+        case BDA_LATM:
+            if (m_nAudioCount < BDA_MAX_AUDIO) {
                 m_Audios[m_nAudioCount].ulPID     = ulPID;
                 m_Audios[m_nAudioCount].nType     = nType;
                 m_Audios[m_nAudioCount].nPesType  = nPesType;
@@ -176,8 +176,8 @@ void CDVBChannel::AddStreamInfo(ULONG ulPID, DVB_STREAM_TYPE nType, PES_STREAM_T
                 m_nAudioCount++;
             }
             break;
-        case DVB_SUBTITLE:
-            if (m_nSubtitleCount < DVB_MAX_SUBTITLE) {
+        case BDA_SUBTITLE:
+            if (m_nSubtitleCount < BDA_MAX_SUBTITLE) {
                 m_Subtitles[m_nSubtitleCount].ulPID     = ulPID;
                 m_Subtitles[m_nSubtitleCount].nType     = nType;
                 m_Subtitles[m_nSubtitleCount].nPesType  = nPesType;
@@ -188,32 +188,32 @@ void CDVBChannel::AddStreamInfo(ULONG ulPID, DVB_STREAM_TYPE nType, PES_STREAM_T
     }
 }
 
-REFERENCE_TIME CDVBChannel::GetAvgTimePerFrame()
+REFERENCE_TIME CBDAChannel::GetAvgTimePerFrame()
 {
     REFERENCE_TIME Value;
     switch (m_nVideoFps) {
-        case DVB_FPS_23_976:
+        case BDA_FPS_23_976:
             Value = 417084;
             break;
-        case DVB_FPS_24_0:
+        case BDA_FPS_24_0:
             Value = 416667;
             break;
-        case DVB_FPS_25_0:
+        case BDA_FPS_25_0:
             Value = 400000;
             break;
-        case DVB_FPS_29_97:
+        case BDA_FPS_29_97:
             Value = 333667;
             break;
-        case DVB_FPS_30_0:
+        case BDA_FPS_30_0:
             Value = 333333;
             break;
-        case DVB_FPS_50_0:
+        case BDA_FPS_50_0:
             Value = 200000;
             break;
-        case DVB_FPS_59_94:
+        case BDA_FPS_59_94:
             Value = 166834;
             break;
-        case DVB_FPS_60_0:
+        case BDA_FPS_60_0:
             Value = 166667;
             break;
         default:
@@ -223,32 +223,32 @@ REFERENCE_TIME CDVBChannel::GetAvgTimePerFrame()
     return Value;
 }
 
-CString CDVBChannel::GetVideoFpsDesc()
+CString CBDAChannel::GetVideoFpsDesc()
 {
     CString strValue;
     switch (m_nVideoFps) {
-        case DVB_FPS_23_976:
+        case BDA_FPS_23_976:
             strValue = _T("23.976");
             break;
-        case DVB_FPS_24_0:
+        case BDA_FPS_24_0:
             strValue = _T("24.000");
             break;
-        case DVB_FPS_25_0:
+        case BDA_FPS_25_0:
             strValue = _T("25.000");
             break;
-        case DVB_FPS_29_97:
+        case BDA_FPS_29_97:
             strValue = _T("29.970");
             break;
-        case DVB_FPS_30_0:
+        case BDA_FPS_30_0:
             strValue = _T("30.000");
             break;
-        case DVB_FPS_50_0:
+        case BDA_FPS_50_0:
             strValue = _T("50.000");
             break;
-        case DVB_FPS_59_94:
+        case BDA_FPS_59_94:
             strValue = _T("59.940");
             break;
-        case DVB_FPS_60_0:
+        case BDA_FPS_60_0:
             strValue = _T("60.000");
             break;
         default:
@@ -259,20 +259,20 @@ CString CDVBChannel::GetVideoFpsDesc()
 
 }
 
-DWORD CDVBChannel::GetVideoARx()
+DWORD CBDAChannel::GetVideoARx()
 {
     DWORD Value;
     switch (GetVideoAR()) {
-        case DVB_AR_1:
+        case BDA_AR_1:
             Value = 1;
             break;
-        case DVB_AR_3_4:
+        case BDA_AR_3_4:
             Value = 4;
             break;
-        case DVB_AR_9_16:
+        case BDA_AR_9_16:
             Value = 16;
             break;
-        case DVB_AR_1_2_21:
+        case BDA_AR_1_2_21:
             Value = 221;
             break;
         default:
@@ -282,20 +282,20 @@ DWORD CDVBChannel::GetVideoARx()
     return Value;
 }
 
-DWORD CDVBChannel::GetVideoARy()
+DWORD CBDAChannel::GetVideoARy()
 {
     DWORD Value;
     switch (GetVideoAR()) {
-        case DVB_AR_1:
+        case BDA_AR_1:
             Value = 1;
             break;
-        case DVB_AR_3_4:
+        case BDA_AR_3_4:
             Value = 3;
             break;
-        case DVB_AR_9_16:
+        case BDA_AR_9_16:
             Value = 9;
             break;
-        case DVB_AR_1_2_21:
+        case BDA_AR_1_2_21:
             Value = 100;
             break;
         default:

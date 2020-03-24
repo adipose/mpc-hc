@@ -117,6 +117,7 @@ protected:
     bool InternalOnXButtonUp(UINT nFlags, UINT nButton, const CPoint& point);
     bool InternalOnXButtonDblClk(UINT nFlags, UINT nButton, const CPoint& point);
     BOOL InternalOnMouseWheel(UINT nFlags, short zDelta, const CPoint& point);
+    BOOL InternalOnMouseHWheel(UINT nFlags, short zDelta, const CPoint& point);
     BOOL InternalOnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
     void InternalOnMouseMove(UINT nFlags, const CPoint& point);
     void InternalOnMouseLeave();
@@ -149,6 +150,7 @@ private:
     void OnXButtonDblClk(UINT nFlags, UINT nButton, CPoint point);
 
     BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint point);
+    void OnMouseHWheel(UINT nFlags, short zDelta, CPoint point);
 
     BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 

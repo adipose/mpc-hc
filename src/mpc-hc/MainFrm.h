@@ -599,7 +599,7 @@ public:
         };
 
         CString         sChannelName;                // Current channel name
-        CDVBChannel*    pChannel          = nullptr; // Pointer to current channel object
+        CBDAChannel*    pChannel          = nullptr; // Pointer to current channel object
         EventDescriptor NowNext;                     // Current channel EIT
         bool            bActive           = false;   // True when channel is active
         bool            bSetChannelActive = false;   // True when channel change is in progress

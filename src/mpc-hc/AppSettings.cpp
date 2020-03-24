@@ -2409,9 +2409,9 @@ void CAppSettings::AddFav(favtype ft, CString s)
     SetFav(ft, sl);
 }
 
-CDVBChannel* CAppSettings::FindChannelByPref(int nPrefNumber)
+CBDAChannel* CAppSettings::FindChannelByPref(int nPrefNumber)
 {
-    auto it = find_if(m_DVBChannels.begin(), m_DVBChannels.end(), [&](CDVBChannel const & channel) {
+    auto it = find_if(m_DVBChannels.begin(), m_DVBChannels.end(), [&](CBDAChannel const & channel) {
         return channel.GetPrefNumber() == nPrefNumber;
     });
 

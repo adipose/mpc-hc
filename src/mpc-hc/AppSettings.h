@@ -274,6 +274,8 @@ struct wmcmd_base : public ACCEL {
         X2DBLCLK,
         WUP,
         WDOWN,
+        WRIGHT,
+        WLEFT,
         LAST
     };
 
@@ -583,7 +585,7 @@ public:
     int             iBDAOffset;
     bool            fBDAIgnoreEncryptedChannels;
     int             nDVBLastChannel;
-    std::vector<CDVBChannel> m_DVBChannels;
+    std::vector<CBDAChannel> m_DVBChannels;
     DVB_RebuildFilterGraph nDVBRebuildFilterGraph;
     DVB_StopFilterGraph nDVBStopFilterGraph;
 
@@ -835,7 +837,7 @@ public:
     void            SetFav(favtype ft, CAtlList<CString>& sl);
     void            AddFav(favtype ft, CString s);
 
-    CDVBChannel*    FindChannelByPref(int nPrefNumber);
+    CBDAChannel*    FindChannelByPref(int nPrefNumber);
 
     bool            GetAllowMultiInst() const;
 

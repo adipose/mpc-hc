@@ -8089,7 +8089,7 @@ void CMainFrame::OnPlayAudio(UINT nID)
     } else if (GetPlaybackMode() == PM_FILE) {
         OnNavStreamSelectSubMenu(i, 1);
     } else if (GetPlaybackMode() == PM_DIGITAL_CAPTURE) {
-        if (CDVBChannel* pChannel = m_pDVBState->pChannel) {
+        if (CBDAChannel* pChannel = m_pDVBState->pChannel) {
             OnNavStreamSelectSubMenu(i, 1);
             pChannel->SetDefaultAudio(i);
         }
@@ -8126,7 +8126,7 @@ void CMainFrame::OnPlaySubtitles(UINT nID)
     }
 
     if (GetPlaybackMode() == PM_DIGITAL_CAPTURE) {
-        if (CDVBChannel* pChannel = m_pDVBState->pChannel) {
+        if (CBDAChannel* pChannel = m_pDVBState->pChannel) {
             OnNavStreamSelectSubMenu(i, 2);
             pChannel->SetDefaultSubtitle(i);
         }
@@ -15338,7 +15338,7 @@ HRESULT CMainFrame::SetChannel(int nChannel)
     CAppSettings& s = AfxGetAppSettings();
     HRESULT hr = S_OK;
     CComQIPtr<IBDATuner> pTun = m_pGB;
-    CDVBChannel* pChannel = s.FindChannelByPref(nChannel);
+    CBDAChannel* pChannel = s.FindChannelByPref(nChannel);
 
     if (s.m_DVBChannels.empty() && nChannel == INT_ERROR) {
         hr = S_FALSE; // All channels have been cleared or it is the first start
@@ -15403,7 +15403,7 @@ HRESULT CMainFrame::SetChannel(int nChannel)
 
 void CMainFrame::UpdateCurrentChannelInfo(bool bShowOSD /*= true*/, bool bShowInfoBar /*= false*/)
 {
-    const CDVBChannel* pChannel = m_pDVBState->pChannel;
+    const CBDAChannel* pChannel = m_pDVBState->pChannel;
     CComQIPtr<IBDATuner> pTun = m_pGB;
 
     if (!m_pDVBState->bInfoActive && pChannel && pTun) {

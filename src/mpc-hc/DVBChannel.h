@@ -30,8 +30,8 @@
 #define FORMAT_VERSION_4       4
 #define FORMAT_VERSION_CURRENT 5
 
-#define DVB_MAX_AUDIO    10
-#define DVB_MAX_SUBTITLE 10
+#define BDA_MAX_AUDIO    10
+#define BDA_MAX_SUBTITLE 10
 
 struct EventDescriptor {
     CString eventName;
@@ -46,69 +46,68 @@ struct EventDescriptor {
     CString content;
 };
 
-enum DVB_STREAM_TYPE {
-    DVB_MPV      = 0x00,
-    DVB_H264     = 0x01,
-    DVB_MPA      = 0x02,
-    DVB_AC3      = 0x03,
-    DVB_EAC3     = 0x04,
-    DVB_HEVC     = 0x05,
-    DVB_LATM     = 0x11,
-    DVB_PSI      = 0x80,
-    DVB_TIF      = 0x81,
-    DVB_EPG      = 0x82,
-    //DVB_PMT    = 0x83,
-    DVB_SUB      = 0x83,
-    DVB_SUBTITLE = 0xFE,
-    DVB_UNKNOWN  = 0xFF
+enum BDA_STREAM_TYPE {
+    BDA_MPV      = 0x00,
+    BDA_H264     = 0x01,
+    BDA_MPA      = 0x02,
+    BDA_AC3      = 0x03,
+    BDA_EAC3     = 0x04,
+    BDA_HEVC     = 0x05,
+    BDA_LATM     = 0x11,
+    BDA_PSI      = 0x80,
+    BDA_TIF      = 0x81,
+    BDA_EPG      = 0x82,
+    BDA_SUB      = 0x83,
+    BDA_SUBTITLE = 0xFE,
+    BDA_UNKNOWN  = 0xFF
 };
 
-enum DVB_CHROMA_TYPE {
-    DVB_Chroma_NONE  = 0x00,
-    DVB_Chroma_4_2_0 = 0x01,
-    DVB_Chroma_4_2_2 = 0x02,
-    DVB_Chroma_4_4_4 = 0x03
+enum BDA_CHROMA_TYPE {
+    BDA_Chroma_NONE  = 0x00,
+    BDA_Chroma_4_2_0 = 0x01,
+    BDA_Chroma_4_2_2 = 0x02,
+    BDA_Chroma_4_4_4 = 0x03
 };
 
-enum DVB_FPS_TYPE {
-    DVB_FPS_NONE   = 0x00,
-    DVB_FPS_23_976 = 0x01,
-    DVB_FPS_24_0   = 0x02,
-    DVB_FPS_25_0   = 0x03,
-    DVB_FPS_29_97  = 0x04,
-    DVB_FPS_30_0   = 0x05,
-    DVB_FPS_50_0   = 0x06,
-    DVB_FPS_59_94  = 0x07,
-    DVB_FPS_60_0   = 0x08
+enum BDA_FPS_TYPE {
+    BDA_FPS_NONE   = 0x00,
+    BDA_FPS_23_976 = 0x01,
+    BDA_FPS_24_0   = 0x02,
+    BDA_FPS_25_0   = 0x03,
+    BDA_FPS_29_97  = 0x04,
+    BDA_FPS_30_0   = 0x05,
+    BDA_FPS_50_0   = 0x06,
+    BDA_FPS_59_94  = 0x07,
+    BDA_FPS_60_0   = 0x08
 };
 
-enum DVB_AspectRatio_TYPE {
-    DVB_AR_NULL   = 0x00,
-    DVB_AR_1      = 0x01,
-    DVB_AR_3_4    = 0x02,
-    DVB_AR_9_16   = 0x03,
-    DVB_AR_1_2_21 = 0x04
+enum BDA_AspectRatio_TYPE {
+    BDA_AR_NULL   = 0x00,
+    BDA_AR_1      = 0x01,
+    BDA_AR_3_4    = 0x02,
+    BDA_AR_9_16   = 0x03,
+    BDA_AR_1_2_21 = 0x04
 };
 
-struct DVBStreamInfo {
+struct BDAStreamInfo {
     ULONG           ulPID    = 0;
-    DVB_STREAM_TYPE nType    = DVB_UNKNOWN;
+    BDA_STREAM_TYPE nType    = BDA_UNKNOWN;
     PES_STREAM_TYPE nPesType = INVALID;
     CString         sLanguage;
 
     LCID GetLCID() const;
 };
 
-class CDVBChannel
+class CBDAChannel
 {
 public:
-    CDVBChannel() = default;
-    CDVBChannel(CString strChannel);
-    ~CDVBChannel() = default;
+    CBDAChannel() = default;
+    CBDAChannel(CString strChannel);
+    ~CBDAChannel() = default;
 
     CString ToString() const;
     /**
-     * @brief Output a JSON representation of a DVB channel.
+     * @brief Output a JSON representation of a BDA channel.
      * @note The object contains two elements : "index", which corresponds to
      * @c m_nPrefNumber, and "name", which contains @c m_strName.
      * @returns A string representing a JSON object containing the
@@ -127,26 +126,26 @@ public:
     ULONG GetPMT() const { return m_ulPMT; };
     ULONG GetPCR() const { return m_ulPCR; };
     ULONG GetVideoPID() const { return m_ulVideoPID; };
-    DVB_FPS_TYPE GetVideoFps() const { return m_nVideoFps; }
+    BDA_FPS_TYPE GetVideoFps() const { return m_nVideoFps; }
     CString GetVideoFpsDesc();
-    DVB_CHROMA_TYPE GetVideoChroma() const { return m_nVideoChroma; }
+    BDA_CHROMA_TYPE GetVideoChroma() const { return m_nVideoChroma; }
     ULONG GetVideoWidth() const {return m_nVideoWidth; }
     ULONG GetVideoHeight() const {return m_nVideoHeight; }
-    DVB_AspectRatio_TYPE GetVideoAR() {return m_nVideoAR; }
+    BDA_AspectRatio_TYPE GetVideoAR() {return m_nVideoAR; }
     DWORD GetVideoARx();
     DWORD GetVideoARy();
-    DVB_STREAM_TYPE GetVideoType() const { return m_nVideoType; }
+    BDA_STREAM_TYPE GetVideoType() const { return m_nVideoType; }
     ULONG GetDefaultAudioPID() const { return m_Audios[GetDefaultAudio()].ulPID; };
-    DVB_STREAM_TYPE GetDefaultAudioType() const { return m_Audios[GetDefaultAudio()].nType; }
+    BDA_STREAM_TYPE GetDefaultAudioType() const { return m_Audios[GetDefaultAudio()].nType; }
     ULONG GetDefaultSubtitlePID() const { return m_Subtitles[GetDefaultSubtitle()].ulPID; };
     int GetAudioCount() const { return m_nAudioCount; };
     int GetDefaultAudio() const { return m_nDefaultAudio; };
     int GetSubtitleCount() const { return m_nSubtitleCount; };
     int GetDefaultSubtitle() const { return m_nDefaultSubtitle; };
-    DVBStreamInfo* GetAudio(int nIndex) { return &m_Audios[nIndex]; };
-    const DVBStreamInfo* GetAudio(int nIndex) const { return &m_Audios[nIndex]; };
-    DVBStreamInfo* GetSubtitle(int nIndex) { return &m_Subtitles[nIndex]; };
-    const DVBStreamInfo* GetSubtitle(int nIndex) const { return &m_Subtitles[nIndex]; };
+    BDAStreamInfo* GetAudio(int nIndex) { return &m_Audios[nIndex]; };
+    const BDAStreamInfo* GetAudio(int nIndex) const { return &m_Audios[nIndex]; };
+    BDAStreamInfo* GetSubtitle(int nIndex) { return &m_Subtitles[nIndex]; };
+    const BDAStreamInfo* GetSubtitle(int nIndex) const { return &m_Subtitles[nIndex]; };
     bool HasName() const { return !m_strName.IsEmpty(); };
     bool IsEncrypted() const { return m_bEncrypted; };
     bool GetNowNextFlag() const { return m_bNowNextFlag; };
@@ -165,24 +164,24 @@ public:
     void SetPMT(ULONG Value) { m_ulPMT = Value; };
     void SetPCR(ULONG Value) { m_ulPCR = Value; };
     void SetVideoPID(ULONG Value) { m_ulVideoPID = Value; };
-    void SetVideoFps(DVB_FPS_TYPE Value) { m_nVideoFps = Value; };
-    void SetVideoChroma(DVB_CHROMA_TYPE Value) { m_nVideoChroma = Value; };
+    void SetVideoFps(BDA_FPS_TYPE Value) { m_nVideoFps = Value; };
+    void SetVideoChroma(BDA_CHROMA_TYPE Value) { m_nVideoChroma = Value; };
     void SetVideoWidth(ULONG Value) { m_nVideoWidth = Value; };
     void SetVideoHeight(ULONG Value) { m_nVideoHeight = Value; };
-    void SetVideoAR(DVB_AspectRatio_TYPE Value) { m_nVideoAR = Value; };
+    void SetVideoAR(BDA_AspectRatio_TYPE Value) { m_nVideoAR = Value; };
     void SetDefaultAudio(int Value) { m_nDefaultAudio = Value; }
     void SetDefaultSubtitle(int Value) { m_nDefaultSubtitle = Value; }
 
-    void AddStreamInfo(ULONG ulPID, DVB_STREAM_TYPE nType, PES_STREAM_TYPE nPesType, LPCTSTR strLanguage);
+    void AddStreamInfo(ULONG ulPID, BDA_STREAM_TYPE nType, PES_STREAM_TYPE nPesType, LPCTSTR strLanguage);
 
-    bool operator < (CDVBChannel const& channel) const {
+    bool operator < (CBDAChannel const& channel) const {
         int aOriginNumber = GetOriginNumber();
         int bOriginNumber = channel.GetOriginNumber();
         return (aOriginNumber == 0 && bOriginNumber == 0) ? GetPrefNumber() < channel.GetPrefNumber() : (aOriginNumber == 0 || bOriginNumber == 0) ? bOriginNumber == 0 : aOriginNumber < bOriginNumber;
     }
 
     // Returns true for channels with the same place, doesn't necessarily need to be equal (i.e if internal streams were updated)
-    bool operator==(CDVBChannel const& channel) const {
+    bool operator==(CBDAChannel const& channel) const {
         return GetPMT() == channel.GetPMT() && GetFrequency() == channel.GetFrequency();
     }
 
@@ -200,18 +199,18 @@ private:
     ULONG m_ulPMT                   = 0;
     ULONG m_ulPCR                   = 0;
     ULONG m_ulVideoPID              = 0;
-    DVB_STREAM_TYPE m_nVideoType    = DVB_MPV;
-    DVB_FPS_TYPE m_nVideoFps        = DVB_FPS_25_0;
-    DVB_CHROMA_TYPE m_nVideoChroma  = DVB_Chroma_4_2_0;
+    BDA_STREAM_TYPE m_nVideoType    = BDA_MPV;
+    BDA_FPS_TYPE m_nVideoFps        = BDA_FPS_25_0;
+    BDA_CHROMA_TYPE m_nVideoChroma  = BDA_Chroma_4_2_0;
     ULONG m_nVideoWidth             = 0;
     ULONG m_nVideoHeight            = 0;
-    DVB_AspectRatio_TYPE m_nVideoAR = DVB_AR_NULL;
+    BDA_AspectRatio_TYPE m_nVideoAR = BDA_AR_NULL;
     int m_nAudioCount               = 0;
     int m_nDefaultAudio             = 0;
     int m_nSubtitleCount            = 0;
     int m_nDefaultSubtitle          = -1;
-    std::array<DVBStreamInfo, DVB_MAX_AUDIO> m_Audios;
-    std::array<DVBStreamInfo, DVB_MAX_SUBTITLE> m_Subtitles;
+    std::array<BDAStreamInfo, BDA_MAX_AUDIO> m_Audios;
+    std::array<BDAStreamInfo, BDA_MAX_SUBTITLE> m_Subtitles;
 
     void FromString(CString strValue);
 };

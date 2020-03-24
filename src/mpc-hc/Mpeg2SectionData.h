@@ -74,18 +74,18 @@ public:
     HRESULT     ParsePAT();
     HRESULT     ParseNIT();
     HRESULT     ParseEIT(ULONG ulSID, EventDescriptor& NowNext);
-    HRESULT     ParsePMT(CDVBChannel& Channel);
+    HRESULT     ParsePMT(CBDAChannel& Channel);
 
     static CStringW ConvertString(BYTE* pBuffer, size_t uLength);
 
-    CAtlMap<int, CDVBChannel>   Channels;
+    CAtlMap<int, CBDAChannel>   Channels;
 
 private:
     CComQIPtr<IMpeg2Data>       m_pData;
     MPEG2_FILTER                m_Filter;
 
 
-    DVB_STREAM_TYPE ConvertToDVBType(PES_STREAM_TYPE nType);
+    BDA_STREAM_TYPE ConvertToDVBType(PES_STREAM_TYPE nType);
     HRESULT         ParseSIHeader(CGolombBuffer& gb, DVB_SI SIType, WORD& wSectionLength, WORD& wTSID);
     HRESULT         SetTime(CGolombBuffer& gb, EventDescriptor& NowNext);
 };

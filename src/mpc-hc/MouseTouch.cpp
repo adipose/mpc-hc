@@ -395,6 +395,12 @@ BOOL CMouse::InternalOnMouseWheel(UINT nFlags, short zDelta, const CPoint& point
            FALSE;
 }
 
+BOOL CMouse::InternalOnMouseHWheel(UINT nFlags, short zDelta, const CPoint& point) {
+    return zDelta > 0 ? OnButton(wmcmd::WRIGHT, point) :
+        zDelta < 0 ? OnButton(wmcmd::WLEFT, point) :
+        FALSE;
+}
+
 bool CMouse::SelectCursor(const CPoint& screenPoint, const CPoint& clientPoint, UINT nFlags)
 {
     const auto& s = AfxGetAppSettings();
@@ -543,6 +549,7 @@ BEGIN_MESSAGE_MAP(CMouseWnd, CWnd)
     ON_WM_XBUTTONUP()
     ON_WM_XBUTTONDBLCLK()
     ON_WM_MOUSEWHEEL()
+    ON_WM_MOUSEHWHEEL()
     ON_WM_SETCURSOR()
     ON_WM_MOUSEMOVE()
     ON_WM_MOUSELEAVE()
@@ -610,6 +617,12 @@ void CMouseWnd::OnXButtonDblClk(UINT nFlags, UINT nButton, CPoint point)
 BOOL CMouseWnd::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
 {
     return CMouse::InternalOnMouseWheel(nFlags, zDelta, point);
+}
+
+void CMouseWnd::OnMouseHWheel(UINT nFlags, short zDelta, CPoint point) {
+    if (!CMouse::InternalOnMouseHWheel(nFlags, zDelta, point)) {
+        Default();
+    }
 }
 
 BOOL CMouseWnd::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)

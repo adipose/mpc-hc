@@ -908,7 +908,7 @@ bool CWebClientSocket::OnViewRes(CStringA& hdr, CStringA& body, CStringA& mime)
     return true;
 }
 
-static CStringA GetChannelsJSON(const std::vector<CDVBChannel>& channels)
+static CStringA GetChannelsJSON(const std::vector<CBDAChannel>& channels)
 {
     // begin the JSON object with the "channels" array inside
     CStringA jsonChannels = "{ \"channels\" : [";
