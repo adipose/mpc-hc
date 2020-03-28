@@ -175,6 +175,7 @@ void CPinInfoWnd::AddLine(CString str)
 
 void CPinInfoWnd::OnSelectedPinChange()
 {
+    m_info_edit.SetRedraw(FALSE);
     m_info_edit.SetWindowText(_T(""));
 
     int i = m_pin_combo.GetCurSel();
@@ -258,6 +259,8 @@ void CPinInfoWnd::OnSelectedPinChange()
     EndEnumMediaTypes(pmt);
 
     m_info_edit.SetSel(0, 0);
+    m_info_edit.SetRedraw(TRUE);
+    m_info_edit.RedrawWindow(NULL);
 }
 
 
