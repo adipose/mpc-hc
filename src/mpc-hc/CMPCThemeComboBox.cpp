@@ -14,6 +14,7 @@ BEGIN_MESSAGE_MAP(CMPCThemeComboBox, CComboBox)
     ON_WM_LBUTTONUP()
     ON_WM_LBUTTONDOWN()
     ON_WM_CREATE()
+    ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 CMPCThemeComboBox::CMPCThemeComboBox()
@@ -132,6 +133,10 @@ void CMPCThemeComboBox::OnPaint()
         bool isFocused, drawDotted = false;
 
         if (pCBEdit) {
+            CRect editRect;
+            pCBEdit->GetWindowRect(editRect);
+            ScreenToClient(editRect);
+            dc.ExcludeClipRect(editRect);
             isFocused = (nullptr != info.hwndItem && ::GetFocus() == info.hwndItem);
             if (isFocused) {
                 fb.CreateSolidBrush(CMPCTheme::ButtonBorderInnerFocusedColor);
@@ -172,12 +177,11 @@ void CMPCThemeComboBox::OnPaint()
             dc.FillSolidRect(rBG, CMPCTheme::ButtonBorderInnerColor);
         } else {
             dc.FillSolidRect(rBG, bkColor);
+            rText = r;
+            rText.right = info.rcItem.right;
+            rText.DeflateRect(3, 3);
+            doDraw(dc, strText, rText, bkColor, fgColor, drawDotted);
         }
-
-        rText = r;
-        rText.right = info.rcItem.right;
-        rText.DeflateRect(3, 3);
-        doDraw(dc, strText, rText, bkColor, fgColor, drawDotted);
 
         rDownArrow = info.rcButton;
         drawComboArrow(dc, arrowColor, rDownArrow);
@@ -260,4 +264,9 @@ int CMPCThemeComboBox::OnCreate(LPCREATESTRUCT lpCreateStruct)
     themeDropDown();
 
     return 0;
+}
+
+
+BOOL CMPCThemeComboBox::OnEraseBkgnd(CDC* pDC) {
+    return TRUE;
 }
