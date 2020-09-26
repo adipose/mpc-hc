@@ -1334,11 +1334,11 @@ STDMETHODIMP CEVRAllocatorPresenter::GetAspectRatioMode(DWORD* pdwAspectRatioMod
 
 STDMETHODIMP CEVRAllocatorPresenter::SetVideoWindow(HWND hwndVideo)
 {
-    if (m_hWnd != hwndVideo) {
         CAutoLock lock(this);
         CAutoLock lock2(&m_ImageProcessingLock);
         CAutoLock cRenderLock(&m_RenderLock);
 
+    if (m_hWnd != hwndVideo) {
         m_hWnd = hwndVideo;
         m_bPendingResetDevice = true;
         if (m_pSink) {
@@ -2577,6 +2577,7 @@ DWORD WINAPI CEVRAllocatorPresenter::VSyncThreadStatic(LPVOID lpParam)
 
 void CEVRAllocatorPresenter::OnResetDevice()
 {
+    CAutoLock cRenderLock(&m_RenderLock);
     // Reset DXVA Manager, and get new buffers
     m_pD3DManager->ResetDevice(m_pD3DDev, m_nResetToken);
 

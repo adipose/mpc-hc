@@ -801,14 +801,14 @@ HRESULT CDX9AllocatorPresenter::CreateDevice(CString& _Error)
         m_BackbufferType = pp.BackBufferFormat;
     }
 
-    if (m_pD3DDev) {
+	if (m_pD3DDevEx) {
         while (hr == D3DERR_DEVICELOST) {
             TRACE(_T("D3DERR_DEVICELOST. Trying to Reset.\n"));
-            hr = m_pD3DDev->TestCooperativeLevel();
+			hr = m_pD3DDevEx->CheckDeviceState(m_hWnd);
         }
         if (hr == D3DERR_DEVICENOTRESET) {
             TRACE(_T("D3DERR_DEVICENOTRESET\n"));
-            hr = m_pD3DDev->Reset(&pp);
+			hr = m_pD3DDevEx->ResetEx(&pp, m_bIsFullscreen ? &DisplayMode : nullptr);
         }
 
         if (m_pD3DDevEx) {
@@ -875,6 +875,9 @@ HRESULT CDX9AllocatorPresenter::CreateDevice(CString& _Error)
     }
 
     m_LastAdapterCheck = rd->GetPerfCounter();
+    if (!bTryToReset) {
+        OnResetDevice();
+    }
 
     return S_OK;
 }
@@ -1707,7 +1710,6 @@ STDMETHODIMP_(bool) CDX9AllocatorPresenter::ResetDevice()
         m_bDeviceResetRequested = false;
         return false;
     }
-    OnResetDevice();
     m_bDeviceResetRequested = false;
     m_bPendingResetDevice = false;
 
