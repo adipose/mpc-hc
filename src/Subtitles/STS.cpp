@@ -500,8 +500,6 @@ static CStringW WebVTT2SSA(CStringW str)
         str.Replace(L"</b>", L"{\\b}");
         str.Replace(L"<u>", L"{\\u1}");
         str.Replace(L"</u>", L"{\\u}");
-        str.Replace(L"<font color=", L"{c}");
-        str.Replace(L"</i>", L"{\\i}");
     }
     if (str.Find(L'&') >= 0) {
         str.Replace(L"&lt;", L"<");
