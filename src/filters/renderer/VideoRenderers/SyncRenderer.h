@@ -28,6 +28,7 @@
 #include <d3d9.h>
 #include <dxva2api.h>
 #include "d3dx9/d3dx9.h"
+#include <evr9.h>
 
 #define VMRBITMAP_UPDATE 0x80000000
 #define MAX_PICTURE_SLOTS (60 + 2) // Last 2 for pixels shader!
@@ -106,6 +107,9 @@ namespace GothSync
     class CBaseAP:
         public CSubPicAllocatorPresenterImpl
     {
+    public:
+        CCritSec m_allocatorLock;
+        CComPtr<IDirect3DDevice9Ex> m_pD3DDevEx;
     protected:
         CRenderersSettings::CAdvRendererSettings m_LastRendererSettings;
 
@@ -113,10 +117,9 @@ namespace GothSync
         HRESULT(__stdcall* m_pDwmIsCompositionEnabled)(__out BOOL* pfEnabled);
         HRESULT(__stdcall* m_pDwmEnableComposition)(UINT uCompositionAction);
 
-        CCritSec m_allocatorLock;
+        CCritSec m_ThreadsLock;
         CComPtr<IDirect3D9Ex> m_pD3DEx;
         CComPtr<IDirect3D9> m_pD3D;
-        CComPtr<IDirect3DDevice9Ex> m_pD3DDevEx;
         CComPtr<IDirect3DDevice9> m_pD3DDev;
 
         CComPtr<IDirect3DTexture9> m_pVideoTexture[MAX_PICTURE_SLOTS];
@@ -440,6 +443,7 @@ namespace GothSync
         STDMETHODIMP SetFullscreen(BOOL fFullscreen);
         STDMETHODIMP GetFullscreen(BOOL* pfFullscreen);
 
+
         // IEVRTrustedVideoPlugin
         STDMETHODIMP IsInTrustedVideoMode(BOOL* pYes);
         STDMETHODIMP CanConstrict(BOOL* pYes);
@@ -553,6 +557,7 @@ namespace GothSync
 
     class CSyncRenderer:
         public CUnknown,
+        public IMFVideoMixerBitmap,
         public IVMRMixerBitmap9,
         public IBaseFilter
     {
@@ -560,6 +565,10 @@ namespace GothSync
         IBaseFilter* m_pEVRBase;
         VMR9AlphaBitmap* m_pVMR9AlphaBitmap;
         CSyncAP* m_pAllocatorPresenter;
+
+        bool                            m_bAlphaBitmapEnable = false;
+        CComPtr<IDirect3DTexture9>      m_pAlphaBitmapTexture;
+        MFVideoAlphaBitmapParams        m_AlphaBitmapParams = {};
 
     public:
         CSyncRenderer(const TCHAR* pName, LPUNKNOWN pUnk, HRESULT& hr, VMR9AlphaBitmap* pVMR9AlphaBitmap, CSyncAP* pAllocatorPresenter);
@@ -578,6 +587,12 @@ namespace GothSync
         virtual HRESULT STDMETHODCALLTYPE SetSyncSource(__in_opt  IReferenceClock* pClock);
         virtual HRESULT STDMETHODCALLTYPE GetSyncSource(__deref_out_opt  IReferenceClock** pClock);
         virtual HRESULT STDMETHODCALLTYPE GetClassID(__RPC__out CLSID* pClassID);
+
+        // IMFVideoMixerBitmap
+        STDMETHODIMP ClearAlphaBitmap();
+        STDMETHODIMP GetAlphaBitmapParameters(MFVideoAlphaBitmapParams* pBmpParms);
+        STDMETHODIMP SetAlphaBitmap(const MFVideoAlphaBitmap* pBmpParms);
+        STDMETHODIMP UpdateAlphaBitmapParameters(const MFVideoAlphaBitmapParams* pBmpParms);
 
         // IVMRMixerBitmap9
         STDMETHODIMP GetAlphaBitmapParameters(VMR9AlphaBitmap* pBmpParms);

@@ -547,7 +547,7 @@ void COSD::InvalidateBitmapOSD()
     DrawMessage();
     DrawDebug();
 
-    m_pMFVMB->SetAlphaBitmap(&m_MFVAlphaBitmap);
+     m_pMFVMB->SetAlphaBitmap(&m_MFVAlphaBitmap);
 
     m_pMainFrame->RepaintVideo(m_llSeekPos == m_llSeekStop);
 }

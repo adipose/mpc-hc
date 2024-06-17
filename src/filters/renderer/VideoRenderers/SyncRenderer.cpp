@@ -3356,6 +3356,8 @@ STDMETHODIMP CSyncAP::GetCurrentMediaType(__deref_out  IMFVideoMediaType** ppMed
 STDMETHODIMP CSyncAP::InitServicePointers(__in IMFTopologyServiceLookup* pLookup)
 {
     DWORD dwObjects = 1;
+    CAutoLock cThreadsLock(&m_ThreadsLock);
+
     pLookup->LookupService(MF_SERVICE_LOOKUP_GLOBAL, 0, MR_VIDEO_MIXER_SERVICE, IID_PPV_ARGS(&m_pMixer), &dwObjects);
     pLookup->LookupService(MF_SERVICE_LOOKUP_GLOBAL, 0, MR_VIDEO_RENDER_SERVICE, IID_PPV_ARGS(&m_pSink), &dwObjects);
     pLookup->LookupService(MF_SERVICE_LOOKUP_GLOBAL, 0, MR_VIDEO_RENDER_SERVICE, IID_PPV_ARGS(&m_pClock), &dwObjects);
@@ -3365,6 +3367,7 @@ STDMETHODIMP CSyncAP::InitServicePointers(__in IMFTopologyServiceLookup* pLookup
 
 STDMETHODIMP CSyncAP::ReleaseServicePointers()
 {
+    CAutoLock cThreadsLock(&m_ThreadsLock);
     StopWorkerThreads();
     m_pMixer = nullptr;
     m_pSink = nullptr;
@@ -3719,7 +3722,7 @@ STDMETHODIMP CSyncAP::InitializeDevice(AM_MEDIA_TYPE* pMediaType)
     }
     return hr;
 }
-
+ 
 DWORD WINAPI CSyncAP::MixerThreadStatic(LPVOID lpParam)
 {
     CSyncAP* pThis = (CSyncAP*) lpParam;
@@ -3994,6 +3997,10 @@ void CSyncAP::RenderThread()
 
 STDMETHODIMP_(bool) CSyncAP::ResetDevice()
 {
+    CAutoLock cThreadsLock(&m_ThreadsLock);
+
+    StopWorkerThreads();
+
     CAutoLock lock(this);
     CAutoLock lock2(&m_ImageProcessingLock);
     CAutoLock cRenderLock(&m_allocatorLock);
@@ -4014,6 +4021,11 @@ STDMETHODIMP_(bool) CSyncAP::ResetDevice()
         }
         ASSERT(SUCCEEDED(hr));
     }
+
+    if (bResult) {
+        StartWorkerThreads();
+    }
+
     return bResult;
 }
 
@@ -4334,6 +4346,10 @@ STDMETHODIMP CSyncRenderer::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 
     if (riid == __uuidof(IVMRMixerBitmap9)) {
         return GetInterface((IVMRMixerBitmap9*)this, ppv);
+    }
+
+    if (riid == __uuidof(IMFVideoMixerBitmap)) {
+        return GetInterface((IMFVideoMixerBitmap*)this, ppv);
     }
 
     if (riid == __uuidof(IBaseFilter)) {
@@ -4736,5 +4752,103 @@ STDMETHODIMP CSyncAP::GetD3DFullscreen(bool* pfEnabled)
 {
     CheckPointer(pfEnabled, E_POINTER);
     *pfEnabled = m_bIsFullscreen;
+    return S_OK;
+}
+
+// IMFVideoMixerBitmap
+STDMETHODIMP CSyncRenderer::ClearAlphaBitmap() {
+    CAutoLock cRenderLock(&m_pAllocatorPresenter->m_allocatorLock);
+    m_bAlphaBitmapEnable = false;
+
+    return S_OK;
+}
+
+STDMETHODIMP CSyncRenderer::GetAlphaBitmapParameters(MFVideoAlphaBitmapParams* pBmpParms) {
+    CheckPointer(pBmpParms, E_POINTER);
+    CAutoLock cRenderLock(&m_pAllocatorPresenter->m_allocatorLock);
+
+    if (m_bAlphaBitmapEnable && m_pAlphaBitmapTexture) {
+        *pBmpParms = m_AlphaBitmapParams; // formal implementation, don't believe it
+        return S_OK;
+    } else {
+        return MF_E_NOT_INITIALIZED;
+    }
+}
+
+STDMETHODIMP CSyncRenderer::SetAlphaBitmap(const MFVideoAlphaBitmap* pBmpParms) {
+    CheckPointer(pBmpParms, E_POINTER);
+    CAutoLock cRenderLock(&m_pAllocatorPresenter->m_allocatorLock);
+
+    CheckPointer(m_pAllocatorPresenter->m_pD3DDevEx, E_ABORT);
+    HRESULT hr = S_OK;
+
+    if (pBmpParms->GetBitmapFromDC && pBmpParms->bitmap.hdc) {
+        HBITMAP hBitmap = (HBITMAP)GetCurrentObject(pBmpParms->bitmap.hdc, OBJ_BITMAP);
+        if (!hBitmap) {
+            return E_INVALIDARG;
+        }
+        DIBSECTION info = { 0 };
+        if (!::GetObjectW(hBitmap, sizeof(DIBSECTION), &info)) {
+            return E_INVALIDARG;
+        }
+        BITMAP& bm = info.dsBm;
+        if (!bm.bmWidth || !bm.bmHeight || bm.bmBitsPixel != 32 || !bm.bmBits) {
+            return E_INVALIDARG;
+        }
+
+        if (m_pAlphaBitmapTexture) {
+            D3DSURFACE_DESC desc = {};
+            m_pAlphaBitmapTexture->GetLevelDesc(0, &desc);
+            if (bm.bmWidth != desc.Width || bm.bmHeight != desc.Height) {
+                m_pAlphaBitmapTexture.Release();
+            }
+        }
+
+        if (!m_pAlphaBitmapTexture) {
+            hr = m_pAllocatorPresenter->m_pD3DDevEx->CreateTexture(bm.bmWidth, bm.bmHeight, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pAlphaBitmapTexture, nullptr);
+        }
+
+        if (SUCCEEDED(hr)) {
+            CComPtr<IDirect3DSurface9> pSurface;
+            hr = m_pAlphaBitmapTexture->GetSurfaceLevel(0, &pSurface);
+            if (SUCCEEDED(hr)) {
+                D3DLOCKED_RECT lr;
+                hr = pSurface->LockRect(&lr, nullptr, D3DLOCK_DISCARD);
+                if (S_OK == hr) {
+                    if (bm.bmWidthBytes == lr.Pitch) {
+                        memcpy(lr.pBits, bm.bmBits, bm.bmWidthBytes * bm.bmHeight);
+                    } else {
+                        LONG linesize = std::min(bm.bmWidthBytes, (LONG)lr.Pitch);
+                        BYTE* src = (BYTE*)bm.bmBits;
+                        BYTE* dst = (BYTE*)lr.pBits;
+                        for (LONG y = 0; y < bm.bmHeight; ++y) {
+                            memcpy(dst, src, linesize);
+                            src += bm.bmWidthBytes;
+                            dst += lr.Pitch;
+                        }
+                    }
+                    hr = pSurface->UnlockRect();
+                }
+            }
+        }
+    } else {
+        return E_INVALIDARG;
+    }
+
+    m_bAlphaBitmapEnable = SUCCEEDED(hr) && m_pAlphaBitmapTexture;
+
+    if (m_bAlphaBitmapEnable) {
+        hr = UpdateAlphaBitmapParameters(&pBmpParms->params);
+    }
+
+    return hr;
+}
+
+STDMETHODIMP CSyncRenderer::UpdateAlphaBitmapParameters(const MFVideoAlphaBitmapParams* pBmpParms) {
+    CheckPointer(pBmpParms, E_POINTER);
+    CAutoLock cRenderLock(&m_pAllocatorPresenter->m_allocatorLock);
+
+    m_AlphaBitmapParams = *pBmpParms; // formal implementation, don't believe it
+
     return S_OK;
 }
