@@ -38,7 +38,7 @@ namespace
         MDT_DEFAULT = MDT_EFFECTIVE_DPI
     } MONITOR_DPI_TYPE;
 
-    typedef int WINAPI tpGetSystemMetricsForDpi(int nIndex, UINT dpi);
+    typedef int (WINAPI* tpGetSystemMetricsForDpi)(int nIndex, UINT dpi);
     typedef HRESULT WINAPI tpGetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT* dpiX, UINT* dpiY);
     typedef BOOL WINAPI tpSystemParametersInfoForDpi(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni, UINT dpi);
     typedef int WINAPI tpGetSystemMetricsForDpiFunc(int nIndex, UINT dpi);
@@ -89,7 +89,7 @@ void DpiHelper::Override(int dpix, int dpiy)
 
 int DpiHelper::GetSystemMetricsDPI(int nIndex) {
     if (IsWindows10OrGreater()) {
-        static tpGetSystemMetricsForDpi* pGetSystemMetricsForDpi = (tpGetSystemMetricsForDpi*)GetProcAddress(GetModuleHandleW(L"user32.dll"), "GetSystemMetricsForDpi");
+        static tpGetSystemMetricsForDpi pGetSystemMetricsForDpi = (tpGetSystemMetricsForDpi)GetProcAddress(GetModuleHandleW(L"user32.dll"), "GetSystemMetricsForDpi");
         if (pGetSystemMetricsForDpi) {
             return pGetSystemMetricsForDpi(nIndex, m_dpix);
         }
