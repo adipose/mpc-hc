@@ -446,9 +446,11 @@ STDMETHODIMP CMPCVRAllocatorPresenter::ClearPixelShaders(int target)
 {
 	HRESULT hr = E_FAIL;
 
-	if (TARGET_SCREEN == target) {
-		// experimental
-		if (CComQIPtr<IExFilterConfig> pIExFilterConfig = m_pMPCVR) {
+	if (CComQIPtr<IExFilterConfig> pIExFilterConfig = m_pMPCVR) {
+		if (TARGET_FRAME == target) {
+			hr = pIExFilterConfig->Flt_SetBool("cmd_clearPreScaleShaders", true);
+		}
+		else if (TARGET_SCREEN == target) {
 			hr = pIExFilterConfig->Flt_SetBool("cmd_clearPostScaleShaders", true);
 		}
 	}
@@ -482,7 +484,7 @@ STDMETHODIMP CMPCVRAllocatorPresenter::AddPixelShader(int target, LPCWSTR name, 
 		iProfile = 4;
 	}
 
-	if (codesize && TARGET_SCREEN == target) {
+	if (codesize && (TARGET_FRAME == target || TARGET_SCREEN == target)) {
 		// experimental
 		if (CComQIPtr<IExFilterConfig> pIExFilterConfig = m_pMPCVR) {
 			int rtype = 0;
@@ -501,7 +503,8 @@ STDMETHODIMP CMPCVRAllocatorPresenter::AddPixelShader(int target, LPCWSTR name, 
 					}
 					p = WriteChunk(p, FCC('CODE'), codesize, (BYTE*)sourceCode);
 
-					hr = pIExFilterConfig->Flt_SetBin("cmd_addPostScaleShader", (LPVOID)pBuf, size);
+					const char* cmdName = (TARGET_FRAME == target) ? "cmd_addPreScaleShader" : "cmd_addPostScaleShader";
+					hr = pIExFilterConfig->Flt_SetBin(cmdName, (LPVOID)pBuf, size);
 					LocalFree(pBuf);
 				}
 			}
