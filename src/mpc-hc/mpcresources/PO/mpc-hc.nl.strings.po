@@ -2067,7 +2067,7 @@ msgstr "Spring vooruit (gemiddeld)"
 
 msgctxt "IDS_MPLAYERC_26"
 msgid "Jump Backward (medium)"
-msgstr "Spring achteruit (middel)"
+msgstr "Spring achteruit (gemiddeld)"
 
 msgctxt "IDS_MPLAYERC_27"
 msgid "Jump Forward (large)"
