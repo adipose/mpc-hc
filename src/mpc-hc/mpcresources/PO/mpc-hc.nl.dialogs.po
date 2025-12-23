@@ -301,7 +301,7 @@ msgstr "Hogere procesprioriteit"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK14"
 msgid "Enable cover-art support"
-msgstr "Ondersteuning voor albumhoezen"
+msgstr "Toon albumhoezen"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_STATIC"
 msgid "History"
