@@ -2063,7 +2063,7 @@ msgstr "Spring achteruit (kort)"
 
 msgctxt "IDS_MPLAYERC_25"
 msgid "Jump Forward (medium)"
-msgstr "Spring vooruit (middel)"
+msgstr "Spring vooruit (gemiddeld)"
 
 msgctxt "IDS_MPLAYERC_26"
 msgid "Jump Backward (medium)"
