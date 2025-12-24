@@ -1,169 +1,166 @@
 # MPC-HC - Strings extracted from menus
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
-# Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
-# 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2021-02-15 14:52:58+0000\n"
-"PO-Revision-Date: 2020-01-02 07:46+0000\n"
-"Last-Translator: MPC HC <adiposegithub@gmail.com>, 2020\n"
-"Language-Team: Panjabi (Punjabi) (https://www.transifex.com/mpchc/teams/106126/pa/)\n"
+"POT-Creation-Date: 2025-04-26 17:38:13+0000\n"
+"PO-Revision-Date: 2025-12-24 06:33+0000\n"
+"Last-Translator: MPC HC <adiposegithub@gmail.com>\n"
+"Language-Team: Panjabi (Punjabi)\n"
+"Language: pa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pa\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgctxt "POPUP"
 msgid "&File"
-msgstr "ਫਾਈਲ(&F)"
+msgstr "&ਫ਼ਾਈਲ"
 
 msgctxt "ID_FILE_OPENQUICK"
 msgid "&Quick Open File..."
-msgstr "...ਤੁਰੰਤ ਫਾਈਲ ਖੋਲ੍ਹੋ(&Q)"
+msgstr "&ਤੇਜ਼ ਫ਼ਾਈਲ ਖੋਲ੍ਹੋ..."
 
 msgctxt "ID_FILE_OPENMEDIA"
 msgid "&Open File/URL..."
-msgstr "...ਫਾਈਲ ਖੋਲ੍ਹੋ(&O)"
+msgstr "ਫ਼ਾਈਲ/URL &ਖੋਲ੍ਹੋ..."
 
 msgctxt "ID_FILE_OPENDVDBD"
 msgid "Open &DVD/BD..."
-msgstr "....&DVD/BD ਖੋਲ੍ਹੋ"
+msgstr "&DVD/BD ਖੋਲ੍ਹੋ..."
 
 msgctxt "ID_FILE_OPENDEVICE"
 msgid "Open De&vice..."
-msgstr "...ਡਿਵਾਇਸ ਖੋਲ੍ਹੋ(&v)"
+msgstr "&ਡਿਵਾਈਸ ਖੋਲ੍ਹੋ..."
 
 msgctxt "ID_FILE_OPENDIRECTORY"
 msgid "Open Dir&ectory..."
-msgstr "...ਡਾਇਰੈਕਟਰੀ ਖੋਲ੍ਹੋ(&e)"
+msgstr "ਡਾਇਰੈਕਟਰੀ &ਖੋਲ੍ਹੋ..."
 
 msgctxt "ID_FILE_OPENDISC"
 msgid "O&pen Disc"
-msgstr "ਡਿਸਕ ਖੋਲ੍ਹੋ(&p)"
+msgstr "ਡਿਸਕ &ਖੋਲ੍ਹੋ"
 
 msgctxt "ID_RECENT_FILES"
 msgid "Recent &Files"
-msgstr "ਤਾਜ਼ਾ ਫਾਈਲਾਂ(&F)"
+msgstr "ਹਾਲੀਆ &ਫ਼ਾਈਲਾਂ"
 
 msgctxt "ID_FILE_CLOSE_AND_RESTORE"
 msgid "&Close"
-msgstr "ਬੰਦ ਕਰੋ(&C)"
+msgstr "&ਬੰਦ ਕਰੋ"
 
 msgctxt "ID_FILE_SAVE_COPY"
 msgid "&Save a Copy..."
-msgstr "...ਕਾਪੀ ਸੰਭਾਲੋ(&S)"
+msgstr "ਕਾਪੀ &ਸੰਭਾਲੋ..."
 
 msgctxt "ID_FILE_SAVE_IMAGE"
 msgid "Save &Image..."
-msgstr "...ਚਿੱਤਰ ਸੰਭਾਲੋ(&I)"
+msgstr "&ਚਿੱਤਰ ਸੰਭਾਲੋ..."
 
 msgctxt "ID_FILE_SAVE_THUMBNAILS"
 msgid "Save &Thumbnails..."
-msgstr "...ਥੰਮਨੇਲ ਸੰਭਾਲੋ(&T)"
+msgstr "&ਥੰਬਨੇਲ ਸੰਭਾਲੋ..."
 
 msgctxt "POPUP"
 msgid "S&ubtitles"
-msgstr "ਸਬ-ਟਾਈਟਲ"
+msgstr "&ਸਬਟਾਈਟਲ"
 
 msgctxt "ID_FILE_SUBTITLES_LOAD"
 msgid "&Load Subtitles..."
-msgstr "...ਸਬਟਾਈਟਲ ਲੋਡ ਕਰੋ(&L)"
+msgstr "ਸਬਟਾਈਟਲ &ਲੋਡ ਕਰੋ..."
 
 msgctxt "ID_FILE_SUBTITLES_SAVE"
 msgid "Save S&ubtitles..."
-msgstr "...ਸਬਟਾਈਟਲ ਸੰਭਾਲੋ(&u)"
+msgstr "ਸਬਟਾਈਟਲ &ਸੰਭਾਲੋ..."
 
 msgctxt "ID_FILE_SUBTITLES_DOWNLOAD"
 msgid "&Download Subtitles..."
-msgstr "...ਸਬ-ਟਾਈਟਲ ਡਾਊਨਲੋਡ ਕਰੋ(&D)"
+msgstr "ਸਬਟਾਈਟਲ &ਡਾਊਨਲੋਡ ਕਰੋ..."
 
 msgctxt "ID_FILE_PROPERTIES"
 msgid "P&roperties"
-msgstr "ਵਿਸ਼ੇਸ਼ਤਾ(&r)"
+msgstr "&ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ"
 
 msgctxt "ID_FILE_OPEN_LOCATION"
 msgid "Open File &Location"
-msgstr ""
+msgstr "ਫ਼ਾਈਲ &ਟਿਕਾਣਾ ਖੋਲ੍ਹੋ"
 
 msgctxt "ID_FILE_EXIT"
 msgid "E&xit"
-msgstr "ਬਾਹਰ(&x)"
+msgstr "&ਬਾਹਰ ਜਾਓ"
 
 msgctxt "POPUP"
 msgid "&View"
-msgstr "ਵੇਖੋ(&V)"
+msgstr "&ਵੇਖੋ"
 
 msgctxt "ID_VIEW_CAPTIONMENU"
 msgid "Caption&&Menu"
-msgstr "ਸੁਰਖੀ ਤੇ ਮੀਨੂ"
+msgstr "ਸੁਰਖੀ&&ਮੀਨੂ"
 
 msgctxt "ID_VIEW_SEEKER"
 msgid "See&k Bar"
-msgstr "ਸੀਕ ਬਾਰ(&k)"
+msgstr "ਸੀਕ &ਬਾਰ"
 
 msgctxt "ID_VIEW_CONTROLS"
 msgid "&Controls"
-msgstr "ਕੰਟਰੋਲ(&C)"
+msgstr "&ਕੰਟਰੋਲ"
 
 msgctxt "ID_VIEW_INFORMATION"
 msgid "&Information"
-msgstr "ਜਾਣਕਾਰੀ(&I)"
+msgstr "&ਜਾਣਕਾਰੀ"
 
 msgctxt "ID_VIEW_STATISTICS"
 msgid "&Statistics"
-msgstr "ਅੰਕੜੇ(&S)"
+msgstr "&ਅੰਕੜੇ"
 
 msgctxt "ID_VIEW_STATUS"
 msgid "St&atus"
-msgstr "ਸਥਿਤੀ(&a)"
+msgstr "&ਸਥਿਤੀ"
 
 msgctxt "ID_VIEW_SUBRESYNC"
 msgid "Su&bresync"
-msgstr "ਸਬ-ਰੀਸਿੰਕ(&b)"
+msgstr "ਸਬ&ਰੀਸਿੰਕ"
 
 msgctxt "ID_VIEW_PLAYLIST"
 msgid "Pla&ylist"
-msgstr "ਪਲੇਅਲਿਸਟ(&y)"
+msgstr "ਪਲੇਅ&ਲਿਸਟ"
 
 msgctxt "ID_VIEW_CAPTURE"
 msgid "Captu&re"
-msgstr "ਕੈਪਚਰ(&r)"
+msgstr "&ਕੈਪਚਰ"
 
 msgctxt "ID_VIEW_NAVIGATION"
 msgid "Na&vigation"
-msgstr "ਨੇਵੀਗੇਸ਼ਨ(&v)"
+msgstr "&ਨੈਵੀਗੇਸ਼ਨ"
 
 msgctxt "POPUP"
 msgid "&Presets..."
-msgstr "...ਪ੍ਰੀਸੈਟ(&P)"
+msgstr "&ਪ੍ਰੀਸੈੱਟ..."
 
 msgctxt "ID_VIEW_PRESETS_MINIMAL"
 msgid "&Minimal"
-msgstr "ਘੱਟੋ-ਘੱਟ(&M)"
+msgstr "&ਘੱਟੋ-ਘੱਟ"
 
 msgctxt "ID_VIEW_PRESETS_COMPACT"
 msgid "&Compact"
-msgstr "ਨਿੰਮਾ(&C)"
+msgstr "&ਸੰਖੇਪ"
 
 msgctxt "ID_VIEW_PRESETS_NORMAL"
 msgid "&Normal"
-msgstr "ਆਮ(&N)"
+msgstr "&ਆਮ"
 
 msgctxt "ID_VIEW_FULLSCREEN"
 msgid "F&ull Screen"
-msgstr "ਪੂਰਾ ਸਕਰੀਨ(&u)"
+msgstr "ਪੂਰੀ &ਸਕਰੀਨ"
 
 msgctxt "POPUP"
 msgid "&Zoom"
-msgstr "ਜ਼ੂਮ(&Z)"
+msgstr "&ਜ਼ੂਮ"
 
 msgctxt "ID_VIEW_ZOOM_25"
 msgid "&25%"
-msgstr ""
+msgstr "&25%"
 
 msgctxt "ID_VIEW_ZOOM_50"
 msgid "&50%"
@@ -179,31 +176,31 @@ msgstr "&200%"
 
 msgctxt "ID_VIEW_ZOOM_AUTOFIT"
 msgid "Auto &Fit"
-msgstr "ਆਟੋ ਫਿੱਟ(&F)"
+msgstr "ਆਟੋ &ਫਿੱਟ"
 
 msgctxt "POPUP"
 msgid "R&enderer Settings"
-msgstr "ਰੈਂਡਰਰ ਸੈਟਿੰਗਾਂ(&e)"
+msgstr "ਰੈਂਡਰਰ &ਸੈਟਿੰਗਾਂ"
 
 msgctxt "ID_VIEW_TEARING_TEST"
 msgid "&Tearing Test"
-msgstr "ਟੀਅਰਿੰਗ ਟੈਸਟ(&T)"
+msgstr "&ਟੀਅਰਿੰਗ ਟੈਸਟ"
 
 msgctxt "ID_VIEW_DISPLAY_RENDERER_STATS"
 msgid "&Display Statistics"
-msgstr "ਡਿਸਪਲੇਅ ਸੈਟਿੰਗਾਂ(&D)"
+msgstr "ਅੰਕੜੇ &ਦਿਖਾਓ"
 
 msgctxt "ID_VIEW_OSD_DISPLAY_TIME"
 msgid "Display Current T&ime"
-msgstr "ਮੌਜੂਦਾ ਸਮਾਂ ਦਿਖਾਉ(&i)"
+msgstr "ਮੌਜੂਦਾ &ਸਮਾਂ ਦਿਖਾਓ"
 
 msgctxt "ID_VIEW_OSD_SHOW_FILENAME"
 msgid "Show &File Name"
-msgstr "ਫਾਈਲ ਨਾਂ ਵੇਖਾਓ(&F)"
+msgstr "&ਫ਼ਾਈਲ ਨਾਂ ਦਿਖਾਓ"
 
 msgctxt "POPUP"
 msgid "&Output Range"
-msgstr "ਆਉਟਪੁੱਟ ਰੇਜ਼(&O)"
+msgstr "&ਆਉਟਪੁੱਟ ਰੇਂਜ"
 
 msgctxt "ID_VIEW_EVROUTPUTRANGE_0_255"
 msgid "&0 - 255"
@@ -215,15 +212,15 @@ msgstr "&16 - 235"
 
 msgctxt "POPUP"
 msgid "&Presentation"
-msgstr "ਪਰਿਜੈਂਟੇਸ਼ਨ(&P)"
+msgstr "&ਪ੍ਰਸਤੁਤੀਕਰਨ"
 
 msgctxt "ID_VIEW_D3DFULLSCREEN"
 msgid "D3D Fullscreen &Mode"
-msgstr "D3D ਪੂਰੀ-ਸਕਰੀਨ ਮੋਡ(&M)"
+msgstr "D3D ਪੂਰੀ ਸਕਰੀਨ &ਮੋਡ"
 
 msgctxt "ID_VIEW_FULLSCREENGUISUPPORT"
 msgid "D3D Fullscreen &GUI Support"
-msgstr "D3D ਪੂਰੀ-ਸਕਰੀਨ &GUI ਸਹਿਯੋਗ"
+msgstr "D3D ਪੂਰੀ ਸਕਰੀਨ &GUI ਸਹਾਇਤਾ"
 
 msgctxt "ID_VIEW_HIGHCOLORRESOLUTION"
 msgid "10-bit &RGB Output"
@@ -231,39 +228,39 @@ msgstr "10-ਬਿੱਟ &RGB ਆਉਟਪੁੱਟ"
 
 msgctxt "ID_VIEW_FORCEINPUTHIGHCOLORRESOLUTION"
 msgid "Force 10-bit RGB &Input"
-msgstr ""
+msgstr "10-ਬਿੱਟ RGB &ਇਨਪੁੱਟ ਲਾਗੂ ਕਰੋ"
 
 msgctxt "ID_VIEW_FULLFLOATINGPOINTPROCESSING"
 msgid "&Full Floating Point Processing"
-msgstr ""
+msgstr "&ਪੂਰੀ ਫਲੋਟਿੰਗ ਪੁਆਇੰਟ ਪ੍ਰੋਸੈਸਿੰਗ"
 
 msgctxt "ID_VIEW_HALFFLOATINGPOINTPROCESSING"
 msgid "&Half Floating Point Processing"
-msgstr ""
+msgstr "&ਅੱਧੀ ਫਲੋਟਿੰਗ ਪੁਆਇੰਟ ਪ੍ਰੋਸੈਸਿੰਗ"
 
 msgctxt "ID_VIEW_DISABLEDESKTOPCOMPOSITION"
 msgid "Disable desktop composition (&Aero)"
-msgstr "ਡੈਸਕਟਾਪ ਕੰਪੋਜ਼ਿਸ਼ਨ ਅਸਮਰੱਥ ਕਰੋ (ਏਰੋ)(&A)"
+msgstr "ਡੈਸਕਟਾਪ ਕੰਪੋਜੀਸ਼ਨ ਅਸਮਰੱਥ ਕਰੋ (&Aero)"
 
 msgctxt "ID_VIEW_ENABLEFRAMETIMECORRECTION"
 msgid "Enable Frame Time &Correction"
-msgstr "ਫਰੇਮ ਸਮਾਂ ਸੋਧ ਸਮਰੱਥ ਕਰੋ(&C)"
+msgstr "ਫਰੇਮ ਸਮਾਂ &ਸੁਧਾਈ ਸਮਰੱਥ ਕਰੋ"
 
 msgctxt "POPUP"
 msgid "&Color Management"
-msgstr "ਰੰਗ ਪਰਬੰਧ(&C)"
+msgstr "&ਰੰਗ ਪ੍ਰਬੰਧਨ"
 
 msgctxt "ID_VIEW_CM_ENABLE"
 msgid "&Enable"
-msgstr "ਸਮਰੱਥ ਕਰੋ(&E)"
+msgstr "&ਸਮਰੱਥ ਕਰੋ"
 
 msgctxt "POPUP"
 msgid "&Input Type"
-msgstr "ਇਨਪੁਟ ਕਿਸਮ(&I)"
+msgstr "&ਇਨਪੁੱਟ ਕਿਸਮ"
 
 msgctxt "ID_VIEW_CM_INPUT_AUTO"
 msgid "&Auto-Detect"
-msgstr "ਆਟੋ-ਖੋਜ(&A)"
+msgstr "&ਆਟੋ-ਪਤਾ ਲਗਾਓ"
 
 msgctxt "ID_VIEW_CM_INPUT_HDTV"
 msgid "&HDTV"
@@ -279,63 +276,63 @@ msgstr "SDTV &PAL"
 
 msgctxt "POPUP"
 msgid "Ambient &Light"
-msgstr ""
+msgstr "ਅੰਬੀਐਂਟ &ਲਾਈਟ"
 
 msgctxt "ID_VIEW_CM_AMBIENTLIGHT_BRIGHT"
 msgid "&Bright (2.2 Gamma)"
-msgstr "ਚਮਕ (2.2 ਗਾਮਾ)(&B)"
+msgstr "&ਚਮਕਦਾਰ (2.2 ਗਾਮਾ)"
 
 msgctxt "ID_VIEW_CM_AMBIENTLIGHT_DIM"
 msgid "&Dim (2.35 Gamma)"
-msgstr "ਫਿੱਕਾ (2.35 ਗਾਮਾ)(&D)"
+msgstr "&ਮੱਧਮ (2.35 ਗਾਮਾ)"
 
 msgctxt "ID_VIEW_CM_AMBIENTLIGHT_DARK"
 msgid "D&ark (2.4 Gamma)"
-msgstr "ਗੂੜ੍ਹਾ (2.4 ਗਾਮਾ)(&a)"
+msgstr "&ਹਨੇਰਾ (2.4 ਗਾਮਾ)"
 
 msgctxt "POPUP"
 msgid "&Rendering Intent"
-msgstr ""
+msgstr "&ਰੈਂਡਰਿੰਗ ਇਰਾਦਾ"
 
 msgctxt "ID_VIEW_CM_INTENT_PERCEPTUAL"
 msgid "&Perceptual"
-msgstr ""
+msgstr "&ਧਾਰਨਾਤਮਕ"
 
 msgctxt "ID_VIEW_CM_INTENT_RELATIVECOLORIMETRIC"
 msgid "&Relative Colorimetric"
-msgstr ""
+msgstr "&ਰਿਲੇਟਿਵ ਕਲਰੀਮੈਟ੍ਰਿਕ"
 
 msgctxt "ID_VIEW_CM_INTENT_SATURATION"
 msgid "&Saturation"
-msgstr "ਸੰਤ੍ਰਿਪਤਾ(&S)"
+msgstr "&ਸੈਚੁਰੇਸ਼ਨ"
 
 msgctxt "ID_VIEW_CM_INTENT_ABSOLUTECOLORIMETRIC"
 msgid "&Absolute Colorimetric"
-msgstr ""
+msgstr "&ਐਬਸੋਲੂਟ ਕਲਰੀਮੈਟ੍ਰਿਕ"
 
 msgctxt "POPUP"
 msgid "&VSync"
-msgstr "&V-ਸਿੰਕ"
+msgstr "&VSync"
 
 msgctxt "ID_VIEW_VSYNC"
 msgid "&VSync"
-msgstr "&V-ਸਿੰਕ"
+msgstr "&VSync"
 
 msgctxt "ID_VIEW_VSYNCACCURATE"
 msgid "&Accurate VSync"
-msgstr ""
+msgstr "&ਸਹੀ VSync"
 
 msgctxt "ID_VIEW_ALTERNATIVEVSYNC"
 msgid "A&lternative VSync"
-msgstr ""
+msgstr "&ਵਿਕਲਪਿਕ VSync"
 
 msgctxt "ID_VIEW_VSYNCOFFSET_DECREASE"
 msgid "&Decrease VSync Offset"
-msgstr ""
+msgstr "VSync ਔਫਸੈੱਟ &ਘਟਾਓ"
 
 msgctxt "ID_VIEW_VSYNCOFFSET_INCREASE"
 msgid "&Increase VSync Offset"
-msgstr ""
+msgstr "VSync ਔਫਸੈੱਟ &ਵਧਾਓ"
 
 msgctxt "POPUP"
 msgid "&GPU Control"
@@ -343,71 +340,71 @@ msgstr "&GPU ਕੰਟਰੋਲ"
 
 msgctxt "ID_VIEW_FLUSHGPU_BEFOREVSYNC"
 msgid "Flush GPU &before VSync"
-msgstr ""
+msgstr "VSync ਤੋਂ &ਪਹਿਲਾਂ GPU ਫਲੱਸ਼ ਕਰੋ"
 
 msgctxt "ID_VIEW_FLUSHGPU_AFTERPRESENT"
 msgid "Flush GPU &after Present"
-msgstr ""
+msgstr "Present ਤੋਂ &ਬਾਅਦ GPU ਫਲੱਸ਼ ਕਰੋ"
 
 msgctxt "ID_VIEW_FLUSHGPU_WAIT"
 msgid "&Wait for flushes"
-msgstr ""
+msgstr "ਫਲੱਸ਼ ਦੀ &ਉਡੀਕ ਕਰੋ"
 
 msgctxt "POPUP"
 msgid "R&eset"
-msgstr "ਮੁੜ-ਸੈਟ ਕਰੋ(&e)"
+msgstr "&ਰੀਸੈੱਟ"
 
 msgctxt "ID_VIEW_RESET_DEFAULT"
 msgid "Reset to &default renderer settings"
-msgstr ""
+msgstr "&ਡਿਫਾਲਟ ਰੈਂਡਰਰ ਸੈਟਿੰਗਾਂ ਤੇ ਰੀਸੈੱਟ ਕਰੋ"
 
 msgctxt "ID_VIEW_RESET_OPTIMAL"
 msgid "Reset to &optimal renderer settings"
-msgstr ""
+msgstr "&ਸਰਵੋਤਮ ਰੈਂਡਰਰ ਸੈਟਿੰਗਾਂ ਤੇ ਰੀਸੈੱਟ ਕਰੋ"
 
 msgctxt "POPUP"
 msgid "Video &Frame"
-msgstr "ਵਿਡੀਓ ਫਰੇਮ(&F)"
+msgstr "ਵੀਡੀਓ &ਫਰੇਮ"
 
 msgctxt "ID_VIEW_VF_HALF"
 msgid "&Half Size"
-msgstr "ਅੱਧਾ ਆਕਾਰ(&H)"
+msgstr "&ਅੱਧਾ ਆਕਾਰ"
 
 msgctxt "ID_VIEW_VF_NORMAL"
 msgid "&Normal Size"
-msgstr "ਆਮ ਆਕਾਰ(&N)"
+msgstr "&ਆਮ ਆਕਾਰ"
 
 msgctxt "ID_VIEW_VF_DOUBLE"
 msgid "&Double Size"
-msgstr "ਦੁੱਗਣਾ ਆਕਾਰ(&D)"
+msgstr "&ਦੁੱਗਣਾ ਆਕਾਰ"
 
 msgctxt "ID_VIEW_VF_STRETCH"
 msgid "&Stretch To Window"
-msgstr "ਵਿੰਡੋ ਲਈ ਖਿੱਚੋ(&S)"
+msgstr "ਵਿੰਡੋ ਤੱਕ &ਖਿੱਚੋ"
 
 msgctxt "ID_VIEW_VF_FROMINSIDE"
 msgid "Touch Window From &Inside"
-msgstr "ਪਾਸੇ ਤੋਂ ਵਿੰਡੋ ਨੂੰ ਟੱਚ ਕਰੋ(&I)"
+msgstr "&ਅੰਦਰੋਂ ਵਿੰਡੋ ਨੂੰ ਛੂਹੋ"
 
 msgctxt "ID_VIEW_VF_ZOOM1"
 msgid "Zoom &1"
-msgstr "ਜ਼ੂਮ &1"
+msgstr "ਜ਼ੂਮ &1"
 
 msgctxt "ID_VIEW_VF_ZOOM2"
 msgid "Zoom &2"
-msgstr "ਜ਼ੂਮ &2"
+msgstr "ਜ਼ੂਮ &2"
 
 msgctxt "ID_VIEW_VF_FROMOUTSIDE"
 msgid "Touch Window From &Outside"
-msgstr "ਬਾਹਰ ਤੋਂ ਵਿੰਡੋ ਟੱਚ ਕਰੋ(&O)"
+msgstr "&ਬਾਹਰੋਂ ਵਿੰਡੋ ਨੂੰ ਛੂਹੋ"
 
 msgctxt "POPUP"
 msgid "&Aspect Ratio"
-msgstr ""
+msgstr "&ਆਸਪੈਕਟ ਅਨੁਪਾਤ"
 
 msgctxt "ID_ASPECTRATIO_DAR"
 msgid "&Default (DAR)"
-msgstr ""
+msgstr "&ਡਿਫਾਲਟ (DAR)"
 
 msgctxt "ID_ASPECTRATIO_4_3"
 msgid "&4:3"
@@ -431,380 +428,380 @@ msgstr "1&85:100"
 
 msgctxt "ID_ASPECTRATIO_SAR"
 msgid "Assume &square pixels (SAR)"
-msgstr ""
+msgstr "&ਵਰਗਾਕਾਰ ਪਿਕਸਲ ਮੰਨੋ (SAR)"
 
 msgctxt "ID_VIEW_VF_COMPMONDESKARDIFF"
 msgid "&Correct Monitor/Desktop AR Diff"
-msgstr ""
+msgstr "ਮਾਨੀਟਰ/ਡੈਸਕਟਾਪ AR ਅੰਤਰ &ਠੀਕ ਕਰੋ"
 
 msgctxt "POPUP"
 msgid "P&nS Frame Adjust"
-msgstr ""
+msgstr "P&nS ਫਰੇਮ ਅਡਜਸਟ"
 
 msgctxt "ID_VIEW_INCSIZE"
 msgid "&Increase Size"
-msgstr "ਆਕਾਰ ਵਧਾਓ(&I)"
+msgstr "ਆਕਾਰ &ਵਧਾਓ"
 
 msgctxt "ID_VIEW_DECSIZE"
 msgid "&Decrease Size"
-msgstr "ਆਕਾਰ ਘਟਾਓ(&D)"
+msgstr "ਆਕਾਰ &ਘਟਾਓ"
 
 msgctxt "ID_VIEW_INCWIDTH"
 msgid "I&ncrease Width"
-msgstr "ਚੌੜਾਈ ਵਧਾਓ(&n)"
+msgstr "ਚੌੜਾਈ &ਵਧਾਓ"
 
 msgctxt "ID_VIEW_DECWIDTH"
 msgid "D&ecrease Width"
-msgstr "ਚੌੜਾਈ ਘਟਾਓ(&e)"
+msgstr "ਚੌੜਾਈ &ਘਟਾਓ"
 
 msgctxt "ID_VIEW_INCHEIGHT"
 msgid "In&crease Height"
-msgstr "ਉਚਾਈ ਵਧਾਓ(&c)"
+msgstr "ਉਚਾਈ &ਵਧਾਓ"
 
 msgctxt "ID_VIEW_DECHEIGHT"
 msgid "Decre&ase Height"
-msgstr "ਉਚਾਈ ਘਟਾਓ(&a)"
+msgstr "ਉਚਾਈ &ਘਟਾਓ"
 
 msgctxt "ID_PANSCAN_MOVERIGHT"
 msgid "Move &Right"
-msgstr "ਸੱਜੇ ਪਾਸੇ ਖਿਸਕਾਓ(&R)"
+msgstr "&ਸੱਜੇ ਜਾਓ"
 
 msgctxt "ID_PANSCAN_MOVELEFT"
 msgid "Move &Left"
-msgstr "ਖੱਬੇ ਪਾਸੇ ਖਿਸਕਾਓ(&L)"
+msgstr "&ਖੱਬੇ ਜਾਓ"
 
 msgctxt "ID_PANSCAN_MOVEUP"
 msgid "Move &Up"
-msgstr "ਉੱਤੇ ਵੱਲ ਖਿਸਕਾਓ(&U)"
+msgstr "&ਉੱਪਰ ਜਾਓ"
 
 msgctxt "ID_PANSCAN_MOVEDOWN"
 msgid "Move &Down"
-msgstr "ਹੇਠਾਂ ਵੱਲ ਖਿਸਕਾਓ(&D)"
+msgstr "&ਹੇਠਾਂ ਜਾਓ"
 
 msgctxt "ID_PANSCAN_CENTER"
 msgid "Cen&ter"
-msgstr "ਸੈਂਟਰ(&t)"
+msgstr "&ਕੇਂਦਰ"
 
 msgctxt "ID_PANSCAN_ROTATEZM"
 msgid "Rotate Cloc&kwise"
-msgstr ""
+msgstr "&ਘੜੀ ਦੀ ਸੂਈ ਦੀ ਦਿਸ਼ਾ ਵਿੱਚ ਘੁੰਮਾਓ"
 
 msgctxt "ID_PANSCAN_ROTATEZ270"
 msgid "Rotate Counter-Clock&wise"
-msgstr ""
+msgstr "ਘੜੀ ਦੀ ਸੂਈ ਦੇ &ਉਲਟ ਘੁੰਮਾਓ"
 
 msgctxt "ID_PANSCAN_ROTATEXM"
 msgid "&Flip Vertically"
-msgstr ""
+msgstr "&ਲੰਬਕਾਰੀ ਫਲਿੱਪ ਕਰੋ"
 
 msgctxt "ID_PANSCAN_ROTATEYM"
 msgid "&Mirror"
-msgstr ""
+msgstr "&ਮਿਰਰ"
 
 msgctxt "ID_VIEW_RESET"
 msgid "Re&set"
-msgstr "ਮੁੜ-ਸੈੱਟ ਕਰੋ(&s)"
+msgstr "&ਰੀਸੈੱਟ"
 
 msgctxt "POPUP"
 msgid "On &Top"
-msgstr "ਉੱਤੇ(&T)"
+msgstr "&ਸਭ ਤੋਂ ਉੱਤੇ"
 
 msgctxt "ID_ONTOP_DEFAULT"
 msgid "&Default"
-msgstr "ਡਿਫਾਲਟ(&D)"
+msgstr "&ਡਿਫਾਲਟ"
 
 msgctxt "ID_ONTOP_ALWAYS"
 msgid "&Always"
-msgstr "ਹਮੇਸ਼ਾ(&A)"
+msgstr "&ਹਮੇਸ਼ਾ"
 
 msgctxt "ID_ONTOP_WHILEPLAYING"
 msgid "While &Playing"
-msgstr "ਚਲਾਉਣ ਦੇ ਦੌਰਾਨ(&P)"
+msgstr "&ਚੱਲਦੇ ਸਮੇਂ"
 
 msgctxt "ID_ONTOP_WHILEPLAYINGVIDEO"
 msgid "While Playing &Video"
-msgstr "ਵਿਡੀਓ ਚਲਾਉਣ ਦੇ ਦੌਰਾਨ(&V)"
+msgstr "&ਵੀਡੀਓ ਚੱਲਦੇ ਸਮੇਂ"
 
 msgctxt "ID_VIEW_OPTIONS"
 msgid "&Options..."
-msgstr "...ਚੋਣਾਂ(&O)"
+msgstr "&ਵਿਕਲਪ..."
 
 msgctxt "POPUP"
 msgid "&Play"
-msgstr "ਚਲਾਓ(&P)"
+msgstr "&ਚਲਾਓ"
 
 msgctxt "ID_PLAY_PLAYPAUSE"
 msgid "&Play/Pause"
-msgstr "ਚਲਾਓ/ਰੋਕੋ(&P)"
+msgstr "&ਚਲਾਓ/ਰੋਕੋ"
 
 msgctxt "ID_PLAY_STOP"
 msgid "&Stop"
-msgstr "ਰੋਕੋ(&S)"
+msgstr "&ਬੰਦ ਕਰੋ"
 
 msgctxt "ID_PLAY_FRAMESTEP"
 msgid "Fra&me Step"
-msgstr "ਫਰੇਮ ਸਟੈਪ(&r)"
+msgstr "ਫਰੇਮ &ਸਟੈਪ"
 
 msgctxt "POPUP"
 msgid "&Repeat"
-msgstr "ਦੁਹਰਾਓ(&R)"
+msgstr "&ਦੁਹਰਾਓ"
 
 msgctxt "ID_PLAY_REPEAT_FOREVER"
 msgid "F&orever"
-msgstr "ਹਮੇਸ਼ਾ(&o)"
+msgstr "&ਹਮੇਸ਼ਾਂ"
 
 msgctxt "ID_PLAY_REPEAT_ONEFILE"
 msgid "&File"
-msgstr "ਫਾਈਲ(&F)"
+msgstr "&ਫ਼ਾਈਲ"
 
 msgctxt "ID_PLAY_REPEAT_WHOLEPLAYLIST"
 msgid "&Playlist"
-msgstr "ਪਲੇਅਲਿਸਟ(&P)"
+msgstr "&ਪਲੇਅਲਿਸਟ"
 
 msgctxt "ID_PLAY_REPEAT_AB"
 msgid "A-B (&Reset)"
-msgstr ""
+msgstr "A-B (&ਰੀਸੈੱਟ)"
 
 msgctxt "ID_PLAY_REPEAT_AB_MARK_A"
 msgid "A-B (Mark &A)"
-msgstr ""
+msgstr "A-B (ਮਾਰਕ &A)"
 
 msgctxt "ID_PLAY_REPEAT_AB_MARK_B"
 msgid "A-B (Mark &B)"
-msgstr ""
+msgstr "A-B (ਮਾਰਕ &B)"
 
 msgctxt "POPUP"
 msgid "&Playback Rate"
-msgstr ""
+msgstr "&ਪਲੇਬੈਕ ਦਰ"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_025"
 msgid "0.25 x"
-msgstr ""
+msgstr "0.25 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_050"
 msgid "0.50 x"
-msgstr ""
+msgstr "0.50 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_075"
 msgid "0.75 x"
-msgstr ""
+msgstr "0.75 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_090"
 msgid "0.90 x"
-msgstr ""
+msgstr "0.90 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_100"
 msgid "1.00 x"
-msgstr ""
+msgstr "1.00 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_110"
 msgid "1.10 x"
-msgstr ""
+msgstr "1.10 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_125"
 msgid "1.25 x"
-msgstr ""
+msgstr "1.25 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_150"
 msgid "1.50 x"
-msgstr ""
+msgstr "1.50 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_175"
 msgid "1.75 x"
-msgstr ""
+msgstr "1.75 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_200"
 msgid "2.00 x"
-msgstr ""
+msgstr "2.00 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_300"
 msgid "3.00 x"
-msgstr ""
+msgstr "3.00 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_400"
 msgid "4.00 x"
-msgstr ""
+msgstr "4.00 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_600"
 msgid "6.00 x"
-msgstr ""
+msgstr "6.00 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_800"
 msgid "8.00 x"
-msgstr ""
+msgstr "8.00 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_FPS23"
 msgid "23.976 fps"
-msgstr ""
+msgstr "23.976 fps"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_FPS24"
 msgid "24 fps"
-msgstr ""
+msgstr "24 fps"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_FPS25"
 msgid "25 fps"
-msgstr ""
+msgstr "25 fps"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_FPS59"
 msgid "59.94 fps"
-msgstr ""
+msgstr "59.94 fps"
 
 msgctxt "ID_PLAY_DECRATE"
 msgid "&Decrease Rate"
-msgstr "ਦਰ ਘਟਾਓ(&D)"
+msgstr "ਦਰ &ਘਟਾਓ"
 
 msgctxt "ID_PLAY_INCRATE"
 msgid "&Increase Rate"
-msgstr "ਦਰ ਵਧਾਓ(&I)"
+msgstr "ਦਰ &ਵਧਾਓ"
 
 msgctxt "ID_PLAY_RESETRATE"
 msgid "R&eset Rate"
-msgstr "ਦਰ ਮੁੜ-ਸੈਟ ਕਰੋ(&e)"
+msgstr "ਦਰ &ਰੀਸੈੱਟ ਕਰੋ"
 
 msgctxt "ID_FILTERS"
 msgid "&Filters"
-msgstr "ਫਿਲਟਰ(&F)"
+msgstr "&ਫਿਲਟਰ"
 
 msgctxt "ID_SHADERS"
 msgid "S&haders"
-msgstr "ਸ਼ੇਡ(&h)"
+msgstr "&ਸ਼ੇਡਰ"
 
 msgctxt "ID_AUDIOS"
 msgid "&Audio Track"
-msgstr "ਆਡੀਓ ਟਰੈਕ(&A)"
+msgstr "&ਆਡੀਓ ਟਰੈਕ"
 
 msgctxt "ID_SUBTITLES"
 msgid "Su&btitle Track"
-msgstr "ਸਬਟਾਈਟਲ ਟਰੈਕ(&b)"
+msgstr "ਸਬਟਾਈਟਲ &ਟਰੈਕ"
 
 msgctxt "ID_VIDEO_STREAMS"
 msgid "Vide&o Track"
-msgstr "ਵਿਡੀਓ ਟਰੈਕ(&V)"
+msgstr "ਵੀਡੀਓ &ਟਰੈਕ"
 
 msgctxt "POPUP"
 msgid "&Volume"
-msgstr "ਵਾਲੀਅਮ(&V)"
+msgstr "&ਆਵਾਜ਼"
 
 msgctxt "ID_VOLUME_UP"
 msgid "&Up"
-msgstr "ਉੱਤੇ(&U)"
+msgstr "ਉੱ&ਤੇ"
 
 msgctxt "ID_VOLUME_DOWN"
 msgid "&Down"
-msgstr "ਹੇਠਾਂ(&D)"
+msgstr "&ਹੇਠਾਂ"
 
 msgctxt "ID_VOLUME_MUTE"
 msgid "&Mute"
-msgstr "ਚੁੱਪ(&M)"
+msgstr "&ਮੂਕ"
 
 msgctxt "POPUP"
 msgid "Af&ter Playback"
-msgstr "ਚਲਾਉਣ ਦੇ ਬਾਅਦ(&t)"
+msgstr "ਪਲੇਬੈਕ ਤੋਂ &ਬਾਅਦ"
 
 msgctxt "ID_AFTERPLAYBACK_DONOTHING"
 msgid "Do no&thing"
-msgstr "ਕੁਝ ਨਾ ਕਰੋ(&t)"
+msgstr "&ਕੁਝ ਨਾ ਕਰੋ"
 
 msgctxt "ID_AFTERPLAYBACK_PLAYNEXT"
 msgid "Play &next file in the folder"
-msgstr "ਫੋਲਡਰ ਵਿੱਚ ਅਗਲੀ ਫਾਈਲ ਚਲਾਓ(&n)"
+msgstr "ਫੋਲਡਰ ਵਿੱਚ &ਅਗਲੀ ਫ਼ਾਈਲ ਚਲਾਓ"
 
 msgctxt "ID_AFTERPLAYBACK_MONITOROFF"
 msgid "Turn off the &monitor"
-msgstr "ਮਾਨੀਟਰ ਬੰਦ ਕਰੋ(&m)"
+msgstr "&ਮਾਨੀਟਰ ਬੰਦ ਕਰੋ"
 
 msgctxt "ID_AFTERPLAYBACK_EXIT"
 msgid "&Exit"
-msgstr "ਬਾਹਰ ਨਿਕਲੋ(&E)"
+msgstr "&ਬਾਹਰ ਜਾਓ"
 
 msgctxt "ID_AFTERPLAYBACK_STANDBY"
 msgid "&Stand By"
-msgstr "ਸਟੈਂਡਬਾਏ(&S)"
+msgstr "&ਸਟੈਂਡ ਬਾਈ"
 
 msgctxt "ID_AFTERPLAYBACK_HIBERNATE"
 msgid "&Hibernate"
-msgstr "ਹਾਈਬਰਨੇਟ(&H)"
+msgstr "&ਹਾਈਬਰਨੇਟ"
 
 msgctxt "ID_AFTERPLAYBACK_SHUTDOWN"
 msgid "Shut&down"
-msgstr "ਬੰਦ ਕਰੋ(&d)"
+msgstr "&ਸ਼ੱਟਡਾਉਨ"
 
 msgctxt "ID_AFTERPLAYBACK_LOGOFF"
 msgid "Log &Off"
-msgstr "ਲਾਗ ਆਫ਼(&O)"
+msgstr "&ਲੌਗ ਔਫ"
 
 msgctxt "ID_AFTERPLAYBACK_LOCK"
 msgid "&Lock"
-msgstr "ਲਾਕ ਕਰੋ(&L)"
+msgstr "&ਲਾਕ"
 
 msgctxt "POPUP"
 msgid "&Navigate"
-msgstr "ਨੇਵੀਗੇਸ਼ਨ(&N)"
+msgstr "&ਨੈਵੀਗੇਟ"
 
 msgctxt "ID_NAVIGATE_SKIPBACK"
 msgid "&Previous"
-msgstr "ਪਿੱਛੇ(&P)"
+msgstr "&ਪਿਛਲਾ"
 
 msgctxt "ID_NAVIGATE_SKIPFORWARD"
 msgid "&Next"
-msgstr "ਅੱਗੇ(&N)"
+msgstr "&ਅਗਲਾ"
 
 msgctxt "ID_NAVIGATE_GOTO"
 msgid "&Go To..."
-msgstr "...ਉੱਤੇ ਜਾਓ(&G)"
+msgstr "...ਤੇ &ਜਾਓ"
 
 msgctxt "ID_NAVIGATE_TITLEMENU"
 msgid "&Title Menu"
-msgstr "ਟਾਈਟਲ ਮੀਨੂ(&T)"
+msgstr "&ਸਿਰਲੇਖ ਮੀਨੂ"
 
 msgctxt "ID_NAVIGATE_ROOTMENU"
 msgid "&Root Menu"
-msgstr "ਰੂਟ ਮੀਨੂ(&R)"
+msgstr "&ਰੂਟ ਮੀਨੂ"
 
 msgctxt "ID_NAVIGATE_SUBPICTUREMENU"
 msgid "&Subtitle Menu"
-msgstr "ਸਬ-ਟਾਈਟਲ ਮੀਨੂ(&S)"
+msgstr "&ਸਬਟਾਈਟਲ ਮੀਨੂ"
 
 msgctxt "ID_NAVIGATE_AUDIOMENU"
 msgid "&Audio Menu"
-msgstr "ਆਡੀਓ ਮੀਨੂ(&A)"
+msgstr "&ਆਡੀਓ ਮੀਨੂ"
 
 msgctxt "ID_NAVIGATE_ANGLEMENU"
 msgid "An&gle Menu"
-msgstr "ਐਂਗਲ ਮੀਨੂ(&g)"
+msgstr "&ਐਂਗਲ ਮੀਨੂ"
 
 msgctxt "ID_NAVIGATE_CHAPTERMENU"
 msgid "&Chapter Menu"
-msgstr "ਚੈਪਟਰ ਮੀਨੂ(&C)"
+msgstr "&ਅਧਿਆਇ ਮੀਨੂ"
 
 msgctxt "ID_FAVORITES"
 msgid "F&avorites"
-msgstr "ਮਨਪਸੰਦ(&a)"
+msgstr "&ਮਨਪਸੰਦ"
 
 msgctxt "POPUP"
 msgid "&Help"
-msgstr "ਮਦਦ(&H)"
+msgstr "ਮ&ਦਦ"
 
 msgctxt "ID_HELP_HOMEPAGE"
 msgid "&Home Page"
-msgstr "ਮੁੱਖ ਸਫ਼ਾ(&H)"
+msgstr "&ਮੁੱਖ ਪੰਨਾ"
 
 msgctxt "ID_HELP_CHECKFORUPDATE"
 msgid "Check for &updates"
-msgstr "ਅੱਪਡੇਟ ਲਈ ਜਾਂਚ ਕਰੋ(&u)"
+msgstr "&ਅੱਪਡੇਟ ਲਈ ਜਾਂਚ ਕਰੋ"
 
 msgctxt "ID_HELP_SHOWCOMMANDLINESWITCHES"
 msgid "&Command Line Switches"
-msgstr "ਕਮਾਂਡ ਲਾਈਨ ਸਵਿੱਚਾਂ(&C)"
+msgstr "&ਕਮਾਂਡ ਲਾਈਨ ਸਵਿੱਚ"
 
 msgctxt "ID_HELP_TOOLBARIMAGES"
 msgid "Download &Toolbar Images"
-msgstr "ਟੂਲਬਾਰ ਚਿੱਤਰ ਡਾਊਨਲੋਡ ਕਰੋ(&T)"
+msgstr "&ਟੂਲਬਾਰ ਚਿੱਤਰ ਡਾਊਨਲੋਡ ਕਰੋ"
 
 msgctxt "ID_HELP_DONATE"
 msgid "&Donate"
-msgstr "ਦਾਨ ਦਿਓ(&D)"
+msgstr "&ਦਾਨ ਕਰੋ"
 
 msgctxt "ID_HELP_ABOUT"
 msgid "&About..."
-msgstr "...ਇਸ ਬਾਰੇ(&A)"
+msgstr "&ਬਾਰੇ..."
