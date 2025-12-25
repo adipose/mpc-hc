@@ -534,7 +534,7 @@ msgstr "&Opțiuni..."
 
 msgctxt "POPUP"
 msgid "&Play"
-msgstr "&Redă"
+msgstr "&Redare"
 
 msgctxt "ID_PLAY_PLAYPAUSE"
 msgid "&Play/Pause"
