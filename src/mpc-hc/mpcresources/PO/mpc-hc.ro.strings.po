@@ -1264,7 +1264,7 @@ msgstr "Închidere..."
 
 msgctxt "IDS_CONTROLS_PLAYING"
 msgid "Playing"
-msgstr "În redare"
+msgstr "Se redă"
 
 msgctxt "IDS_CONTROLS_PAUSED"
 msgid "Paused"
