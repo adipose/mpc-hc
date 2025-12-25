@@ -1991,7 +1991,7 @@ msgstr "Skalowanie paska narzędzi:"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Toolbar Alignment:"
-msgstr "Wyrównanie paska narzędzi:"
+msgstr "Wyrównanie paska:"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Active Style:"
