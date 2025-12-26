@@ -2134,7 +2134,7 @@ msgstr "ビデオ フレーム: 1/2 のサイズ"
 
 msgctxt "IDS_AG_VIDFRM_NORMAL"
 msgid "Video Frame Normal Size"
-msgstr "映像フレーム: 標準のサイズ"
+msgstr "ビデオ フレーム: 標準のサイズ"
 
 msgctxt "IDS_AG_VIDFRM_DOUBLE"
 msgid "Video Frame Double Size"
