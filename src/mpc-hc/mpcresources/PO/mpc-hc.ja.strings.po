@@ -2130,7 +2130,7 @@ msgstr "ズーム 自動調整"
 
 msgctxt "IDS_AG_VIDFRM_HALF"
 msgid "Video Frame Half Size"
-msgstr "映像フレーム: 1/2 のサイズ"
+msgstr "ビデオ フレーム: 1/2 のサイズ"
 
 msgctxt "IDS_AG_VIDFRM_NORMAL"
 msgid "Video Frame Normal Size"
