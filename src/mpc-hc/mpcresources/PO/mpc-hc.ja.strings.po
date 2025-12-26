@@ -2847,7 +2847,7 @@ msgstr "失敗"
 
 msgctxt "IDS_MAINFRM_96"
 msgid "Can't create video capture filter"
-msgstr "映像キャプチャ フィルターを作成できません"
+msgstr "ビデオ キャプチャ フィルターを作成できません"
 
 msgctxt "IDS_MAINFRM_98"
 msgid "No capture filters"
