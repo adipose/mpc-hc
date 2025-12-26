@@ -3817,7 +3817,7 @@ msgstr "入力されたフレーム レートの解析中にエラーが発生�
 
 msgctxt "IDS_FRAME_STEP_ERROR_RENDERER"
 msgid "Cannot frame-step, try a different video renderer."
-msgstr "コマ送りできません。別の映像レンダラーを試してください。"
+msgstr "コマ送りできません。別のビデオ レンダラーを試してください。"
 
 msgctxt "IDS_SCREENSHOT_ERROR_SHOCKWAVE"
 msgid ""
