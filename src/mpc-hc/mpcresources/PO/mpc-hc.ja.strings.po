@@ -2154,7 +2154,7 @@ msgstr "ビデオ フレーム: 幅を拡大"
 
 msgctxt "IDS_MPLAYERC_47"
 msgid "Video Frame Inc Height"
-msgstr "映像フレーム: 高さを拡大"
+msgstr "ビデオ フレーム: 高さを拡大"
 
 msgctxt "IDS_AG_PNS_DEC_SIZE"
 msgid "Video Frame Dec Size"
