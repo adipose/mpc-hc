@@ -3011,7 +3011,7 @@ msgstr "ビデオ フレーム: 合わせて表示"
 
 msgctxt "IDS_AG_VIDFRM_INSIDE"
 msgid "Video Frame Inside"
-msgstr "映像フレーム: 内接"
+msgstr "ビデオ フレーム: 内接"
 
 msgctxt "IDS_AG_VIDFRM_OUTSIDE"
 msgid "Video Frame Outside"
