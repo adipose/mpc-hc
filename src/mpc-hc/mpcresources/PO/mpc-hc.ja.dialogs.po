@@ -1425,7 +1425,7 @@ msgstr "周波数調整:"
 
 msgctxt "IDD_PPAGESYNC_IDC_SYNCDISPLAY"
 msgid "Sync display to video"
-msgstr "ディスプレイを映像に同期する"
+msgstr "ディスプレイをビデオに同期する"
 
 msgctxt "IDD_PPAGESYNC_IDC_STATIC2"
 msgid "Frequency adjustment:"
