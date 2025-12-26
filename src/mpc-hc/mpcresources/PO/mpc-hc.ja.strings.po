@@ -888,7 +888,7 @@ msgid ""
 "3d. Antialiasing turned on at the display settings may have a bad effect on "
 "the rendering speed."
 msgstr ""
-"映像サーフェスはテクスチャとして割り当てられ、3D で 2 "
+"ビデオ サーフェスはテクスチャとして割り当てられ、3D で 2 "
 "つの三角形として描画されます。ディスプレイ設定でアンチエイリアスを有効にすると、レンダリング速度に悪影響を及ぼす可能性があります。"
 
 msgctxt "IDC_DX9RESIZER_COMBO"
