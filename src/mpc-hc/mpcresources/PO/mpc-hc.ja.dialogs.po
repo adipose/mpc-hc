@@ -545,7 +545,7 @@ msgstr "% で表示する"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC7"
 msgid "Animate at"
-msgstr "動画のフレーム レートの"
+msgstr "ビデオのフレーム レートの"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC8"
 msgid "% of the video frame rate"
