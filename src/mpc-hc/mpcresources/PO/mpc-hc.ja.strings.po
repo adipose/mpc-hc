@@ -322,7 +322,7 @@ msgstr "ライブ"
 
 msgctxt "IDS_CAPTURE_ERROR_VID_FILTER"
 msgid "Can't add video capture filter to the graph"
-msgstr "グラフに映像キャプチャ フィルターを追加できません"
+msgstr "グラフにビデオ キャプチャ フィルターを追加できません"
 
 msgctxt "IDS_CAPTURE_ERROR_AUD_FILTER"
 msgid "Can't add audio capture filter to the graph"
