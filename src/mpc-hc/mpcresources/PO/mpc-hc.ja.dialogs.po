@@ -561,7 +561,7 @@ msgstr "レンダラーのレイアウト"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_CHECK_SUB_AR_COMPENSATION"
 msgid "Apply aspect ratio compensation for anamorphic videos"
-msgstr "アナモルフィック映像に縦横比の補正を適用する"
+msgstr "アナモルフィック ビデオに縦横比の補正を適用する"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
 msgid "Warning"
