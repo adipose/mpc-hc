@@ -728,7 +728,7 @@ msgstr "メディアの長さ:"
 
 msgctxt "IDD_FILEPROPDETAILS_IDC_STATIC"
 msgid "Video size:"
-msgstr "映像サイズ:"
+msgstr "ビデオのサイズ:"
 
 msgctxt "IDD_FILEPROPDETAILS_IDC_STATIC"
 msgid "Created:"
