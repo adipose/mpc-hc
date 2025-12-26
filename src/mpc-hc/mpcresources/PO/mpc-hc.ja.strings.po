@@ -1347,7 +1347,7 @@ msgstr "ビデオ フレーム: 回転 Z+ (90 度反時計回り)"
 
 msgctxt "IDS_AG_PNS_ROTATEZ_P2"
 msgid "Video Frame Rotate Z+ (2 degrees)"
-msgstr "映像フレーム: 回転 Z+ (2 度反時計回り)"
+msgstr "ビデオ フレーム: 回転 Z+ (2 度反時計回り)"
 
 msgctxt "IDS_AG_PNS_ROTATEZ_M"
 msgid "Video Frame Rotate Z-"
