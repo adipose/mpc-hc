@@ -4298,7 +4298,7 @@ msgstr ""
 
 msgctxt "IDS_CMD_DEVICE"
 msgid "/device\t\tOpen the default video device"
-msgstr "/device\t\t既定の映像デバイスを開く"
+msgstr "/device\t\t既定のビデオ デバイスを開く"
 
 msgctxt "IDS_CMD_OPEN"
 msgid "/open\t\tOpen the file, don't automatically start playback"
