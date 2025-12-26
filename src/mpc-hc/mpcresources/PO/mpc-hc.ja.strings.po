@@ -644,7 +644,7 @@ msgstr "再生::全画面表示"
 
 msgctxt "IDD_PPAGEAUDIORENDERER"
 msgid "Internal Filters::Audio Renderer"
-msgstr "内部フィルター::音声レンダラー"
+msgstr "内部フィルター::オーディオ レンダラー"
 
 msgctxt "IDS_AUDIOSWITCHER"
 msgid "Audio Switcher"
