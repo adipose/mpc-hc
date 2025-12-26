@@ -3023,7 +3023,7 @@ msgstr "ビデオ フレーム: リセット"
 
 msgctxt "IDS_AG_PNS_ROTATEX_P"
 msgid "Video Frame Rotate X+"
-msgstr "映像フレーム: 回転 X+ (上回転)"
+msgstr "ビデオ フレーム: 回転 X+ (上回転)"
 
 msgctxt "IDS_TIME_TOOLTIP_ABOVE"
 msgid "Above seekbar"
