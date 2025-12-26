@@ -3015,7 +3015,7 @@ msgstr "ビデオ フレーム: 内接"
 
 msgctxt "IDS_AG_VIDFRM_OUTSIDE"
 msgid "Video Frame Outside"
-msgstr "映像フレーム: 外接"
+msgstr "ビデオ フレーム: 外接"
 
 msgctxt "IDS_AG_PNS_RESET"
 msgid "Video Frame Reset"
