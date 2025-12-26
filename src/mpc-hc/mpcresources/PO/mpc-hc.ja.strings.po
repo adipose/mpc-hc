@@ -3019,7 +3019,7 @@ msgstr "ビデオ フレーム: 外接"
 
 msgctxt "IDS_AG_PNS_RESET"
 msgid "Video Frame Reset"
-msgstr "映像フレーム: リセット"
+msgstr "ビデオ フレーム: リセット"
 
 msgctxt "IDS_AG_PNS_ROTATEX_P"
 msgid "Video Frame Rotate X+"
