@@ -1872,7 +1872,7 @@ msgstr "トラック言語"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK4"
 msgid "Video Info"
-msgstr "映像情報"
+msgstr "ビデオ情報"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK12"
 msgid "Audio Info"
