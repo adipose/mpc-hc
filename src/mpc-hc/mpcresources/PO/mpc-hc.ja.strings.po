@@ -2138,7 +2138,7 @@ msgstr "ビデオ フレーム: 標準のサイズ"
 
 msgctxt "IDS_AG_VIDFRM_DOUBLE"
 msgid "Video Frame Double Size"
-msgstr "映像フレーム: 2 倍のサイズ"
+msgstr "ビデオ フレーム: 2 倍のサイズ"
 
 msgctxt "IDS_AG_ALWAYS_ON_TOP"
 msgid "Always On Top"
