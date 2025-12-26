@@ -2166,7 +2166,7 @@ msgstr "ビデオ フレーム: 幅を縮小"
 
 msgctxt "IDS_MPLAYERC_50"
 msgid "Video Frame Dec Height"
-msgstr "映像フレーム: 高さを縮小"
+msgstr "ビデオ フレーム: 高さを縮小"
 
 msgctxt "IDS_SUBDL_DLG_DOWNLOADING"
 msgid "Downloading [%s] \"%s\""
