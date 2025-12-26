@@ -1417,7 +1417,7 @@ msgstr "フィルター グラフを停止"
 
 msgctxt "IDD_PPAGESYNC_IDC_SYNCVIDEO"
 msgid "Sync video to display"
-msgstr "映像をディスプレイに同期する"
+msgstr "ビデオをディスプレイに同期する"
 
 msgctxt "IDD_PPAGESYNC_IDC_STATIC1"
 msgid "Frequency adjustment:"
