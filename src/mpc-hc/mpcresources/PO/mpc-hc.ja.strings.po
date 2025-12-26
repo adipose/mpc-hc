@@ -2673,7 +2673,7 @@ msgstr "再生時間のないファイルのサムネイルは作成できませ
 
 msgctxt "IDS_THUMBNAILS_NO_FRAME_SIZE"
 msgid "Failed to get video frame size"
-msgstr "映像フレームのサイズを取得できませんでした"
+msgstr "ビデオ フレームのサイズを取得できませんでした"
 
 msgctxt "IDS_OUT_OF_MEMORY"
 msgid "Out of memory, go buy some more!"
