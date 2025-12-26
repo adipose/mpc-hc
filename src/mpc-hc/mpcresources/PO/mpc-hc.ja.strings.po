@@ -1335,7 +1335,7 @@ msgstr "ビデオ フレーム: 回転 X- (上下反転)"
 
 msgctxt "IDS_AG_PNS_ROTATEY_P"
 msgid "Video Frame Rotate Y+"
-msgstr "映像フレーム: 回転 Y+ (左回転)"
+msgstr "ビデオ フレーム: 回転 Y+ (左回転)"
 
 msgctxt "IDS_AG_PNS_ROTATEY_M"
 msgid "Video Frame Rotate Y-"
