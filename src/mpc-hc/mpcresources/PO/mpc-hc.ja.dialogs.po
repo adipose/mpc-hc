@@ -983,7 +983,7 @@ msgstr "下"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK_RELATIVETO"
 msgid "Position subtitles relative to the video frame"
-msgstr "映像フレームを基準に字幕を配置する"
+msgstr "ビデオ フレームを基準に字幕を配置する"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Colors && Transparency"
