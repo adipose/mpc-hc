@@ -826,7 +826,7 @@ msgid ""
 "desktop color space recommended."
 msgstr ""
 "VMR-9 (ウィンドウ) と同様ですが、字幕表示には MPC-HC の Allocator-Presenter "
-"プラグインを使用します。オーバーレイによる映像ミラーリングが動作する可能性があります。また、デスクトップのカラーモードは 「True Color」 "
+"プラグインを使用します。オーバーレイによるビデオ ミラーリングが動作する可能性があります。また、デスクトップのカラーモードは 「True Color」 "
 "に設定することを推奨します。"
 
 msgctxt "IDC_DSDXR"
