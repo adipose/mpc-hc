@@ -1129,7 +1129,7 @@ msgstr "回転"
 
 msgctxt "IDD_PPAGEOUTPUT_IDC_STATIC"
 msgid "Audio Renderer"
-msgstr "音声レンダラー"
+msgstr "オーディオ レンダラー"
 
 msgctxt "IDD_PPAGEOUTPUT_IDC_BUTTON2"
 msgid "Settings"
