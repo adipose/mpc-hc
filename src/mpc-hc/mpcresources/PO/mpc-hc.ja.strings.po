@@ -3079,7 +3079,7 @@ msgstr "ズーム ウィンドウを縮小"
 
 msgctxt "IDS_SEEKBAR_HOVER_PREVIEW"
 msgid "Video Preview"
-msgstr "映像プレビュー"
+msgstr "ビデオ プレビュー"
 
 msgctxt "IDS_SEEKBAR_HOVER_TOOLTIP"
 msgid "Seek Time"
