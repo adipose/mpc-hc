@@ -2236,7 +2236,7 @@ msgstr "1 から 365 までの数字を入力してください。"
 
 msgctxt "IDS_AG_PNS_CENTER"
 msgid "Video Frame Center"
-msgstr "映像フレーム: 中央へ戻す"
+msgstr "ビデオ フレーム: 中央へ戻す"
 
 msgctxt "IDS_AG_PNS_LEFT"
 msgid "Video Frame Left"
