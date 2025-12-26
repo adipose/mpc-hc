@@ -4685,7 +4685,7 @@ msgstr "ステータス バーに現在の A-B リピート マークを表示�
 
 msgctxt "IDS_PPAGEADVANCED_SHOW_VIDEOINFO_STATUSBAR"
 msgid "Display video info (codec name, resolution) in status bar."
-msgstr "ステータス バーに映像情報 (コーデック名、解像度) を表示します。"
+msgstr "ステータス バーにビデオ情報 (コーデック名、解像度) を表示します。"
 
 msgctxt "IDS_PPAGEADVANCED_PAUSE_WHILE_DRAGGING_SEEKBAR"
 msgid "Pause playback while dragging the seekbar."
