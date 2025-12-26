@@ -4526,7 +4526,7 @@ msgctxt "IDS_CMD_AUDIORENDERER"
 msgid ""
 "/audiorenderer N\tStart using audiorenderer N, where N starts from 1 (see "
 "\"Output\" settings)"
-msgstr "/audiorenderer N\tN 番目 (N は 1 から始まる) の音声レンダラーを使用する (「出力」 設定を参照)"
+msgstr "/audiorenderer N\tN 番目 (N は 1 から始まる) のオーディオ レンダラーを使用する (「出力」 設定を参照)"
 
 msgctxt "IDS_CMD_SHADERPRESET"
 msgid "/shaderpreset \"Pr\"\tStart using \"Pr\" shader preset"
