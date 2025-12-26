@@ -2268,7 +2268,7 @@ msgstr "ビデオ フレーム: 左下へ移動"
 
 msgctxt "IDS_MPLAYERC_59"
 msgid "Video Frame Down/Right"
-msgstr "映像フレーム: 右下へ移動"
+msgstr "ビデオ フレーム: 右下へ移動"
 
 msgctxt "IDS_AG_VOLUME_UP"
 msgid "Volume Up"
