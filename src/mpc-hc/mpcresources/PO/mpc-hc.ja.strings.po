@@ -841,7 +841,7 @@ msgid ""
 "CPU from working unnecessarily."
 msgstr ""
 "あらゆるビデオ系メディア タイプに接続し、入力されたサンプルをどこにも送らず破棄します。ビデオ表示が不要で、CPU "
-"に無駄な処理をさせたくない場合に使用します。"
+"に無駄な処理をさせたくない場合に使用してください。"
 
 msgctxt "IDC_DSNULL_UNCOMP"
 msgid ""
