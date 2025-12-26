@@ -1115,7 +1115,7 @@ msgctxt "IDC_CHECK_ALLOW_DROPPING_SUBPIC"
 msgid ""
 "Disabling this option will prevent the subtitles from blinking but it may "
 "cause the video renderer to skip some video frames."
-msgstr "このオプションを無効にすると字幕の点滅は防げますが、映像レンダラーが一部のフレームをスキップする可能性があります。"
+msgstr "このオプションを無効にすると字幕の点滅は防げますが、ビデオ レンダラーが一部のビデオ フレームをスキップする可能性があります。"
 
 msgctxt "ID_PLAY_PLAY"
 msgid ""
