@@ -1852,7 +1852,7 @@ msgstr "ホバー位置:"
 
 msgctxt "IDD_PPAGETHEME_IDC_SEEK_PREVIEW"
 msgid "Show video preview"
-msgstr "映像プレビューを表示する"
+msgstr "ビデオ プレビューを表示する"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK14"
 msgid "Show time"
