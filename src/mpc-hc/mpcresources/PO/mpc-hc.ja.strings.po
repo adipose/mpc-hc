@@ -2146,7 +2146,7 @@ msgstr "常に手前に表示"
 
 msgctxt "IDS_AG_PNS_INC_SIZE"
 msgid "Video Frame Inc Size"
-msgstr "映像フレーム: サイズを拡大"
+msgstr "ビデオ フレーム: サイズを拡大"
 
 msgctxt "IDS_AG_PNS_INC_WIDTH"
 msgid "Video Frame Inc Width"
