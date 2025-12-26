@@ -870,7 +870,7 @@ msgstr ""
 
 msgctxt "IDC_REGULARSURF"
 msgid "Video surface will be allocated as a regular offscreen surface."
-msgstr "映像サーフェスは通常のオフスクリーン サーフェスとして割り当てられます。"
+msgstr "ビデオ サーフェスは通常のオフスクリーン サーフェスとして割り当てられます。"
 
 msgctxt "IDC_TEXTURESURF2D"
 msgid ""
