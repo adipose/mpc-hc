@@ -3471,7 +3471,7 @@ msgstr "映像をディスプレイに同期: オフ"
 
 msgctxt "IDS_OSD_RS_SYNC_TO_VIDEO_ON"
 msgid "Synchronize Display to Video: On"
-msgstr "ディスプレイを映像に同期: オン"
+msgstr "ディスプレイをビデオに同期: オン"
 
 msgctxt "IDS_OSD_RS_SYNC_TO_VIDEO_OFF"
 msgid "Synchronize Display to Video: Off"
