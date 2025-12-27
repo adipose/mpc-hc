@@ -1881,7 +1881,7 @@ msgstr "Pozicija Lebdenja:"
 
 msgctxt "IDD_PPAGETHEME_IDC_SEEK_PREVIEW"
 msgid "Show video preview"
-msgstr "Prikaži predeogled videa"
+msgstr "Prikaži predogled videa"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK14"
 msgid "Show time"
