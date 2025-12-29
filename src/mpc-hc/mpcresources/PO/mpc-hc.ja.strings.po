@@ -1662,7 +1662,7 @@ msgstr "品質 (%):"
 
 msgctxt "IDS_PPAGEADVANCED_COVER_SIZE_LIMIT"
 msgid "Maximum size (NxNpx) of a cover-art loaded in the audio only mode."
-msgstr "音声のみモードで表示されるカバーアートの最大サイズ (NxNpx) です。 "
+msgstr "オーディオ専用モードで読み込まれるカバーアートの最大サイズ (NxNpx) です。 "
 
 msgctxt "IDS_SUBTITLE_DELAY_STEP_TOOLTIP"
 msgid ""
