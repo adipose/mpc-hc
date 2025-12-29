@@ -592,7 +592,7 @@ msgstr "詳細設定"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER"
 msgid "Internal Filters::Audio Switcher"
-msgstr "内部フィルター::音声切り替え"
+msgstr "内部フィルター::オーディオ スイッチャー"
 
 msgctxt "IDD_PPAGEEXTERNALFILTERS"
 msgid "External Filters"
