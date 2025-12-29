@@ -3823,7 +3823,7 @@ msgctxt "IDS_SCREENSHOT_ERROR_SHOCKWAVE"
 msgid ""
 "The \"Save Image\" and \"Save Thumbnails\" functions do not work for "
 "Shockwave files."
-msgstr "「画像を保存」 および 「サムネイルを保存」 の機能は、Shockwave ファイルに対して動作しません。"
+msgstr "「画像を保存」 および 「サムネイルを保存」 の機能は、Shockwave ファイルでは動作しません。"
 
 msgctxt "IDS_SCREENSHOT_ERROR_OVERLAY"
 msgid ""
