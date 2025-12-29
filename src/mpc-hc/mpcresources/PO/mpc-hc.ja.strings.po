@@ -648,7 +648,7 @@ msgstr "内部フィルター::オーディオ レンダラー"
 
 msgctxt "IDS_AUDIOSWITCHER"
 msgid "Audio Switcher"
-msgstr "音声切り替え"
+msgstr "オーディオ スイッチャー"
 
 msgctxt "IDS_ICONS_REASSOC_DLG_TITLE"
 msgid "New version of the icon library"
