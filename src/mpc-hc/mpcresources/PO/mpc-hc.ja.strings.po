@@ -3879,7 +3879,7 @@ msgstr "ビデオ キャプチャ ピンが見つかりませんでした。"
 
 msgctxt "IDS_CAPTURE_ERROR_AUD_CAPT_PIN"
 msgid "No audio capture pin was found."
-msgstr "音声キャプチャ用のピンが見つかりませんでした。"
+msgstr "オーディオ キャプチャ用のピンが見つかりませんでした。"
 
 msgctxt "IDS_CAPTURE_ERROR_OUT_FILE"
 msgid "Error initializing the output file."
