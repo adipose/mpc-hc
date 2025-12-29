@@ -1744,7 +1744,7 @@ msgctxt "IDS_TIME_SHIFT_TOOLTIP"
 msgid ""
 "Enter a positive value if the audio is early, a negative value if it is "
 "late."
-msgstr "映像よりも音声が早く再生される場合は正の値を、遅く再生される場合は負の値を入力してください。"
+msgstr "音声が早い場合は正の値を、遅れている場合は負の値を入力してください。"
 
 msgctxt "IDS_WEBUI_DISABLED_PREVIEW_MSG"
 msgid "Preview is currently disabled. You can enable it in MPC-HC's options."
