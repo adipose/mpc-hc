@@ -4482,7 +4482,7 @@ msgstr "/regvid\t\t動画ファイルに関連付ける"
 
 msgctxt "IDS_CMD_REGAUD"
 msgid "/regaud\t\tCreate file associations for audio files"
-msgstr "/regaud\t\t音声ファイルに関連付ける"
+msgstr "/regaud\t\tオーディオ ファイルに関連付ける"
 
 msgctxt "IDS_CMD_REGPL"
 msgid "/regpl\t\tCreate file associations for playlist files"
