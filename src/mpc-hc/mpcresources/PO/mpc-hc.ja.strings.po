@@ -53,7 +53,7 @@ msgstr "音楽の再生"
 
 msgctxt "IDS_AUTOPLAY_PLAYAUDIOCD"
 msgid "Play Audio CD"
-msgstr "音楽 CD の再生"
+msgstr "オーディオ CD の再生"
 
 msgctxt "IDS_AUTOPLAY_PLAYDVDMOVIE"
 msgid "Play DVD Movie"
