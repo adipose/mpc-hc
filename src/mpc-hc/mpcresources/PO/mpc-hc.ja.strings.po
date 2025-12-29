@@ -326,7 +326,7 @@ msgstr "グラフにビデオ キャプチャ フィルターを追加できま�
 
 msgctxt "IDS_CAPTURE_ERROR_AUD_FILTER"
 msgid "Can't add audio capture filter to the graph"
-msgstr "グラフに音声キャプチャ フィルターを追加できません"
+msgstr "グラフにオーディオ キャプチャ フィルターを追加できません"
 
 msgctxt "IDS_CAPTURE_ERROR_DEVICE"
 msgid "Could not open capture device."
