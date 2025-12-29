@@ -1475,7 +1475,7 @@ msgstr "すべてのファイル (*.*)|*.*|"
 
 msgctxt "IDS_AG_AUDIOFILES"
 msgid "Audio files (all types)"
-msgstr "音声ファイル (すべての種類)"
+msgstr " オーディオ ファイル (すべての種類)"
 
 msgctxt "IDS_AG_NOT_KNOWN"
 msgid "Not known"
