@@ -847,7 +847,7 @@ msgctxt "IDC_DSNULL_UNCOMP"
 msgid ""
 "Same as the normal Null renderer, but this will only connect to uncompressed"
 " types."
-msgstr "標準の Null レンダラーと同様ですが、非圧縮形式にのみ接続されます。"
+msgstr "通常の Null レンダラーと同様ですが、非圧縮形式にのみ接続します。"
 
 msgctxt "IDC_DSEVR_CUSTOM"
 msgid ""
