@@ -3875,7 +3875,7 @@ msgstr "マルチプレクサー フィルターに %s ストリームを接続�
 
 msgctxt "IDS_CAPTURE_ERROR_VID_CAPT_PIN"
 msgid "No video capture pin was found."
-msgstr "ビデオ キャプチャ ピンが見つかりませんでした。"
+msgstr "ビデオ キャプチャ用のピンが見つかりませんでした。"
 
 msgctxt "IDS_CAPTURE_ERROR_AUD_CAPT_PIN"
 msgid "No audio capture pin was found."
