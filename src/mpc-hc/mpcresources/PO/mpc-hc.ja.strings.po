@@ -3983,7 +3983,7 @@ msgstr "動画形式のみに関連付けます"
 
 msgctxt "IDC_ASSOCIATE_AUDIO_FORMATS"
 msgid "Associate with audio formats only"
-msgstr "音声ファイル形式のみに関連付けます"
+msgstr "オーディオ形式のみに関連付けます"
 
 msgctxt "IDC_CLEAR_ALL_ASSOCIATIONS"
 msgid "Clear all associations"
