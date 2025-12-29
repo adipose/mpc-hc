@@ -797,7 +797,7 @@ msgid ""
 "Default video renderer filter for DirectShow. Others will fall back to this "
 "one when they can't be loaded for some reason."
 msgstr ""
-"DirectShow における標準のビデオ レンダラー フィルターです。他のレンダラーが何らかの理由で読み込めない場合に、代わりに使用されます。"
+"DirectShow の標準ビデオ レンダラー フィルターです。他のフィルターが何らかの理由で読み込めない場合、このフィルターにフォール バックします。"
 
 msgctxt "IDC_DSOVERLAYMIXER"
 msgid ""
