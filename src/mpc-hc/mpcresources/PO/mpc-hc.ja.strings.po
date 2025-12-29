@@ -4252,7 +4252,7 @@ msgstr ""
 
 msgctxt "IDS_CMD_DUB"
 msgid "/dub \"dubname\"\tLoad an additional audio file"
-msgstr "/dub \"dubname\"\t追加の音声ファイルを読み込む"
+msgstr "/dub \"dubname\"\t追加のオーディオ ファイルを読み込む"
 
 msgctxt "IDS_CMD_DUBDELAY"
 msgid ""
