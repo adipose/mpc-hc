@@ -3979,7 +3979,7 @@ msgstr "すべての形式に関連付けます"
 
 msgctxt "IDC_ASSOCIATE_VIDEO_FORMATS"
 msgid "Associate with video formats only"
-msgstr "ビデオ形式のみに関連付けます"
+msgstr "動画形式のみに関連付けます"
 
 msgctxt "IDC_ASSOCIATE_AUDIO_FORMATS"
 msgid "Associate with audio formats only"
