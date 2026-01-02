@@ -4393,7 +4393,7 @@ msgid ""
 "the given height. Value 0 means it will choose the highest resolution "
 "available."
 msgstr ""
-"指定した高さによって、Youtube-DL が選択する動画の解像度を制限できます。値を 0 にすると、使用可能な中で最も高い解像度が選択されます。"
+"指定した高さを上限として、Youtube-DL が選択する動画解像度を制限できます。値を 0 にすると、使用可能な最高解像度が選択されます。"
 
 msgctxt "IDS_PPAGEADVANCED_YDL_VIDEO_FORMAT"
 msgid ""
