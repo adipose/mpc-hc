@@ -4437,7 +4437,7 @@ msgstr ""
 
 msgctxt "IDS_PPAGEADVANCED_SAVEIMAGE_POSITION"
 msgid "Include video position in filename"
-msgstr "ファイル名にビデオの再生位置を含めます"
+msgstr "ファイル名に動画の再生位置を含めます"
 
 msgctxt "IDS_PPAGEADVANCED_SAVEIMAGE_CURRENTTIME"
 msgid "Include current time in filename"
