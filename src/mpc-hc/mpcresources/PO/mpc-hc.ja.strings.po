@@ -4474,7 +4474,7 @@ msgstr "/randomize\tプレイリストをランダム化する"
 
 msgctxt "IDS_CMD_REGVID"
 msgid "/regvid\t\tCreate file associations for video files"
-msgstr "/regvid\t\tビデオ ファイルに関連付ける"
+msgstr "/regvid\t\t動画ファイルに関連付ける"
 
 msgctxt "IDS_CMD_REGAUD"
 msgid "/regaud\t\tCreate file associations for audio files"
