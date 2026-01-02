@@ -489,7 +489,7 @@ msgstr "レンダリングに失敗したピンを報告する"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_CHECK2"
 msgid "Auto-load audio files"
-msgstr "オーディオ ファイルを自動で読み込む"
+msgstr "音声ファイルを自動で読み込む"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_CHECK3"
 msgid "Override placement"
