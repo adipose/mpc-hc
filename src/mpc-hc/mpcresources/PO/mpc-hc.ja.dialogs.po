@@ -621,7 +621,7 @@ msgstr "自動再生"
 
 msgctxt "IDD_PPAGEFORMATS_IDC_CHECK1"
 msgid "Video"
-msgstr "ビデオ"
+msgstr "動画"
 
 msgctxt "IDD_PPAGEFORMATS_IDC_CHECK2"
 msgid "Music"
