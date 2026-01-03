@@ -347,7 +347,7 @@ msgstr "GPU 控制(&G)"
 
 msgctxt "ID_VIEW_FLUSHGPU_BEFOREVSYNC"
 msgid "Flush GPU &before VSync"
-msgstr "在垂直同步前刷新 GPU(&B)"
+msgstr "在垂直同步前清空 GPU(&B)"
 
 msgctxt "ID_VIEW_FLUSHGPU_AFTERPRESENT"
 msgid "Flush GPU &after Present"
