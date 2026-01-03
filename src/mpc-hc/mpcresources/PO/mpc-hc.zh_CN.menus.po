@@ -575,7 +575,7 @@ msgstr "标记&A点"
 
 msgctxt "ID_PLAY_REPEAT_AB_MARK_B"
 msgid "A-B (Mark &B)"
-msgstr "标记B点(&B)"
+msgstr "标记&B点"
 
 msgctxt "POPUP"
 msgid "&Playback Rate"
