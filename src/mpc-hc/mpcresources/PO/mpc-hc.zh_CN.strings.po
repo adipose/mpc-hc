@@ -221,7 +221,7 @@ msgstr "如果可能不要使用 (最快,不支持大多数滤镜)"
 
 msgctxt "IDS_PPAGE_CAPTURE_SFG1"
 msgid "Only when switching different video types"
-msgstr "只有当切换不同视频类型时"
+msgstr "仅当切换不同视频类型时"
 
 msgctxt "IDS_PPAGE_CAPTURE_SFG2"
 msgid "Always (may be required by some devices)"
