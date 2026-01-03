@@ -355,7 +355,7 @@ msgstr "在呈现后清空 GPU(&A)"
 
 msgctxt "ID_VIEW_FLUSHGPU_WAIT"
 msgid "&Wait for flushes"
-msgstr "等待刷新(&W)"
+msgstr "等待刷新完成(&W)"
 
 msgctxt "POPUP"
 msgid "R&eset"
