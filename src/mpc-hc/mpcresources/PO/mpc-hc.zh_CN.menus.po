@@ -439,7 +439,7 @@ msgstr "假定是方形像素 (&SAR)"
 
 msgctxt "ID_VIEW_VF_COMPMONDESKARDIFF"
 msgid "&Correct Monitor/Desktop AR Diff"
-msgstr "纠正显示器/桌面纵横比差异(&C)"
+msgstr "校正显示器/桌面纵横比差异(&C)"
 
 msgctxt "POPUP"
 msgid "P&nS Frame Adjust"
