@@ -511,7 +511,7 @@ msgstr "重置(&S)"
 
 msgctxt "POPUP"
 msgid "On &Top"
-msgstr "前端显示(&T)"
+msgstr "置顶(&T)"
 
 msgctxt "ID_ONTOP_DEFAULT"
 msgid "&Default"
