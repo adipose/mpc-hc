@@ -213,7 +213,7 @@ msgctxt "IDS_PPAGE_CAPTURE_FGDESC1"
 msgid ""
 "Fast except when switching between different video streams. Only one video "
 "decoder present in the filter graph."
-msgstr "在不同视频流之间切换以外情况下的最快方式。只会在滤镜图表中出现一个视频解码器。"
+msgstr "除切换视频流外，速度均很快。滤镜图中仅包含一个视频解码器。"
 
 msgctxt "IDS_PPAGE_CAPTURE_SFG0"
 msgid "Never if possible (fastest, but not supported by most filters)"
