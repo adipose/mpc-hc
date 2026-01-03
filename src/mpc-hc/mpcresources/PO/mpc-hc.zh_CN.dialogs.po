@@ -1965,7 +1965,7 @@ msgstr "工具栏对齐: "
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Active Style:"
-msgstr "活动样式"
+msgstr "活动样式: "
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Custom Button 1"
