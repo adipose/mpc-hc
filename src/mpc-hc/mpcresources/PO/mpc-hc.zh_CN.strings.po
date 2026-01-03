@@ -201,7 +201,7 @@ msgstr "只有当切换不同视频类型时"
 
 msgctxt "IDS_PPAGE_CAPTURE_FG2"
 msgid "Always (default)"
-msgstr "一直(默认)"
+msgstr "始终 (默认)"
 
 msgctxt "IDS_PPAGE_CAPTURE_FGDESC0"
 msgid ""
