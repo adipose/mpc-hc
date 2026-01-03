@@ -247,7 +247,7 @@ msgstr "半浮点处理(&H)"
 
 msgctxt "ID_VIEW_DISABLEDESKTOPCOMPOSITION"
 msgid "Disable desktop composition (&Aero)"
-msgstr "关闭桌面合成 (&Aero)"
+msgstr "禁用桌面合成 (&Aero)"
 
 msgctxt "ID_VIEW_ENABLEFRAMETIMECORRECTION"
 msgid "Enable Frame Time &Correction"
