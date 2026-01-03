@@ -571,7 +571,7 @@ msgstr "重置A-B循环(&R)"
 
 msgctxt "ID_PLAY_REPEAT_AB_MARK_A"
 msgid "A-B (Mark &A)"
-msgstr "标记A点(&A)"
+msgstr "标记&A点"
 
 msgctxt "ID_PLAY_REPEAT_AB_MARK_B"
 msgid "A-B (Mark &B)"
