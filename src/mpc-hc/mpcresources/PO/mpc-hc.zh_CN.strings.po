@@ -229,7 +229,7 @@ msgstr "总是 (某些设备可能需要)"
 
 msgctxt "IDS_INFOBAR_PARENTAL_RATING"
 msgid "Parental rating"
-msgstr "父母指导评级"
+msgstr "家长分级"
 
 msgctxt "IDS_PARENTAL_RATING"
 msgid "%d+"
