@@ -9,13 +9,14 @@
 # CyanVesper <SharpNight93@gmail.com>, 2024
 # lychichem <leichixian@outlook.com>, 2025
 # YuanHao Du, 2025
+# KaiHuaDou, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2025-09-18 18:34:29+0000\n"
+"POT-Creation-Date: 2025-11-27 15:27:16+0000\n"
 "PO-Revision-Date: 2020-01-02 07:46+0000\n"
-"Last-Translator: YuanHao Du, 2025\n"
+"Last-Translator: KaiHuaDou, 2026\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/mpchc/teams/106126/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4512,15 +4513,15 @@ msgstr "/shaderpreset \"Pr\"\t启动时使用着色器预设“Pr”"
 
 msgctxt "IDS_TOOLBAR_ALIGNMENT_LEFT"
 msgid "Left"
-msgstr ""
+msgstr "左"
 
 msgctxt "IDS_TOOLBAR_ALIGNMENT_CENTER"
 msgid "Center"
-msgstr ""
+msgstr "中"
 
 msgctxt "IDS_TOOLBAR_ALIGNMENT_RIGHT"
 msgid "Right"
-msgstr ""
+msgstr "右"
 
 msgctxt "IDS_MESSAGEBOX_CANCEL"
 msgid "Cancel"
@@ -4883,7 +4884,7 @@ msgstr "字幕轨"
 
 msgctxt "IDS_FAVORITES_UNSAVED_CHANGES"
 msgid "Do you want to save changes to your favorites?"
-msgstr ""
+msgstr "您要保存对收藏夹的修改吗？"
 
 msgctxt "IDS_AG_EXIT_FULLSCREEN"
 msgid "Exit Fullscreen"
