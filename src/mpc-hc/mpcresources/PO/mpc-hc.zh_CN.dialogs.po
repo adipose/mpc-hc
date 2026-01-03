@@ -192,7 +192,7 @@ msgstr "取消"
 
 msgctxt "IDD_OPEN_DLG_IDC_CHECK1"
 msgid "Add to playlist without opening"
-msgstr "添加到播放列表但不要打开"
+msgstr "仅添加到播放列表"
 
 msgctxt "IDD_ABOUTBOX_CAPTION"
 msgid "About"
