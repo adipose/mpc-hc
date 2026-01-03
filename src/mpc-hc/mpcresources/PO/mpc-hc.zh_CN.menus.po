@@ -375,7 +375,7 @@ msgstr "视频画面(&F)"
 
 msgctxt "ID_VIEW_VF_HALF"
 msgid "&Half Size"
-msgstr "半数尺寸(&H)"
+msgstr "半尺寸(&H)"
 
 msgctxt "ID_VIEW_VF_NORMAL"
 msgid "&Normal Size"
