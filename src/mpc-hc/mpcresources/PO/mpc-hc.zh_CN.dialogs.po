@@ -205,7 +205,7 @@ msgstr "版权所有 2002-2025 clsid2 和其他开发者"
 msgctxt "IDD_ABOUTBOX_IDC_STATIC"
 msgid ""
 "This program is freeware and released under the GNU General Public License."
-msgstr "此程序是遵守 GNU 通用公众授权协议发布的自由软件。"
+msgstr "本程序为遵循 GNU 通用公共许可证发布的自由软件。"
 
 msgctxt "IDD_ABOUTBOX_IDC_STATIC"
 msgid "English translation made by MPC-HC Team"
