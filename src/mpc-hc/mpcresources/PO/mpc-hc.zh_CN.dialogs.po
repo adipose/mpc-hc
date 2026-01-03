@@ -213,7 +213,7 @@ msgstr "简体中文翻译由Transifex上的志愿者维护"
 
 msgctxt "IDD_ABOUTBOX_IDC_STATIC"
 msgid "Build information"
-msgstr "编译信息"
+msgstr "构建信息"
 
 msgctxt "IDD_ABOUTBOX_IDC_STATIC"
 msgid "Version:"
