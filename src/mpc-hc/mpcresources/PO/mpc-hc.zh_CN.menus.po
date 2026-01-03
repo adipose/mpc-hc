@@ -411,7 +411,7 @@ msgstr "高宽比(&A)"
 
 msgctxt "ID_ASPECTRATIO_DAR"
 msgid "&Default (DAR)"
-msgstr "默认 (DAR)(&D)"
+msgstr "默认(&DAR)"
 
 msgctxt "ID_ASPECTRATIO_4_3"
 msgid "&4:3"
