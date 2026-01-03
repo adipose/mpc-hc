@@ -207,7 +207,7 @@ msgctxt "IDS_PPAGE_CAPTURE_FGDESC0"
 msgid ""
 "Not supported by some devices. Two video decoders always present in the "
 "filter graph."
-msgstr "不支持某些设备。在滤镜图表中总是会出现两个视频解码器。"
+msgstr "部分设备不支持。滤镜图中将始终包含两个视频解码器。"
 
 msgctxt "IDS_PPAGE_CAPTURE_FGDESC1"
 msgid ""
