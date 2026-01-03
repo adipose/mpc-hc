@@ -1957,7 +1957,7 @@ msgstr "工具栏样式"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC3"
 msgid "Toolbar Scale:"
-msgstr "工具栏尺寸"
+msgstr "工具栏尺寸: "
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Toolbar Alignment:"
