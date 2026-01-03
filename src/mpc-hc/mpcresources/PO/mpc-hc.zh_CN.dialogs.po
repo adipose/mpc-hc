@@ -164,7 +164,7 @@ msgctxt "IDD_OPEN_DLG_IDC_STATIC"
 msgid ""
 "Type the address of a movie or audio file (on the Internet or your computer)"
 " and the player will open it for you."
-msgstr "请先输入声音或电影文件的地址 (在 Internet 或您的计算机中) 随后播放器将会为您打开它。"
+msgstr "输入视频/音频文件地址（网络或本地），播放器将自动播放。"
 
 msgctxt "IDD_OPEN_DLG_IDC_STATIC"
 msgid "Open:"
