@@ -407,7 +407,7 @@ msgstr "缩放以填满窗口(&O)"
 
 msgctxt "POPUP"
 msgid "&Aspect Ratio"
-msgstr "高宽比(&A)"
+msgstr "纵横比(&A)"
 
 msgctxt "ID_ASPECTRATIO_DAR"
 msgid "&Default (DAR)"
