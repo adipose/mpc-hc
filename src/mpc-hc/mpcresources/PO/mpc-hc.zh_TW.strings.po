@@ -2361,7 +2361,7 @@ msgstr "下一種角度（DVD）"
 
 msgctxt "IDS_MPLAYERC_92"
 msgid "Prev Angle (DVD)"
-msgstr "前一角度（DVD）"
+msgstr "前一種角度（DVD）"
 
 msgctxt "IDS_MPLAYERC_93"
 msgid "Next Audio Track (DVD)"
