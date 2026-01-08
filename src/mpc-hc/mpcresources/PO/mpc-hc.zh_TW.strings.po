@@ -2341,7 +2341,7 @@ msgstr "上一段音軌"
 
 msgctxt "IDS_AG_NEXT_SUBTITLE"
 msgid "Next Subtitle Track"
-msgstr "次一字幕軌"
+msgstr "次一組字幕軌"
 
 msgctxt "IDS_AG_PREV_SUBTITLE"
 msgid "Prev Subtitle Track"
