@@ -2357,7 +2357,7 @@ msgstr "重新載入字幕"
 
 msgctxt "IDS_MPLAYERC_91"
 msgid "Next Angle (DVD)"
-msgstr "次一角度（DVD）"
+msgstr "下一種角度（DVD）"
 
 msgctxt "IDS_MPLAYERC_92"
 msgid "Prev Angle (DVD)"
