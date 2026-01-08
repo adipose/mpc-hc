@@ -2007,7 +2007,7 @@ msgstr "上一段"
 
 msgctxt "IDS_AG_NEXT_FILE"
 msgid "Next File"
-msgstr "次一檔案"
+msgstr "下一個檔案"
 
 msgctxt "IDS_AG_PREVIOUS_FILE"
 msgid "Previous File"
