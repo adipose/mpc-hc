@@ -3798,7 +3798,7 @@ msgctxt "IDS_SCREENSHOT_ERROR_SHOCKWAVE"
 msgid ""
 "The \"Save Image\" and \"Save Thumbnails\" functions do not work for "
 "Shockwave files."
-msgstr "「儲存影像」和「儲存縮圖」功能不能與 Shockwave 檔案一同運作。"
+msgstr "Shockwave 檔案不能使用「儲存影像」和「儲存縮圖」功能。"
 
 msgctxt "IDS_SCREENSHOT_ERROR_OVERLAY"
 msgid ""
