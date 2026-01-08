@@ -4367,7 +4367,7 @@ msgstr "yt-dlp/youtube-dl を呼び出しています..."
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_TOP"
 msgid "Align Top"
-msgstr "上に配置"
+msgstr "上部に配置"
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_MIDDLE"
 msgid "Align Middle"
