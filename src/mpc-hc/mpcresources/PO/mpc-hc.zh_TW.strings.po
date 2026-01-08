@@ -2023,7 +2023,7 @@ msgstr "移至前一字幕"
 
 msgctxt "IDS_MPLAYERC_101"
 msgid "Goto Next Subtitle"
-msgstr "移至次一字幕"
+msgstr "移至次一組字幕"
 
 msgctxt "IDS_MPLAYERC_102"
 msgid "Subresync: shift -100ms"
