@@ -2011,7 +2011,7 @@ msgstr "下一個檔案"
 
 msgctxt "IDS_AG_PREVIOUS_FILE"
 msgid "Previous File"
-msgstr "前一檔案"
+msgstr "前一個檔案"
 
 msgctxt "IDS_MPLAYERC_99"
 msgid "Toggle Direct3D fullscreen"
