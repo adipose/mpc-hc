@@ -2377,7 +2377,7 @@ msgstr "下一組字幕軌（DVD）"
 
 msgctxt "IDS_MPLAYERC_96"
 msgid "Prev Subtitle Track (DVD)"
-msgstr "前一字幕軌（DVD）"
+msgstr "前一組字幕軌（DVD）"
 
 msgctxt "IDS_MPLAYERC_97"
 msgid "On/Off Subtitle (DVD)"
