@@ -4375,7 +4375,7 @@ msgstr "中央に配置"
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_BOTTOM"
 msgid "Align Bottom"
-msgstr "下に配置"
+msgstr "下部に配置"
 
 msgctxt "IDS_PPAGEADVANCED_USE_YDL"
 msgid ""
