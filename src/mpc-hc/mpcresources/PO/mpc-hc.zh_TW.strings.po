@@ -2345,7 +2345,7 @@ msgstr "下一組字幕軌"
 
 msgctxt "IDS_AG_PREV_SUBTITLE"
 msgid "Prev Subtitle Track"
-msgstr "前一字幕軌"
+msgstr "前一組字幕軌"
 
 msgctxt "IDS_MPLAYERC_85"
 msgid "On/Off Subtitle"
