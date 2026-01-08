@@ -2019,7 +2019,7 @@ msgstr "切換 Direct3D 全螢幕"
 
 msgctxt "IDS_MPLAYERC_100"
 msgid "Goto Prev Subtitle"
-msgstr "移至前一字幕"
+msgstr "移至前一組字幕"
 
 msgctxt "IDS_MPLAYERC_101"
 msgid "Goto Next Subtitle"
