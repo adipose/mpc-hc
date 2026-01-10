@@ -2010,7 +2010,7 @@ msgstr "Escala de Barra de Herramientas:"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Toolbar Alignment:"
-msgstr "Alineación de la Barra de Herramientas"
+msgstr "Alineación de Barra de Herramientas"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Active Style:"
