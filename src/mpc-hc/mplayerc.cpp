@@ -1686,10 +1686,23 @@ static BOOL CreateFakeVideoTS(LPCWSTR strIFOPath, LPWSTR strFakeFile, size_t nFa
 static CMPCThemeScrollBarRenderer* GetScrollBarRenderer(HWND hWnd) {
     CWnd* pWnd = CWnd::FromHandlePermanent(hWnd);
 
-    if (pWnd && AppNeedsThemedControls()) {
-        CMPCThemePlayerListCtrl* pListCtrl = DYNAMIC_DOWNCAST(CMPCThemePlayerListCtrl, pWnd);
-        if (pListCtrl) {
-            return pListCtrl; // Implicit upcast to CMPCThemeScrollBarRenderer*
+    // Themed scrollbars not available in classic mode = !IsThemeActive()
+    if (pWnd && AppNeedsThemedControls() && IsThemeActive()) {
+        CMPCThemeScrollBarRenderer* pRenderer = DYNAMIC_DOWNCAST(CMPCThemePlayerListCtrl, pWnd);
+        if (pRenderer) {
+            return pRenderer;
+        }
+        pRenderer = DYNAMIC_DOWNCAST(CMPCThemeEdit, pWnd);
+        if (pRenderer) {
+            return pRenderer;
+        }
+        pRenderer = DYNAMIC_DOWNCAST(CMPCThemeListBox, pWnd);
+        if (pRenderer) {
+            return pRenderer;
+        }
+        pRenderer = DYNAMIC_DOWNCAST(CMPCThemeTreeCtrl, pWnd);
+        if (pRenderer) {
+            return pRenderer;
         }
     }
     return nullptr;

@@ -439,8 +439,6 @@ private:
     bool m_fCustomGraph;
     bool m_fShockwaveGraph;
 
-    int m_iGraphID;
-
     CComPtr<ISubClock> m_pSubClock;
 
     bool m_fFrameSteppingActive;
@@ -450,7 +448,7 @@ private:
 
     bool m_fEndOfStream;
     ULONGLONG m_dwLastPause;
-    ULONGLONG m_dwReloadPos;
+    REFERENCE_TIME m_rtReloadPos;
     int m_iReloadAudioIdx;
     int m_iReloadSubIdx;
 
@@ -644,7 +642,7 @@ protected:
     void LoadKeyFrames();
     std::vector<REFERENCE_TIME> m_kfs;
 
-    bool m_fOpeningAborted;
+    volatile bool m_fOpeningAborted;
     bool m_bWasSnapped;
 
 protected:

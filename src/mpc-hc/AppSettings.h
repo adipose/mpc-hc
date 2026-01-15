@@ -939,7 +939,7 @@ public:
     bool            bEnableCoverArt;
     int             nCoverArtSizeLimit;
 
-    bool            bEnableLogging;
+    int             DebugLogMask;
 
     bool            IsD3DFullscreen() const;
     CString         SelectedAudioRenderer() const;

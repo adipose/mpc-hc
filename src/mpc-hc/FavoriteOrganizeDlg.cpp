@@ -32,7 +32,7 @@
 
 //IMPLEMENT_DYNAMIC(CFavoriteOrganizeDlg, CMPCThemeResizableDialog)
 CFavoriteOrganizeDlg::CFavoriteOrganizeDlg(CWnd* pParent /*=nullptr*/)
-    : CModelessResizableDialog(CFavoriteOrganizeDlg::IDD, pParent)
+    : CMPCThemeModelessResizableDialog(CFavoriteOrganizeDlg::IDD, pParent)
 {
 }
 
@@ -112,7 +112,7 @@ void CFavoriteOrganizeDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CFavoriteOrganizeDlg, CModelessResizableDialog)
+BEGIN_MESSAGE_MAP(CFavoriteOrganizeDlg, CMPCThemeModelessResizableDialog)
     ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, OnTcnSelchangeTab1)
     ON_WM_DRAWITEM()
     ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST2, OnLvnItemchangedList2)
@@ -128,13 +128,13 @@ BEGIN_MESSAGE_MAP(CFavoriteOrganizeDlg, CModelessResizableDialog)
     ON_BN_CLICKED(IDOK, OnBnClickedOk)
     ON_BN_CLICKED(ID_APPLY_NOW, OnBnClickedApply)
     ON_UPDATE_COMMAND_UI(ID_APPLY_NOW, OnUpdateApplyBn)
-    ON_WM_SHOWWINDOW()
     ON_WM_ACTIVATE()
     ON_NOTIFY(LVN_ENDLABELEDIT, IDC_LIST2, OnLvnEndlabeleditList2)
     ON_NOTIFY(NM_DBLCLK, IDC_LIST2, OnPlayFavorite)
     ON_NOTIFY(LVN_KEYDOWN, IDC_LIST2, OnKeyPressed)
     ON_NOTIFY(LVN_GETINFOTIP, IDC_LIST2, OnLvnGetInfoTipList)
     ON_WM_SIZE()
+    ON_MESSAGE(WM_DPICHANGED, OnDpiChanged)
 END_MESSAGE_MAP()
 
 void  CFavoriteOrganizeDlg::OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResult) {
@@ -144,6 +144,8 @@ void  CFavoriteOrganizeDlg::OnLvnItemchangedList2(NMHDR* pNMHDR, LRESULT* pResul
 
 BOOL CFavoriteOrganizeDlg::OnInitDialog()
 {
+    EnableSaveRestoreKey(IDS_R_DLG_ORGANIZE_FAV);
+
     __super::OnInitDialog();
     if (GetExStyle() & WS_EX_TOPMOST) {
         if (auto tt = m_list.GetToolTips()) { //when dialog is topmost, tooltips appear behind the dialog?
@@ -164,17 +166,9 @@ BOOL CFavoriteOrganizeDlg::OnInitDialog()
 
     LoadList();
 
-    AddAnchor(IDC_TAB1, TOP_LEFT, BOTTOM_RIGHT);
-    AddAnchor(IDC_LIST2, TOP_LEFT, BOTTOM_RIGHT);
-    AddAnchor(IDC_BUTTON1, TOP_RIGHT);
-    AddAnchor(IDC_BUTTON2, TOP_RIGHT);
-    AddAnchor(IDC_BUTTON3, TOP_RIGHT);
-    AddAnchor(IDC_BUTTON4, TOP_RIGHT);
-    AddAnchor(IDOK, BOTTOM_RIGHT);
-    AddAnchor(IDCANCEL, BOTTOM_RIGHT);
-    AddAnchor(ID_APPLY_NOW, BOTTOM_RIGHT);
-    EnableSaveRestoreKey(IDS_R_DLG_ORGANIZE_FAV);
+    SetupAnchors();
     fulfillThemeReqs();
+
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -187,6 +181,12 @@ void CFavoriteOrganizeDlg::LoadList() {
 
     SetupList(false);
     m_bModified = false;
+}
+
+void CFavoriteOrganizeDlg::ShowAndLoad()
+{
+    LoadList();
+    ShowWindow(SW_SHOW);
 }
 
 void CFavoriteOrganizeDlg::AddItemToVisualList(int tabIndex, const CString& favoriteString) {
@@ -551,16 +551,6 @@ void CFavoriteOrganizeDlg::OnCancel()
     __super::OnCancel();
 }
 
-void CFavoriteOrganizeDlg::OnShowWindow(BOOL bShow, UINT nStatus)
-{
-    __super::OnShowWindow(bShow, nStatus);
-
-    if (bShow) {
-        // Always reload data from settings when showing the dialog
-        LoadList();
-    }
-}
-
 void CFavoriteOrganizeDlg::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized)
 {
     __super::OnActivate(nState, pWndOther, bMinimized);
@@ -570,6 +560,19 @@ void CFavoriteOrganizeDlg::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimi
     }
 }
 
+void CFavoriteOrganizeDlg::SetupAnchors()
+{
+    AddAnchor(IDC_TAB1, TOP_LEFT, BOTTOM_RIGHT);
+    AddAnchor(IDC_LIST2, TOP_LEFT, BOTTOM_RIGHT);
+    AddAnchor(IDC_BUTTON1, TOP_RIGHT);
+    AddAnchor(IDC_BUTTON2, TOP_RIGHT);
+    AddAnchor(IDC_BUTTON3, TOP_RIGHT);
+    AddAnchor(IDC_BUTTON4, TOP_RIGHT);
+    AddAnchor(IDOK, BOTTOM_RIGHT);
+    AddAnchor(IDCANCEL, BOTTOM_RIGHT);
+    AddAnchor(ID_APPLY_NOW, BOTTOM_RIGHT);
+}
+
 void CFavoriteOrganizeDlg::OnSize(UINT nType, int cx, int cy)
 {
     __super::OnSize(nType, cx, cy);
@@ -577,6 +580,18 @@ void CFavoriteOrganizeDlg::OnSize(UINT nType, int cx, int cy)
     if (IsWindow(m_list)) {
         UpdateColumnsSizes(); //on first size, we need to call this, or it doesn't use the full window until a rename/resize
     }
+}
+
+LRESULT CFavoriteOrganizeDlg::OnDpiChanged(WPARAM wParam, LPARAM lParam)
+{
+    LRESULT result = __super::OnDpiChanged(wParam, lParam);
+
+    // CDpiAwareResizableDialog blocks OnSize during dpi changes.  Update columns here
+    if (IsWindow(m_list)) {
+        UpdateColumnsSizes();
+    }
+
+    return result;
 }
 
 void CFavoriteOrganizeDlg::OnLvnGetInfoTipList(NMHDR* pNMHDR, LRESULT* pResult)

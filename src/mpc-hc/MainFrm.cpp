@@ -114,6 +114,8 @@
 #include "stb/stb_image.h"
 #include "stb/stb_image_resize2.h"
 
+#include  "Logger.h"
+
 #include <dwmapi.h>
 #undef SubclassWindow
 
@@ -639,7 +641,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     ON_WM_MOUSEHWHEEL()
 END_MESSAGE_MAP()
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 const TCHAR* GetEventString(LONG evCode)
 {
 #define UNPACK_VALUE(VALUE) case VALUE: return _T(#VALUE);
@@ -752,9 +754,11 @@ const TCHAR* GetEventString(LONG evCode)
             UNPACK_VALUE(EC_BG_ERROR);
     };
 #undef UNPACK_VALUE
-    return _T("UNKNOWN");
+    CString ret;
+    ret.Format(_T("UNKNOWN 0x%08x"), evCode);
+    return ret;
 }
-#endif
+//#endif
 
 void CMainFrame::EventCallback(MpcEvent ev)
 {
@@ -814,14 +818,13 @@ CMainFrame::CMainFrame()
     , m_nLastSkipDirection(0)
     , m_fCustomGraph(false)
     , m_fShockwaveGraph(false)
-    , m_iGraphID(0)
     , m_fFrameSteppingActive(false)
     , m_nStepForwardCount(0)
     , m_rtStepForwardStart(0)
     , m_nVolumeBeforeFrameStepping(0)
     , m_fEndOfStream(false)
     , m_dwLastPause(0)
-    , m_dwReloadPos(0)
+    , m_rtReloadPos(0)
     , m_iReloadAudioIdx(-1)
     , m_iReloadSubIdx(-1)
     , m_bRememberFilePos(false)
@@ -1224,6 +1227,7 @@ void CMainFrame::OnDestroy()
         CAMMsgEvent e;
         m_pGraphThread->PostThreadMessage(CGraphThread::TM_EXIT, (WPARAM)0, (LPARAM)&e);
         if (!e.Wait(5000)) {
+            PLAYER_LOG(_T("CMainFrame::OnDestroy - Terminating graph thread due to timeout"));
             TRACE(_T("ERROR: Must call TerminateThread() on CMainFrame::m_pGraphThread->m_hThread\n"));
             TerminateThread(m_pGraphThread->m_hThread, DWORD_ERROR);
         }
@@ -1244,6 +1248,10 @@ void CMainFrame::OnDestroy()
 void CMainFrame::OnClose()
 {
     CAppSettings& s = AfxGetAppSettings();
+
+    if (USE_LOGGER(s)) {
+        PLAYER_LOG(_T("CMainFrame::OnClose"));
+    }
 
     s.bToggleShader = m_bToggleShader;
     s.bToggleShaderScreenSpace = m_bToggleShaderScreenSpace;
@@ -1278,6 +1286,10 @@ void CMainFrame::OnClose()
     lockGraphAccess.Lock();
     AfxGetMyApp()->SetClosingState();
     lockGraphAccess.Unlock();
+
+    if (USE_LOGGER(s)) {
+        PLAYER_LOG(_T("CMainFrame::OnClose - closing state has been set"));
+    }
 
     __super::OnClose();
 }
@@ -2954,38 +2966,50 @@ void CMainFrame::GraphEventComplete()
 LRESULT CMainFrame::OnGraphNotify(WPARAM wParam, LPARAM lParam)
 {
     if (wParam != 0) {
-        return E_INVALIDARG;
-    }
-
-    if (AfxGetMyApp()->m_fClosingState) {
+        ASSERT(false);
         return S_OK;
     }
-    if (lParam != m_iGraphID) {
+    if (AfxGetMyApp()->m_fClosingState) {
         ASSERT(false);
-        return E_INVALIDARG;
+        return S_OK;
+    }
+    if (!m_pME || lParam != (LPARAM)m_pME.p) {
+        ASSERT(false);
+        return S_OK;
+    }
+    if (m_fOpeningAborted || m_eMediaLoadState != MLS::LOADED && m_eMediaLoadState != MLS::LOADING) {
+        ASSERT(false);
+        return S_OK;
     }
 
     lockGraphAccess.Lock();
 
-    if (AfxGetMyApp()->m_fClosingState) {
+    if (AfxGetMyApp()->m_fClosingState || m_fOpeningAborted || m_eMediaLoadState != MLS::LOADED && m_eMediaLoadState != MLS::LOADING) {
+        lockGraphAccess.Unlock();
         ASSERT(false);
         return S_OK;
     }
-    if (lParam != m_iGraphID) {
+    if (!m_pME || lParam != (LPARAM)m_pME.p) {
         lockGraphAccess.Unlock();
         ASSERT(false);
-        return E_INVALIDARG;
+        return S_OK;
     }
 
     HRESULT hr = S_OK;
     LONG evCode = 0;
     LONG_PTR evParam1, evParam2;
-    while (!AfxGetMyApp()->m_fClosingState && m_pME && !m_fOpeningAborted && (GetLoadState() == MLS::LOADED || GetLoadState() == MLS::LOADING) && SUCCEEDED(m_pME->GetEvent(&evCode, &evParam1, &evParam2, 0))) {
+    // there should be WM_GRAPHNOTIFY message for each event, so no need for a loop here
+    if (SUCCEEDED(m_pME->GetEvent(&evCode, &evParam1, &evParam2, 0))) {
 #ifdef _DEBUG
         if (evCode != EC_DVD_CURRENT_HMSF_TIME) {
-            TRACE(_T("--> CMainFrame::OnGraphNotify on thread: %lu; id: %ld; event: 0x%08x (%ws)\n"), GetCurrentThreadId(), lParam, evCode, GetEventString(evCode));
+            TRACE(_T("--> CMainFrame::OnGraphNotify (thread %lu)(graph %ld)(loadstate %d) event: %ws\n"), GetCurrentThreadId(), lParam, m_eMediaLoadState, GetEventString(evCode));
+        }
+#else
+        if (evCode != EC_DVD_CURRENT_HMSF_TIME && USE_LOGGER(AfxGetAppSettings())) {
+            PLAYER_LOG(_T("CMainFrame::OnGraphNotify (thread %lu)(graph %ld)(loadstate %d) event: %ws"), GetCurrentThreadId(), lParam, m_eMediaLoadState, GetEventString(evCode));
         }
 #endif
+
         CString str;
         if (m_fCustomGraph) {
             if (EC_BG_ERROR == evCode) {
@@ -3378,6 +3402,8 @@ LRESULT CMainFrame::OnGraphNotify(WPARAM wParam, LPARAM lParam)
                 UpdateCachedMediaState();
                 TRACE(_T("Unhandled graph event\n"));
         }
+    } else {
+        ASSERT(false);
     }
 
     if (!AfxGetMyApp()->m_fClosingState) {
@@ -4042,13 +4068,19 @@ void CMainFrame::OnUpdatePlayerStatus(CCmdUI* pCmdUI)
 
 LRESULT CMainFrame::OnFilePostOpenmedia(WPARAM wParam, LPARAM lParam)
 {
-    if (!m_pGB) {
+    auto& s = AfxGetAppSettings();
+        
+    if (m_pGB && GetLoadState() == MLS::LOADING) {
+        if (USE_LOGGER(s)) {
+            PLAYER_LOG(_T("CMainFrame::OnFilePostOpenmedia (thread %lu)"), GetCurrentThreadId());
+        }
+    } else {
+        if (USE_LOGGER(s)) {
+            PLAYER_LOG(_T("CMainFrame::OnFilePostOpenmedia (thread %lu) - unexpected state"), GetCurrentThreadId());
+        }
         ASSERT(FALSE);
         return 1;
     }
-    ASSERT(GetLoadState() == MLS::LOADING);
-
-    auto& s = AfxGetAppSettings();
 
     // from this on
     m_bOpenMediaActive = false;
@@ -4264,6 +4296,10 @@ LRESULT CMainFrame::OnOpenMediaFailed(WPARAM wParam, LPARAM lParam)
     ASSERT(GetCurrentThreadId() == AfxGetApp()->m_nThreadID);
     const auto& s = AfxGetAppSettings();
 
+    if (USE_LOGGER(s)) {
+        PLAYER_LOG(_T("CMainFrame::OnOpenMediaFailed (thread %lu)"), GetCurrentThreadId());
+    }
+
     m_lastOMD.Free();
     m_lastOMD.Attach((OpenMediaData*)lParam);
     if (!m_lastOMD->title) {
@@ -4277,7 +4313,7 @@ LRESULT CMainFrame::OnOpenMediaFailed(WPARAM wParam, LPARAM lParam)
     m_bOpenMediaActive = false;
     m_OpenMediaFailedCount++;
 
-    m_dwReloadPos = 0;
+    m_rtReloadPos = 0;
     reloadABRepeat = ABRepeat();
     m_iReloadAudioIdx = -1;
     m_iReloadSubIdx = -1;
@@ -5286,13 +5322,17 @@ void CMainFrame::OnFileReopen()
         return;
     }
 
+    auto& s = AfxGetAppSettings();
+    if (USE_LOGGER(s)) {
+        PLAYER_LOG(_T("CMainFrame::OnFileReopen"));
+    }
+
     // save playback position
     if (GetLoadState() == MLS::LOADED) {
-        if (m_bRememberFilePos && !m_fEndOfStream && m_dwReloadPos == 0 && m_pMS) {
-            auto& s = AfxGetAppSettings();
+        if (m_bRememberFilePos && !m_fEndOfStream && m_rtReloadPos == 0 && m_pMS) {
             REFERENCE_TIME rtNow = 0;
             m_pMS->GetCurrentPosition(&rtNow);
-            m_dwReloadPos = rtNow;
+            m_rtReloadPos = rtNow;
             s.MRU.UpdateCurrentFilePosition(rtNow, true);
         }
         reloadABRepeat = abRepeat;
@@ -6939,6 +6979,10 @@ void CMainFrame::OnFileOpenLocation() {
 
 void CMainFrame::OnFileCloseMedia()
 {
+    if (USE_LOGGER(AfxGetAppSettings())) {
+        PLAYER_LOG(_T("CMainFrame::OnFileCloseMedia"));
+    }
+
     CloseMedia();
 }
 
@@ -8848,7 +8892,7 @@ void CMainFrame::OnPlayPlay()
                     // after long pause or hibernation, reload video file to avoid playback issues on some systems (with buggy drivers)
                     // in case of hibernate, m_dwLastPause equals 1
                     if (m_dwLastPause == 1 || s.iReloadAfterLongPause > 0 && (GetTickCount64() - m_dwLastPause >= s.iReloadAfterLongPause * 60 * 1000)) {
-                        m_dwReloadPos = m_wndSeekBar.GetPos();
+                        m_rtReloadPos = m_wndSeekBar.GetPos();
                         reloadABRepeat = abRepeat;
                         m_iReloadAudioIdx = GetCurrentAudioTrackIdx();
                         m_iReloadSubIdx = GetCurrentSubtitleTrackIdx();
@@ -11223,7 +11267,7 @@ void CMainFrame::OnFavoritesQuickAddFavorite()
 
 void CMainFrame::OnFavoritesOrganize()
 {
-    m_wndFavoriteOrganizeDialog.ShowWindow(SW_SHOW);
+    m_wndFavoriteOrganizeDialog.ShowAndLoad();
 }
 
 void CMainFrame::OnUpdateFavoritesOrganize(CCmdUI* pCmdUI)
@@ -13311,9 +13355,16 @@ void CMainFrame::OpenCreateGraphObject(OpenMediaData* pOMD)
 
     m_fCustomGraph = false;
     m_fShockwaveGraph = false;
-    m_iGraphID++;
 
     const CAppSettings& s = AfxGetAppSettings();
+
+    if (USE_LOGGER(AfxGetAppSettings())) {
+        if (m_pGB) {
+            PLAYER_LOG(_T("CMainFrame::OpenCreateGraphObject (thread %lu) - unxpected value for m_pGB"), GetCurrentThreadId());
+        } else {
+            PLAYER_LOG(_T("CMainFrame::OpenCreateGraphObject (thread %lu)"), GetCurrentThreadId());
+        }
+    }
 
     m_pGB_preview = nullptr;
     m_bUseSeekPreview = s.fUseSeekbarHover && s.fSeekPreview && m_wndPreView && ::IsWindow(m_wndPreView.m_hWnd) && !(s.nCLSwitches & CLSW_THUMBNAILS);
@@ -13427,7 +13478,7 @@ void CMainFrame::OpenCreateGraphObject(OpenMediaData* pOMD)
         throw (UINT)IDS_GRAPH_INTERFACES_ERROR;
     }
 
-    if (FAILED(m_pME->SetNotifyWindow((OAHWND)m_hWnd, WM_GRAPHNOTIFY, (LPARAM)m_iGraphID))) {
+    if (FAILED(m_pME->SetNotifyWindow((OAHWND)m_hWnd, WM_GRAPHNOTIFY, (LPARAM)m_pME.p))) {
         throw (UINT)IDS_GRAPH_TARGET_WND_ERROR;
     }
 
@@ -15594,6 +15645,10 @@ bool CMainFrame::OpenMediaPrivate(CAutoPtr<OpenMediaData> pOMD)
     ASSERT(GetLoadState() == MLS::LOADING);
     auto& s = AfxGetAppSettings();
 
+    if (USE_LOGGER(s)) {
+        PLAYER_LOG(_T("CMainFrame::OpenMediaPrivate (thread %lu)"), GetCurrentThreadId());
+    }
+
     m_fValidDVDOpen = false;
     m_iDefRotation = 0;
 
@@ -15770,11 +15825,11 @@ bool CMainFrame::OpenMediaPrivate(CAutoPtr<OpenMediaData> pOMD)
                 abRepeat = pFileData->abRepeat;
             }
 
-            if (m_dwReloadPos > 0) {
-                if (m_dwReloadPos < rtDur) {
-                    rtPos = m_dwReloadPos;
+            if (m_rtReloadPos > 0) {
+                if (m_rtReloadPos < rtDur) {
+                    rtPos = m_rtReloadPos;
                 }
-                m_dwReloadPos = 0;
+                m_rtReloadPos = 0;
             }
             if (reloadABRepeat) {
                 abRepeat = reloadABRepeat;
@@ -15954,7 +16009,14 @@ void CMainFrame::CloseMediaPrivate()
 {
     ASSERT(GetLoadState() == MLS::CLOSING);
 
-    MediaControlStop(true); // needed for StreamBufferSource, because m_iMediaLoadState is always MLS::CLOSED // TODO: fix the opening for such media
+    CAppSettings& s = AfxGetAppSettings();
+
+    if (USE_LOGGER(s)) {
+        PLAYER_LOG(_T("CMainFrame::CloseMediaPrivate (thread %lu) - start"), GetCurrentThreadId());
+    }
+
+    ULONGLONG tc1 = GetTickCount64();
+
     m_CachedFilterState = -1;
 
     m_fLiveWM = false;
@@ -15982,6 +16044,8 @@ void CMainFrame::CloseMediaPrivate()
     }
 
     m_bIsMPCVRExclusiveMode = false;
+
+    ULONGLONG tc2 = GetTickCount64();
 
     // IMPORTANT: IVMRSurfaceAllocatorNotify/IVMRSurfaceAllocatorNotify9 has to be released before the VMR/VMR9, otherwise it will crash in Release()
     m_OSD.Stop();
@@ -16016,6 +16080,8 @@ void CMainFrame::CloseMediaPrivate()
     m_pAMTuner.Release();
     m_pCGB.Release();
 
+    ULONGLONG tc3 = GetTickCount64();
+
     m_pDVDC.Release();
     m_pDVDI.Release();
     m_pAMOP.Release();
@@ -16043,16 +16109,20 @@ void CMainFrame::CloseMediaPrivate()
         pSS.Release();
     }
 
+    ULONGLONG tc4 = GetTickCount64();
+
     if (m_pGB) {
         m_pGB->RemoveFromROT();
         m_pGB.Release();
     }
 
+    ULONGLONG tc5 = GetTickCount64();
+    ULONGLONG tc6 = tc5;
+
     if (m_pGB_preview) {
-        TRACE(_T("Stopping preview graph\n"));
-        MediaControlStopPreview();
         TRACE(_T("Releasing preview graph\n"));
         ReleasePreviewGraph();
+        tc6 = GetTickCount64();
     }
 
     m_pProv.Release();
@@ -16062,6 +16132,11 @@ void CMainFrame::CloseMediaPrivate()
     m_lastOMD.Free();
 	
 	m_FontInstaller.UninstallFonts();
+
+    if (USE_LOGGER(s)) {
+        ULONGLONG tc7 = GetTickCount64();
+        PLAYER_LOG(_T("CMainFrame::CloseMediaPrivate - complete - %llums %llums %llums %llums %llums %llums"), tc2-tc1, tc3-tc2, tc4-tc3, tc5-tc4, tc6-tc5, tc7-tc6);
+    }
 }
 
 bool CMainFrame::WildcardFileSearch(CString searchstr, std::set<CString, CStringUtils::LogicalLess>& results, bool recurse_dirs)
@@ -19132,10 +19207,18 @@ void CMainFrame::OpenMedia(CAutoPtr<OpenMediaData> pOMD)
         }
     }
 
+    const auto& s = AfxGetAppSettings();
+
     if (m_bOpenMediaActive) {
+        if (USE_LOGGER(s)) {
+            PLAYER_LOG(_T("CMainFrame::OpenMedia (thread %lu) -> skipping because there already is an active OpenMedia call"), GetCurrentThreadId());
+        }
         TRACE(_T("CMainFrame::OpenMedia (thread %lu) -> skipping because there already is an active OpenMedia call\n"), GetCurrentThreadId());
         return;
     } else {
+        if (USE_LOGGER(s)) {
+            PLAYER_LOG(_T("CMainFrame::OpenMedia (thread %lu)"), GetCurrentThreadId());
+        }
         TRACE(_T("CMainFrame::OpenMedia (thread %lu)\n"), GetCurrentThreadId());
     }
     m_bOpenMediaActive = true;
@@ -19188,8 +19271,6 @@ void CMainFrame::OpenMedia(CAutoPtr<OpenMediaData> pOMD)
 
     // we hereby proclaim
     SetLoadState(MLS::LOADING);
-
-    const auto& s = AfxGetAppSettings();
 
     // use the graph thread only for some media types
     bool bDirectShow = pFileData && !pFileData->fns.IsEmpty() && s.m_Formats.GetEngine(pFileData->fns.GetHead()) == DirectShow;
@@ -19246,6 +19327,9 @@ void CMainFrame::OpenMedia(CAutoPtr<OpenMediaData> pOMD)
 
 bool CMainFrame::ResetDevice()
 {
+    if (USE_LOGGER(AfxGetAppSettings())) {
+        PLAYER_LOG(_T("CMainFrame::ResetDevice"));
+    }
     if (m_pCAP2_preview) {
         m_pCAP2_preview->ResetDevice();
     }
@@ -19257,6 +19341,9 @@ bool CMainFrame::ResetDevice()
 
 bool CMainFrame::DisplayChange()
 {
+    if (USE_LOGGER(AfxGetAppSettings())) {
+        PLAYER_LOG(_T("CMainFrame::DisplayChange"));
+    }
     if (m_pCAP2_preview) {
         m_pCAP2_preview->DisplayChange();
     }
@@ -19278,7 +19365,10 @@ bool CMainFrame::CloseMediaBeforeOpen()
                 return true;
             }
         }
-        return (m_eMediaLoadState == MLS::CLOSED);
+        if (m_eMediaLoadState != MLS::CLOSED) {
+            PLAYER_LOG(_T("CMainFrame::CloseMediaBeforeOpen - unexpected loadstate %d"), m_eMediaLoadState);
+            return false;
+        }
     }
     return true;
 }
@@ -19286,6 +19376,9 @@ bool CMainFrame::CloseMediaBeforeOpen()
 void CMainFrame::ForceCloseProcess()
 {
     MessageBeep(MB_ICONEXCLAMATION);
+    if (USE_LOGGER(AfxGetAppSettings())) {
+        PLAYER_LOG(_T("CMainFrame::ForceCloseProcess"));
+    }
     if (CrashReporter::IsEnabled()) {
         CrashReporter::Disable();
     }
@@ -19296,6 +19389,8 @@ void CMainFrame::CloseMedia(bool bNextIsQueued/* = false*/, bool bPendingFileDel
 {
     TRACE(_T("CMainFrame::CloseMedia\n"));
 
+    auto& s = AfxGetAppSettings();
+
     m_dwLastPause = 0;
 
     if (m_bUseSeekPreview && m_wndPreView.IsWindowVisible()) {
@@ -19305,10 +19400,16 @@ void CMainFrame::CloseMedia(bool bNextIsQueued/* = false*/, bool bPendingFileDel
     m_bDVDStillOn = false;
 
     if (m_eMediaLoadState == MLS::CLOSED) {
+        if (USE_LOGGER(s)) {
+            PLAYER_LOG(_T("CMainFrame::CloseMedia (thread %lu) - ignoring because already closed"), GetCurrentThreadId());
+        }
         TRACE(_T("Ignoring duplicate close action.\n"));
         return;
     }
     if (m_eMediaLoadState == MLS::CLOSING) {
+        if (USE_LOGGER(s)) {
+            PLAYER_LOG(_T("CMainFrame::CloseMedia (thread %lu) - already closing - waiting"), GetCurrentThreadId());
+        }
         TRACE(_T("Duplicate close action.\n"));
         for (int i = 0; i < 10; i++) {
             Sleep(250);
@@ -19316,11 +19417,17 @@ void CMainFrame::CloseMedia(bool bNextIsQueued/* = false*/, bool bPendingFileDel
                 break;
             }
         }
+        if (USE_LOGGER(s) && m_eMediaLoadState != MLS::CLOSED) {
+            PLAYER_LOG(_T("CMainFrame::CloseMedia (thread %lu) - unexpected loadstate"), GetCurrentThreadId());
+        }
         ASSERT(m_eMediaLoadState == MLS::CLOSED);
         return;
     }
 
-    m_iGraphID++;
+    if (USE_LOGGER(s)) {
+        PLAYER_LOG(_T("CMainFrame::CloseMedia (thread %lu) - starting close"), GetCurrentThreadId());
+    }
+
     if (m_pME) {
         m_pME->SetNotifyFlags(AM_MEDIAEVENT_NONOTIFY);
         m_pME->SetNotifyWindow(NULL, 0, 0);
@@ -19335,7 +19442,6 @@ void CMainFrame::CloseMedia(bool bNextIsQueued/* = false*/, bool bPendingFileDel
         ASSERT(!m_bSettingUpMenus);
     }
 
-    auto& s = AfxGetAppSettings();
     bool savehistory = false;
     if (GetLoadState() == MLS::LOADED) {
         if (GetMediaState() == State_Running) {
@@ -19349,7 +19455,7 @@ void CMainFrame::CloseMedia(bool bNextIsQueued/* = false*/, bool bPendingFileDel
 
         // save playback position
         if (s.fKeepHistory && !bPendingFileDelete) {
-            if (m_bRememberFilePos && !m_fEndOfStream && m_dwReloadPos == 0 && m_pMS) {
+            if (m_bRememberFilePos && !m_fEndOfStream && m_rtReloadPos == 0 && m_pMS) {
                 REFERENCE_TIME rtNow = 0;
                 m_pMS->GetCurrentPosition(&rtNow);
                 if (rtNow > 0) {
@@ -19411,6 +19517,9 @@ void CMainFrame::CloseMedia(bool bNextIsQueued/* = false*/, bool bPendingFileDel
     bool bGraphTerminated = false;
     if (GetLoadState() == MLS::LOADING) {
         TRACE(_T("Media is still loading. Aborting graph.\n"));
+        if (USE_LOGGER(s)) {
+            PLAYER_LOG(_T("CMainFrame::CloseMedia - Need to abort graph creation"));
+        }
 
         // tell OpenMediaPrivate() that we want to abort
         m_fOpeningAborted = true;
@@ -19494,6 +19603,9 @@ void CMainFrame::CloseMedia(bool bNextIsQueued/* = false*/, bool bPendingFileDel
                                 msg = L"Timeout while aborting filter graph creation.\n\nIf files load slowly with MadVR, you should change dithering in Madvr settings (Error Diffusion is broken on AMD GPU).\n\nClick YES to terminate player process. Click NO to wait longer (up to 15 seconds).";
                             } else {
                                 msg = L"Timeout while aborting filter graph creation.\n\nClick YES to terminate player process. Click NO to wait longer (up to 15 seconds).";
+                            }
+                            if (USE_LOGGER(s)) {
+                                PLAYER_LOG(_T("CMainFrame::CloseMedia - Timeout when aborting filter graph creation"));
                             }
                             if (IDYES == AfxMessageBox(msg, MB_ICONEXCLAMATION | MB_YESNO, 0)) {
                                 processmsg = false;
@@ -19634,6 +19746,9 @@ void CMainFrame::CloseMedia(bool bNextIsQueued/* = false*/, bool bPendingFileDel
                                 msg = L"Timeout when closing filter graph.\n\nClick YES to terminate player process. Click NO to wait longer (up to 15 seconds).";
                             }
                         }
+                        if (USE_LOGGER(s)) {
+                            PLAYER_LOG(_T("CMainFrame::CloseMedia - Timeout when closing filter graph"));
+                        }
                         if (IDYES == AfxMessageBox(msg, MB_ICONEXCLAMATION | MB_YESNO, 0)) {
                             processmsg = false;
                         } else {
@@ -19660,6 +19775,10 @@ void CMainFrame::CloseMedia(bool bNextIsQueued/* = false*/, bool bPendingFileDel
         s.MRU.WriteCurrentEntry();
     }
     s.MRU.current_rfe_hash.Empty();
+
+    if (USE_LOGGER(s)) {
+        PLAYER_LOG(_T("CMainFrame::CloseMedia - completed"));
+    }
 
     TRACE(_T("Close media completed\n"));
 }
@@ -19873,9 +19992,15 @@ LRESULT CMainFrame::OnCurrentChannelInfoUpdated(WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-// ==== Added by CASIMIR666
 void CMainFrame::SetLoadState(MLS eState)
 {
+    if (eState == MLS::LOADING && m_eMediaLoadState != MLS::CLOSED || eState == MLS::FAILING && m_eMediaLoadState != MLS::LOADING) {
+        ASSERT(false);
+        if (USE_LOGGER(AfxGetAppSettings())) {
+            PLAYER_LOG(_T("CMainFrame::SetLoadState - unexpected state change: %d -> %d"), m_eMediaLoadState, eState);
+        }
+    }
+
     m_eMediaLoadState = eState;
     SendAPICommand(CMD_STATE, L"%d", static_cast<int>(eState));
     if (eState == MLS::LOADED) {
@@ -21377,6 +21502,10 @@ UINT CMainFrame::OnPowerBroadcast(UINT nPowerEvent, LPARAM nEventData)
 {
     static BOOL bWasPausedBeforeSuspention;
 
+    if (USE_LOGGER(AfxGetAppSettings())) {
+        PLAYER_LOG(_T("CMainFrame::OnPowerBroadcast"));
+    }
+
     switch (nPowerEvent) {
         case PBT_APMSUSPEND:            // System is suspending operation.
             TRACE(_T("OnPowerBroadcast - suspending\n"));   // For user tracking
@@ -21407,7 +21536,12 @@ UINT CMainFrame::OnPowerBroadcast(UINT nPowerEvent, LPARAM nEventData)
 
 void CMainFrame::OnSessionChange(UINT nSessionState, UINT nId)
 {
-    if (AfxGetAppSettings().bLockNoPause) {
+    const auto& s = AfxGetAppSettings();
+    if (USE_LOGGER(s)) {
+        PLAYER_LOG(_T("CMainFrame::OnSessionChange"));
+    }
+
+    if (s.bLockNoPause) {
         return;
     }
 

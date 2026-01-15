@@ -277,8 +277,8 @@ void CPPageMouse::AddCmdToRightClick(WORD id, size_t idx) {
     while (pos) {
         wmcmd& wc = wmcmds.GetNext(pos);
         if (id == wc.cmd) {
-            idx = m_cmbRightButtonClick.InsertString(idx - 1, ResStr(wc.dwname));
-            m_cmbRightButtonClick.SetItemData(idx, id);
+            idx = m_cmbRightButtonClick.InsertString((int)idx - 1, ResStr(wc.dwname));
+            m_cmbRightButtonClick.SetItemData((int)idx, id);
             break;
         }
     }
@@ -292,7 +292,7 @@ void CPPageMouse::OnRightClickChange() {
             const WORD id = dlg.GetSelectedCommandID();
             size_t idx;
             for (idx = 0; idx < m_cmbRightButtonClick.GetCount(); idx++) {
-                if (id == m_cmbRightButtonClick.GetItemData(idx)) {
+                if (id == m_cmbRightButtonClick.GetItemData((int)idx)) {
                     break;
                 }
             }

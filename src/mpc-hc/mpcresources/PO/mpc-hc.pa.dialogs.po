@@ -1665,7 +1665,7 @@ msgctxt "IDD_DEBUGSHADERS_DLG_IDC_RADIO4"
 msgid "PS 3.0"
 msgstr "PS 3.0"
 
-msgctxt "IDD_DEBUGSHADERS_DLG_IDC_STATIC"
+msgctxt "IDD_DEBUGSHADERS_DLG_IDC_STATIC1"
 msgid "Debug Information"
 msgstr "ਡੀਬੱਗ ਜਾਣਕਾਰੀ"
 

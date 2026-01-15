@@ -195,8 +195,8 @@ msgid "About"
 msgstr "バージョン情報"
 
 msgctxt "IDD_ABOUTBOX_IDC_AUTHORS_LINK"
-msgid "Copyright 2002-2025 clsid2 and others"
-msgstr "著作権 2002-2025 clsid2 および他の貢献者"
+msgid "Copyright 2002-2026 clsid2 and others"
+msgstr "著作権 2002-2026 clsid2 および他の貢献者"
 
 msgctxt "IDD_ABOUTBOX_IDC_STATIC"
 msgid ""
@@ -1673,7 +1673,7 @@ msgctxt "IDD_DEBUGSHADERS_DLG_IDC_RADIO4"
 msgid "PS 3.0"
 msgstr "PS 3.0"
 
-msgctxt "IDD_DEBUGSHADERS_DLG_IDC_STATIC"
+msgctxt "IDD_DEBUGSHADERS_DLG_IDC_STATIC1"
 msgid "Debug Information"
 msgstr "デバッグ情報"
 

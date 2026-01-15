@@ -71,7 +71,8 @@ protected:
     void RedrawDialogTooltipIfVisible();
     static bool metricsNeedCalculation;
 public:
-    static bool getFontByFace(CFont& font, CWnd *wnd, wchar_t* fontName, int size, LONG weight = FW_REGULAR);
+    static bool getFontByFace(CFont& font, CWnd *wnd, const wchar_t* fontName, int size, LONG weight = FW_REGULAR);
+    static bool getFontByFaceForDpi(CFont& font, const wchar_t* fontName, int size, UINT dpi, LONG weight = FW_REGULAR);
     static bool getFixedFont(CFont& font, CDC* pDC, CWnd* wnd);
     static bool getFontByType(CFont& font, CWnd* wnd, int type, bool underline = false, bool bold = false);
     enum fontType {
@@ -107,12 +108,13 @@ public:
     static void drawGripper(CWnd* window, CWnd* dpiRefWnd, CRect rectGripper, CDC* pDC, bool rot90);
     static void drawToolbarHideButton(CDC* pDC, CWnd* window, CRect iconRect, std::vector<CMPCTheme::pathPoint> icon, double dpiScaling, bool antiAlias, bool hover);
     static bool canUseWin10DarkTheme();
+    static bool IsBasicMode(); // Returns true if DWM composition is disabled (classic/basic mode)
     static UINT defaultLogo();
     static HBRUSH getParentDialogBGClr(CWnd* wnd, CDC* pDC);
     static void drawParentDialogBGClr(CWnd* wnd, CDC* pDC, CRect r, bool fill = true);
     static void fulfillThemeReqs(CProgressCtrl* ctl);
     static void enableWindows10DarkFrame(CWnd* window);
-    static void AdjustDynamicWidgetPair(CWnd* window, int left, int right, WidgetPairType lType = WidgetPairAuto, WidgetPairType rType = WidgetPairAuto);
+    static void AdjustDynamicWidgetPair(CWnd* window, int left, int right);
     static void UpdateAnalogCaptureDeviceSlider(CScrollBar* pScrollBar);
     static bool IsWindowVisibleAndRendered(CWnd* window);
     static void RefreshBitmapIconControls(CWnd* parentWnd);

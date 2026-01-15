@@ -141,6 +141,8 @@
     <ClCompile Include="CMPCThemeFrameWnd.cpp" />
     <ClCompile Include="CMPCThemeInternalPropertyPageWnd.cpp" />
     <ClCompile Include="CMPCThemeMiniDockFrameWnd.cpp" />
+    <ClCompile Include="CMPCThemeModelessResizableDialog.cpp" />
+    <ClCompile Include="CMPCThemeProgressCtrl.cpp" />
     <ClCompile Include="CMPCThemePropPageButton.cpp" />
     <ClCompile Include="CMPCThemeResizablePropertyPage.cpp" />
     <ClCompile Include="CMPCThemeResizablePropertySheet.cpp" />
@@ -336,6 +338,8 @@
     <ClInclude Include="CMPCThemeFrameWnd.h" />
     <ClInclude Include="CMPCThemeInternalPropertyPageWnd.h" />
     <ClInclude Include="CMPCThemeMiniDockFrameWnd.h" />
+    <ClInclude Include="CMPCThemeModelessResizableDialog.h" />
+    <ClInclude Include="CMPCThemeProgressCtrl.h" />
     <ClInclude Include="CMPCThemePropPageButton.h" />
     <ClInclude Include="CMPCThemeResizablePropertyPage.h" />
     <ClInclude Include="CMPCThemeResizablePropertySheet.h" />

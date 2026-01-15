@@ -40,6 +40,7 @@ void CPPageAdvanced::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_LIST1, m_list);
     DDX_Control(pDX, IDC_COMBO1, m_comboBox);
     DDX_Control(pDX, IDC_SPIN1, m_spinButtonCtrl);
+    DDX_Control(pDX, IDC_EDIT1, m_dynamicEdit);
 }
 
 BOOL CPPageAdvanced::OnInitDialog()
@@ -59,12 +60,12 @@ BOOL CPPageAdvanced::OnInitDialog()
         pToolTip->SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOREDRAW | SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_NOOWNERZORDER);
     }
 
-    GetDlgItem(IDC_EDIT1)->GetWindowRect(editRect);
+    m_dynamicEdit.GetWindowRect(editRect);
     ScreenToClient(editRect);
 
-    m_spinButtonCtrl.SetBuddy(GetDlgItem(IDC_EDIT1));
+    m_spinButtonCtrl.SetBuddy(&m_dynamicEdit);
 
-    GetDlgItem(IDC_EDIT1)->ShowWindow(SW_HIDE);
+    m_dynamicEdit.ShowWindow(SW_HIDE);
     GetDlgItem(IDC_COMBO1)->ShowWindow(SW_HIDE);
     GetDlgItem(IDC_RADIO1)->ShowWindow(SW_HIDE);
     GetDlgItem(IDC_RADIO2)->ShowWindow(SW_HIDE);
@@ -173,7 +174,7 @@ void CPPageAdvanced::InitSettings()
 #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER
     addBoolItem(CRASHREPORTER, IDS_RS_ENABLE_CRASH_REPORTER, true, s.bEnableCrashReporter, StrRes(IDS_PPAGEADVANCED_CRASHREPORTER));
 #endif
-    addBoolItem(LOGGING, IDS_RS_LOGGING, false, s.bEnableLogging, StrRes(IDS_PPAGEADVANCED_LOGGER));
+    addIntItem(LOGGING, IDS_RS_LOGGING, 0, s.DebugLogMask, std::make_pair(0, 31), /*StrRes(IDS_PPAGEADVANCED_LOGGER)*/ L"Enables logging to file (requires restart).\nThis option for debugging purposes only and should not be enabled during normal use!\nLogs are saved in folder: %appdata%\\MPC-HC\nValue to set is the sum of the loggers that you want to enable:\n1: General\n4: Subtitle search\n8: yt-dlp processing\n16: DVB scanning");
     addIntItem(FULLSCREEN_DELAY, IDS_RS_FULLSCREEN_DELAY, MIN_FULLSCREEN_DELAY, s.iFullscreenDelay, std::make_pair(MIN_FULLSCREEN_DELAY, MAX_FULLSCREEN_DELAY), StrRes(IDS_PPAGEADVANCED_FULLSCREEN_DELAY));
     addIntItem(AUTO_DOWNLOAD_SCORE_MOVIES, IDS_RS_AUTODOWNLOADSCOREMOVIES, 0x16, s.nAutoDownloadScoreMovies,
         std::make_pair(10, 30), StrRes(IDS_PPAGEADVANCED_SCORE));
@@ -248,7 +249,7 @@ void CPPageAdvanced::OnBnClickedDefaultButton()
 
         if (auto pItemBool = std::dynamic_pointer_cast<SettingsBool>(pItem)) {
             str = pItemBool->GetValue() ? m_strTrue : m_strFalse;
-            SetDlgItemText(IDC_EDIT1, str);
+            m_dynamicEdit.SetWindowText(str);
             if (pItemBool->GetValue()) {
                 CheckRadioButton(IDC_RADIO1, IDC_RADIO2, IDC_RADIO1);
             } else {
@@ -259,11 +260,11 @@ void CPPageAdvanced::OnBnClickedDefaultButton()
             str = list.at(pItemCombo->GetValue());
             m_comboBox.SetCurSel(pItemCombo->GetValue());
         } else if (auto pItemInt = std::dynamic_pointer_cast<SettingsInt>(pItem)) {
-            SetDlgItemInt(IDC_EDIT1, pItemInt->GetValue());
             str.Format(_T("%d"), pItemInt->GetValue());
+            m_dynamicEdit.SetWindowText(str);
         } else if (auto pItemCString = std::dynamic_pointer_cast<SettingsCString>(pItem)) {
             str = pItemCString->GetValue();
-            SetDlgItemText(IDC_EDIT1, pItemCString->GetValue());
+            m_dynamicEdit.SetWindowText(str);
         } else {
             UNREACHABLE_CODE();
         }
@@ -381,22 +382,23 @@ void CPPageAdvanced::OnLvnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
                 m_comboBox.ShowWindow(SW_SHOW);
             } else if (auto pItemInt = std::dynamic_pointer_cast<SettingsInt>(pItem)) {
                 setDialogItemsVisibility({ IDC_COMBO1, IDC_RADIO1, IDC_RADIO2 }, SW_HIDE);
-                GetDlgItem(IDC_EDIT1)->ModifyStyle(0, ES_NUMBER, 0);
                 const auto& range = pItemInt->GetRange();
+                m_dynamicEdit.SetMode(CMPCThemeDynamicEdit::Mode::INT);
+                m_dynamicEdit.SetIntRange(range.first, range.second);
                 if (!m_spinButtonCtrl.GetBuddy()) {
-                    GetDlgItem(IDC_EDIT1)->MoveWindow(editRect, TRUE);
-                    m_spinButtonCtrl.SetBuddy(GetDlgItem(IDC_EDIT1));
+                    m_dynamicEdit.MoveWindow(editRect, TRUE);
+                    m_spinButtonCtrl.SetBuddy(&m_dynamicEdit);
                 }
                 m_spinButtonCtrl.SetRange32(range.first, range.second);
                 m_spinButtonCtrl.SetPos32(pItemInt->GetValue());
                 m_spinButtonCtrl.ShowWindow(SW_SHOW);
-                GetDlgItem(IDC_EDIT1)->ShowWindow(SW_SHOW);
+                m_dynamicEdit.ShowWindow(SW_SHOW);
             } else if (auto pItemCString = std::dynamic_pointer_cast<SettingsCString>(pItem)) {
                 setDialogItemsVisibility({ IDC_COMBO1, IDC_RADIO1, IDC_RADIO2, IDC_BUTTON1, IDC_SPIN1 }, SW_HIDE);
-                GetDlgItem(IDC_EDIT1)->ModifyStyle(ES_NUMBER, 0, 0);
-                SetDlgItemText(IDC_EDIT1, pItemCString->GetValue());
+                m_dynamicEdit.SetMode(CMPCThemeDynamicEdit::Mode::STRING);
+                m_dynamicEdit.SetWindowText(pItemCString->GetValue());
                 m_spinButtonCtrl.SetBuddy(NULL);
-                GetDlgItem(IDC_EDIT1)->ShowWindow(SW_SHOW);
+                m_dynamicEdit.ShowWindow(SW_SHOW);
             } else {
                 UNREACHABLE_CODE();
             }

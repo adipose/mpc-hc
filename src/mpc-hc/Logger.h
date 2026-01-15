@@ -24,15 +24,22 @@
 #include "mplayerc.h"
 
 enum class LogTargets {
-    BDA,
-    SUBTITLES,
-    YDL
+    PLAYER    =  1,
+    YDL       =  4,
+    SUBTITLES =  8,
+    BDA       = 16,
 };
 
 namespace
 {
     template<LogTargets TARGET>
     constexpr LPCTSTR GetFileName();
+
+    template<>
+    constexpr LPCTSTR GetFileName<LogTargets::PLAYER>()
+    {
+        return _T("player.log");
+    }
 
     template<>
     constexpr LPCTSTR GetFileName<LogTargets::BDA>()
@@ -107,7 +114,7 @@ private:
         m_file = nullptr;
         // Check if logging is enabled only during initialization to avoid incomplete logs
         if (s.IsInitialized()) {
-            if (s.bEnableLogging) {
+            if (s.DebugLogMask & (int)TARGET) {
                 CString savePath;
                 if (AfxGetMyApp()->GetAppSavePath(savePath)) {
                     if (!PathUtils::Exists(savePath)) {
@@ -135,6 +142,9 @@ private:
 #define MPCHC_LOG(TARGET, fmt, ...)  Logger<LogTargets::TARGET>::Log(__FUNCTION__, fmt, __VA_ARGS__)
 #define MPCHC_LOG2(TARGET, fmt, ...) Logger<LogTargets::TARGET>::Log2(fmt, __VA_ARGS__)
 
+#define PLAYER_LOG(...) MPCHC_LOG2(PLAYER, __VA_ARGS__)
 #define BDA_LOG(...) MPCHC_LOG(BDA, __VA_ARGS__)
 #define SUBTITLES_LOG(...) MPCHC_LOG(SUBTITLES, __VA_ARGS__)
 #define YDL_LOG(fmt, ...) MPCHC_LOG2(YDL, fmt, __VA_ARGS__)
+
+#define USE_LOGGER(s) (s.DebugLogMask & (int)LogTargets::PLAYER)
