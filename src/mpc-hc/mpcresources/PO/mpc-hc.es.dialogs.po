@@ -1751,7 +1751,7 @@ msgctxt "IDD_PPAGEAUDIORENDERER_IDC_CHECK4"
 msgid "Ignore system channel mixer (always ignored in exclusive WASAPI mode)"
 msgstr ""
 "Ignorar el mezclador de canales del sistema (siempre ignorado en modo "
-"exclusivo de WAPASI)"
+"exclusivo de WASAPI)"
 
 msgctxt "IDD_PPAGEAUDIORENDERER_IDC_CHECK3"
 msgid "Enable stereo crossfeed (for headphones)"
