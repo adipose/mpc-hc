@@ -1223,8 +1223,7 @@ void CPlayerPlaylistBar::Append(CStringW vdn, CStringW adn, int vinput, int vcha
 void CPlayerPlaylistBar::SetupList()
 {
     RebuildPosMap();
-    m_list.SetItemCountEx((int)m_pl.GetCount(), LVSICF_NOINVALIDATEALL);
-    m_list.Invalidate();
+    m_list.SetItemCountEx((int)m_pl.GetCount(), 0);
 }
 
 void CPlayerPlaylistBar::UpdateList()
