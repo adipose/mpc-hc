@@ -482,6 +482,94 @@ void CInPlaceListBox::OnNcDestroy()
 }
 
 
+// CMPCThemeInPlaceEdit
+
+CMPCThemeInPlaceEdit::CMPCThemeInPlaceEdit(int iItem, int iSubItem, CString sInitText, CMPCThemeInPlaceEdit** ppSelf)
+    : m_iItem(iItem)
+    , m_iSubItem(iSubItem)
+    , m_sInitText(sInitText)
+    , m_ppSelf(ppSelf)
+    , m_bESC(FALSE)
+{
+    if (m_ppSelf) *m_ppSelf = this;
+}
+
+CMPCThemeInPlaceEdit::~CMPCThemeInPlaceEdit()
+{
+}
+
+BEGIN_MESSAGE_MAP(CMPCThemeInPlaceEdit, CMPCThemeInlineEdit)
+    ON_WM_KILLFOCUS()
+    ON_WM_NCDESTROY()
+    ON_WM_CHAR()
+    ON_WM_CREATE()
+END_MESSAGE_MAP()
+
+BOOL CMPCThemeInPlaceEdit::PreTranslateMessage(MSG* pMsg)
+{
+    if (pMsg->message == WM_KEYDOWN) {
+        if (pMsg->wParam == VK_RETURN
+                || pMsg->wParam == VK_DELETE
+                || pMsg->wParam == VK_ESCAPE
+                || GetKeyState(VK_CONTROL)) {
+            ::TranslateMessage(pMsg);
+            ::DispatchMessage(pMsg);
+            return TRUE;
+        }
+    }
+    return CEdit::PreTranslateMessage(pMsg);
+}
+
+void CMPCThemeInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
+{
+    CEdit::OnKillFocus(pNewWnd);
+
+    CString str;
+    GetWindowText(str);
+
+    LV_DISPINFO dispinfo;
+    dispinfo.hdr.hwndFrom = GetParent()->m_hWnd;
+    dispinfo.hdr.idFrom = GetDlgCtrlID();
+    dispinfo.hdr.code = LVN_ENDLABELEDIT;
+    dispinfo.item.mask = LVIF_TEXT;
+    dispinfo.item.iItem = m_iItem;
+    dispinfo.item.iSubItem = m_iSubItem;
+    dispinfo.item.pszText = m_bESC ? nullptr : LPTSTR((LPCTSTR)str);
+    dispinfo.item.cchTextMax = str.GetLength();
+    GetParent()->GetParent()->SendMessage(WM_NOTIFY, GetParent()->GetDlgCtrlID(), (LPARAM)&dispinfo);
+
+    DestroyWindow();
+}
+
+void CMPCThemeInPlaceEdit::OnNcDestroy()
+{
+    if (m_ppSelf) *m_ppSelf = nullptr;
+    CEdit::OnNcDestroy();
+    delete this;
+}
+
+void CMPCThemeInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+    if (nChar == VK_ESCAPE || nChar == VK_RETURN) {
+        if (nChar == VK_ESCAPE) {
+            m_bESC = TRUE;
+        }
+        GetParent()->SetFocus();
+        return;
+    }
+    CEdit::OnChar(nChar, nRepCnt, nFlags);
+}
+
+int CMPCThemeInPlaceEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+    if (CEdit::OnCreate(lpCreateStruct) == -1) {
+        return -1;
+    }
+    SetFont(GetParent()->GetFont());
+    SetWindowText(m_sInitText);
+    return 0;
+}
+
 // CPlayerListCtrl
 
 IMPLEMENT_DYNAMIC(CPlayerListCtrl, CMPCThemePlayerListCtrl)
@@ -492,6 +580,7 @@ CPlayerListCtrl::CPlayerListCtrl(int tStartEditingDelay)
     , m_nTimerID(0)
     , m_fInPlaceDirty(false)
     , inPlaceControl(false)
+    , m_pVirtualEdit(nullptr)
 {
 }
 
@@ -752,6 +841,50 @@ CEdit* CPlayerListCtrl::ShowInPlaceEdit(int nItem, int nCol)
     return pEdit;
 }
 
+void CPlayerListCtrl::StartVirtualEditLabel(int nItem, int nSubItem)
+{
+    // Cancel any lingering edit (should already be gone via SetFocus at top of OnLButtonDown)
+    if (m_pVirtualEdit) {
+        SetFocus();
+    }
+
+    CString text = GetItemText(nItem, nSubItem); // triggers LVN_GETDISPINFO for virtual lists
+
+    CRect rect;
+    GetItemRect(nItem, &rect, LVIR_LABEL);
+    rect.DeflateRect(1, 0, 0, 1);
+
+    // Create hidden — parent adjusts rect/font in response to LVN_BEGINLABELEDIT
+    m_pVirtualEdit = DEBUG_NEW CMPCThemeInPlaceEdit(nItem, nSubItem, text, &m_pVirtualEdit);
+    m_pVirtualEdit->Create(WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, rect, this, 0);
+
+    // Notify parent; edit is already created so parent can call GetVirtualEditCtrl()
+    LV_DISPINFO dispinfo = {};
+    dispinfo.hdr.hwndFrom = m_hWnd;
+    dispinfo.hdr.idFrom = GetDlgCtrlID();
+    dispinfo.hdr.code = LVN_BEGINLABELEDIT;
+    dispinfo.item.mask = LVIF_TEXT;
+    dispinfo.item.iItem = nItem;
+    dispinfo.item.iSubItem = nSubItem;
+    dispinfo.item.pszText = LPTSTR((LPCTSTR)text);
+    dispinfo.item.cchTextMax = text.GetLength();
+
+    if (!GetParent()->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo)) {
+        // Parent denied editing
+        if (m_pVirtualEdit) {
+            m_pVirtualEdit->DestroyWindow(); // → OnNcDestroy → m_pVirtualEdit = nullptr
+        }
+        return;
+    }
+
+    // Parent allowed; show and focus
+    if (m_pVirtualEdit) {
+        m_pVirtualEdit->ShowWindow(SW_SHOW);
+        m_pVirtualEdit->SetFocus();
+        m_pVirtualEdit->SetSel(0, -1);
+    }
+}
+
 CEdit* CPlayerListCtrl::ShowInPlaceFloatEdit(int nItem, int nCol)
 {
     CRect rect;
@@ -910,19 +1043,30 @@ void CPlayerListCtrl::OnLButtonDown(UINT nFlags, CPoint point)
     } else if (m_nItemClicked == m_nItemClickedNow /*&& m_nSubItemClicked == m_nSubItemClickedNow*/) {
         m_nSubItemClicked = m_nSubItemClickedNow;
 
-        LV_DISPINFO dispinfo;
-        dispinfo.hdr.hwndFrom = m_hWnd;
-        dispinfo.hdr.idFrom = GetDlgCtrlID();
-        dispinfo.hdr.code = LVN_BEGINLABELEDIT;
-        dispinfo.item.mask = 0;
-        dispinfo.item.iItem = m_nItemClicked;
-        dispinfo.item.iSubItem = m_nSubItemClicked;
-        if (GetParent()->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo)) {
+        if (GetStyle() & LVS_OWNERDATA) {
+            // Virtual list: CPlayerListCtrl manages the edit lifecycle internally.
+            // LVN_BEGINLABELEDIT is sent from StartVirtualEditLabel with the edit already created.
             if (m_tStartEditingDelay > 0) {
                 m_nTimerID = SetTimer(1, m_tStartEditingDelay, nullptr);
             } else {
-                dispinfo.hdr.code = LVN_DOLABELEDIT;
-                GetParent()->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
+                StartVirtualEditLabel(m_nItemClicked, m_nSubItemClicked);
+            }
+        } else {
+            // Non-virtual: delegate to parent via LVN_BEGINLABELEDIT / LVN_DOLABELEDIT.
+            LV_DISPINFO dispinfo;
+            dispinfo.hdr.hwndFrom = m_hWnd;
+            dispinfo.hdr.idFrom = GetDlgCtrlID();
+            dispinfo.hdr.code = LVN_BEGINLABELEDIT;
+            dispinfo.item.mask = 0;
+            dispinfo.item.iItem = m_nItemClicked;
+            dispinfo.item.iSubItem = m_nSubItemClicked;
+            if (GetParent()->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo)) {
+                if (m_tStartEditingDelay > 0) {
+                    m_nTimerID = SetTimer(1, m_tStartEditingDelay, nullptr);
+                } else {
+                    dispinfo.hdr.code = LVN_DOLABELEDIT;
+                    GetParent()->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
+                }
             }
         }
     } else {
@@ -941,14 +1085,18 @@ void CPlayerListCtrl::OnTimer(UINT_PTR nIDEvent)
 
         UINT flag = LVIS_FOCUSED;
         if ((GetItemState(m_nItemClicked, flag) & flag) == flag && m_nSubItemClicked >= 0) {
-            LV_DISPINFO dispinfo;
-            dispinfo.hdr.hwndFrom = m_hWnd;
-            dispinfo.hdr.idFrom = GetDlgCtrlID();
-            dispinfo.hdr.code = LVN_DOLABELEDIT;
-            dispinfo.item.mask = 0;
-            dispinfo.item.iItem = m_nItemClicked;
-            dispinfo.item.iSubItem = m_nSubItemClicked;
-            GetParent()->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
+            if (GetStyle() & LVS_OWNERDATA) {
+                StartVirtualEditLabel(m_nItemClicked, m_nSubItemClicked);
+            } else {
+                LV_DISPINFO dispinfo;
+                dispinfo.hdr.hwndFrom = m_hWnd;
+                dispinfo.hdr.idFrom = GetDlgCtrlID();
+                dispinfo.hdr.code = LVN_DOLABELEDIT;
+                dispinfo.item.mask = 0;
+                dispinfo.item.iItem = m_nItemClicked;
+                dispinfo.item.iSubItem = m_nSubItemClicked;
+                GetParent()->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
+            }
         }
     } else if (nIDEvent == 43) {
         // CListCtrl does really strange things on this timer.
