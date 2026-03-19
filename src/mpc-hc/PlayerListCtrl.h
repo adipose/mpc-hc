@@ -187,7 +187,6 @@ private:
 
     bool PrepareInPlaceControl(int nRow, int nCol, CRect& rect);
     void StartVirtualEditLabel(int nItem, int nSubItem);
-    LRESULT SendLabelEditNotify(UINT code, int nItem, int nSubItem);
 
 public:
     CPlayerListCtrl(int tStartEditingDelay = 500);
@@ -201,6 +200,8 @@ public:
     // Returns the active virtual-list inline edit, or nullptr if none is open.
     // Valid during and after LVN_BEGINLABELEDIT; caller may adjust rect/font.
     CMPCThemeInPlaceEdit* GetVirtualEditCtrl() const { return m_pVirtualEdit; }
+
+    static LRESULT SendLabelEditNotify(CWnd* pList, UINT code, int nItem, int nSubItem, LPCTSTR pszText = nullptr);
 
     CWinHotkeyCtrl* ShowInPlaceWinHotkey(int nItem, int nCol);
     CEdit* ShowInPlaceEdit(int nItem, int nCol);

@@ -527,16 +527,8 @@ void CMPCThemeInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
     CString str;
     GetWindowText(str);
 
-    LV_DISPINFO dispinfo;
-    dispinfo.hdr.hwndFrom = GetParent()->m_hWnd;
-    dispinfo.hdr.idFrom = GetDlgCtrlID();
-    dispinfo.hdr.code = LVN_ENDLABELEDIT;
-    dispinfo.item.mask = LVIF_TEXT;
-    dispinfo.item.iItem = m_iItem;
-    dispinfo.item.iSubItem = m_iSubItem;
-    dispinfo.item.pszText = m_bESC ? nullptr : LPTSTR((LPCTSTR)str);
-    dispinfo.item.cchTextMax = str.GetLength();
-    GetParent()->GetParent()->SendMessage(WM_NOTIFY, GetParent()->GetDlgCtrlID(), (LPARAM)&dispinfo);
+    CPlayerListCtrl::SendLabelEditNotify(GetParent(), LVN_ENDLABELEDIT, m_iItem, m_iSubItem,
+                                         m_bESC ? nullptr : (LPCTSTR)str);
 
     DestroyWindow();
 }
@@ -858,17 +850,7 @@ void CPlayerListCtrl::StartVirtualEditLabel(int nItem, int nSubItem)
     m_pVirtualEdit->Create(WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, rect, this, 0);
 
     // Notify parent; edit is already created so parent can call GetVirtualEditCtrl()
-    LV_DISPINFO dispinfo = {};
-    dispinfo.hdr.hwndFrom = m_hWnd;
-    dispinfo.hdr.idFrom = GetDlgCtrlID();
-    dispinfo.hdr.code = LVN_BEGINLABELEDIT;
-    dispinfo.item.mask = LVIF_TEXT;
-    dispinfo.item.iItem = nItem;
-    dispinfo.item.iSubItem = nSubItem;
-    dispinfo.item.pszText = LPTSTR((LPCTSTR)text);
-    dispinfo.item.cchTextMax = text.GetLength();
-
-    if (!GetParent()->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo)) {
+    if (!SendLabelEditNotify(this, LVN_BEGINLABELEDIT, nItem, nSubItem, text)) {
         // Parent denied editing
         if (m_pVirtualEdit) {
             m_pVirtualEdit->DestroyWindow(); // → OnNcDestroy → m_pVirtualEdit = nullptr
@@ -1022,15 +1004,20 @@ BOOL CPlayerListCtrl::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
     return CListCtrl::OnMouseWheel(nFlags, zDelta, pt);
 }
 
-LRESULT CPlayerListCtrl::SendLabelEditNotify(UINT code, int nItem, int nSubItem)
+LRESULT CPlayerListCtrl::SendLabelEditNotify(CWnd* pList, UINT code, int nItem, int nSubItem, LPCTSTR pszText)
 {
     LV_DISPINFO dispinfo = {};
-    dispinfo.hdr.hwndFrom = m_hWnd;
-    dispinfo.hdr.idFrom = GetDlgCtrlID();
+    dispinfo.hdr.hwndFrom = pList->m_hWnd;
+    dispinfo.hdr.idFrom = pList->GetDlgCtrlID();
     dispinfo.hdr.code = code;
     dispinfo.item.iItem = nItem;
     dispinfo.item.iSubItem = nSubItem;
-    return GetParent()->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
+    if (pszText) {
+        dispinfo.item.mask = LVIF_TEXT;
+        dispinfo.item.pszText = const_cast<LPTSTR>(pszText);
+        dispinfo.item.cchTextMax = (int)_tcslen(pszText);
+    }
+    return pList->GetParent()->SendMessage(WM_NOTIFY, pList->GetDlgCtrlID(), (LPARAM)&dispinfo);
 }
 
 void CPlayerListCtrl::OnLButtonDown(UINT nFlags, CPoint point)
@@ -1063,11 +1050,11 @@ void CPlayerListCtrl::OnLButtonDown(UINT nFlags, CPoint point)
             }
         } else {
             // Non-virtual: delegate to parent via LVN_BEGINLABELEDIT / LVN_DOLABELEDIT.
-            if (SendLabelEditNotify(LVN_BEGINLABELEDIT, m_nItemClicked, m_nSubItemClicked)) {
+            if (SendLabelEditNotify(this, LVN_BEGINLABELEDIT, m_nItemClicked, m_nSubItemClicked)) {
                 if (m_tStartEditingDelay > 0) {
                     m_nTimerID = SetTimer(1, m_tStartEditingDelay, nullptr);
                 } else {
-                    SendLabelEditNotify(LVN_DOLABELEDIT, m_nItemClicked, m_nSubItemClicked);
+                    SendLabelEditNotify(this, LVN_DOLABELEDIT, m_nItemClicked, m_nSubItemClicked);
                 }
             }
         }
@@ -1090,7 +1077,7 @@ void CPlayerListCtrl::OnTimer(UINT_PTR nIDEvent)
             if (GetStyle() & LVS_OWNERDATA) {
                 StartVirtualEditLabel(m_nItemClicked, m_nSubItemClicked);
             } else {
-                SendLabelEditNotify(LVN_DOLABELEDIT, m_nItemClicked, m_nSubItemClicked);
+                SendLabelEditNotify(this, LVN_DOLABELEDIT, m_nItemClicked, m_nSubItemClicked);
             }
         }
     } else if (nIDEvent == 43) {
