@@ -187,6 +187,7 @@ private:
 
     bool PrepareInPlaceControl(int nRow, int nCol, CRect& rect);
     void StartVirtualEditLabel(int nItem, int nSubItem);
+    LRESULT SendLabelEditNotify(UINT code, int nItem, int nSubItem);
 
 public:
     CPlayerListCtrl(int tStartEditingDelay = 500);

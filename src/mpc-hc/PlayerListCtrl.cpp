@@ -1023,6 +1023,17 @@ BOOL CPlayerListCtrl::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
     return CListCtrl::OnMouseWheel(nFlags, zDelta, pt);
 }
 
+LRESULT CPlayerListCtrl::SendLabelEditNotify(UINT code, int nItem, int nSubItem)
+{
+    LV_DISPINFO dispinfo = {};
+    dispinfo.hdr.hwndFrom = m_hWnd;
+    dispinfo.hdr.idFrom = GetDlgCtrlID();
+    dispinfo.hdr.code = code;
+    dispinfo.item.iItem = nItem;
+    dispinfo.item.iSubItem = nSubItem;
+    return GetParent()->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
+}
+
 void CPlayerListCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 {
     CListCtrl::OnLButtonDown(nFlags, point);
@@ -1053,19 +1064,11 @@ void CPlayerListCtrl::OnLButtonDown(UINT nFlags, CPoint point)
             }
         } else {
             // Non-virtual: delegate to parent via LVN_BEGINLABELEDIT / LVN_DOLABELEDIT.
-            LV_DISPINFO dispinfo;
-            dispinfo.hdr.hwndFrom = m_hWnd;
-            dispinfo.hdr.idFrom = GetDlgCtrlID();
-            dispinfo.hdr.code = LVN_BEGINLABELEDIT;
-            dispinfo.item.mask = 0;
-            dispinfo.item.iItem = m_nItemClicked;
-            dispinfo.item.iSubItem = m_nSubItemClicked;
-            if (GetParent()->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo)) {
+            if (SendLabelEditNotify(LVN_BEGINLABELEDIT, m_nItemClicked, m_nSubItemClicked)) {
                 if (m_tStartEditingDelay > 0) {
                     m_nTimerID = SetTimer(1, m_tStartEditingDelay, nullptr);
                 } else {
-                    dispinfo.hdr.code = LVN_DOLABELEDIT;
-                    GetParent()->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
+                    SendLabelEditNotify(LVN_DOLABELEDIT, m_nItemClicked, m_nSubItemClicked);
                 }
             }
         }
@@ -1088,14 +1091,7 @@ void CPlayerListCtrl::OnTimer(UINT_PTR nIDEvent)
             if (GetStyle() & LVS_OWNERDATA) {
                 StartVirtualEditLabel(m_nItemClicked, m_nSubItemClicked);
             } else {
-                LV_DISPINFO dispinfo;
-                dispinfo.hdr.hwndFrom = m_hWnd;
-                dispinfo.hdr.idFrom = GetDlgCtrlID();
-                dispinfo.hdr.code = LVN_DOLABELEDIT;
-                dispinfo.item.mask = 0;
-                dispinfo.item.iItem = m_nItemClicked;
-                dispinfo.item.iSubItem = m_nSubItemClicked;
-                GetParent()->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
+                SendLabelEditNotify(LVN_DOLABELEDIT, m_nItemClicked, m_nSubItemClicked);
             }
         }
     } else if (nIDEvent == 43) {
