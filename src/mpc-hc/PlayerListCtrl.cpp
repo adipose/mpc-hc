@@ -852,7 +852,6 @@ void CPlayerListCtrl::StartVirtualEditLabel(int nItem, int nSubItem)
 
     CRect rect;
     GetItemRect(nItem, &rect, LVIR_LABEL);
-    rect.DeflateRect(1, 0, 0, 1);
 
     // Create hidden — parent adjusts rect/font in response to LVN_BEGINLABELEDIT
     m_pVirtualEdit = DEBUG_NEW CMPCThemeInPlaceEdit(nItem, nSubItem, text, &m_pVirtualEdit);
