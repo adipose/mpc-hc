@@ -2635,25 +2635,9 @@ void CPlayerPlaylistBar::OnLvnGetDispInfoList(NMHDR* pNMHDR, LRESULT* pResult)
 void CPlayerPlaylistBar::OnLvnBeginlabeleditList(NMHDR* pNMHDR, LRESULT* pResult)
 {
     NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
-    int nItem = pDispInfo->item.iItem;
-
-    // The edit control is already created; adjust its rect to account for the
-    // item number drawn before the text, and apply the max-width constraint.
-    if (CMPCThemeInPlaceEdit* pEdit = m_list.GetVirtualEditCtrl()) {
-        CRect r;
-        pEdit->GetWindowRect(r);
-        m_list.ScreenToClient(r);
-        r.left += inlineEditXpos;
-
-        POSITION pos = FindPos(nItem);
-        int maxW = pos ? m_pl.GetAt(pos).inlineEditMaxWidth : 0;
-        if (maxW > 0 && r.left + maxW < r.right) {
-            r.right = r.left + maxW;
-        }
-        pEdit->MoveWindow(r);
-        pEdit->setOverridePos(inlineEditXpos, maxW > 0 ? maxW : -1);
-    }
-
+    POSITION pos = FindPos(pDispInfo->item.iItem);
+    int maxW = pos ? m_pl.GetAt(pos).inlineEditMaxWidth : -1;
+    m_list.AdjustVirtualEditPos(inlineEditXpos, maxW);
     *pResult = 1; // allow editing
 }
 

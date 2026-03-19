@@ -833,6 +833,20 @@ CEdit* CPlayerListCtrl::ShowInPlaceEdit(int nItem, int nCol)
     return pEdit;
 }
 
+void CPlayerListCtrl::AdjustVirtualEditPos(int xOffset, int maxWidth)
+{
+    if (!m_pVirtualEdit) return;
+    CRect r;
+    m_pVirtualEdit->GetWindowRect(r);
+    ScreenToClient(r);
+    r.left += xOffset;
+    if (maxWidth > 0 && r.left + maxWidth < r.right) {
+        r.right = r.left + maxWidth;
+    }
+    m_pVirtualEdit->MoveWindow(r);
+    m_pVirtualEdit->setOverridePos(xOffset, maxWidth > 0 ? maxWidth : -1);
+}
+
 void CPlayerListCtrl::StartVirtualEditLabel(int nItem, int nSubItem)
 {
     // Cancel any lingering edit (should already be gone via SetFocus at top of OnLButtonDown)

@@ -201,6 +201,11 @@ public:
     // Valid during and after LVN_BEGINLABELEDIT; caller may adjust rect/font.
     CMPCThemeInPlaceEdit* GetVirtualEditCtrl() const { return m_pVirtualEdit; }
 
+    // Positions the active virtual-list inline edit. xOffset shifts the left edge
+    // (e.g. to clear a sequence number drawn before the label); maxWidth caps the
+    // right edge. Call from LVN_BEGINLABELEDIT before returning *pResult = 1.
+    void AdjustVirtualEditPos(int xOffset, int maxWidth = -1);
+
     static LRESULT SendLabelEditNotify(CWnd* pList, UINT code, int nItem, int nSubItem, LPCTSTR pszText = nullptr);
 
     CWinHotkeyCtrl* ShowInPlaceWinHotkey(int nItem, int nCol);
