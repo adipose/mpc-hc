@@ -71,16 +71,8 @@ void CInPlaceWinHotkey::OnKillFocus(CWnd* pNewWnd)
     CString str;
     GetWindowText(str);
 
-    LV_DISPINFO dispinfo;
-    dispinfo.hdr.hwndFrom = GetParent()->m_hWnd;
-    dispinfo.hdr.idFrom = GetDlgCtrlID();
-    dispinfo.hdr.code = LVN_ENDLABELEDIT;
-    dispinfo.item.mask = LVIF_TEXT;
-    dispinfo.item.iItem = m_iItem;
-    dispinfo.item.iSubItem = m_iSubItem;
-    dispinfo.item.pszText = m_bESC ? nullptr : LPTSTR((LPCTSTR)str);
-    dispinfo.item.cchTextMax = str.GetLength();
-    GetParent()->GetParent()->SendMessage(WM_NOTIFY, GetParent()->GetDlgCtrlID(), (LPARAM)&dispinfo);
+    CPlayerListCtrl::SendLabelEditNotify(GetParent(), LVN_ENDLABELEDIT, m_iItem, m_iSubItem,
+                                         m_bESC ? nullptr : (LPCTSTR)str);
 
     DestroyWindow();
 }
@@ -170,16 +162,8 @@ void CInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
     CString str;
     GetWindowText(str);
 
-    LV_DISPINFO dispinfo;
-    dispinfo.hdr.hwndFrom = GetParent()->m_hWnd;
-    dispinfo.hdr.idFrom = GetDlgCtrlID();
-    dispinfo.hdr.code = LVN_ENDLABELEDIT;
-    dispinfo.item.mask = LVIF_TEXT;
-    dispinfo.item.iItem = m_iItem;
-    dispinfo.item.iSubItem = m_iSubItem;
-    dispinfo.item.pszText = m_bESC ? nullptr : LPTSTR((LPCTSTR)str);
-    dispinfo.item.cchTextMax = str.GetLength();
-    GetParent()->GetParent()->SendMessage(WM_NOTIFY, GetParent()->GetDlgCtrlID(), (LPARAM)&dispinfo);
+    CPlayerListCtrl::SendLabelEditNotify(GetParent(), LVN_ENDLABELEDIT, m_iItem, m_iSubItem,
+                                         m_bESC ? nullptr : (LPCTSTR)str);
 
     DestroyWindow();
 }
