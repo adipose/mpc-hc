@@ -990,6 +990,7 @@ BEGIN_MESSAGE_MAP(CPlayerListCtrl, CMPCThemePlayerListCtrl)
     ON_WM_XBUTTONDBLCLK()
     ON_WM_SETCURSOR()
     ON_NOTIFY_REFLECT_EX(LVN_ENDLABELEDIT, &CPlayerListCtrl::OnLvnEndlabeledit)
+    ON_MESSAGE(LVM_EDITLABEL, OnLvmEditLabel)
 END_MESSAGE_MAP()
 
 // CPlayerListCtrl message handlers
@@ -1034,6 +1035,22 @@ LRESULT CPlayerListCtrl::SendLabelEditNotify(CWnd* pList, UINT code, int nItem, 
     return pList->GetParent()->SendMessage(WM_NOTIFY, pList->GetDlgCtrlID(), (LPARAM)&dispinfo);
 }
 
+LRESULT CPlayerListCtrl::OnLvmEditLabel(WPARAM wParam, LPARAM)
+{
+    int nItem = (int)wParam;
+    if (nItem < 0) {
+        return 0;
+    }
+    if (GetStyle() & LVS_OWNERDATA) {
+        StartVirtualEditLabel(nItem, m_nSubItemClicked);
+    } else {
+        if (SendLabelEditNotify(this, LVN_BEGINLABELEDIT, nItem, m_nSubItemClicked)) {
+            SendLabelEditNotify(this, LVN_DOLABELEDIT, nItem, m_nSubItemClicked);
+        }
+    }
+    return 0;
+}
+
 void CPlayerListCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 {
     CListCtrl::OnLButtonDown(nFlags, point);
@@ -1054,23 +1071,10 @@ void CPlayerListCtrl::OnLButtonDown(UINT nFlags, CPoint point)
     } else if (m_nItemClicked == m_nItemClickedNow /*&& m_nSubItemClicked == m_nSubItemClickedNow*/) {
         m_nSubItemClicked = m_nSubItemClickedNow;
 
-        if (GetStyle() & LVS_OWNERDATA) {
-            // Virtual list: CPlayerListCtrl manages the edit lifecycle internally.
-            // LVN_BEGINLABELEDIT is sent from StartVirtualEditLabel with the edit already created.
-            if (m_tStartEditingDelay > 0) {
-                m_nTimerID = SetTimer(1, m_tStartEditingDelay, nullptr);
-            } else {
-                StartVirtualEditLabel(m_nItemClicked, m_nSubItemClicked);
-            }
+        if (m_tStartEditingDelay > 0) {
+            m_nTimerID = SetTimer(1, m_tStartEditingDelay, nullptr);
         } else {
-            // Non-virtual: delegate to parent via LVN_BEGINLABELEDIT / LVN_DOLABELEDIT.
-            if (SendLabelEditNotify(this, LVN_BEGINLABELEDIT, m_nItemClicked, m_nSubItemClicked)) {
-                if (m_tStartEditingDelay > 0) {
-                    m_nTimerID = SetTimer(1, m_tStartEditingDelay, nullptr);
-                } else {
-                    SendLabelEditNotify(this, LVN_DOLABELEDIT, m_nItemClicked, m_nSubItemClicked);
-                }
-            }
+            SendMessage(LVM_EDITLABEL, m_nItemClicked, 0);
         }
     } else {
         m_nItemClicked = m_nItemClickedNow;
@@ -1088,11 +1092,7 @@ void CPlayerListCtrl::OnTimer(UINT_PTR nIDEvent)
 
         UINT flag = LVIS_FOCUSED;
         if ((GetItemState(m_nItemClicked, flag) & flag) == flag && m_nSubItemClicked >= 0) {
-            if (GetStyle() & LVS_OWNERDATA) {
-                StartVirtualEditLabel(m_nItemClicked, m_nSubItemClicked);
-            } else {
-                SendLabelEditNotify(this, LVN_DOLABELEDIT, m_nItemClicked, m_nSubItemClicked);
-            }
+            SendMessage(LVM_EDITLABEL, m_nItemClicked, 0);
         }
     } else if (nIDEvent == 43) {
         // CListCtrl does really strange things on this timer.
