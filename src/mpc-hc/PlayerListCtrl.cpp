@@ -952,6 +952,7 @@ CListBox* CPlayerListCtrl::ShowInPlaceListBox(int nItem, int nCol, CAtlList<CStr
 }
 
 BEGIN_MESSAGE_MAP(CPlayerListCtrl, CMPCThemePlayerListCtrl)
+    ON_WM_SIZE()
     ON_WM_VSCROLL()
     ON_WM_HSCROLL()
     ON_WM_MOUSEWHEEL()
@@ -978,6 +979,14 @@ BEGIN_MESSAGE_MAP(CPlayerListCtrl, CMPCThemePlayerListCtrl)
 END_MESSAGE_MAP()
 
 // CPlayerListCtrl message handlers
+
+void CPlayerListCtrl::OnSize(UINT nType, int cx, int cy)
+{
+    if (m_pVirtualEdit) {
+        SetFocus();
+    }
+    __super::OnSize(nType, cx, cy);
+}
 
 void CPlayerListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {

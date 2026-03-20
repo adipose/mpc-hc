@@ -1786,7 +1786,9 @@ void CPlayerPlaylistBar::ResizeListColumn()
 {
     if (::IsWindow(m_list.m_hWnd)) {
         // Commit any active inline edit before resizing
-        m_list.SetFocus();
+        if (m_list.GetVirtualEditCtrl()) {
+            m_list.SetFocus();
+        }
 
         CRect r;
         GetClientRect(r);
