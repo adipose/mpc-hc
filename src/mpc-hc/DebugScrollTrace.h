@@ -19,9 +19,11 @@
 
 // ---- shared state via function-local statics (C++11, no ODR issues) --------
 
-static inline FILE*& DBG_LogFile()   { static FILE* p = nullptr; return p; }
+static inline FILE*& DBG_LogFile()      { static FILE* p = nullptr; return p; }
 static inline HHOOK& DBG_GetMsgHook()  { static HHOOK h = nullptr; return h; }
 static inline HHOOK& DBG_CallWndHook() { static HHOOK h = nullptr; return h; }
+static inline HHOOK& DBG_MouseLLHook() { static HHOOK h = nullptr; return h; }
+static inline DWORD& DBG_MainTid()     { static DWORD t = 0;       return t; }
 
 // ---- internal helpers -------------------------------------------------------
 
@@ -171,6 +173,36 @@ static inline void DBG_LogMouseEvent(const char* hookType, HWND hwnd, UINT msg, 
     fflush(DBG_LogFile());
 }
 
+// WH_MOUSE_LL — global low-level hook, fires on our thread for all mouse input
+// system-wide. Used to see WM_MOUSEWHEEL at the raw level and identify which
+// window the TrackPoint driver actually targets.
+static LRESULT CALLBACK DBG_MouseLLProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    if (nCode == HC_ACTION && (wParam == WM_MOUSEWHEEL || wParam == WM_MOUSEHWHEEL)) {
+        const MSLLHOOKSTRUCT* p = reinterpret_cast<const MSLLHOOKSTRUCT*>(lParam);
+        short delta = HIWORD(p->mouseData);
+
+        HWND hwndUnder = WindowFromPoint(p->pt);
+        char underClass[128] = {};
+        DBG_GetClassName8(hwndUnder, underClass, sizeof(underClass));
+
+        DWORD underTid = hwndUnder ? GetWindowThreadProcessId(hwndUnder, nullptr) : 0;
+        DWORD underPid = 0;
+        if (hwndUnder) GetWindowThreadProcessId(hwndUnder, &underPid);
+        DWORD ourPid = GetCurrentProcessId();
+
+        DBG_LogTrace("[MouseLL] %s  delta=%+d  pt=(%d,%d)  under=0x%p (%s)  underTid=%lu  %s",
+                     wParam == WM_MOUSEWHEEL ? "WM_MOUSEWHEEL" : "WM_MOUSEHWHEEL",
+                     (int)delta, p->pt.x, p->pt.y,
+                     (void*)hwndUnder, underClass,
+                     (unsigned long)underTid,
+                     underPid == ourPid
+                         ? (underTid == DBG_MainTid() ? "SAME_THREAD" : "DIFF_THREAD(same proc)")
+                         : "DIFF_PROCESS");
+    }
+    return CallNextHookEx(DBG_MouseLLHook(), nCode, wParam, lParam);
+}
+
 static LRESULT CALLBACK DBG_GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     if (nCode == HC_ACTION) {
@@ -198,11 +230,14 @@ inline void DBG_InstallScrollTrace()
     DBG_OpenLog();
     HINSTANCE hInst = AfxGetInstanceHandle();
     DWORD tid = GetCurrentThreadId();
+    DBG_MainTid()     = tid;
     DBG_GetMsgHook()  = SetWindowsHookEx(WH_GETMESSAGE,  DBG_GetMsgProc,  hInst, tid);
     DBG_CallWndHook() = SetWindowsHookEx(WH_CALLWNDPROC, DBG_CallWndProc, hInst, tid);
+    DBG_MouseLLHook() = SetWindowsHookEx(WH_MOUSE_LL,    DBG_MouseLLProc, hInst, 0);
     if (DBG_LogFile()) {
-        fprintf(DBG_LogFile(), "Hooks installed: GetMsg=%p  CallWnd=%p  tid=%lu\n",
-                (void*)DBG_GetMsgHook(), (void*)DBG_CallWndHook(), (unsigned long)tid);
+        fprintf(DBG_LogFile(), "Hooks installed: GetMsg=%p  CallWnd=%p  MouseLL=%p  tid=%lu\n",
+                (void*)DBG_GetMsgHook(), (void*)DBG_CallWndHook(),
+                (void*)DBG_MouseLLHook(), (unsigned long)tid);
         fflush(DBG_LogFile());
     }
 }
@@ -211,5 +246,6 @@ inline void DBG_UninstallScrollTrace()
 {
     if (DBG_GetMsgHook())  { UnhookWindowsHookEx(DBG_GetMsgHook());  DBG_GetMsgHook()  = nullptr; }
     if (DBG_CallWndHook()) { UnhookWindowsHookEx(DBG_CallWndHook()); DBG_CallWndHook() = nullptr; }
+    if (DBG_MouseLLHook()) { UnhookWindowsHookEx(DBG_MouseLLHook()); DBG_MouseLLHook() = nullptr; }
     DBG_CloseLog();
 }
