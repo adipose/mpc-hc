@@ -189,6 +189,7 @@
     <ClCompile Include="CoverArt.cpp" />
     <ClCompile Include="CrashReporter.cpp" />
     <ClCompile Include="CShockwaveFlash.cpp" />
+    <ClCompile Include="DebugScrollTrace.cpp" />
     <ClCompile Include="DebugShadersDlg.cpp" />
     <ClCompile Include="DeinterlacerFilter.cpp" />
     <ClCompile Include="DpiAwareResizableDialog.cpp" />
@@ -385,6 +386,7 @@
     <ClInclude Include="CoverArt.h" />
     <ClInclude Include="CrashReporter.h" />
     <ClInclude Include="CShockwaveFlash.h" />
+    <ClInclude Include="DebugScrollTrace.h" />
     <ClInclude Include="DebugShadersDlg.h" />
     <ClInclude Include="DeinterlacerFilter.h" />
     <ClInclude Include="DpiAwareResizableDialog.h" />
