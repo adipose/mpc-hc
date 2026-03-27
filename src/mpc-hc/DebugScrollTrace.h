@@ -124,6 +124,17 @@ static inline POINT DBG_ExtractPoint(HWND hwnd, UINT msg, LPARAM lParam)
     return pt;
 }
 
+inline void DBG_LogTrace(const char* fmt, ...)
+{
+    if (!DBG_LogFile()) return;
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(DBG_LogFile(), fmt, args);
+    va_end(args);
+    fputc('\n', DBG_LogFile());
+    fflush(DBG_LogFile());
+}
+
 static inline void DBG_LogMouseEvent(const char* hookType, HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (!DBG_LogFile()) return;
@@ -181,17 +192,6 @@ static LRESULT CALLBACK DBG_CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 }
 
 // ---- public API -------------------------------------------------------------
-
-inline void DBG_LogTrace(const char* fmt, ...)
-{
-    if (!DBG_LogFile()) return;
-    va_list args;
-    va_start(args, fmt);
-    vfprintf(DBG_LogFile(), fmt, args);
-    va_end(args);
-    fputc('\n', DBG_LogFile());
-    fflush(DBG_LogFile());
-}
 
 inline void DBG_InstallScrollTrace()
 {
