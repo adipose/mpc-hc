@@ -23,6 +23,7 @@
 #include "MainFrm.h"
 #include "mplayerc.h"
 #include "version.h"
+#include "DebugScrollTrace.h"
 
 #include "GraphThread.h"
 #include "FGFilterLAV.h"
@@ -1153,6 +1154,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         m_media_trans_control.Init(this);
     }
 
+    DBG_InstallScrollTrace();
     return 0;
 }
 
@@ -1212,6 +1214,7 @@ void CMainFrame::OnMeasureItem(int nIDCtl, LPMEASUREITEMSTRUCT lpMeasureItemStru
 
 void CMainFrame::OnDestroy()
 {
+    DBG_UninstallScrollTrace();
     WTSUnRegisterSessionNotification();
     ShowTrayIcon(false);
     m_dropTarget.Revoke();

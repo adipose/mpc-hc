@@ -177,6 +177,8 @@ private:
     }
 };
 
+#include "DebugScrollTrace.h"
+
 template <class T>
 class CMouseWheelHook
 {
@@ -185,44 +187,91 @@ class CMouseWheelHook
     static LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam) {
         if (nCode == HC_ACTION && wParam == WM_MOUSEWHEEL) {
             const auto& msex = *reinterpret_cast<MOUSEHOOKSTRUCTEX*>(lParam);
-            if (const CWnd* pFocus = CWnd::FromHandlePermanent(msex.hwnd)) {
-                if (const CWnd* pFocusRoot = pFocus->GetAncestor(GA_ROOT)) {
-                    // only intercept messages to focused windows that have white-listed root windows
-                    if (T::GetRoots().count(pFocusRoot)) {
-                        if (const CWnd* pUnder = CWnd::WindowFromPoint(msex.pt)) {
-                            if (pFocusRoot == pUnder->GetAncestor(GA_ROOT) &&
-                                    GetCurrentThreadId() == GetWindowThreadProcessId(pUnder->m_hWnd, nullptr)) {
-                                MSG msg = {
-                                    NULL,
-                                    static_cast<UINT>(wParam),
-                                    CMouse::GetMouseFlags() | msex.mouseData,
-                                    MAKELPARAM(msex.pt.x, msex.pt.y),
-                                    static_cast<DWORD>(GetMessageTime()),
-                                    msex.pt
-                                };
+            short delta = HIWORD(msex.mouseData);
+            DBG_LogTrace("[WheelHook] WM_MOUSEWHEEL  delta=%+d  pt=(%d,%d)  focusHwnd=0x%p",
+                         (int)delta, msex.pt.x, msex.pt.y, (void*)msex.hwnd);
 
-                                for (const CWnd* pTarget : { pUnder, pFocusRoot }) {
-                                    msg.hwnd = pTarget->m_hWnd;
-                                    if (!msg.hwnd) {
-                                        ASSERT(FALSE);
-                                        continue;
-                                    }
+            const CWnd* pFocus = CWnd::FromHandlePermanent(msex.hwnd);
+            if (!pFocus) {
+                DBG_LogTrace("[WheelHook]   skip: focusHwnd not in permanent map");
+                return CallNextHookEx(nullptr, nCode, wParam, lParam);
+            }
 
-                                    // walk through pre-translate
-                                    if (CWnd::WalkPreTranslateTree(pFocusRoot->m_hWnd, &msg)) {
-                                        // the message shouldn't be dispatched
-                                        continue;
-                                    }
+            const CWnd* pFocusRoot = pFocus->GetAncestor(GA_ROOT);
+            if (!pFocusRoot) {
+                DBG_LogTrace("[WheelHook]   skip: no root ancestor for focus window");
+                return CallNextHookEx(nullptr, nCode, wParam, lParam);
+            }
 
-                                    if (DispatchMessage(&msg)) {
-                                        return TRUE;
-                                    }
-                                }
-                            }
-                        }
-                    }
+            {
+                char cls[128] = {};
+                GetClassNameA(pFocusRoot->m_hWnd, cls, sizeof(cls));
+                DBG_LogTrace("[WheelHook]   focusRoot=0x%p (%s)  whitelisted=%d",
+                             (void*)pFocusRoot->m_hWnd, cls, (int)T::GetRoots().count(pFocusRoot));
+            }
+
+            if (!T::GetRoots().count(pFocusRoot)) {
+                DBG_LogTrace("[WheelHook]   skip: focusRoot not whitelisted");
+                return CallNextHookEx(nullptr, nCode, wParam, lParam);
+            }
+
+            const CWnd* pUnder = CWnd::WindowFromPoint(msex.pt);
+            if (!pUnder) {
+                DBG_LogTrace("[WheelHook]   skip: no window under cursor at (%d,%d)", msex.pt.x, msex.pt.y);
+                return CallNextHookEx(nullptr, nCode, wParam, lParam);
+            }
+
+            {
+                char cls[128] = {};
+                GetClassNameA(pUnder->m_hWnd, cls, sizeof(cls));
+                const CWnd* pUnderRoot = pUnder->GetAncestor(GA_ROOT);
+                DWORD underTid = GetWindowThreadProcessId(pUnder->m_hWnd, nullptr);
+                DBG_LogTrace("[WheelHook]   under=0x%p (%s)  sameRoot=%d  sameTid=%d",
+                             (void*)pUnder->m_hWnd, cls,
+                             (int)(pFocusRoot == pUnderRoot),
+                             (int)(GetCurrentThreadId() == underTid));
+            }
+
+            if (pFocusRoot != pUnder->GetAncestor(GA_ROOT) ||
+                    GetCurrentThreadId() != GetWindowThreadProcessId(pUnder->m_hWnd, nullptr)) {
+                DBG_LogTrace("[WheelHook]   skip: under-window root/thread mismatch");
+                return CallNextHookEx(nullptr, nCode, wParam, lParam);
+            }
+
+            MSG msg = {
+                NULL,
+                static_cast<UINT>(wParam),
+                CMouse::GetMouseFlags() | msex.mouseData,
+                MAKELPARAM(msex.pt.x, msex.pt.y),
+                static_cast<DWORD>(GetMessageTime()),
+                msex.pt
+            };
+
+            for (const CWnd* pTarget : { pUnder, pFocusRoot }) {
+                msg.hwnd = pTarget->m_hWnd;
+                if (!msg.hwnd) {
+                    ASSERT(FALSE);
+                    continue;
+                }
+
+                char cls[128] = {};
+                GetClassNameA(msg.hwnd, cls, sizeof(cls));
+
+                BOOL bPreTranslated = CWnd::WalkPreTranslateTree(pFocusRoot->m_hWnd, &msg);
+                DBG_LogTrace("[WheelHook]   target=0x%p (%s)  WalkPreTranslate=%d",
+                             (void*)msg.hwnd, cls, (int)bPreTranslated);
+                if (bPreTranslated) {
+                    continue;
+                }
+
+                LRESULT res = DispatchMessage(&msg);
+                DBG_LogTrace("[WheelHook]   DispatchMessage -> %lld", (long long)res);
+                if (res) {
+                    return TRUE;
                 }
             }
+
+            DBG_LogTrace("[WheelHook]   no target handled it, passing to next hook");
         }
         return CallNextHookEx(nullptr, nCode, wParam, lParam);
     }
