@@ -69,6 +69,7 @@ static inline void DBG_GetClassName8(HWND hwnd, char* buf, int len)
 static inline const char* DBG_MsgName(UINT msg)
 {
     switch (msg) {
+        case WM_MOUSEMOVE:      return "WM_MOUSEMOVE";
         case WM_MOUSEWHEEL:     return "WM_MOUSEWHEEL";
         case WM_MOUSEHWHEEL:    return "WM_MOUSEHWHEEL";
         case WM_VSCROLL:        return "WM_VSCROLL";
@@ -178,27 +179,40 @@ static inline void DBG_LogMouseEvent(const char* hookType, HWND hwnd, UINT msg, 
 // window the TrackPoint driver actually targets.
 static LRESULT CALLBACK DBG_MouseLLProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    if (nCode == HC_ACTION && (wParam == WM_MOUSEWHEEL || wParam == WM_MOUSEHWHEEL)) {
+    if (nCode == HC_ACTION) {
         const MSLLHOOKSTRUCT* p = reinterpret_cast<const MSLLHOOKSTRUCT*>(lParam);
-        short delta = HIWORD(p->mouseData);
 
         HWND hwndUnder = WindowFromPoint(p->pt);
-        char underClass[128] = {};
-        DBG_GetClassName8(hwndUnder, underClass, sizeof(underClass));
-
         DWORD underTid = hwndUnder ? GetWindowThreadProcessId(hwndUnder, nullptr) : 0;
         DWORD underPid = 0;
         if (hwndUnder) GetWindowThreadProcessId(hwndUnder, &underPid);
         DWORD ourPid = GetCurrentProcessId();
+        const char* threadTag = underPid == ourPid
+            ? (underTid == DBG_MainTid() ? "SAME_THREAD" : "DIFF_THREAD(same proc)")
+            : "DIFF_PROCESS";
 
-        DBG_LogTrace("[MouseLL] %s  delta=%+d  pt=(%d,%d)  under=0x%p (%s)  underTid=%lu  %s",
-                     wParam == WM_MOUSEWHEEL ? "WM_MOUSEWHEEL" : "WM_MOUSEHWHEEL",
-                     (int)delta, p->pt.x, p->pt.y,
-                     (void*)hwndUnder, underClass,
-                     (unsigned long)underTid,
-                     underPid == ourPid
-                         ? (underTid == DBG_MainTid() ? "SAME_THREAD" : "DIFF_THREAD(same proc)")
-                         : "DIFF_PROCESS");
+        if (wParam == WM_MOUSEWHEEL || wParam == WM_MOUSEHWHEEL) {
+            short delta = HIWORD(p->mouseData);
+            char underClass[128] = {};
+            DBG_GetClassName8(hwndUnder, underClass, sizeof(underClass));
+            DBG_LogTrace("[MouseLL] %s  delta=%+d  pt=(%d,%d)  under=0x%p (%s)  underTid=%lu  %s",
+                         wParam == WM_MOUSEWHEEL ? "WM_MOUSEWHEEL" : "WM_MOUSEHWHEEL",
+                         (int)delta, p->pt.x, p->pt.y,
+                         (void*)hwndUnder, underClass,
+                         (unsigned long)underTid, threadTag);
+        } else if (wParam == WM_MOUSEMOVE) {
+            // Only log when the window under the cursor changes, to avoid flooding
+            static HWND s_lastHwndUnder = nullptr;
+            if (hwndUnder != s_lastHwndUnder) {
+                s_lastHwndUnder = hwndUnder;
+                char underClass[128] = {};
+                DBG_GetClassName8(hwndUnder, underClass, sizeof(underClass));
+                DBG_LogTrace("[MouseLL] WM_MOUSEMOVE  pt=(%d,%d)  under=0x%p (%s)  underTid=%lu  %s",
+                             p->pt.x, p->pt.y,
+                             (void*)hwndUnder, underClass,
+                             (unsigned long)underTid, threadTag);
+            }
+        }
     }
     return CallNextHookEx(DBG_MouseLLHook(), nCode, wParam, lParam);
 }
