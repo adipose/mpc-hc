@@ -1961,8 +1961,10 @@ again:
 	auto ReleaseAudio = [this](const bool bFull = false) {
 		m_bPendingAudioClientChange = true;
 		m_pSyncClock->UnSlave();
-		ASSERT(m_csRender.m_lockCount > 0);
-		m_csRender.Unlock(); // in case other thread is waiting for lock in RenderWasapiBuffer
+#if DEBUG
+		ASSERT(m_csRender.m_lockCount > 0); // FIXME: count can be higher than 1, making unlock ineffective
+#endif
+		m_csRender.Unlock(); // in case other thread is waiting for lock in RenderWasapiBuffer, not sure if truely needed
 		PauseRendererThread();
 		m_csRender.Lock();
 		m_bIsAudioClientStarted = false;
@@ -2991,8 +2993,9 @@ HRESULT CMpcAudioRenderer::RenderWasapiBuffer()
 	CheckPointer(m_pWaveFormatExOutput, S_OK);
 
 	CAutoLock cRenderLock(&m_csRender);
-
+#if DEBUG
 	ASSERT(m_csRender.m_lockCount > 0);
+#endif
 
 	if (m_bPendingAudioClientChange || !m_pAudioClient || !m_pRenderClient || !m_pWaveFormatExOutput) {
 		ASSERT(false);

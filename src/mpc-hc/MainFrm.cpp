@@ -15061,6 +15061,9 @@ CSize CMainFrame::OpenSetupGetVideoSize()
 void CMainFrame::OpenSetupVideo()
 {
     CAutoLock ga(&lockGraphAccess);
+#if DEBUG
+    ASSERT(lockGraphAccess.m_lockCount == 1);
+#endif
 
     CSize vs = OpenSetupGetVideoSize();
     if (m_fShockwaveGraph) {
