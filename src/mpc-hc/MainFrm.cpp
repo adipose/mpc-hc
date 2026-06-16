@@ -13891,6 +13891,13 @@ HRESULT CMainFrame::PreviewWindowShow(REFERENCE_TIME rtCur2) {
     if (!m_wndPreView.IsWindowVisible()) {
         m_wndPreView.SetRelativeSize(AfxGetAppSettings().iSeekPreviewSize);
         m_wndPreView.ShowWindow(SW_SHOWNOACTIVATE);
+        // The preview is an owned popup that normally inherits the main window's WS_EX_TOPMOST.
+        // It has occasionally been reported behind an always-on-top main window (issue #3849);
+        // the exact cause is unconfirmed and not reproducible here, but it appears the preview
+        // can end up in a different z-order band than the main window. As a safeguard, explicitly
+        // place it in the same band as the main window so it is not left behind.
+        m_wndPreView.SetWindowPos((GetExStyle() & WS_EX_TOPMOST) ? &wndTopMost : &wndNoTopMost,
+                                  0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
         m_wndPreView.SetWindowSize();
     }
 
