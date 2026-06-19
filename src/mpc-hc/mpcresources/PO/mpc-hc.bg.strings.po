@@ -5093,3 +5093,19 @@ msgstr "Разбъркване: Изкл."
 msgctxt "IDS_ABOUT_COPYRIGHT"
 msgid "Copyright 2002-%s clsid2 and others"
 msgstr "Авторски права 2002-%s clsid2 и други"
+
+msgctxt "IDS_PLAYLIST_POSITION_LEFT"
+msgid "&Left"
+msgstr "Ляво"
+
+msgctxt "IDS_PLAYLIST_POSITION_TOP"
+msgid "&Top"
+msgstr "Горе"
+
+msgctxt "IDS_PLAYLIST_POSITION_RIGHT"
+msgid "&Right"
+msgstr "Дясно"
+
+msgctxt "IDS_PLAYLIST_POSITION_BOTTOM"
+msgid "&Bottom"
+msgstr "Долу"

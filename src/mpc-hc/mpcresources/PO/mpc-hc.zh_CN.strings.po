@@ -4940,3 +4940,19 @@ msgstr "乱序：关"
 msgctxt "IDS_ABOUT_COPYRIGHT"
 msgid "Copyright 2002-%s clsid2 and others"
 msgstr "版权所有 2002-%s clsid2 和其他开发者"
+
+msgctxt "IDS_PLAYLIST_POSITION_LEFT"
+msgid "&Left"
+msgstr "左侧"
+
+msgctxt "IDS_PLAYLIST_POSITION_TOP"
+msgid "&Top"
+msgstr "顶部"
+
+msgctxt "IDS_PLAYLIST_POSITION_RIGHT"
+msgid "&Right"
+msgstr "右侧"
+
+msgctxt "IDS_PLAYLIST_POSITION_BOTTOM"
+msgid "&Bottom"
+msgstr "底部"

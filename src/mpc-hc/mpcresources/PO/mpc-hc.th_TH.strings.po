@@ -4927,3 +4927,19 @@ msgstr ""
 msgctxt "IDS_ABOUT_COPYRIGHT"
 msgid "Copyright 2002-%s clsid2 and others"
 msgstr ""
+
+msgctxt "IDS_PLAYLIST_POSITION_LEFT"
+msgid "&Left"
+msgstr "ซ้าย"
+
+msgctxt "IDS_PLAYLIST_POSITION_TOP"
+msgid "&Top"
+msgstr "บน"
+
+msgctxt "IDS_PLAYLIST_POSITION_RIGHT"
+msgid "&Right"
+msgstr "ขวา"
+
+msgctxt "IDS_PLAYLIST_POSITION_BOTTOM"
+msgid "&Bottom"
+msgstr "ล่าง"
