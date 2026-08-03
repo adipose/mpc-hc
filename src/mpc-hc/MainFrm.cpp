@@ -1284,10 +1284,6 @@ void CMainFrame::OnClose()
 
     ShowWindow(SW_HIDE);
 
-    if (GetMediaState() == State_Running) {
-        MediaControlPause(true);
-    }
-
     m_wndPlaylistBar.SavePlaylist();
     m_wndPlaylistBar.ClearExternalPlaylistIfInvalid();
 
@@ -9473,8 +9469,6 @@ void CMainFrame::OnPlayStop(bool is_closing)
             }
         }
         m_nStepForwardCount = 0;
-    } else if (GetLoadState() == MLS::CLOSING) {
-        MediaControlStop(true);
     }
 
     m_nLoops = 0;
@@ -16437,6 +16431,11 @@ void CMainFrame::CloseMediaPrivate()
 
     ULONGLONG tc1 = GetTickCount64();
 
+    // Stop the graph before releasing it. Stopping can block indefinitely on a
+    // stuck source filter (e.g. an unresponsive network stream), so it must not
+    // be done on the UI thread.
+    MediaControlStop(true);
+
     m_CachedFilterState = -1;
 
     m_fLiveWM = false;
@@ -19842,10 +19841,6 @@ void CMainFrame::CloseMedia(bool bNextIsQueued/* = false*/, bool bPendingFileDel
 
     bool savehistory = false;
     if (GetLoadState() == MLS::LOADED) {
-        if (GetMediaState() == State_Running) {
-            MediaControlPause(true);
-        }
-
         // abort sub search
         m_pSubtitlesProviders->Abort(SubtitlesThreadType(STT_SEARCH | STT_DOWNLOAD));
         m_wndSubtitlesDownloadDialog.DoClear();
@@ -20118,7 +20113,8 @@ void CMainFrame::CloseMedia(bool bNextIsQueued/* = false*/, bool bPendingFileDel
         m_bUseSeekPreview = false;
     }
 
-    // stop the graph before destroying it
+    // update UI for stopped state; the graph itself is stopped in CloseMediaPrivate(),
+    // which runs on the graph thread where a hang is guarded by the timeout below
     OnPlayStop(true);
 
     // clear any active osd messages
