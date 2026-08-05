@@ -339,8 +339,11 @@ function utf16util {
     $full = (Resolve-Path -LiteralPath $File).Path
     $utf8 = New-Object System.Text.UTF8Encoding($false)
 
-    # UTF-16LE -> UTF-8 temp
+    # UTF-16LE -> UTF-8 temp. Strip the BOM before handing the text to the tool so
+    # line-1 ^-anchored patterns work; remember it so the write-back can restore it.
     $text = [System.Text.Encoding]::Unicode.GetString([System.IO.File]::ReadAllBytes($full))
+    $hadBom = $text.Length -gt 0 -and $text[0] -eq [char]0xFEFF
+    if ($hadBom) { $text = $text.Substring(1) }
     $tmp = [System.IO.Path]::GetTempFileName()
     [System.IO.File]::WriteAllText($tmp, $text, $utf8)
 
@@ -353,8 +356,14 @@ function utf16util {
         & $tool @Rest $tmp
 
         if ($writeBack) {
-            # UTF-8 -> UTF-16LE back onto the original file
+            # UTF-8 -> UTF-16LE back onto the original file. MSYS sed/awk/perl may strip
+            # the BOM and emit bare-LF line endings (this silently corrupted mpc-hc.rc on
+            # 2026-08-02: whole file rewritten without BOM, CRLF -> LF). Restore the BOM,
+            # and normalize every line ending to CRLF as a rule — MPC-HC files are CRLF.
             $newText = [System.IO.File]::ReadAllText($tmp, $utf8)
+            if ($newText.Length -gt 0 -and $newText[0] -eq [char]0xFEFF) { $newText = $newText.Substring(1) }
+            $newText = $newText -replace '(?<!\r)\n', "`r`n"
+            if ($hadBom) { $newText = [char]0xFEFF + $newText }
             [System.IO.File]::WriteAllBytes($full, [System.Text.Encoding]::Unicode.GetBytes($newText))
         }
     }
