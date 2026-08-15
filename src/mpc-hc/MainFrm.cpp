@@ -21491,16 +21491,16 @@ LRESULT CMainFrame::OnSendApiCurrentHost(WPARAM wParam, LPARAM lParam)
     if (IsWindow(reply.window)
             && GetWindowThreadProcessId(reply.window, &currentReplyPid)
             && currentReplyPid == reply.processId) {
-        CAppSettings& s = AfxGetAppSettings();
+        const CAppSettings& s = AfxGetAppSettings();
         HWND hHost = s.hMasterWnd;
         DWORD currentHostPid = 0;
         if (!hHost || !s.hMasterWndPid || !IsWindow(hHost)
                 || !GetWindowThreadProcessId(hHost, &currentHostPid)
                 || currentHostPid != s.hMasterWndPid) {
-            // Host window is gone or was reused by another process: drop the stale
-            // connection so hMasterWnd stops being treated as a live host everywhere.
-            s.hMasterWnd = nullptr;
-            s.hMasterWndPid = 0;
+            // Host window is gone or was reused by another process: report "no host",
+            // but leave hMasterWnd untouched. Incoming command routing only requires it
+            // to be non-null, and a host may legitimately keep sending commands after
+            // its registered window is destroyed; a query must not sever that.
             hHost = nullptr;
         }
 
@@ -21509,8 +21509,10 @@ LRESULT CMainFrame::OnSendApiCurrentHost(WPARAM wParam, LPARAM lParam)
         SendAPIStringTo(reply.window, CMD_CURRENTHOST, payload);
     }
 
-    if (!m_pendingApiHostReplies.empty()) {
-        PostMessage(WM_SENDAPICURRENTHOST);
+    if (!m_pendingApiHostReplies.empty() && !PostMessage(WM_SENDAPICURRENTHOST)) {
+        // Cannot schedule another pass; drop the remainder rather than stranding
+        // entries that the duplicate check would then suppress forever.
+        m_pendingApiHostReplies.clear();
     }
 
     return 0;
@@ -21526,8 +21528,10 @@ void CMainFrame::SendAPIStringTo(HWND hTarget, MPCAPI_COMMAND nCommand, const CS
     DWORD_PTR result = 0;
     SendMessageTimeout(hTarget, WM_COPYDATA, reinterpret_cast<WPARAM>(GetSafeHwnd()),
                        reinterpret_cast<LPARAM>(&data),
-                       // reply is fire-and-forget; SMTO_BLOCK would stall our UI thread if the target is slow, for no benefit
-                       SMTO_ABORTIFHUNG | SMTO_ERRORONEXIT, 100, &result);
+                       // reply is fire-and-forget; the timeout keeps a slow target from stalling our UI
+                       // thread, but is generous enough that a merely busy requester still gets the reply
+                       // (clients treat a missing reply as "feature not supported")
+                       SMTO_ABORTIFHUNG | SMTO_ERRORONEXIT, 500, &result);
 }
 
 void CMainFrame::SendAPICommand(MPCAPI_COMMAND nCommand, LPCWSTR fmt, ...)

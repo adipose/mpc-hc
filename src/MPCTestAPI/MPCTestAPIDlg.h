@@ -71,4 +71,5 @@ public:
     int         m_nCommandType;
     afx_msg void OnBnClickedButtonSendcommand();
     void        Senddata(MPCAPI_COMMAND nCmd, LPCTSTR strCommand);
+    void        SenddataTo(HWND hWndTarget, MPCAPI_COMMAND nCmd, LPCTSTR strCommand);
 };

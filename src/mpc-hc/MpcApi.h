@@ -53,9 +53,10 @@ MPC-HC replies asynchronously with a WM_COPYDATA where:
      - dwData :  CMD_CURRENTHOST
      - lpData :  the configured host's HWND as decimal text, or "0" if no live host is connected
      - wParam :  MPC-HC's own HWND (so an observer can correlate replies from multiple player instances)
-Feature detection: an older MPC-HC returns TRUE from the WM_COPYDATA send but never replies,
-so a client must treat "no CMD_CURRENTHOST within a short timeout" as "not supported" rather
-than relying on the send's return value.
+Feature detection: an older MPC-HC never replies, and its WM_COPYDATA return value is not
+reliable either (TRUE when an API host happens to be connected, FALSE otherwise), so a client
+must treat "no CMD_CURRENTHOST within a short timeout" as "not supported" rather than relying
+on the send's return value.
 */
 
 #pragma once
@@ -148,7 +149,8 @@ typedef enum MPCAPI_COMMAND :
     CMD_CURRENTSUBTITLETRACK   = 0x5000000D,
 
     // Send the HWND of the currently connected API host in response to CMD_GETHOST
-    // Parameter 1: host HWND as an unsigned decimal value, or 0 if no live host is connected
+    // Parameter 1: host HWND as a signed decimal value (same encoding as CMD_CONNECT),
+    // or 0 if no live host is connected
     CMD_CURRENTHOST         = 0x50000010,
 
     // Send current playback position in response
