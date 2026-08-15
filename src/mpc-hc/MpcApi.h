@@ -43,9 +43,26 @@ Ex: When a DVD is playing, use CMD_GETNOWPLAYING to get:
      - dwData :  CMD_NOWPLAYING
      - lpData :  dvddomain|titlenumber|numberofchapters|currentchapter|titleduration
                  dvddomains: DVD - Stopped, DVD - FirstPlay, DVD - RootMenu, DVD - TitleMenu, DVD - Title
+
+A process that did not launch MPC-HC can still discover a running instance and ask which
+API host (if any) it is connected to. Find the player window with
+FindWindow(MPC_WND_CLASS_NAME, nullptr), then send it a WM_COPYDATA with
+     - dwData :  CMD_GETHOST (empty payload)
+     - wParam :  the requester's own HWND
+MPC-HC replies asynchronously with a WM_COPYDATA where:
+     - dwData :  CMD_CURRENTHOST
+     - lpData :  the configured host's HWND as decimal text, or "0" if no live host is connected
+     - wParam :  MPC-HC's own HWND (so an observer can correlate replies from multiple player instances)
+Feature detection: an older MPC-HC returns TRUE from the WM_COPYDATA send but never replies,
+so a client must treat "no CMD_CURRENTHOST within a short timeout" as "not supported" rather
+than relying on the send's return value.
 */
 
 #pragma once
+
+// Class name of MPC-HC's top-level window; external clients pass this to
+// FindWindow to locate a running MPC-HC instance.
+#define MPC_WND_CLASS_NAME L"MediaPlayerClassicW"
 
 typedef enum MPC_LOADSTATE {
     MLS_CLOSED,
@@ -260,6 +277,8 @@ typedef enum MPCAPI_COMMAND :
     // Ask which API host is currently connected
     // The reply is sent to the requesting HWND, even when no host is connected
     // Returns CMD_CURRENTHOST
+    // The reply is asynchronous; older MPC-HC versions never send it, so clients
+    // must use a timeout for feature detection
     CMD_GETHOST             = 0xA000300B,
 
     // Toggle FullScreen

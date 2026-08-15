@@ -190,6 +190,9 @@ BOOL CRegisterCopyDataDlg::OnInitDialog()
     m_strMPCPath += _T("mpc-hc.exe");
 #endif // _WIN64
 
+    // The other combo entries live in the .rc DLGINIT block; appending this one in
+    // code keeps its index (23) in sync with OnBnClickedButtonSendcommand without
+    // hand-editing DLGINIT. Note: regenerating the .rc in a resource editor drops it.
     if (CComboBox* pCommand = static_cast<CComboBox*>(GetDlgItem(IDC_COMBO1))) {
         pCommand->AddString(_T("Get host"));
     }
@@ -362,6 +365,13 @@ void CRegisterCopyDataDlg::OnBnClickedButtonSendcommand()
             Senddata(CMD_CLOSEAPP, m_txtCommand);
             break;
         case 23:
+            // Unlike the other commands, host discovery is meaningful even for an
+            // MPC-HC instance we did not launch. If we have no connection yet, find a
+            // running player by its window class so the reply (including "0" = no host)
+            // can be observed. Remember it so the CMD_CURRENTHOST reply correlates.
+            if (!m_hWndMPC) {
+                m_hWndMPC = ::FindWindow(MPC_WND_CLASS_NAME, nullptr);
+            }
             Senddata(CMD_GETHOST, strEmpty);
             break;
     }

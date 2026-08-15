@@ -473,15 +473,6 @@ private:
     void SendStatusMessage(CString msg, int nTimeOut, bool bError = false);
     CString m_tempstatus_msg, m_closingmsg;
 
-    static constexpr size_t MAX_PENDING_API_HOST_REPLIES = 32;
-    DWORD m_apiHostPid = 0;
-    struct PendingApiHostReply {
-        HWND window;
-        DWORD processId;
-    };
-    std::deque<PendingApiHostReply> m_pendingApiHostReplies;
-    void SendAPIStringTo(HWND hTarget, MPCAPI_COMMAND nCommand, const CStringW& payload);
-
     REFERENCE_TIME m_rtDurationOverride;
 
     void CleanGraph();
@@ -1301,6 +1292,15 @@ public:
     void        ProcessAPICommand(COPYDATASTRUCT* pCDS);
     void        SendAPICommand(MPCAPI_COMMAND nCommand, LPCWSTR fmt, ...);
     void        SendNowPlayingToApi(bool sendtrackinfo = true);
+    // TODO: consolidate SendAPIStringTo with SendAPICommand (they differ only by
+    // explicit target + timeout) once the sibling API PRs land.
+    void        SendAPIStringTo(HWND hTarget, MPCAPI_COMMAND nCommand, const CStringW& payload);
+    static constexpr size_t MAX_PENDING_API_HOST_REPLIES = 32;
+    struct PendingApiHostReply {
+        HWND window;
+        DWORD processId;
+    };
+    std::deque<PendingApiHostReply> m_pendingApiHostReplies;
     void        SendSubtitleTracksToApi();
     void        SendAudioTracksToApi();
     void        SendPlaylistToApi();

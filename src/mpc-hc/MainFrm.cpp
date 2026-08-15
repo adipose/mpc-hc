@@ -5093,6 +5093,10 @@ BOOL CMainFrame::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCDS)
         PLAYER_LOG(_T("CMainFrame::OnCopyData"));
     }
 
+    // The reply cannot be returned synchronously: ON_WM_COPYDATA truncates the handler's
+    // return value to BOOL, and sending back to the requester while still inside its
+    // SendMessage(WM_COPYDATA) risks a nested-send deadlock. So queue the request and
+    // answer from our own UI thread via WM_SENDAPICURRENTHOST.
     if (pCDS->dwData == CMD_GETHOST) {
         const HWND hReply = pWnd ? pWnd->GetSafeHwnd() : nullptr;
         DWORD requesterPid = 0;
@@ -5110,8 +5114,9 @@ BOOL CMainFrame::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCDS)
             }
 
             m_pendingApiHostReplies.push_back({ hReply, requesterPid });
-            if (m_pendingApiHostReplies.size() == 1) {
-                PostMessage(WM_SENDAPICURRENTHOST);
+            if (m_pendingApiHostReplies.size() == 1 && !PostMessage(WM_SENDAPICURRENTHOST)) {
+                m_pendingApiHostReplies.pop_back();
+                return FALSE;
             }
         }
 
@@ -5147,8 +5152,6 @@ BOOL CMainFrame::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCDS)
     s.ParseCommandLine(cmdln);
 
     if (s.nCLSwitches & CLSW_SLAVE) {
-        m_apiHostPid = 0;
-        GetWindowThreadProcessId(s.hMasterWnd, &m_apiHostPid);
         SendAPICommand(CMD_CONNECT, L"%d", PtrToInt(GetSafeHwnd()));
         s.nCLSwitches &= ~CLSW_SLAVE;
     }
@@ -21488,16 +21491,21 @@ LRESULT CMainFrame::OnSendApiCurrentHost(WPARAM wParam, LPARAM lParam)
     if (IsWindow(reply.window)
             && GetWindowThreadProcessId(reply.window, &currentReplyPid)
             && currentReplyPid == reply.processId) {
-        HWND hHost = AfxGetAppSettings().hMasterWnd;
+        CAppSettings& s = AfxGetAppSettings();
+        HWND hHost = s.hMasterWnd;
         DWORD currentHostPid = 0;
-        if (!hHost || !m_apiHostPid || !IsWindow(hHost)
+        if (!hHost || !s.hMasterWndPid || !IsWindow(hHost)
                 || !GetWindowThreadProcessId(hHost, &currentHostPid)
-                || currentHostPid != m_apiHostPid) {
+                || currentHostPid != s.hMasterWndPid) {
+            // Host window is gone or was reused by another process: drop the stale
+            // connection so hMasterWnd stops being treated as a live host everywhere.
+            s.hMasterWnd = nullptr;
+            s.hMasterWndPid = 0;
             hHost = nullptr;
         }
 
         CStringW payload;
-        payload.Format(L"%Iu", reinterpret_cast<UINT_PTR>(hHost));
+        payload.Format(L"%d", PtrToInt(hHost));
         SendAPIStringTo(reply.window, CMD_CURRENTHOST, payload);
     }
 
@@ -21518,7 +21526,8 @@ void CMainFrame::SendAPIStringTo(HWND hTarget, MPCAPI_COMMAND nCommand, const CS
     DWORD_PTR result = 0;
     SendMessageTimeout(hTarget, WM_COPYDATA, reinterpret_cast<WPARAM>(GetSafeHwnd()),
                        reinterpret_cast<LPARAM>(&data),
-                       SMTO_ABORTIFHUNG | SMTO_ERRORONEXIT | SMTO_BLOCK, 100, &result);
+                       // reply is fire-and-forget; SMTO_BLOCK would stall our UI thread if the target is slow, for no benefit
+                       SMTO_ABORTIFHUNG | SMTO_ERRORONEXIT, 100, &result);
 }
 
 void CMainFrame::SendAPICommand(MPCAPI_COMMAND nCommand, LPCWSTR fmt, ...)
