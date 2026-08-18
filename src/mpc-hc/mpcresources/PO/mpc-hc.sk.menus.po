@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-08-08 15:18:32+0000\n"
+"POT-Creation-Date: 2026-08-18 04:47:14+0000\n"
 "PO-Revision-Date: 2020-01-02 07:46+0000\n"
 "Last-Translator: Marián Hikaník, 2026\n"
 "Language-Team: Slovak (https://app.transifex.com/mpchc/teams/106126/sk/)\n"
@@ -680,7 +680,7 @@ msgstr "Stopa s &titulkami"
 
 msgctxt "ID_SUBTITLES_SECONDARY"
 msgid "Secondary Subtitle Track"
-msgstr ""
+msgstr "Sekundárna stopa s titulkami"
 
 msgctxt "ID_VIDEO_STREAMS"
 msgid "Vide&o Track"
