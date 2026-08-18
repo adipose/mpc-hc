@@ -4655,7 +4655,7 @@ msgctxt "IDS_SUBTITLES_SECONDARY_BAD_FORMAT"
 msgid ""
 "This subtitle format cannot be used as a secondary subtitle track. Only "
 "simple text formats such as SRT are supported."
-msgstr "この字幕形式はセカンダリ字幕トラックとして使用できません。SRT のような単純なテキスト形式のみに対応しています。"
+msgstr "この字幕形式は副字幕トラックとして使用できません。SRT のような単純なテキスト形式のみに対応しています。"
 
 msgctxt "IDS_MESSAGEBOX_CANCEL"
 msgid "Cancel"
