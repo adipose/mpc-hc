@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-08-08 15:18:32+0000\n"
+"POT-Creation-Date: 2026-08-18 04:47:14+0000\n"
 "PO-Revision-Date: 2020-01-02 07:46+0000\n"
 "Last-Translator: Felipefpl, 2026\n"
 "Language-Team: Portuguese (Brazil) (https://app.transifex.com/mpchc/teams/106126/pt_BR/)\n"
@@ -683,7 +683,7 @@ msgstr "Fa&ixa da Legenda"
 
 msgctxt "ID_SUBTITLES_SECONDARY"
 msgid "Secondary Subtitle Track"
-msgstr ""
+msgstr "Faixa de Legenda Secundária"
 
 msgctxt "ID_VIDEO_STREAMS"
 msgid "Vide&o Track"
