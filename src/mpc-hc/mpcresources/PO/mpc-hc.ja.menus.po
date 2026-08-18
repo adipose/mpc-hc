@@ -681,7 +681,7 @@ msgstr "字幕トラック(&B)"
 
 msgctxt "ID_SUBTITLES_SECONDARY"
 msgid "Secondary Subtitle Track"
-msgstr "セカンダリ字幕トラック"
+msgstr "副字幕トラック"
 
 msgctxt "ID_VIDEO_STREAMS"
 msgid "Vide&o Track"
