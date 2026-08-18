@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-08-08 15:18:32+0000\n"
+"POT-Creation-Date: 2026-08-18 04:47:14+0000\n"
 "PO-Revision-Date: 2020-01-02 07:46+0000\n"
 "Last-Translator: ever_green, 2026\n"
 "Language-Team: Japanese (https://app.transifex.com/mpchc/teams/106126/ja/)\n"
@@ -2467,7 +2467,7 @@ msgstr "前の字幕トラック"
 
 msgctxt "IDS_AG_AUTOCOPY_SUBTITLE"
 msgid "Auto-Copy Subtitle to Clipboard"
-msgstr ""
+msgstr "字幕をクリップボードに自動コピー"
 
 msgctxt "IDS_MPLAYERC_85"
 msgid "On/Off Subtitle"
@@ -4645,17 +4645,17 @@ msgstr "右寄せ"
 
 msgctxt "IDS_OSD_AUTOCOPY_SUBTITLE_ON"
 msgid "Auto-Copy Subtitle to Clipboard: On"
-msgstr ""
+msgstr "字幕をクリップボードに自動コピー: オン"
 
 msgctxt "IDS_OSD_AUTOCOPY_SUBTITLE_OFF"
 msgid "Auto-Copy Subtitle to Clipboard: Off"
-msgstr ""
+msgstr "字幕をクリップボードに自動コピー: オフ"
 
 msgctxt "IDS_SUBTITLES_SECONDARY_BAD_FORMAT"
 msgid ""
 "This subtitle format cannot be used as a secondary subtitle track. Only "
 "simple text formats such as SRT are supported."
-msgstr ""
+msgstr "この字幕形式はセカンダリ字幕トラックとして使用できません。SRT のような単純なテキスト形式のみに対応しています。"
 
 msgctxt "IDS_MESSAGEBOX_CANCEL"
 msgid "Cancel"
