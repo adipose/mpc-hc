@@ -4031,11 +4031,11 @@ msgstr "%s tampon filtresi zincire bağlanamıyor."
 
 msgctxt "IDS_CAPTURE_ERROR_ADD_ENCODER"
 msgid "Can't add the %s encoder filter to the graph."
-msgstr "%s kodlayıcı filtresi grafa eklenemiyor."
+msgstr "%s kodlayıcı filtresi zincire eklenemiyor."
 
 msgctxt "IDS_CAPTURE_ERROR_CONNECT_ENC"
 msgid "Can't connect the %s encoder filter to the graph."
-msgstr "%s kodlayıcı filtresi grafa bağlanamıyor."
+msgstr "%s kodlayıcı filtresi zincire bağlanamıyor."
 
 msgctxt "IDS_CAPTURE_ERROR_COMPRESSION"
 msgid "Can't set the compression format on the %s encoder filter."
