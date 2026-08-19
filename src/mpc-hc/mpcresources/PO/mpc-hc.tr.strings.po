@@ -689,11 +689,11 @@ msgstr "%25"
 
 msgctxt "IDS_PPAGE_OUTPUT_VMR9WINDOWED"
 msgid "Video Mixing Renderer 9 (windowed)"
-msgstr "Video Karıştırma İşleyici 9 (pencerede)"
+msgstr "VMR-9 (pencereli)"
 
 msgctxt "IDS_PPAGE_OUTPUT_VMR9RENDERLESS"
 msgid "Video Mixing Renderer 9 (renderless)"
-msgstr "Video Karıştırma İşleyici 9 (işleyicisiz)"
+msgstr "VMR-9 (işleyicisiz)"
 
 msgctxt "IDS_PPAGE_OUTPUT_EVR"
 msgid "Enhanced Video Renderer"
@@ -762,7 +762,7 @@ msgstr "MPC Video İşleyici"
 
 msgctxt "IDS_PPAGE_OUTPUT_VMR7"
 msgid "Video Mixing Renderer 7"
-msgstr "Video Karıştırma İşleyici 7"
+msgstr "VMR-7"
 
 msgctxt "IDD_PPAGEACCELTBL"
 msgid "Player::Keys"
