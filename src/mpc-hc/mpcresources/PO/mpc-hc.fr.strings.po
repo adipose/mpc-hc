@@ -4745,7 +4745,7 @@ msgstr ""
 
 msgctxt "IDS_CMD_MONITOR"
 msgid "/monitor N\tStart player on monitor N, where N starts from 1"
-msgstr "/monitor N\tDémarre MPC-HC sur l'écran N, où N commence à 1"
+msgstr "/monitor N\tDémarrer MPC-HC sur l'écran N, où N commence à 1"
 
 msgctxt "IDS_CMD_AUDIORENDERER"
 msgid ""
