@@ -1008,7 +1008,7 @@ msgstr "100%"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Primary"
-msgstr "Primaire"
+msgstr "Primaire :"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Secondary"
