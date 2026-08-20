@@ -267,7 +267,7 @@ msgstr "Afficher le chemin complet"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_RADIO4"
 msgid "File name only"
-msgstr "Nom du fichier uniquement"
+msgstr "Afficher le nom du fichier uniquement"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_RADIO5"
 msgid "Don't prefix anything"
