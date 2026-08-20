@@ -1964,7 +1964,7 @@ msgstr "Intégration à Windows"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK_ENHANCED_TASKBAR"
 msgid "Use enhanced taskbar features"
-msgstr "Affichage barre des tâches avancé"
+msgstr "Utiliser une barre des tâches avancée"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK11"
 msgid "Control via Windows UI (SMTC)"
