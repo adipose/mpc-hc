@@ -4301,7 +4301,7 @@ msgstr "/reset\t\tRestaurer les paramètres par défaut"
 
 msgctxt "IDS_CMD_HELP"
 msgid "/help /h /?\tShow help about command line switches"
-msgstr "/help /h /?\tAffiche l'aide pour les options de la ligne de commande"
+msgstr "/help /h /?\tAfficher l'aide pour les options de la ligne de commande"
 
 msgctxt "IDS_PPAGEADVANCED_SCORE"
 msgid ""
