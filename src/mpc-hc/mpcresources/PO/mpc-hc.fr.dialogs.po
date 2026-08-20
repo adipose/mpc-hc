@@ -1224,11 +1224,11 @@ msgstr "Réinitialiser"
 
 msgctxt "IDD_PPAGEMISC_IDC_EXPORT_SETTINGS"
 msgid "Export"
-msgstr "Exporter"
+msgstr "Exporter les réglages…"
 
 msgctxt "IDD_PPAGEMISC_IDC_EXPORT_KEYS"
 msgid "Export keys"
-msgstr "Export des raccourcis"
+msgstr "Exporter les raccourcis…"
 
 msgctxt "IDD_TUNER_SCAN_CAPTION"
 msgid "Tuner scan"
