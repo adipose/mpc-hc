@@ -4566,7 +4566,7 @@ msgstr "/mute\t\tCouper le son"
 
 msgctxt "IDS_CMD_VOLUME"
 msgid "/volume N\tSet Volume, where N is a range from 0 to 100"
-msgstr "/volume N\tRègle le Volume, avec N compris entre 1 et 100"
+msgstr "/volume N\tRégler le volume, avec N compris entre 1 et 100"
 
 msgctxt "IDS_YOUTUBEDL_NOT_FOUND"
 msgid ""
