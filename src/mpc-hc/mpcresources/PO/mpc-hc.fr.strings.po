@@ -4538,7 +4538,7 @@ msgstr ""
 
 msgctxt "IDS_CMD_LOGOFF"
 msgid "/logoff\t\tLog off after playback"
-msgstr "/logoff\t\tDéconnecte la session après la lecture"
+msgstr "/logoff\t\tDéconnecter la session après la lecture"
 
 msgctxt "IDS_CMD_LOCK"
 msgid "/lock\t\tLock workstation after playback"
