@@ -4273,7 +4273,7 @@ msgstr "/nofocus\t\tDémarrer MPC-HC en arrière-plan"
 
 msgctxt "IDS_CMD_WEBPORT"
 msgid "/webport N\tStart web interface on specified port"
-msgstr "/webport N\tDémarre l'interface Web sur le port spécifié"
+msgstr "/webport N\tDémarrer l'interface Web sur le port spécifié"
 
 msgctxt "IDS_CMD_DEBUG"
 msgid "/debug\t\tShow debug information in OSD"
