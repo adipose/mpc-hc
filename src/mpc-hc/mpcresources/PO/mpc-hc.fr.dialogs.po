@@ -1856,7 +1856,7 @@ msgstr "Couleur du thème moderne :"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC4"
 msgid "Seekbar"
-msgstr "Barre de lecture"
+msgstr "Barre de défilement"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC22"
 msgid "Modern Seekbar height:"
