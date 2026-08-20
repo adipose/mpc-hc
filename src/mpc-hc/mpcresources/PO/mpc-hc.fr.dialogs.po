@@ -1056,7 +1056,7 @@ msgstr "Double clic :"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
 msgid "Right click"
-msgstr "Clic droit"
+msgstr "Clic droit :"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_BUTTON2"
 msgid "Default"
