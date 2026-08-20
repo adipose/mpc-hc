@@ -2300,7 +2300,7 @@ msgstr "Plein écran"
 
 msgctxt "IDS_MPLAYERC_39"
 msgid "Fullscreen (w/o res.change)"
-msgstr "Plein écran (sans changement de résolution)"
+msgstr "Plein écran (sans changer de résolution)"
 
 msgctxt "IDS_AG_ZOOM_AUTO_FIT"
 msgid "Zoom Auto Fit"
