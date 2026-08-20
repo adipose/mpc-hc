@@ -295,7 +295,7 @@ msgstr "Désactiver le menu « Ouvrir le disque »"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK9"
 msgid "Process priority above normal"
-msgstr "Priorité supérieure à la normale"
+msgstr "Utiliser une priorité supérieure à la normale"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK14"
 msgid "Enable cover-art support"
