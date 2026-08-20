@@ -4559,7 +4559,7 @@ msgid ""
 "/viewpreset N\tStart with a specific preset,\n"
 "\t\twhere N is one of \"1\" Minimal, \"2\" Compact, \"3\" Normal, or \"4\" Custom"
 msgstr ""
-"/viewpreset N\tDémarre avec un préréglage spécifique,\n"
+"/viewpreset N\tDémarrer avec un préréglage spécifique,\n"
 "\t\toù N est soit \"1\" Minimal, \"2\" Compact, \"3\" Normal ou \"4\" Personnalisé"
 
 msgctxt "IDS_CMD_MUTE"
