@@ -4729,7 +4729,7 @@ msgstr "/startpos hh:mm:ss\tStart playing at position hh:mm:ss"
 
 msgctxt "IDS_CMD_AB_START"
 msgid "/ab_start hh:mm:ss\tA-B repeat start position"
-msgstr "/ab_start hh:mm:ss\tposition de début de répétition A-B"
+msgstr "/ab_start hh:mm:ss\tPosition de début de répétition A-B"
 
 msgctxt "IDS_CMD_AB_END"
 msgid "/ab_end hh:mm:ss\tA-B repeat end position"
