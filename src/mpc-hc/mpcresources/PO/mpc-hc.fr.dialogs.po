@@ -679,7 +679,7 @@ msgstr "Déplacement rapide (à l'image-clé)"
 
 msgctxt "IDD_PPAGEEXTERNALFILTERS_IDC_BUTTON1"
 msgid "Add Filter..."
-msgstr "Ajouter un filtre"
+msgstr "Ajouter un filtre…"
 
 msgctxt "IDD_PPAGEEXTERNALFILTERS_IDC_BUTTON2"
 msgid "Remove"
