@@ -4574,7 +4574,7 @@ msgid ""
 "located in MPC-HC folder or in PATH."
 msgstr ""
 "Le lancement de Youtube-DL a échoué. S'assurer que le fichier yt-dlp.exe ou "
-"youtube-dl se trouve dans le même répertoire que MPC-HC ou dans un dossier "
+"youtube-dl se trouve dans le même dossier que MPC-HC ou dans un dossier "
 "inclus dans le PATH."
 
 msgctxt "IDS_CONTROLS_YOUTUBEDL"
