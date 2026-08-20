@@ -2869,7 +2869,7 @@ msgstr "Pas assez de mémoire !"
 
 msgctxt "IDS_THUMBNAILS_INVALID_FORMAT"
 msgid "Invalid image format, cannot create thumbnails out of %d bpp dibs."
-msgstr "Format d'image invalide, impossible de créer des vignettes %d bpp."
+msgstr "Format d'image invalide, impossible de créer les miniatures %d bpp."
 
 msgctxt "IDS_THUMBNAILS_INFO_FILESIZE"
 msgid "File Size: %s (%s bytes)\\N"
