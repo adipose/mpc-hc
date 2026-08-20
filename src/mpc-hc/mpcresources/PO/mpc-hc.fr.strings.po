@@ -4673,7 +4673,7 @@ msgstr ""
 "Quand cette option est activée, l'imprécision d'une recherche rapide (vers "
 "une image clé) peut atteindre 20 secondes. Quand elle est désactivée, "
 "l'imprécision autorisée lors du choix entre une recherche rapide et une "
-"recherche normale est plus limitée. Par exemple, 30% de la durée du saut."
+"recherche normale est plus limitée. Par ex. 30 % de la durée du saut."
 
 msgctxt "IDS_CMD_FULLSCREEN"
 msgid "/fullscreen\tStart in fullscreen mode"
