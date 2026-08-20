@@ -1344,7 +1344,7 @@ msgstr "Redimensionnement :"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC"
 msgid "Surface:"
-msgstr "Surface:"
+msgstr "Surface :"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_EVR_BUFFERS_TXT"
 msgid "EVR Buffers:"
