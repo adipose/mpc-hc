@@ -1316,11 +1316,11 @@ msgstr "Fournisseur réseau :"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_STATIC5"
 msgid "Tuner"
-msgstr "Tuner"
+msgstr "Tuner :"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_STATIC6"
 msgid "Receiver"
-msgstr "Récepteur"
+msgstr "Récepteur :"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_PPAGECAPTURE_ST10"
 msgid "Channel switching approach:"
