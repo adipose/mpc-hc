@@ -1606,7 +1606,7 @@ msgstr "Ajout après redimensionnement"
 
 msgctxt "IDD_PPAGESHADERS_IDC_STATIC"
 msgid "Shader presets"
-msgstr "Présélections d'effets"
+msgstr "Préréglages d'effets"
 
 msgctxt "IDD_PPAGESHADERS_IDC_BUTTON3"
 msgid "Load"
@@ -1972,7 +1972,7 @@ msgstr "Contrôle via l'interface Windows SMTC"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC"
 msgid "Custom Preset (4)"
-msgstr "Présélection personnalisée (4)"
+msgstr "Préréglage personnalisé (4)"
 
 msgctxt "IDD_PPAGETHEME_IDC_CUSTOMPRESET_MENU"
 msgid "Menu"
