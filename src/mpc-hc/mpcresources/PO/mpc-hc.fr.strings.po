@@ -89,7 +89,7 @@ msgstr "DVD"
 
 msgctxt "IDS_PLAYLOOPMODE_AB"
 msgid "A-B Repeat: Reset Positions"
-msgstr "A-B répétition : réinitialiser les repères"
+msgstr "Répétition A-B : réinitialiser les repères"
 
 msgctxt "IDS_PLAY_LOOPMODE_AB"
 msgid "A-B"
@@ -97,11 +97,11 @@ msgstr "A-B"
 
 msgctxt "IDS_PLAYLOOPMODE_AB_MARK_A"
 msgid "A-B Repeat: Mark A Position"
-msgstr "A-B répétition : placer le repère A"
+msgstr "Répétition A-B : placer le repère A"
 
 msgctxt "IDS_PLAYLOOPMODE_AB_MARK_B"
 msgid "A-B Repeat: Mark B Position"
-msgstr "A-B répétition : placer le repère B"
+msgstr "Répétition A-B : placer le repère B"
 
 msgctxt "IDS_SCREENSHOT_SUBTITLES"
 msgid "Include Subtitles"
