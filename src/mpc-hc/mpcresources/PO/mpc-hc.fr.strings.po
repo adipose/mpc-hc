@@ -4559,7 +4559,7 @@ msgid ""
 "/viewpreset N\tStart with a specific preset,\n"
 "\t\twhere N is one of \"1\" Minimal, \"2\" Compact, \"3\" Normal, or \"4\" Custom"
 msgstr ""
-"/viewpreset N\tDémarre avec un pré-réglage particulier,\n"
+"/viewpreset N\tDémarre avec un préréglage spécifique,\n"
 "\t\toù N est soit \"1\" Minimal, \"2\" Compact, \"3\" Normal ou \"4\" Personnalisé"
 
 msgctxt "IDS_CMD_MUTE"
@@ -4757,7 +4757,7 @@ msgstr ""
 
 msgctxt "IDS_CMD_SHADERPRESET"
 msgid "/shaderpreset \"Pr\"\tStart using \"Pr\" shader preset"
-msgstr "/shaderpreset \"Pr\"\tUtiliser la présélection d'effets vidéo \"Pr\""
+msgstr "/shaderpreset \"Pr\"\tUtiliser le préréglage d'effets vidéo \"Pr\""
 
 msgctxt "IDS_TOOLBAR_ALIGNMENT_LEFT"
 msgid "Left"
