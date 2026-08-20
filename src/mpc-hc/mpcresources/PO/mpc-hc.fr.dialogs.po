@@ -1856,7 +1856,7 @@ msgstr "Couleur du thème moderne :"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC4"
 msgid "Seekbar"
-msgstr "Barre de défilement"
+msgstr "Barre de lecture"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC22"
 msgid "Modern Seekbar height:"
@@ -1872,7 +1872,7 @@ msgstr "Durée écoulée :"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC8"
 msgid "Seekbar Hover"
-msgstr "Survol de la barre de défilement"
+msgstr "Survol de la barre de lecture"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC11"
 msgid "Hover Position:"
@@ -1984,7 +1984,7 @@ msgstr "État"
 
 msgctxt "IDD_PPAGETHEME_IDC_CUSTOMPRESET_SEEKBAR"
 msgid "Seek Bar"
-msgstr "Barre de défilement"
+msgstr "Barre de lecture"
 
 msgctxt "IDD_PPAGETHEME_IDC_CUSTOMPRESET_INFO"
 msgid "Information"
