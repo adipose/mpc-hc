@@ -2771,7 +2771,7 @@ msgstr "Décalage des sous-titres : %ld ms"
 
 msgctxt "IDS_AG_TITLE2"
 msgid "Title: %02d/%02d"
-msgstr "Titre : %02d/%02d"
+msgstr "Titre : %02d/%02d"
 
 msgctxt "IDS_REALVIDEO_INCOMPATIBLE"
 msgid "Filename contains unsupported characters (use only A-Z, 0-9)"
