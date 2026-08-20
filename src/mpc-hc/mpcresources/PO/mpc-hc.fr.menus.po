@@ -29,7 +29,7 @@ msgstr "Ouvrir &rapidement..."
 
 msgctxt "ID_FILE_OPENMEDIA"
 msgid "&Open File/URL..."
-msgstr "&Ouvrir un fichier..."
+msgstr "&Ouvrir un fichier/URL…"
 
 msgctxt "ID_FILE_OPENDVDBD"
 msgid "Open &DVD/BD..."
