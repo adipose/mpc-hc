@@ -4713,7 +4713,7 @@ msgstr "/regpl\t\tAssocier les listes de lecture à MPC-HC"
 
 msgctxt "IDS_CMD_REGALL"
 msgid "/regall\t\tCreate file associations for all supported file types"
-msgstr "/regall\t\tAssocie tous les fichiers supportés à MPC-HC"
+msgstr "/regall\t\tAssocier tous les fichiers pris en charge à MPC-HC"
 
 msgctxt "IDS_CMD_UNREGALL"
 msgid "/unregall\t\tRemove all file associations"
