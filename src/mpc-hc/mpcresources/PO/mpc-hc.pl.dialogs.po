@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-08-08 15:18:32+0000\n"
+"POT-Creation-Date: 2026-08-18 04:47:14+0000\n"
 "PO-Revision-Date: 2020-01-02 07:46+0000\n"
 "Last-Translator: Łukasz Janik, 2026\n"
 "Language-Team: Polish (https://app.transifex.com/mpchc/teams/106126/pl/)\n"
@@ -1809,7 +1809,7 @@ msgstr "Resetuj zaznaczone"
 
 msgctxt "IDD_COLORCONTROLS_DLG_CAPTION"
 msgid "Color controls"
-msgstr "Przełącz kontrolki"
+msgstr "Kontrolki kolorów"
 
 msgctxt "IDD_COLORCONTROLS_DLG_IDC_STATIC"
 msgid "Brightness"
