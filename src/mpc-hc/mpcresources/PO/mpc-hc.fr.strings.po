@@ -3148,7 +3148,7 @@ msgid ""
 "Unrecognized switch(es) found in command line string: \n"
 "\n"
 msgstr ""
-"Option(s) non reconnue(s) dans la ligne de commande : \n"
+"Option(s) non reconnue(s) dans la ligne de commande : \n"
 "\n"
 
 msgctxt "IDS_AG_TOGGLE_INFO"
