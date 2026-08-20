@@ -4709,7 +4709,7 @@ msgstr "/regaud\t\tAssocier les formats audio à MPC-HC"
 
 msgctxt "IDS_CMD_REGPL"
 msgid "/regpl\t\tCreate file associations for playlist files"
-msgstr "/regpl\t\tAssocie les listes de lecture à MPC-HC"
+msgstr "/regpl\t\tAssocier les listes de lecture à MPC-HC"
 
 msgctxt "IDS_CMD_REGALL"
 msgid "/regall\t\tCreate file associations for all supported file types"
