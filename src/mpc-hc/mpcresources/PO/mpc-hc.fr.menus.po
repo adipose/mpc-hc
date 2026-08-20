@@ -45,7 +45,7 @@ msgstr "Ouvrir un &répertoire..."
 
 msgctxt "ID_FILE_OPENDISC"
 msgid "O&pen Disc"
-msgstr "Ouvrir le &disque"
+msgstr "Ouvrir un &disque"
 
 msgctxt "ID_RECENT_FILES"
 msgid "Recent &Files"
