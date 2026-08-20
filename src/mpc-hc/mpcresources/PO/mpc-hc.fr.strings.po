@@ -4297,7 +4297,7 @@ msgstr ""
 
 msgctxt "IDS_CMD_RESET"
 msgid "/reset\t\tRestore default settings"
-msgstr "/reset\t\tRestaure les paramètres par défaut"
+msgstr "/reset\t\tRestaurer les paramètres par défaut"
 
 msgctxt "IDS_CMD_HELP"
 msgid "/help /h /?\tShow help about command line switches"
