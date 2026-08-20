@@ -1328,7 +1328,7 @@ msgstr "Configuration du changement de chaîne :"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_PPAGECAPTURE_ST11"
 msgid "Rebuild filter graph"
-msgstr "Reconstruire le graphe"
+msgstr "Reconstruire le graphe :"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_PPAGECAPTURE_ST12"
 msgid "Stop filter graph"
