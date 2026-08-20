@@ -4562,7 +4562,7 @@ msgstr ""
 
 msgctxt "IDS_CMD_MUTE"
 msgid "/mute\t\tMute the audio"
-msgstr "/mute\t\tCoupe le son"
+msgstr "/mute\t\tCouper le son"
 
 msgctxt "IDS_CMD_VOLUME"
 msgid "/volume N\tSet Volume, where N is a range from 0 to 100"
