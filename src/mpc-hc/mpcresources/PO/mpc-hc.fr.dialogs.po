@@ -1300,7 +1300,7 @@ msgstr "Vidéo :"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_STATIC2"
 msgid "Audio"
-msgstr "Audio"
+msgstr "Audio :"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_STATIC3"
 msgid "Country"
