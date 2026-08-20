@@ -1984,7 +1984,7 @@ msgstr "État"
 
 msgctxt "IDD_PPAGETHEME_IDC_CUSTOMPRESET_SEEKBAR"
 msgid "Seek Bar"
-msgstr "Barre de lecture"
+msgstr "Barre de défilement"
 
 msgctxt "IDD_PPAGETHEME_IDC_CUSTOMPRESET_INFO"
 msgid "Information"
