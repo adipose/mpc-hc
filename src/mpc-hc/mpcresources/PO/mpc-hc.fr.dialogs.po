@@ -531,7 +531,7 @@ msgstr "Nombre de sous-images à mettre en tampon :"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC21"
 msgid "Maximum texture resolution:"
-msgstr "Résolution de texture maximale:"
+msgstr "Résolution de texture maximale :"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_CHECK_NO_SUB_ANIM"
 msgid "Never animate the subtitles"
