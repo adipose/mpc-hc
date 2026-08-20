@@ -1598,11 +1598,11 @@ msgstr "Supprimer"
 
 msgctxt "IDD_PPAGESHADERS_IDC_BUTTON1"
 msgid "Add to pre-resize"
-msgstr "Ajout avant redimensionnement"
+msgstr "Ajouter avant redimensionnement"
 
 msgctxt "IDD_PPAGESHADERS_IDC_BUTTON2"
 msgid "Add to post-resize"
-msgstr "Ajout après redimensionnement"
+msgstr "Ajouter après redimensionnement"
 
 msgctxt "IDD_PPAGESHADERS_IDC_STATIC"
 msgid "Shader presets"
