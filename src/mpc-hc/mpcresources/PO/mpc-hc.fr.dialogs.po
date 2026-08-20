@@ -1606,7 +1606,7 @@ msgstr "Ajout après redimensionnement"
 
 msgctxt "IDD_PPAGESHADERS_IDC_STATIC"
 msgid "Shader presets"
-msgstr "Préréglages d'effets"
+msgstr "Préréglages d'effets vidéo"
 
 msgctxt "IDD_PPAGESHADERS_IDC_BUTTON3"
 msgid "Load"
