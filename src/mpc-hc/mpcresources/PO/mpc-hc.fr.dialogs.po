@@ -1332,7 +1332,7 @@ msgstr "Reconstruire le graphe :"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_PPAGECAPTURE_ST12"
 msgid "Stop filter graph"
-msgstr "Arrêter le graphe"
+msgstr "Arrêter le graphe :"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC"
 msgid "Common"
