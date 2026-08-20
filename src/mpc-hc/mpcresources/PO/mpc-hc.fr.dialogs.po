@@ -675,7 +675,7 @@ msgstr ""
 
 msgctxt "IDD_PPAGETWEAKS_IDC_FASTSEEK_CHECK"
 msgid "Fast seek (on keyframe)"
-msgstr "Déplacement rapide (à l'image clé)"
+msgstr "Déplacement rapide (à l'image clé) :"
 
 msgctxt "IDD_PPAGEEXTERNALFILTERS_IDC_BUTTON1"
 msgid "Add Filter..."
