@@ -275,7 +275,7 @@ msgstr "Ne pas afficher le chemin"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK13"
 msgid "Replace file name with title"
-msgstr "Remplacer le nom du fichier par son titre"
+msgstr "Remplacer le nom du fichier par le titre"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_STATIC"
 msgid "Other"
