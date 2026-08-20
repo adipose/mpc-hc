@@ -4281,7 +4281,7 @@ msgstr "/debug\t\tAfficher des informations de débogage via l'OSD"
 
 msgctxt "IDS_CMD_NOCRASHREPORTER"
 msgid "/nocrashreporter\tDisable the crash reporter"
-msgstr "/nocrashreporter\tDésactive le rapporteur de plantage"
+msgstr "/nocrashreporter\tDésactiver le rapporteur de plantage"
 
 msgctxt "IDS_CMD_SLAVE"
 msgid "/slave \"hWnd\"\tUse MPC-HC as slave"
