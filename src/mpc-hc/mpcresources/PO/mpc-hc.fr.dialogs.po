@@ -539,7 +539,7 @@ msgstr "Ne jamais animer les sous-titres"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC5"
 msgid "Render at"
-msgstr "Afficher après :"
+msgstr "Afficher à :"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC6"
 msgid "% of the animation"
