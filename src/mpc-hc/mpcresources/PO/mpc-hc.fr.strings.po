@@ -2035,11 +2035,11 @@ msgstr "Enregistrer une copie"
 
 msgctxt "IDS_FASTSEEK_LATEST"
 msgid "Latest keyframe"
-msgstr "Image-clé précédente"
+msgstr "Image clé précédente"
 
 msgctxt "IDS_FASTSEEK_NEAREST"
 msgid "Nearest keyframe"
-msgstr "Image-clé la plus proche"
+msgstr "Image clé la plus proche"
 
 msgctxt "IDS_HOOKS_FAILED"
 msgid ""
@@ -2188,11 +2188,11 @@ msgstr "Saut arrière (grand)"
 
 msgctxt "IDS_MPLAYERC_29"
 msgid "Jump Forward (keyframe)"
-msgstr "Saut avant (image-clé)"
+msgstr "Saut avant (image clé)"
 
 msgctxt "IDS_MPLAYERC_30"
 msgid "Jump Backward (keyframe)"
-msgstr "Saut arrière (image-clé)"
+msgstr "Saut arrière (image clé)"
 
 msgctxt "IDS_AG_NEXT"
 msgid "Next"
