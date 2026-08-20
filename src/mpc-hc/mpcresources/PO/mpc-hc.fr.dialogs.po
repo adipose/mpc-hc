@@ -944,11 +944,11 @@ msgstr "Angle (z,°) :"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC3"
 msgid "Scale (x,%)"
-msgstr "Échelle (x,%)"
+msgstr "Échelle (x,%) :"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC4"
 msgid "Scale (y,%)"
-msgstr "Échelle (y,%)"
+msgstr "Échelle (y,%) :"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Border Style"
