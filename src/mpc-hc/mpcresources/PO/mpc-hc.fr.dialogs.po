@@ -1088,11 +1088,11 @@ msgstr "Splitter…"
 
 msgctxt "IDD_PPAGEINTERNALFILTERS_IDC_VIDEO_DEC_CONF"
 msgid "Video decoder"
-msgstr "Décodeur vidéo"
+msgstr "Décodeur vidéo…"
 
 msgctxt "IDD_PPAGEINTERNALFILTERS_IDC_AUDIO_DEC_CONF"
 msgid "Audio decoder"
-msgstr "Décodeur audio"
+msgstr "Décodeur audio…"
 
 msgctxt "IDD_PPAGELOGO_IDC_RADIO1"
 msgid "Internal:"
