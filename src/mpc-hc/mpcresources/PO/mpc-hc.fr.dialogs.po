@@ -2036,7 +2036,7 @@ msgstr "Clic :"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Right click"
-msgstr "Clic droit"
+msgstr "Clic droit :"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Custom Button 2"
