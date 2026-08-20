@@ -1904,7 +1904,7 @@ msgstr "Informations vidéo"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK12"
 msgid "Audio Info"
-msgstr "Infos audio"
+msgstr "Informations audio"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK5"
 msgid "FPS"
