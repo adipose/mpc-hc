@@ -1380,7 +1380,7 @@ msgstr "Synchroniser la vidéo avec l'écran"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC1"
 msgid "Frequency adjustment:"
-msgstr "Ajustement de la fréquence:"
+msgstr "Ajustement de la fréquence :"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_SYNCDISPLAY"
 msgid "Sync display to video"
@@ -1388,7 +1388,7 @@ msgstr "Synchroniser l'écran avec la vidéo"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC2"
 msgid "Frequency adjustment:"
-msgstr "Ajustement de la fréquence:"
+msgstr "Ajustement de la fréquence :"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC3"
 msgid "lines"
