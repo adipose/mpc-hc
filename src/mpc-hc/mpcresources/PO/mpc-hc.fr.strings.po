@@ -4513,7 +4513,7 @@ msgstr "/open\t\tOuvrir le fichier et mettre MPC-HC en pause"
 
 msgctxt "IDS_CMD_PLAY"
 msgid "/play\t\tStart playing the file as soon the player is launched"
-msgstr "/play\t\tOuvre le fichier et commence la lecture"
+msgstr "/play\t\tCommencer la lecture dès que le lecteur est prêt"
 
 msgctxt "IDS_CMD_CLOSE"
 msgid ""
