@@ -1860,7 +1860,7 @@ msgstr "Barre de lecture"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC22"
 msgid "Modern Seekbar height:"
-msgstr "Hauteur de barre :"
+msgstr "Hauteur de la barre :"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK2"
 msgid "Show chapter marks on seekbar"
