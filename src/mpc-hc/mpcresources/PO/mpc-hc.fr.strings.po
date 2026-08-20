@@ -4455,7 +4455,7 @@ msgstr ""
 
 msgctxt "IDS_CMD_DUB"
 msgid "/dub \"dubname\"\tLoad an additional audio file"
-msgstr "/dub \"fichier audio\"\tCharge un fichier audio supplémentaire"
+msgstr "/dub \"fichier audio\"\tCharger un fichier audio supplémentaire"
 
 msgctxt "IDS_CMD_DUBDELAY"
 msgid ""
