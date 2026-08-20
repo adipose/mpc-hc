@@ -4860,7 +4860,7 @@ msgstr "Activer l'écrasement de tous les styles"
 msgctxt "IDS_PPAGEADVANCED_LOOP_FOLDER_NEXT_FILE"
 msgid "Loop back to first file in folder after playing the last file."
 msgstr ""
-"Reboucler sur le premier fichier du répertoire après avoir fini de lire le "
+"Reboucler sur le premier fichier du dossier après avoir fini de lire le "
 "dernier fichier."
 
 msgctxt "IDS_PPAGEADVANCED_FULLSCREEN_DELAY"
