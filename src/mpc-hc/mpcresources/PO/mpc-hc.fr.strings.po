@@ -5146,7 +5146,7 @@ msgstr "Statut"
 
 msgctxt "IDS_ARS_DEVICE"
 msgid "Device:"
-msgstr "Périphérique:"
+msgstr "Périphérique :"
 
 msgctxt "IDS_ARS_MODE"
 msgid "Mode:"
