@@ -1340,7 +1340,7 @@ msgstr "Commun"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC"
 msgid "Resizer:"
-msgstr "Redimensionnement:"
+msgstr "Redimensionnement :"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC"
 msgid "Surface:"
