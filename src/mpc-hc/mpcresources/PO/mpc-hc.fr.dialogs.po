@@ -1888,7 +1888,7 @@ msgstr "Afficher la durée écoulée"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC7"
 msgid "Preview width (% of screen)"
-msgstr "Largeur de l'aperçu (% d'écran)"
+msgstr "Largeur de l'aperçu (% d'écran) :"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC10"
 msgid "Status Bar Elements"
