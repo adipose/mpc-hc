@@ -1900,7 +1900,7 @@ msgstr "Langue de la piste"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK4"
 msgid "Video Info"
-msgstr "Infos vidéo"
+msgstr "Informations vidéo"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK12"
 msgid "Audio Info"
