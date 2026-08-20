@@ -4753,7 +4753,7 @@ msgid ""
 "\"Output\" settings)"
 msgstr ""
 "/audiorenderer N\tUtiliser le moteur de rendu audio N, où N commence à 1\n"
-"\t\t(cf. \"Sortie audio\" dans les options)"
+"\t\t(cf. \"Sortie\" dans les options)"
 
 msgctxt "IDS_CMD_SHADERPRESET"
 msgid "/shaderpreset \"Pr\"\tStart using \"Pr\" shader preset"
