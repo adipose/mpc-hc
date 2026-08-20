@@ -4292,7 +4292,7 @@ msgid ""
 "/hwgpu \"index\"\tSet the index of the GPU used for hardware decoding.\n"
 "\t\tOnly available for CUVID and DXVA2 (copy-back)"
 msgstr ""
-"/hwgpu \"N\"\tFixe le numéro du GPU utilisé pour le décodage matériel\n"
+"/hwgpu \"N\"\tDéfinir le numéro du GPU utilisé pour le décodage matériel\n"
 "\t\tDisponible uniquement pour CUVID et DXVA2 (copy-back)"
 
 msgctxt "IDS_CMD_RESET"
