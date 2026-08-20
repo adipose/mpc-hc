@@ -77,7 +77,7 @@ msgstr "&Charger des sous-titres..."
 
 msgctxt "ID_FILE_SUBTITLES_SAVE"
 msgid "Save S&ubtitles..."
-msgstr "&Enregistrer les sous-titres..."
+msgstr "Enregistrer les so&us-titres..."
 
 msgctxt "ID_FILE_SUBTITLES_DOWNLOAD"
 msgid "&Download Subtitles..."
