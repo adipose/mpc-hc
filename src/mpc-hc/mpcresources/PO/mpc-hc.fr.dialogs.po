@@ -940,7 +940,7 @@ msgstr "Espacement :"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC2"
 msgid "Angle (z,°)"
-msgstr "Angle (z,°)"
+msgstr "Angle (z,°) :"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC3"
 msgid "Scale (x,%)"
