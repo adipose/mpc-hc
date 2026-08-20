@@ -4269,7 +4269,7 @@ msgstr "/iconsassoc\tRéassocier les icônes spécifiques aux formats"
 
 msgctxt "IDS_CMD_NOFOCUS"
 msgid "/nofocus\t\tOpen MPC-HC in background"
-msgstr "/nofocus\t\tDémarre MPC-HC en arrière-plan"
+msgstr "/nofocus\t\tDémarrer MPC-HC en arrière-plan"
 
 msgctxt "IDS_CMD_WEBPORT"
 msgid "/webport N\tStart web interface on specified port"
