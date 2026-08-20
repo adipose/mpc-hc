@@ -4277,7 +4277,7 @@ msgstr "/webport N\tDémarrer l'interface Web sur le port spécifié"
 
 msgctxt "IDS_CMD_DEBUG"
 msgid "/debug\t\tShow debug information in OSD"
-msgstr "/debug\t\tAffiche des informations de débogage via l'OSD"
+msgstr "/debug\t\tAfficher des informations de débogage via l'OSD"
 
 msgctxt "IDS_CMD_NOCRASHREPORTER"
 msgid "/nocrashreporter\tDisable the crash reporter"
