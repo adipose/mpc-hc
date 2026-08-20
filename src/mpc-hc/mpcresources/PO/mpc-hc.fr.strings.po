@@ -2945,7 +2945,7 @@ msgstr "Ouverture interrompue"
 
 msgctxt "IDS_MAINFRM_83"
 msgid "Failed to render the file"
-msgstr "Impossible de lire le fichier"
+msgstr "Impossible de rendre le fichier"
 
 msgctxt "IDS_AG_CHAPTER2"
 msgid "Chapter: "
