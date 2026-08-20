@@ -4771,7 +4771,7 @@ msgstr "Droite"
 
 msgctxt "IDS_OSD_AUTOCOPY_SUBTITLE_ON"
 msgid "Auto-Copy Subtitle to Clipboard: On"
-msgstr "Copier auto les sous-titres dans le presse-papiers : activé"
+msgstr "Copie auto des sous-titres dans le presse-papiers : activée"
 
 msgctxt "IDS_OSD_AUTOCOPY_SUBTITLE_OFF"
 msgid "Auto-Copy Subtitle to Clipboard: Off"
