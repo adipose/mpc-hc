@@ -4933,7 +4933,7 @@ msgstr "Quand la barre d'état est cachée"
 
 msgctxt "IDS_PPAGEADVANCED_STARTUP_PRESET"
 msgid "View preset to apply at startup"
-msgstr "Voir le préréglage d'affichage appliqué au démarrage"
+msgstr "Préréglage d'affichage appliqué au démarrage"
 
 msgctxt "IDS_STARTUP_PRESET_REMEMBER"
 msgid "Remember last"
