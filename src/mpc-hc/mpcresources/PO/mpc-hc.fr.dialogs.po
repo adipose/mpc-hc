@@ -1296,7 +1296,7 @@ msgstr "Paramétrage du récepteur analogique"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_STATIC1"
 msgid "Video"
-msgstr "Vidéo"
+msgstr "Vidéo :"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_STATIC2"
 msgid "Audio"
