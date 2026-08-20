@@ -2032,7 +2032,7 @@ msgstr "Bouton personnalisé 1"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Click"
-msgstr "Clic"
+msgstr "Clic :"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Right click"
