@@ -4717,7 +4717,7 @@ msgstr "/regall\t\tAssocier tous les fichiers pris en charge à MPC-HC"
 
 msgctxt "IDS_CMD_UNREGALL"
 msgid "/unregall\t\tRemove all file associations"
-msgstr "/unregall\t\tSupprime l'association des fichiers à MPC-HC"
+msgstr "/unregall\t\tSupprimer l'association des fichiers à MPC-HC"
 
 msgctxt "IDS_CMD_START"
 msgid "/start ms\t\tStart playing at \"ms\" (= milliseconds)"
