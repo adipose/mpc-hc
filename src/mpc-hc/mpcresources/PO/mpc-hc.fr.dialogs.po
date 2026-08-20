@@ -2020,7 +2020,7 @@ msgstr "Échelle de barre d'outil :"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Toolbar Alignment:"
-msgstr "Alignement de barre d'outil:"
+msgstr "Alignement :"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Active Style:"
