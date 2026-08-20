@@ -4462,7 +4462,7 @@ msgid ""
 "/dubdelay \"file\"\tLoad an additional audio file shifted with XXms\n"
 "\t\t(if the file contains \"...DELAY XXms...\")"
 msgstr ""
-"/dubdelay \"fichier\"\tCharge un fichier audio avec décalage de XXms\n"
+"/dubdelay \"fichier\"\tCharger un fichier audio avec décalage de XXms\n"
 "\t\t(si le nom contient \"...DELAY XXms...\")"
 
 msgctxt "IDS_CMD_D3DFS"
