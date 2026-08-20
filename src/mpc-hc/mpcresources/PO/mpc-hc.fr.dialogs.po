@@ -1312,7 +1312,7 @@ msgstr "Paramétrage du récepteur numérique (BDA)"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_STATIC4"
 msgid "Network Provider"
-msgstr "Fournisseur réseau"
+msgstr "Fournisseur réseau :"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_STATIC5"
 msgid "Tuner"
