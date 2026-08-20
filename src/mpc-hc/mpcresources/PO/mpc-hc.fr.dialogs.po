@@ -1224,7 +1224,7 @@ msgstr "Réinitialiser"
 
 msgctxt "IDD_PPAGEMISC_IDC_EXPORT_SETTINGS"
 msgid "Export"
-msgstr "Exporter les paramètres…"
+msgstr "Exporter…"
 
 msgctxt "IDD_PPAGEMISC_IDC_EXPORT_KEYS"
 msgid "Export keys"
