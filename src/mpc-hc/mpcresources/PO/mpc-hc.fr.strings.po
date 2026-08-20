@@ -4528,7 +4528,7 @@ msgstr "/shutdown\tÉteindre la machine après la lecture"
 
 msgctxt "IDS_CMD_STANDBY"
 msgid "/standby\t\tPut the operating system in standby mode after playback"
-msgstr "/standby\t\tMet la machine en veille après la lecture"
+msgstr "/standby\t\tMettre la machine en veille après la lecture"
 
 msgctxt "IDS_CMD_HIBERNATE"
 msgid "/hibernate\t\tHibernate operating system after playback"
