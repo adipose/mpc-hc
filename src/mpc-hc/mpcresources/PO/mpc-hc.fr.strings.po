@@ -1676,7 +1676,7 @@ msgstr "Préréglage d'effets vidéo : %s"
 
 msgctxt "IDS_AG_SHADERS_PRESET_NEXT"
 msgid "Next Shader Preset"
-msgstr "Présélection d'effets vidéo suivante"
+msgstr "Préréglage d'effets vidéo suivant"
 
 msgctxt "IDS_AG_SHADERS_PRESET_PREV"
 msgid "Prev Shader Preset"
