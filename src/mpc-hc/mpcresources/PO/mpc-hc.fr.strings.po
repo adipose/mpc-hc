@@ -4487,7 +4487,7 @@ msgstr "/dvd\t\tDémarrer en mode DVD (nom du dossier DVD en option)"
 
 msgctxt "IDS_CMD_DVDPOS_TC"
 msgid "/dvdpos T#C\tStart playback at title T, chapter C"
-msgstr "/dvdpos T#C\tDémarre la lecture du titre T, à partir du chapitre C"
+msgstr "/dvdpos T#C\tDémarrer la lecture du titre T, à partir du chapitre C"
 
 msgctxt "IDS_CMD_DVDPOS_TIME"
 msgid "/dvdpos T#P\tStart playback at title T, position P (hh:mm:ss)"
@@ -4505,7 +4505,7 @@ msgstr ""
 
 msgctxt "IDS_CMD_DEVICE"
 msgid "/device\t\tOpen the default video device"
-msgstr "/device\t\tOuvre le périphérique de capture vidéo par défaut"
+msgstr "/device\t\tOuvrir le périphérique de capture vidéo par défaut"
 
 msgctxt "IDS_CMD_OPEN"
 msgid "/open\t\tOpen the file, don't automatically start playback"
