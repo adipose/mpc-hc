@@ -4542,7 +4542,7 @@ msgstr "/logoff\t\tDéconnecter la session après la lecture"
 
 msgctxt "IDS_CMD_LOCK"
 msgid "/lock\t\tLock workstation after playback"
-msgstr "/lock\t\tVerrouille la session après la lecture"
+msgstr "/lock\t\tVerrouiller la session après la lecture"
 
 msgctxt "IDS_CMD_MONITOROFF"
 msgid "/monitoroff\tTurn off the monitor after playback"
