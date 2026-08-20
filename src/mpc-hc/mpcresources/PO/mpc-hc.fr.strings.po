@@ -3029,7 +3029,7 @@ msgstr "Répertoire DVD introuvable"
 
 msgctxt "IDS_MAINFRM_94"
 msgid "Can't create the DVD Navigator filter"
-msgstr "Impossible de créer le navigateur DVD"
+msgstr "Impossible de créer le filtre de navigation DVD"
 
 msgctxt "IDS_AG_FAILED"
 msgid "Failed"
