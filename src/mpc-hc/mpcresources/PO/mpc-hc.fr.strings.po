@@ -4509,7 +4509,7 @@ msgstr "/device\t\tOuvrir le périphérique de capture vidéo par défaut"
 
 msgctxt "IDS_CMD_OPEN"
 msgid "/open\t\tOpen the file, don't automatically start playback"
-msgstr "/open\t\tOuvrir le fichier et mettre MPC-HC en pause"
+msgstr "/open\t\tOuvre le fichier et met MPC-HC en pause"
 
 msgctxt "IDS_CMD_PLAY"
 msgid "/play\t\tStart playing the file as soon the player is launched"
