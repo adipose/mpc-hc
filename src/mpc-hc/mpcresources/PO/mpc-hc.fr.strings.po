@@ -1672,7 +1672,7 @@ msgstr ""
 
 msgctxt "IDS_OSD_SHADERS_PRESET"
 msgid "Shader preset: %s"
-msgstr "Préréglage d'effets vidéo : %s"
+msgstr "Préréglage d'effet vidéo : %s"
 
 msgctxt "IDS_AG_SHADERS_PRESET_NEXT"
 msgid "Next Shader Preset"
