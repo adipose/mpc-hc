@@ -4546,7 +4546,7 @@ msgstr "/lock\t\tVerrouiller la session après la lecture"
 
 msgctxt "IDS_CMD_MONITOROFF"
 msgid "/monitoroff\tTurn off the monitor after playback"
-msgstr "/monitoroff\tÉteint l'écran après la lecture"
+msgstr "/monitoroff\tÉteindre l'écran après la lecture"
 
 msgctxt "IDS_CMD_PLAYNEXT"
 msgid "/playnext\t\tOpen next file in the folder after playback"
