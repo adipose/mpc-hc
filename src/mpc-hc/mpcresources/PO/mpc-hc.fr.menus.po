@@ -85,7 +85,7 @@ msgstr "&Télécharger des sous-titres..."
 
 msgctxt "ID_FILE_PROPERTIES"
 msgid "P&roperties"
-msgstr "&Propriétés..."
+msgstr "P&ropriétés..."
 
 msgctxt "ID_FILE_OPEN_LOCATION"
 msgid "Open File &Location"
