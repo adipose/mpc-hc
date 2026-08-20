@@ -3653,7 +3653,7 @@ msgstr "Synchronisation verticale précise : désactivée"
 
 msgctxt "IDS_OSD_RS_SYNC_TO_DISPLAY_ON"
 msgid "Synchronize Video to Display: On"
-msgstr "Synchroniser la vidéo à l'affichage : oui"
+msgstr "Synchroniser la vidéo à l'affichage : activée"
 
 msgctxt "IDS_OSD_RS_SYNC_TO_DISPLAY_OFF"
 msgid "Synchronize Video to Display: Off"
@@ -3661,7 +3661,7 @@ msgstr "Synchroniser la vidéo à l'affichage : désactivée"
 
 msgctxt "IDS_OSD_RS_SYNC_TO_VIDEO_ON"
 msgid "Synchronize Display to Video: On"
-msgstr "Synchroniser l'affichage à la vidéo : oui"
+msgstr "Synchroniser l'affichage à la vidéo : activée"
 
 msgctxt "IDS_OSD_RS_SYNC_TO_VIDEO_OFF"
 msgid "Synchronize Display to Video: Off"
@@ -3669,7 +3669,7 @@ msgstr "Synchroniser l'affichage à la vidéo : désactivée"
 
 msgctxt "IDS_OSD_RS_PRESENT_NEAREST_ON"
 msgid "Present at Nearest VSync: On"
-msgstr "Présenter à la synchronisation verticale la plus proche : oui"
+msgstr "Présenter à la synchronisation verticale la plus proche : activée"
 
 msgctxt "IDS_OSD_RS_PRESENT_NEAREST_OFF"
 msgid "Present at Nearest VSync: Off"
