@@ -4775,7 +4775,7 @@ msgstr "Copie auto des sous-titres dans le presse-papiers : activée"
 
 msgctxt "IDS_OSD_AUTOCOPY_SUBTITLE_OFF"
 msgid "Auto-Copy Subtitle to Clipboard: Off"
-msgstr "Copier auto les sous-titres dans le presse-papiers : désactivé"
+msgstr "Copie auto des sous-titres dans le presse-papiers : désactivée"
 
 msgctxt "IDS_SUBTITLES_SECONDARY_BAD_FORMAT"
 msgid ""
