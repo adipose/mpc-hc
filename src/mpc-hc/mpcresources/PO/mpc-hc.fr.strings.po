@@ -4471,7 +4471,7 @@ msgstr "/d3dfs\t\tLancer l'affichage en mode plein écran D3D"
 
 msgctxt "IDS_CMD_SUB"
 msgid "/sub \"subname\"\tLoad an additional subtitle file"
-msgstr "/sub \"fichier ST\"\tCharge un fichier de sous-titres"
+msgstr "/sub \"fichier ST\"\tCharger un fichier de sous-titres"
 
 msgctxt "IDS_CMD_FILTER"
 msgid ""
