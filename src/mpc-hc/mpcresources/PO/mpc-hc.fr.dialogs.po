@@ -283,7 +283,7 @@ msgstr "Divers"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK3"
 msgid "Tray icon"
-msgstr "Icône dans la barre de notification"
+msgstr "Placer une icône en barre de notification"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK8"
 msgid "Store settings in .ini file"
