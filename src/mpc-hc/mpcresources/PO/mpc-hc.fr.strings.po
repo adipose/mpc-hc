@@ -2594,7 +2594,7 @@ msgstr "OSD : afficher l'indicateur de temps"
 
 msgctxt "IDS_PPAGEWEBSERVER_0"
 msgid "Select the directory"
-msgstr "Sélectionner le dossier"
+msgstr "Sélectionner le répertoire"
 
 msgctxt "IDS_FAVORITES_QUICKADDFAVORITE"
 msgid "Quick add favorite"
