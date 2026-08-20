@@ -1028,7 +1028,7 @@ msgstr "Lier les couches de transparence"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC21"
 msgid "8-bit Character Set"
-msgstr "Jeu de caractères 8 bits"
+msgstr "Jeu de caractères 8 bits :"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC22"
 msgid "OpenType Language"
