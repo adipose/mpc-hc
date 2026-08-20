@@ -4579,7 +4579,7 @@ msgstr ""
 
 msgctxt "IDS_CONTROLS_YOUTUBEDL"
 msgid "Calling yt-dlp/youtube-dl..."
-msgstr "Appel de yt-dlp/youtube-dl en cours..."
+msgstr "Appel de yt-dlp/youtube-dl en cours…"
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_TOP"
 msgid "Align Top"
