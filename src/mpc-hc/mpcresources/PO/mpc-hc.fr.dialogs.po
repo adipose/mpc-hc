@@ -1032,7 +1032,7 @@ msgstr "Jeu de caractères 8 bits :"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC22"
 msgid "OpenType Language"
-msgstr "Langue OpenType"
+msgstr "Langue OpenType :"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC_LIBASS"
 msgid "Libass Options"
