@@ -4285,7 +4285,7 @@ msgstr "/nocrashreporter\tDésactiver le rapporteur de plantage"
 
 msgctxt "IDS_CMD_SLAVE"
 msgid "/slave \"hWnd\"\tUse MPC-HC as slave"
-msgstr "/slave \"hWnd\"\tDémarre MPC-HC en mode « esclave »"
+msgstr "/slave \"hWnd\"\tDémarrer MPC-HC en mode « esclave »"
 
 msgctxt "IDS_CMD_HWGPU"
 msgid ""
