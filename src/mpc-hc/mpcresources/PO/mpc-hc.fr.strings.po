@@ -2937,7 +2937,7 @@ msgstr "Impossible de créer l'objet graphe des filtres"
 
 msgctxt "IDS_MAINFRM_81"
 msgid "Invalid argument"
-msgstr "Paramètre invalide"
+msgstr "Argument invalide"
 
 msgctxt "IDS_MAINFRM_82"
 msgid "Opening aborted"
