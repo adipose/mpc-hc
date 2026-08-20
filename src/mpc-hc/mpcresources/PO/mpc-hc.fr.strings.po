@@ -1165,7 +1165,7 @@ msgstr "Ouvrir le dossier contenant le fichier"
 
 msgctxt "IDS_AG_OPENDIRECTORY"
 msgid "Open Directory"
-msgstr "Ouvrir un répertoire"
+msgstr "Ouvrir un dossier"
 
 msgctxt "IDS_AG_TOGGLE_NAVIGATION"
 msgid "Toggle Navigation Bar"
