@@ -4733,7 +4733,7 @@ msgstr "/ab_start hh:mm:ss\tposition de début de répétition A-B"
 
 msgctxt "IDS_CMD_AB_END"
 msgid "/ab_end hh:mm:ss\tA-B repeat end position"
-msgstr "/ab_end hh:mm:ss\tposition de fin de répétition A-B"
+msgstr "/ab_end hh:mm:ss\tPosition de fin de répétition A-B"
 
 msgctxt "IDS_CMD_FIXEDSIZE"
 msgid ""
