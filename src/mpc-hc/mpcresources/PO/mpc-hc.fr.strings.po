@@ -4725,7 +4725,7 @@ msgstr "/start ms\t\tDémarrer la lecture à \"ms\" (millisecondes)"
 
 msgctxt "IDS_CMD_STARTPOS"
 msgid "/startpos hh:mm:ss\tStart playing at position hh:mm:ss"
-msgstr "/startpos hh:mm:ss\tStart playing at position hh:mm:ss"
+msgstr "/startpos hh:mm:ss\tDémarrer la lecture à la position hh:mm:ss"
 
 msgctxt "IDS_CMD_AB_START"
 msgid "/ab_start hh:mm:ss\tA-B repeat start position"
@@ -4757,7 +4757,7 @@ msgstr ""
 
 msgctxt "IDS_CMD_SHADERPRESET"
 msgid "/shaderpreset \"Pr\"\tStart using \"Pr\" shader preset"
-msgstr "/shaderpreset \"Pr\"\tUtilise la présélection d'effets vidéo \"Pr\""
+msgstr "/shaderpreset \"Pr\"\tUtiliser la présélection d'effets vidéo \"Pr\""
 
 msgctxt "IDS_TOOLBAR_ALIGNMENT_LEFT"
 msgid "Left"
