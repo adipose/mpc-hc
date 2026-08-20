@@ -4550,7 +4550,7 @@ msgstr "/monitoroff\tÉteindre l'écran après la lecture"
 
 msgctxt "IDS_CMD_PLAYNEXT"
 msgid "/playnext\t\tOpen next file in the folder after playback"
-msgstr "/playnext\t\tOuvre le fichier suivant dans le répertoire après la lecture"
+msgstr "/playnext\t\tOuvrir le fichier suivant du dossier après la lecture"
 
 msgctxt "IDS_CMD_VIEWPRESET"
 msgid ""
