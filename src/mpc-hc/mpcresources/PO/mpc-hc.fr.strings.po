@@ -4265,7 +4265,7 @@ msgstr ""
 
 msgctxt "IDS_CMD_ICONASSOC"
 msgid "/iconsassoc\tReassociate format icons"
-msgstr "/iconsassoc\tRéassocie les icônes spécifiques aux formats"
+msgstr "/iconsassoc\tRéassocier les icônes spécifiques aux formats"
 
 msgctxt "IDS_CMD_NOFOCUS"
 msgid "/nofocus\t\tOpen MPC-HC in background"
