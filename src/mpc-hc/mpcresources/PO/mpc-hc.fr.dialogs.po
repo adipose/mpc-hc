@@ -1404,7 +1404,7 @@ msgstr "Présenter à la synchronisation verticale la plus proche"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC5"
 msgid "Target sync offset:"
-msgstr "Décalage de synchronisation cible:"
+msgstr "Décalage de synchronisation cible :"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC6"
 msgid "ms"
