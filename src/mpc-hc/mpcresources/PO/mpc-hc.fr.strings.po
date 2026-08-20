@@ -407,7 +407,7 @@ msgstr "Liste de lecture"
 
 msgctxt "IDS_PPAGE_FS_CLN_ON_OFF"
 msgid "On/Off"
-msgstr "Activé"
+msgstr "Activé/Désactivé"
 
 msgctxt "IDS_PPAGE_FS_CLN_FROM_FPS"
 msgid "From (FPS)"
