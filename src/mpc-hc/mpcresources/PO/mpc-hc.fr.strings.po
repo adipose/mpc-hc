@@ -4721,7 +4721,7 @@ msgstr "/unregall\t\tSupprime l'association des fichiers à MPC-HC"
 
 msgctxt "IDS_CMD_START"
 msgid "/start ms\t\tStart playing at \"ms\" (= milliseconds)"
-msgstr "/start ms\t\tDémarre la lecture à \"ms\" (millisecondes)"
+msgstr "/start ms\t\tDémarrer la lecture à \"ms\" (millisecondes)"
 
 msgctxt "IDS_CMD_STARTPOS"
 msgid "/startpos hh:mm:ss\tStart playing at position hh:mm:ss"
