@@ -2550,7 +2550,7 @@ msgstr "Piste de sous-titres précédente"
 
 msgctxt "IDS_AG_AUTOCOPY_SUBTITLE"
 msgid "Auto-Copy Subtitle to Clipboard"
-msgstr "Copier auto les sous-titres en presse-papiers"
+msgstr "Copier auto les sous-titres dans le presse-papiers"
 
 msgctxt "IDS_MPLAYERC_85"
 msgid "On/Off Subtitle"
