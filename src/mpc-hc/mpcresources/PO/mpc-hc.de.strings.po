@@ -4105,7 +4105,7 @@ msgstr "Nach Wiedergabe: Bildschirm ausschalten"
 
 msgctxt "IDS_AFTERPLAYBACK_PLAYNEXT"
 msgid "After Playback: Play next file in the folder"
-msgstr "Nach Wiedergabe: Nächste Ordnerdatei öffnen"
+msgstr "Nach Wiedergabe: Nächste Datei im Ordner öffnen"
 
 msgctxt "IDS_AFTERPLAYBACK_DONOTHING"
 msgid "After Playback: Do nothing"
