@@ -3290,7 +3290,7 @@ msgstr "Erste Ordnerdatei erreicht."
 
 msgctxt "IDS_LAST_IN_FOLDER"
 msgid "The last file of the folder is already loaded."
-msgstr "Letzte Ordnerdatei erreicht."
+msgstr "Letzte Datei im Ordner erreicht."
 
 msgctxt "IDS_FRONT_LEFT"
 msgid "Front Left"
