@@ -1790,7 +1790,7 @@ msgstr "Keine Aktion"
 
 msgctxt "IDS_AFTER_PLAYBACK_PLAY_NEXT"
 msgid "Play next file in the folder"
-msgstr "Nächste Ordnerdatei öffnen"
+msgstr "Nächste Datei im Ordner öffnen"
 
 msgctxt "IDS_AFTER_PLAYBACK_REWIND"
 msgid "Rewind current file"
