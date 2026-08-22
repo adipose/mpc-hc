@@ -1711,7 +1711,7 @@ msgstr "+%d %%"
 
 msgctxt "IDS_PLAYLIST_ADDFOLDER"
 msgid "Add containing &folder"
-msgstr "Enthaltenden &Ordner hinzufügen"
+msgstr "Alle Dateien des &Ordners hinzufügen"
 
 msgctxt "IDS_HW_INDICATOR"
 msgid "[H/W]"
