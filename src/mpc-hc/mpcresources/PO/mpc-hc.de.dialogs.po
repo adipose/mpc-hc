@@ -671,7 +671,7 @@ msgid ""
 "Open previous/next file in folder on \"Skip back/forward\" when there is "
 "only one item in playlist"
 msgstr ""
-"Vorherige/nächste Datei im Verzeichnis bei nur einem Eintrag in der "
+"Vorherige/nächste Datei im Ordner bei nur einem Eintrag in der "
 "Wiedergabeliste durch \"Vorwärts/Rückwärts springen\" öffnen"
 
 msgctxt "IDD_PPAGETWEAKS_IDC_FASTSEEK_CHECK"
