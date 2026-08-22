@@ -26,7 +26,6 @@
 #include <psapi.h>
 #include "PPageSheet.h"
 #include "CMPCThemeMsgBox.h"
-#include "MainFrm.h"
 
 // CPPageMisc dialog
 
@@ -185,7 +184,7 @@ void CPPageMisc::OnExportKeys()
 
 void CPPageMisc::OnColorControls()
 {
-    AfxGetMainFrame()->PostMessage(WM_COMMAND, ID_COLOR_CONTROLS);
+    EndDialog(CPPageSheet::OPEN_COLOR_CONTROLS);
 }
 
 void CPPageMisc::AdjustDynamicWidgets() {

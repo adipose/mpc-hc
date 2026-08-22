@@ -81,7 +81,8 @@ class CPPageSheet : public TreePropSheet::CTreePropSheet, public CMPCThemeUtil
 public:
     enum {
         APPLY_LANGUAGE_CHANGE = 100, // 100 is a magic number than won't collide with WinAPI constants
-        RESET_SETTINGS
+        RESET_SETTINGS,
+        OPEN_COLOR_CONTROLS
     };
     CPtrArray& getPages() { return m_pages; };
 private:

@@ -19772,6 +19772,9 @@ void CMainFrame::ShowOptions(int idPage/* = 0*/)
             // and immediately reopen
             ShellExecute(nullptr, _T("open"), PathUtils::GetProgramPath(true), _T("/reset"), nullptr, SW_SHOWNORMAL);
             break;
+        case CPPageSheet::OPEN_COLOR_CONTROLS:
+            OnViewColorControls();
+            break;
         default:
             ASSERT(iRes > 0 && iRes != CPPageSheet::APPLY_LANGUAGE_CHANGE);
             break;
