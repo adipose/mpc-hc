@@ -4533,7 +4533,7 @@ msgstr "/monitoroff\tSchaltet den Bildschirm aus (nach Wiedergabe)"
 
 msgctxt "IDS_CMD_PLAYNEXT"
 msgid "/playnext\t\tOpen next file in the folder after playback"
-msgstr "/playnext\t\tÖffnet die nächste Ordnerdatei (nach Wiedergabe)"
+msgstr "/playnext\t\tÖffnet die nächste Datei im Ordner (nach Wiedergabe)"
 
 msgctxt "IDS_CMD_VIEWPRESET"
 msgid ""
