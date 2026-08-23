@@ -4050,7 +4050,7 @@ msgstr "鮮やかさ: %s"
 
 msgctxt "IDS_OSD_RESET_COLOR"
 msgid "Color settings restored"
-msgstr "色の設定が復元されました"
+msgstr "カラー設定が復元されました"
 
 msgctxt "IDS_OSD_NO_COLORCONTROL"
 msgid "Color control is not supported"
