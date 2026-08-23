@@ -1809,7 +1809,7 @@ msgstr "Resetuj zaznaczone"
 
 msgctxt "IDD_COLORCONTROLS_DLG_CAPTION"
 msgid "Color controls"
-msgstr "Kontrolki kolorów"
+msgstr "Regulacja kolorów"
 
 msgctxt "IDD_COLORCONTROLS_DLG_IDC_STATIC"
 msgid "Brightness"
