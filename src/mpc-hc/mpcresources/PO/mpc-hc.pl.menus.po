@@ -668,7 +668,7 @@ msgstr "&Filtry"
 
 msgctxt "ID_COLOR_CONTROLS"
 msgid "&Color controls..."
-msgstr "&Kontrolki kolorów..."
+msgstr "&Regulacja kolorów..."
 
 msgctxt "ID_SHADERS"
 msgid "S&haders"
