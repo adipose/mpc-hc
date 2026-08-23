@@ -3762,7 +3762,7 @@ msgstr "鮮やかさを下げる"
 
 msgctxt "IDS_RESET_COLOR"
 msgid "Reset color settings"
-msgstr "色の設定をリセット"
+msgstr "カラー設定をリセット"
 
 msgctxt "IDS_USING_LATEST_STABLE"
 msgid ""
