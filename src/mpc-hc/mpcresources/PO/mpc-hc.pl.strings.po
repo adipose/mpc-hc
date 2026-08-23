@@ -5332,4 +5332,4 @@ msgstr "Różne"
 
 msgctxt "IDS_AG_COLOR_CONTROLS"
 msgid "Color Controls"
-msgstr "Kontrolki kolorów"
+msgstr "Regulacja kolorów"
