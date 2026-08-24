@@ -653,7 +653,7 @@ msgstr "59,94 FPS"
 
 msgctxt "ID_PLAY_DECRATE"
 msgid "&Decrease Rate"
-msgstr "Tempo v&erringern"
+msgstr "Geschwindigkeit v&erringern"
 
 msgctxt "ID_PLAY_INCRATE"
 msgid "&Increase Rate"
