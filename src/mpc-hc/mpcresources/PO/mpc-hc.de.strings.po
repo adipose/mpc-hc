@@ -1986,7 +1986,7 @@ msgstr "Gehe zu"
 
 msgctxt "IDS_AG_INCREASE_RATE"
 msgid "Increase Rate"
-msgstr "Tempo erhöhen"
+msgstr "Geschwindigkeit erhöhen"
 
 msgctxt "IDS_CONTENT_SHOW_GAMESHOW"
 msgid "Show/Game show"
