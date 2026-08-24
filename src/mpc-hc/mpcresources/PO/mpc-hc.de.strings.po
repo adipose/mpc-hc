@@ -3120,7 +3120,7 @@ msgstr "Lautstärkeverstärkung verringern"
 
 msgctxt "IDS_VOLUME_BOOST_MIN"
 msgid "Volume boost Min"
-msgstr "Tonverstärkung: +0 % (min)"
+msgstr "Lautstärkeverstärkung: +0 % (min)"
 
 msgctxt "IDS_VOLUME_BOOST_MAX"
 msgid "Volume boost Max"
