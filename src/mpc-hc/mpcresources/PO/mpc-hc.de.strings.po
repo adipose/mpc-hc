@@ -3124,7 +3124,7 @@ msgstr "Lautstärkeverstärkung: +0 % (min)"
 
 msgctxt "IDS_VOLUME_BOOST_MAX"
 msgid "Volume boost Max"
-msgstr "Tonverstärkung: +300 % (max)"
+msgstr "Lautstärkeverstärkung: +300 % (max)"
 
 msgctxt "IDS_USAGE"
 msgid "Usage: mpc-hc.exe \"pathname\" [switches]"
