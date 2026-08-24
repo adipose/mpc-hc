@@ -2139,7 +2139,7 @@ msgstr "BDA-Fehler"
 
 msgctxt "IDS_AG_DECREASE_RATE"
 msgid "Decrease Rate"
-msgstr "Tempo verringern"
+msgstr "Geschwindigkeit verringern"
 
 msgctxt "IDS_AG_RESET_RATE"
 msgid "Reset Rate"
