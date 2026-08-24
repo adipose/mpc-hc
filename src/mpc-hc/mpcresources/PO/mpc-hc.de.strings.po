@@ -3116,7 +3116,7 @@ msgstr "Lautstärkeverstärkung erhöhen"
 
 msgctxt "IDS_VOLUME_BOOST_DEC"
 msgid "Volume boost decrease"
-msgstr "Tonverstärkung verringern"
+msgstr "Lautstärkeverstärkung verringern"
 
 msgctxt "IDS_VOLUME_BOOST_MIN"
 msgid "Volume boost Min"
