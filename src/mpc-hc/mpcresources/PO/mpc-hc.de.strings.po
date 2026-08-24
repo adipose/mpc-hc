@@ -2077,7 +2077,7 @@ msgstr "VSync-Offset: %d"
 
 msgctxt "IDS_OSD_SPEED"
 msgid "Speed: %.2lfx"
-msgstr "Tempo: %.2lfx"
+msgstr "Geschwindigkeit: %.2lfx"
 
 msgctxt "IDS_OSD_THUMBS_SAVED"
 msgid "Thumbnails saved successfully"
