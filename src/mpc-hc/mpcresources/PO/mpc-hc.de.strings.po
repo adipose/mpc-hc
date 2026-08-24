@@ -3112,7 +3112,7 @@ msgstr "Untertitelverschiebung: %ld ms"
 
 msgctxt "IDS_VOLUME_BOOST_INC"
 msgid "Volume boost increase"
-msgstr "Tonverstärkung erhöhen"
+msgstr "Lautstärkeverstärkung erhöhen"
 
 msgctxt "IDS_VOLUME_BOOST_DEC"
 msgid "Volume boost decrease"
