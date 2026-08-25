@@ -672,7 +672,7 @@ msgid ""
 "only one item in playlist"
 msgstr ""
 "Vorherige/nächste Datei im Ordner bei nur einem Eintrag in der "
-"Wiedergabeliste durch \"Vorherige/nächste Datei öffnen\" öffnen."
+"Wiedergabeliste durch \"Vorherige/nächste Datei öffnen\"-Befehl öffnen."
 
 msgctxt "IDD_PPAGETWEAKS_IDC_FASTSEEK_CHECK"
 msgid "Fast seek (on keyframe)"
