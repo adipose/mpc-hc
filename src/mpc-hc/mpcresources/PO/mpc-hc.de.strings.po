@@ -2191,7 +2191,7 @@ msgstr "Nächste Datei öffnen"
 
 msgctxt "IDS_AG_PREVIOUS"
 msgid "Previous"
-msgstr "Rückwärts (springen)"
+msgstr "Vorherige Datei öffnen"
 
 msgctxt "IDS_AG_NEXT_FILE"
 msgid "Next File"
