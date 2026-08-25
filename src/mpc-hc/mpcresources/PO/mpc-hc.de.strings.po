@@ -2187,7 +2187,7 @@ msgstr "Sprung: Rückwärts (Keyframe)"
 
 msgctxt "IDS_AG_NEXT"
 msgid "Next"
-msgstr "Vorwärts (springen)"
+msgstr "Nächste Datei öffnen"
 
 msgctxt "IDS_AG_PREVIOUS"
 msgid "Previous"
