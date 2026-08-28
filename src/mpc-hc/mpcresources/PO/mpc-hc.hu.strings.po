@@ -779,7 +779,7 @@ msgstr "Feliratok::Alapstílus"
 
 msgctxt "IDD_PPAGEINTERNALFILTERS"
 msgid "Internal Filters::General"
-msgstr "Külső szűrők::Általános"
+msgstr "Belső szűrők::Általános"
 
 msgctxt "IDD_PPAGELOGO"
 msgid "Player::Logo"
