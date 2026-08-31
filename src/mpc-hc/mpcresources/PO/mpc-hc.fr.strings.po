@@ -3,15 +3,16 @@
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
 # MPC HC <adiposegithub@gmail.com>, 2022
-# Cyril Provence <ywa78408@eveav.com>, 2026
 # tmtisfree <tmtisfree@free.fr>, 2026
+# Cyril Provence <ywa78408@eveav.com>, 2026
+# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-08-18 04:47:14+0000\n"
-"PO-Revision-Date: 2020-01-02 07:46+0000\n"
-"Last-Translator: tmtisfree <tmtisfree@free.fr>, 2026\n"
+"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
+"PO-Revision-Date: 2026-08-31 14:27+0000\n"
+"Last-Translator: Transifex sync (Studio)\n"
 "Language-Team: French (https://app.transifex.com/mpchc/teams/106126/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5371,3 +5372,7 @@ msgstr "Divers"
 msgctxt "IDS_AG_COLOR_CONTROLS"
 msgid "Color Controls"
 msgstr "Contrôles de couleur"
+
+msgctxt "IDC_COLOR_CONTROLS"
+msgid "You can also open Color controls from the Play menu"
+msgstr ""

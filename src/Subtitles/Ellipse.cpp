@@ -43,7 +43,7 @@ int CEllipse::GetLeftIntersect(int dx, int dy)
     ASSERT(dy >= 0); // We are sure dy is always greater or equal to 0 in our case
 
     // Crude conditions to filter every case that won't intersect at all or not on the left
-    if (dx > -m_rx && dx < m_rx /*&& dy > -m_2ry*/ && dy < m_2ry) {
+    if (dx > -m_rx && dx < m_rx && dy >= 0 && dy < m_2ry ) {
         const size_t nCache = nIntersectCacheLineSize * dy + dx + m_rx - 1;
         int iRes = m_intersectCache[nCache];
 

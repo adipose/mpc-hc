@@ -6,15 +6,15 @@
 # lifegpc <g1710431395@gmail.com>, 2020
 # CyanVesper <SharpNight93@gmail.com>, 2023
 # KaiHuaDou, 2026
-# Phonebook3599, 2026
 # YuanHao Du, 2026
+# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-08-18 04:47:14+0000\n"
-"PO-Revision-Date: 2020-01-02 07:46+0000\n"
-"Last-Translator: YuanHao Du, 2026\n"
+"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
+"PO-Revision-Date: 2026-08-31 14:27+0000\n"
+"Last-Translator: Transifex sync (Studio)\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/mpchc/teams/106126/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"

@@ -111,6 +111,8 @@ private:
     void SyncSelectionToPos(POSITION pos);
     void UpdateList();
     void EnsureVisible(POSITION pos);
+    bool ListHasGeometry() const;
+    bool m_bScrollToCurrentPending = false; // a scroll was deferred while the bar had no geometry
     int FindItem(const POSITION pos) const;
     POSITION FindPos(int i);
     void RebuildPosMap();
@@ -170,6 +172,7 @@ public:
     void SetFirstSelected();
     void SetFirst();
     void SetLast();
+    void EnsureCurrentVisible();
     void SetCurValid(bool fValid);
     void SetCurLabel(CString label);
     void SetCurTime(REFERENCE_TIME rt);

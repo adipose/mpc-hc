@@ -27,6 +27,7 @@
 #include <memory>
 #include <map>
 #include <deque>
+#include <vector>
 #include "CMPCThemeComboBox.h"
 #include "CMPCThemeSpinButtonCtrl.h"
 #include "CMPCThemePlayerListCtrl.h"
@@ -81,6 +82,9 @@ public:
     bool GetValue() const {
         return currentValue;
     }
+    bool GetDefaultValue() const {
+        return defaultValue;
+    }
     void Apply() {
         settingReference = currentValue;
     }
@@ -116,6 +120,9 @@ public:
     }
     int GetValue() const {
         return currentValue;
+    }
+    int GetDefaultValue() const {
+        return defaultValue;
     }
     void Apply() {
         settingReference = currentValue;
@@ -214,6 +221,7 @@ private:
         SAVEIMAGE_CURRENTTIME,
         SNAPSHOTSUBTITLES,
         SNAPSHOTKEEPVIDEOEXTENSION,
+        SUB_SECONDARY_VERT_POS,
         ADD_LANGCODE_WHEN_SAVE_SUBTITLES,
         USE_TITLE_IN_RECENT_FILE_LIST,
         MOUSE_LEFTUP_DELAY,
@@ -268,6 +276,9 @@ private:
     CString m_strFalse;
 
     void InitSettings();
+    // The widest value the setting can ever display, and whether it would be drawn flagged (bold).
+    std::pair<CString, bool> GetWidestValue(const std::shared_ptr<SettingsBase>& pItem, CDC* pDC);
+    void AutoSizeValueColumn();
     bool IsDefault(ADVANCED_SETTINGS) const;
     inline bool IsHeaderRow(int iItem) const {
         return m_list.GetItemData(iItem) == HEADER_ITEM_DATA;

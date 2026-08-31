@@ -184,12 +184,6 @@ BOOL CDpiAwareResizableDialog::OnInitDialog() {
     UpdateMinMaxTrackSizeForDPI();
     ApplyDialogSizeAndDpi(m_currentDpi, GetTargetDluSize());
 
-    // Refresh grip (initialized with primary monitor DPI, not current monitor)
-    CWnd* pGrip = GetSizeGripWnd();
-    if (pGrip && ::IsWindow(pGrip->GetSafeHwnd())) {
-        pGrip->SendMessage(WM_SETTINGCHANGE, 0, 0);
-    }
-
     return ret;
 }
 
@@ -424,11 +418,6 @@ LRESULT CDpiAwareResizableDialog::OnDpiChanged(WPARAM wParam, LPARAM lParam)
 
     ApplyDialogSizeAndDpi(m_currentDpi, targetDluSize);
     RefreshStaticImages();
-
-    CWnd* pGrip = GetSizeGripWnd();
-    if (pGrip && ::IsWindow(pGrip->GetSafeHwnd())) {
-        pGrip->SendMessage(WM_SETTINGCHANGE, 0, 0);
-    }
 
     SetupAnchors();
 
@@ -728,7 +717,7 @@ void CDpiAwareResizableDialog::LoadStaticIcon(int controlID, LPCTSTR iconResourc
     int iconSize = std::min(controlRect.Width(), controlRect.Height());
 
     HICON hIcon = nullptr;
-    HINSTANCE hInst = isSystemIcon ? nullptr : AfxGetResourceHandle();
+    HINSTANCE hInst = isSystemIcon ? nullptr : AfxGetInstanceHandle();
 
     if (SUCCEEDED(LoadIconWithScaleDown(hInst, iconResourceID, iconSize, iconSize, &hIcon))) {
         pStatic->SetIcon(hIcon);
@@ -755,7 +744,7 @@ void CDpiAwareResizableDialog::RefreshStaticImages()
 
         HICON hOldIcon = pStatic->GetIcon();
         HICON hIcon = nullptr;
-        HINSTANCE hInst = info.isSystemIcon ? nullptr : AfxGetResourceHandle();
+        HINSTANCE hInst = info.isSystemIcon ? nullptr : AfxGetInstanceHandle();
 
         if (SUCCEEDED(LoadIconWithScaleDown(hInst, info.resourceID, iconSize, iconSize, &hIcon))) {
             pStatic->SetIcon(hIcon);

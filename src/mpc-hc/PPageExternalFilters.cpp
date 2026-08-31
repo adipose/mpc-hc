@@ -450,11 +450,39 @@ void CPPageExternalFilters::OnDoubleClickFilter(NMHDR* pNMHDR, LRESULT* pResult)
 {
     ASSERT(pNMHDR);
     ASSERT(pResult);
+    *pResult = 0;
 
     if (FilterOverride* f = GetCurFilter()) {
+        if (f->clsid == CLSID_VapourSynthFilter) {
+            CString vsscript_path = L"VSScript.dll";
+            wchar_t* env_value = nullptr;
+            size_t size = 0;
+            errno_t result = _wdupenv_s(&env_value, &size, L"VSSCRIPT_PATH");
+            if (result == 0 && env_value != nullptr)
+            {
+                vsscript_path = env_value;
+                free(env_value);
+            }
+            HMODULE hVS = LoadLibraryExW(vsscript_path, nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
+            if (hVS) {
+                FreeLibrary(hVS);
+            } else {
+                AfxMessageBox(L"Error: Can not open filter properties. The required Vapoursynth runtime is not installed.", MB_OK);
+                return;
+            }
+        }
+        if (f->clsid == CLSID_AviSynthFilter) {
+            HMODULE hAVS = LoadLibraryExW(L"avisynth.dll", nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
+            if (hAVS) {
+                FreeLibrary(hAVS);
+            } else {
+                AfxMessageBox(L"Error: Can not open filter properties. The required Avisynth runtime is not installed.", MB_OK);
+                return;
+            }
+        }
+
         CComPtr<IBaseFilter> pBF;
         CString name;
-
         if (f->type == FilterOverride::REGISTERED) {
             CStringW namew;
             if (CreateFilter(f->dispname, &pBF, namew)) {
@@ -478,8 +506,6 @@ void CPPageExternalFilters::OnDoubleClickFilter(NMHDR* pNMHDR, LRESULT* pResult)
             }
         }
     }
-
-    *pResult = 0;
 }
 
 int CPPageExternalFilters::OnVKeyToItem(UINT nKey, CListBox* pListBox, UINT nIndex)
