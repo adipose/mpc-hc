@@ -76,7 +76,7 @@ msgstr "Nahrať"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK2"
 msgid "Enable built-in audio switcher filter (requires restart)"
-msgstr "Zapnúť vstavaný filter zvuku (vyžaduje reštart)"
+msgstr "Zapnúť vstavaný filter prepínača zvuku (vyžaduje reštart)"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK5"
 msgid "Normalize"
