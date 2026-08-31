@@ -4,14 +4,13 @@
 # Translators:
 # MPC HC <adiposegithub@gmail.com>, 2020
 # Marián Hikaník, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-08-31 14:27+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-08-22 17:29:52+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Marián Hikaník, 2026\n"
 "Language-Team: Slovak (https://app.transifex.com/mpchc/teams/106126/sk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -622,11 +621,11 @@ msgstr "Prehrávanie::Shadery"
 
 msgctxt "IDD_PPAGETOOLBAR"
 msgid "Player::Toolbar"
-msgstr "Prehrávač::Panel nástrojov"
+msgstr "Prehrávač:Panel nástrojov"
 
 msgctxt "IDD_PPAGETOOLBARLAYOUT"
 msgid "Player::Toolbar Layout"
-msgstr "Prehrávač::Rozloženie panela nástrojov"
+msgstr "Prehrávač: Rozloženie panela nástrojov"
 
 msgctxt "IDS_PPAGE_TOOLBAR_AVAIL_BUTTONS"
 msgid "Available Buttons"
@@ -5323,4 +5322,4 @@ msgstr "Ovládače farby"
 
 msgctxt "IDC_COLOR_CONTROLS"
 msgid "You can also open Color controls from the Play menu"
-msgstr ""
+msgstr "Ovládacie prvky farieb môžete otvoriť aj z menu pre prehrávanie"
