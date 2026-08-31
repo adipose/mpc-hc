@@ -596,7 +596,7 @@ msgstr "Player::Geral"
 
 msgctxt "IDD_PPAGEDVD"
 msgid "Playback::DVD"
-msgstr "Playback::DVD"
+msgstr "Reprodução::DVD"
 
 msgctxt "IDD_PPAGESUBTITLES"
 msgid "Subtitles::General"
@@ -620,7 +620,7 @@ msgstr "Filtros Externos"
 
 msgctxt "IDD_PPAGESHADERS"
 msgid "Playback::Shaders"
-msgstr "Playback::Shaders"
+msgstr "Reprodução::Shaders"
 
 msgctxt "IDD_PPAGETOOLBAR"
 msgid "Player::Toolbar"
@@ -652,11 +652,11 @@ msgstr "Info da Mídia"
 
 msgctxt "IDD_PPAGECAPTURE"
 msgid "Playback::Capture"
-msgstr "Playback::Captura"
+msgstr "Reprodução::Captura"
 
 msgctxt "IDD_PPAGEFULLSCREEN"
 msgid "Playback::Fullscreen"
-msgstr "Playback::Tela Cheia"
+msgstr "Reprodução::Tela Cheia"
 
 msgctxt "IDS_AUDIOSWITCHER"
 msgid "Audio Switcher"
@@ -790,7 +790,7 @@ msgstr "Player::Interface do Usuário"
 
 msgctxt "IDD_PPAGEOUTPUT"
 msgid "Playback::Output"
-msgstr "Playback::Saída dos Dados"
+msgstr "Reprodução::Saída dos Dados"
 
 msgctxt "IDD_PPAGEWEBSERVER"
 msgid "Player::Web Interface"
