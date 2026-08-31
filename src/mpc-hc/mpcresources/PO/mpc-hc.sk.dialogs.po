@@ -128,7 +128,7 @@ msgid ""
 " You do not need to enter the separators explicitly."
 msgstr ""
 "Zadajte kód pre čas s použitím formátu [hh:]mm:ss.ms, ak chcete preskočiť na"
-" zadaný čas. Oddeľovače nemusíte zadávať explicitne."
+" zadaný čas. Oddeľovače nemusíte explicitne zadávať."
 
 msgctxt "IDD_GOTO_DLG_IDC_STATIC"
 msgid "Time"
