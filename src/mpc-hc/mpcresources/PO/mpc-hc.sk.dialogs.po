@@ -559,7 +559,7 @@ msgstr "Rozloženie vykresľovača"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_CHECK_SUB_AR_COMPENSATION"
 msgid "Apply aspect ratio compensation for anamorphic videos"
-msgstr "Pre anamorfné videá použiť kompenzáciu stranového pomeru."
+msgstr "Pre anamorfné videá použiť kompenzáciu pomeru strán."
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
 msgid "Warning"
