@@ -773,7 +773,7 @@ msgstr "Trình phát::Chuột"
 
 msgctxt "IDD_PPAGESUBSTYLE"
 msgid "Subtitles::Default Style"
-msgstr "Phụ Đề::Kiểu Mặc Định"
+msgstr "Phụ đề::Kiểu Mặc Định"
 
 msgctxt "IDD_PPAGEINTERNALFILTERS"
 msgid "Internal Filters::General"
