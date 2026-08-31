@@ -776,7 +776,7 @@ msgstr "Субтитри::Стил по подразбиране"
 
 msgctxt "IDD_PPAGEINTERNALFILTERS"
 msgid "Internal Filters::General"
-msgstr "Вътрешни Филтри::Общи"
+msgstr "Вътрешни филтри::Общи"
 
 msgctxt "IDD_PPAGELOGO"
 msgid "Player::Logo"
