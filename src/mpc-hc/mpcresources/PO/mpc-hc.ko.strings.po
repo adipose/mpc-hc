@@ -603,7 +603,7 @@ msgstr "조정"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER"
 msgid "Internal Filters::Audio Switcher"
-msgstr "내장 필터::오디오 스위처"
+msgstr "내부 필터::오디오 스위처"
 
 msgctxt "IDD_PPAGEEXTERNALFILTERS"
 msgid "External Filters"
