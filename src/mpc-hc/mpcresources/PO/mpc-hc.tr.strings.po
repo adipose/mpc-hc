@@ -6,14 +6,13 @@
 # MPC HC <adiposegithub@gmail.com>, 2022
 # Sinan H., 2024
 # Mücahid Aksel <mucahidaksel@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-08-31 14:27+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-08-22 17:29:52+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Mücahid Aksel <mucahidaksel@gmail.com>, 2026\n"
 "Language-Team: Turkish (https://app.transifex.com/mpchc/teams/106126/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -882,7 +881,7 @@ msgid ""
 "This is the recommended choice for old hardware.\n"
 "Does not support HDR video."
 msgstr ""
-"Windows'un standart video işleyicisidir. Tüm oynatıcı işlevselliğiyle uyumlu hale getirilmiştir. \n"
+"Windows'un standart video işleyicisidir. Tüm oynatıcı işlevselliğiyle uyumlu hale getirilmiştir.\n"
 "Eski donanımlar için önerilen seçenektir.\n"
 "HDR videoyu desteklemez."
 
@@ -5340,4 +5339,4 @@ msgstr "Renk ayarları"
 
 msgctxt "IDC_COLOR_CONTROLS"
 msgid "You can also open Color controls from the Play menu"
-msgstr ""
+msgstr "Renk ayarlarını Oynatım menüsünden de açabilirsiniz"
