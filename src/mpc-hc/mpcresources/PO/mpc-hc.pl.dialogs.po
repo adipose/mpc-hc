@@ -1428,7 +1428,7 @@ msgstr ""
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC"
 msgid "More renderer settings are available in the Play menu"
-msgstr "Więcej ustawień renderera jest dostępnych w menu Odtwarzanie."
+msgstr "Więcej ustawień renderera jest dostępnych w menu Odtwarzanie"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_RESET"
 msgid "Reset"
