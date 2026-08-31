@@ -479,7 +479,7 @@ msgstr "Nastavenia otvárania"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_CHECK7"
 msgid "Use worker thread to construct the filter graph"
-msgstr "Pri vytváraní grafu filtra použiť pracovné vlákno"
+msgstr "Na vytvorenie grafu filtra použiť pracovné vlákno"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_CHECK6"
 msgid "Report pins which fail to render"
