@@ -621,11 +621,11 @@ msgstr "Prehrávanie::Shadery"
 
 msgctxt "IDD_PPAGETOOLBAR"
 msgid "Player::Toolbar"
-msgstr "Prehrávač:Panel nástrojov"
+msgstr "Prehrávač::Panel nástrojov"
 
 msgctxt "IDD_PPAGETOOLBARLAYOUT"
 msgid "Player::Toolbar Layout"
-msgstr "Prehrávač: Rozloženie panela nástrojov"
+msgstr "Prehrávač::Rozloženie panela nástrojov"
 
 msgctxt "IDS_PPAGE_TOOLBAR_AVAIL_BUTTONS"
 msgid "Available Buttons"
