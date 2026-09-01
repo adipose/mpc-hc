@@ -605,7 +605,7 @@ msgstr "Өстәмә"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER"
 msgid "Internal Filters::Audio Switcher"
-msgstr "Встроенные фильтры::Аудиопереключатель"
+msgstr "Кертелгән сөзгечләр::Аудиопереключатель"
 
 msgctxt "IDD_PPAGEEXTERNALFILTERS"
 msgid "External Filters"
@@ -613,7 +613,7 @@ msgstr "Тышкы сөзгечләр"
 
 msgctxt "IDD_PPAGESHADERS"
 msgid "Playback::Shaders"
-msgstr "Уйнаткыч::Шейдерлар"
+msgstr "Уйнату::Шейдерлар"
 
 msgctxt "IDD_PPAGETOOLBAR"
 msgid "Player::Toolbar"
@@ -780,7 +780,7 @@ msgstr ""
 
 msgctxt "IDD_PPAGEOUTPUT"
 msgid "Playback::Output"
-msgstr "Уйнаткыч::Чыгару"
+msgstr "Уйнату::Чыгару"
 
 msgctxt "IDD_PPAGEWEBSERVER"
 msgid "Player::Web Interface"
