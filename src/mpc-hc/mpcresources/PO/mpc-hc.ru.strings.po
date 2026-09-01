@@ -618,7 +618,7 @@ msgstr "Внешние фильтры"
 
 msgctxt "IDD_PPAGESHADERS"
 msgid "Playback::Shaders"
-msgstr "Проигрыватель::Шейдеры"
+msgstr "Воспроизведение::Шейдеры"
 
 msgctxt "IDD_PPAGETOOLBAR"
 msgid "Player::Toolbar"
