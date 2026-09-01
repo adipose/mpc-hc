@@ -593,7 +593,7 @@ msgstr "ਸਬ-ਟਾਈਟਲ::ਆਮ"
 
 msgctxt "IDD_PPAGEFORMATS"
 msgid "Player::Formats"
-msgstr "ਚਲਾਓ::ਫਾਰਮੈਟ"
+msgstr "ਪਲੇਅਰ::ਫਾਰਮੈਟ"
 
 msgctxt "IDD_PPAGETWEAKS"
 msgid "Tweaks"
