@@ -610,7 +610,7 @@ msgstr "Ajustes"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER"
 msgid "Internal Filters::Audio Switcher"
-msgstr "Filtros internos::Alternador de áudio"
+msgstr "Filtros Internos::Alternador de áudio"
 
 msgctxt "IDD_PPAGEEXTERNALFILTERS"
 msgid "External Filters"
@@ -622,11 +622,11 @@ msgstr "Reprodução::Shaders"
 
 msgctxt "IDD_PPAGETOOLBAR"
 msgid "Player::Toolbar"
-msgstr "Player::Barra de ferramentas"
+msgstr "Reprodutor::Barra de ferramentas"
 
 msgctxt "IDD_PPAGETOOLBARLAYOUT"
 msgid "Player::Toolbar Layout"
-msgstr "Player::Esquema da barra de ferramentas"
+msgstr "Reprodutor::Esquema da barra de ferramentas"
 
 msgctxt "IDS_PPAGE_TOOLBAR_AVAIL_BUTTONS"
 msgid "Available Buttons"
