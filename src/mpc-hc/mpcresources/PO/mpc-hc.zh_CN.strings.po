@@ -12,14 +12,13 @@
 # Fentanyl, 2026
 # Phonebook3599, 2026
 # YuanHao Du, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-08-31 14:27+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-08-22 17:29:52+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: YuanHao Du, 2026\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/mpchc/teams/106126/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4148,7 +4147,7 @@ msgstr "就绪..."
 
 msgctxt "IDS_CMD_PNS"
 msgid "/pns \"name\"\tSpecify PnS Frame Adjust Preset to use (for example: /pns \"%s\")"
-msgstr "/pns \"name\" 指定使用的画面平移与缩放 (PnS) 预设(例如：/pns \"%s\")"
+msgstr "/pns \"name\" 指定使用的画面平移与缩放 (PnS) 预设(例如：/pns \"1%\")"
 
 msgctxt "IDS_CMD_PNS_VALUES"
 msgid ""
@@ -5186,4 +5185,4 @@ msgstr "颜色控制"
 
 msgctxt "IDC_COLOR_CONTROLS"
 msgid "You can also open Color controls from the Play menu"
-msgstr ""
+msgstr "你也可以从 \"播放\" 菜单打开 \"颜色控制\"。"
