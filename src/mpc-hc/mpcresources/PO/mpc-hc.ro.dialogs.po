@@ -6,14 +6,13 @@
 # Daniel <danny3@tutanota.com>, 2022
 # Mac Balls, 2022
 # Miloiu Andrei-Valentin <miloiuandrei@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-08-31 14:27+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-08-22 12:12:47+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Miloiu Andrei-Valentin <miloiuandrei@gmail.com>, 2026\n"
 "Language-Team: Romanian (https://app.transifex.com/mpchc/teams/106126/ro/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1244,11 +1243,11 @@ msgstr "Exportă"
 
 msgctxt "IDD_PPAGEMISC_IDC_STATIC"
 msgid "Color controls"
-msgstr ""
+msgstr "Controale de culoare (Comenzi de culoare)"
 
 msgctxt "IDD_PPAGEMISC_IDC_COLOR_CONTROLS"
 msgid "Open"
-msgstr ""
+msgstr "Deschide"
 
 msgctxt "IDD_TUNER_SCAN_CAPTION"
 msgid "Tuner scan"
@@ -1833,19 +1832,19 @@ msgstr "Controale de culoare (Comenzi de culoare)"
 
 msgctxt "IDD_COLORCONTROLS_DLG_IDC_STATIC5"
 msgid "Brightness"
-msgstr ""
+msgstr "Luminozitate"
 
 msgctxt "IDD_COLORCONTROLS_DLG_IDC_STATIC6"
 msgid "Contrast"
-msgstr ""
+msgstr "Contrast"
 
 msgctxt "IDD_COLORCONTROLS_DLG_IDC_STATIC7"
 msgid "Hue"
-msgstr ""
+msgstr "Nuanță"
 
 msgctxt "IDD_COLORCONTROLS_DLG_IDC_STATIC8"
 msgid "Saturation"
-msgstr ""
+msgstr "Saturație"
 
 msgctxt "IDD_COLORCONTROLS_DLG_IDC_RESET"
 msgid "Reset"
