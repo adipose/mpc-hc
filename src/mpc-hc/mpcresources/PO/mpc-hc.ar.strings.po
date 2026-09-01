@@ -582,7 +582,7 @@ msgstr ""
 
 msgctxt "IDD_PPAGEPLAYBACK"
 msgid "Playback::General"
-msgstr "إعادة التشغيل::عام"
+msgstr "التشغيل::عام"
 
 msgctxt "IDD_PPAGEPLAYER"
 msgid "Player::General"
@@ -590,11 +590,11 @@ msgstr "المشغل::عام"
 
 msgctxt "IDD_PPAGEDVD"
 msgid "Playback::DVD"
-msgstr "تشغيل :: DVD"
+msgstr "التشغيل::DVD"
 
 msgctxt "IDD_PPAGESUBTITLES"
 msgid "Subtitles::General"
-msgstr "الترجمات::عام"
+msgstr "الترجمة::عام"
 
 msgctxt "IDD_PPAGEFORMATS"
 msgid "Player::Formats"
@@ -614,7 +614,7 @@ msgstr "الفلاتر الخارجية"
 
 msgctxt "IDD_PPAGESHADERS"
 msgid "Playback::Shaders"
-msgstr "إعادة تشغيل::الظلال"
+msgstr "التشغيل::الظلال"
 
 msgctxt "IDD_PPAGETOOLBAR"
 msgid "Player::Toolbar"
@@ -650,7 +650,7 @@ msgstr "التشغيل::الملتقط"
 
 msgctxt "IDD_PPAGEFULLSCREEN"
 msgid "Playback::Fullscreen"
-msgstr "تشغيل::وضع ملء الشاشة"
+msgstr "التشغيل::وضع ملء الشاشة"
 
 msgctxt "IDS_AUDIOSWITCHER"
 msgid "Audio Switcher"
@@ -781,7 +781,7 @@ msgstr ""
 
 msgctxt "IDD_PPAGEOUTPUT"
 msgid "Playback::Output"
-msgstr "المشغل::المخرجات"
+msgstr "التشغيل::المخرجات"
 
 msgctxt "IDD_PPAGEWEBSERVER"
 msgid "Player::Web Interface"
