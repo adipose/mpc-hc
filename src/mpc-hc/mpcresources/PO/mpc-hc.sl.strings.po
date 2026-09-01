@@ -600,7 +600,7 @@ msgstr "Podnapisi::Splošno"
 
 msgctxt "IDD_PPAGEFORMATS"
 msgid "Player::Formats"
-msgstr "Predvajanje::Formati"
+msgstr "Predvajalnik::Formati"
 
 msgctxt "IDD_PPAGETWEAKS"
 msgid "Tweaks"
@@ -775,7 +775,7 @@ msgstr "Interni filtri::Splošno"
 
 msgctxt "IDD_PPAGELOGO"
 msgid "Player::Logo"
-msgstr "Predvajanje::Logo"
+msgstr "Predvajalnik::Logo"
 
 msgctxt "IDD_PPAGETHEME"
 msgid "Player::User Interface"
@@ -787,7 +787,7 @@ msgstr "Predvajanje::Izhod"
 
 msgctxt "IDD_PPAGEWEBSERVER"
 msgid "Player::Web Interface"
-msgstr "Predvajanje::Mrežni vmesnik"
+msgstr "Predvajalnik::Mrežni vmesnik"
 
 msgctxt "IDD_FILEPROPDETAILS"
 msgid "Details"
