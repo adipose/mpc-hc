@@ -4916,7 +4916,7 @@ msgstr "Sonuncuyu hatırla"
 msgctxt "IDS_PPAGEADVANCED_TIME_ON_SEEKBAR_LEFT"
 msgid ""
 "Show the time on the left side of the seekbar instead of the right side"
-msgstr "Süreyi İzlem çubuğunun sağ tarafı yerine sol tarafında göster"
+msgstr "Süre sayacını İzlem çubuğunun sağ tarafı yerine sol tarafında göster"
 
 msgctxt "IDS_PPAGEADVANCED_SHOW_LANG_STATUSBAR"
 msgid "Display current audio and subtitle language in status bar"
