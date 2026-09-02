@@ -1867,7 +1867,7 @@ msgstr "Bölüm işaretlerini izlem çubuğunda göster"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC"
 msgid "Time on seekbar:"
-msgstr "Süreyi göster:"
+msgstr "Süre sayacını göster:"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC8"
 msgid "Seekbar Hover"
