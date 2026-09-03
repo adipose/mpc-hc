@@ -656,7 +656,7 @@ msgstr "Reprodução::Captura"
 
 msgctxt "IDD_PPAGEFULLSCREEN"
 msgid "Playback::Fullscreen"
-msgstr "Playback::Tela Cheia"
+msgstr "Reprodução::Tela Cheia"
 
 msgctxt "IDS_AUDIOSWITCHER"
 msgid "Audio Switcher"
@@ -790,7 +790,7 @@ msgstr "Player::Interface do Usuário"
 
 msgctxt "IDD_PPAGEOUTPUT"
 msgid "Playback::Output"
-msgstr "Playback::Saída dos Dados"
+msgstr "Reprodução::Saída dos Dados"
 
 msgctxt "IDD_PPAGEWEBSERVER"
 msgid "Player::Web Interface"
