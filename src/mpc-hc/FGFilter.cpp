@@ -28,6 +28,7 @@
 #include "uuids.h"
 #include "moreuuids.h"
 #include <mvrInterfaces.h>
+#include <IMPCVRSubclassReplacement.h>
 
 #include <initguid.h>
 #include "AllocatorCommon.h"
@@ -610,6 +611,9 @@ HRESULT CFGFilterVideoRenderer::Create(IBaseFilter** ppBF, CInterfaceList<IUnkno
                 if (CComQIPtr<ID3DFullscreenControl> pD3DFSC = *ppBF) {
                     pD3DFSC->SetD3DFullscreen(true);
                 }
+            }
+            if (CComQIPtr<IMPCVRSubclassReplacement> pSR = pCAP) {
+                VERIFY(SUCCEEDED(pSR->DisableSubclassing()));
             }
             // renderer supports calling IVideoWindow::put_Owner before the pins are connected
             if (CComQIPtr<IVideoWindow> pVW = *ppBF) {

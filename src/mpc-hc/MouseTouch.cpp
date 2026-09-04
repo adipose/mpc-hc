@@ -483,7 +483,11 @@ void CMouse::InternalOnRButtonUp(UINT nFlags, const CPoint& point)
 {
     if (m_bWaitingRButtonUp) {
         m_bWaitingRButtonUp = false;
-        OnButton(wmcmd::RUP, point);
+        // MPCVR's window hook used to block WM_RBUTTONUP in exclusive fullscreen mode;
+        // with hooking disabled the player has to keep the context menu from opening
+        if (!m_pMainFrame->m_bIsMPCVRExclusiveMode) {
+            OnButton(wmcmd::RUP, point);
+        }
         SetCursor(nFlags, point);
     }
 }

@@ -95,6 +95,7 @@
 #include <IPinHook.h>
 
 #include <mvrInterfaces.h>
+#include <IMPCVRSubclassReplacement.h>
 
 #include <Il21dec.h>
 #include <dvdevcod.h>
@@ -16628,6 +16629,7 @@ bool CMainFrame::OpenMediaPrivate(CAutoPtr<OpenMediaData> pOMD)
     m_pMVRI = nullptr;
     m_pMVRS = nullptr;
     m_pMVRSR = nullptr;
+    m_pMPCVRSR = nullptr;
     m_pMVRFG = nullptr;
     m_pMVTO = nullptr;
     m_pD3DFSC = nullptr;
@@ -16701,6 +16703,7 @@ bool CMainFrame::OpenMediaPrivate(CAutoPtr<OpenMediaData> pOMD)
         m_pMVRI = m_pCAP;
         m_pMVRS = m_pCAP;
         m_pMVRSR = m_pCAP;
+        m_pMPCVRSR = m_pCAP;
         m_pMVRFG = m_pCAP;
         m_pMVTO = m_pCAP;
         m_pD3DFSC = m_pCAP;
@@ -17038,6 +17041,7 @@ void CMainFrame::CloseMediaPrivate()
     // IMPORTANT: IVMRSurfaceAllocatorNotify/IVMRSurfaceAllocatorNotify9 has to be released before the VMR/VMR9, otherwise it will crash in Release()
     m_pMVRFG.Release();
     m_pMVRSR.Release();
+    m_pMPCVRSR.Release();
     m_pMVRS.Release();
     m_pMVRC.Release();
     m_pMVRI.Release();
@@ -20062,6 +20066,7 @@ bool CMainFrame::BuildGraphVideoAudio(int fVPreview, bool fVCapture, int fAPrevi
         m_pMVRS.Release();
         m_pMVRFG.Release();
         m_pMVRSR.Release();
+        m_pMPCVRSR.Release();
         m_pMVTO.Release();
 
         m_pCAP3.Release();
@@ -20140,6 +20145,7 @@ bool CMainFrame::BuildGraphVideoAudio(int fVPreview, bool fVCapture, int fAPrevi
             m_pGB->FindInterface(IID_PPV_ARGS(&m_pMFVP), TRUE);
             m_pMVTO = m_pCAP;
             m_pMVRSR = m_pCAP;
+            m_pMPCVRSR = m_pCAP;
             m_pMVRS = m_pCAP;
             m_pMVRFG = m_pCAP;
 
@@ -23356,8 +23362,8 @@ LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 
     LRESULT ret = 0;
     bool bCallOurProc = true;
-    if (m_pMVRSR) {
-        // call madVR window proc directly when the interface is available
+    if (m_pMVRSR || m_pMPCVRSR) {
+        // call the renderer window proc directly when the interface is available
         switch (message) {
             case WM_CLOSE:
             case WM_SYSCOMMAND:
@@ -23368,7 +23374,11 @@ LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
                 // CMouseWnd will call madVR window proc
                 break;
             default:
-                bCallOurProc = !m_pMVRSR->ParentWindowProc(m_hWnd, message, &wParam, &lParam, &ret);
+                // when the dedicated fullscreen window hosts the video, CFullscreenWnd forwards its own messages;
+                // keyboard messages are re-posted from there to this window, so those still go through here
+                if (m_pVideoWnd != m_pDedicatedFSVideoWnd || (message >= WM_KEYFIRST && message <= WM_KEYLAST)) {
+                    bCallOurProc = !ForwardMessageToRenderer(m_hWnd, message, wParam, lParam, ret);
+                }
         }
     }
     if (bCallOurProc && m_hWnd) {
@@ -23376,6 +23386,18 @@ LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
     }
 
     return ret;
+}
+
+// Forwards a message to the renderer that would otherwise have subclassed hWnd; returns true when it handled the message
+bool CMainFrame::ForwardMessageToRenderer(HWND hWnd, UINT message, WPARAM& wParam, LPARAM& lParam, LRESULT& ret)
+{
+    if (m_pMVRSR) {
+        return !!m_pMVRSR->ParentWindowProc(hWnd, message, &wParam, &lParam, &ret);
+    }
+    if (m_pMPCVRSR) {
+        return !!m_pMPCVRSR->ParentWindowProc(hWnd, message, &wParam, &lParam, &ret);
+    }
+    return false;
 }
 
 bool CMainFrame::IsAeroSnapped()
