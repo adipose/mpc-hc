@@ -1227,7 +1227,7 @@ msgstr "zi (zile)"
 
 msgctxt "IDD_PPAGEMISC_IDC_STATIC"
 msgid "Settings management"
-msgstr "Gestionează setările"
+msgstr "Gestionarea setărilor"
 
 msgctxt "IDD_PPAGEMISC_IDC_RESET_SETTINGS"
 msgid "Reset"
