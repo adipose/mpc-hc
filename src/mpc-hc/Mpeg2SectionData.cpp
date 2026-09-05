@@ -237,6 +237,7 @@ BDA_STREAM_TYPE CMpeg2DataParser::ConvertToDVBType(PES_STREAM_TYPE nType)
         case AUDIO_STREAM_AC3:
             return BDA_AC3;
         case AUDIO_STREAM_AC3_PLUS:
+        case AUDIO_STREAM_EAC3_ATSC:
             return BDA_EAC3;
         case AUDIO_STREAM_AAC:
             return BDA_ADTS;
@@ -254,11 +255,14 @@ HRESULT CMpeg2DataParser::ParseSIHeader(CGolombBuffer& gb, DVB_SI SIType, WORD& 
     if (gb.BitRead(8) != SIType) {
         return ERROR_INVALID_DATA;              // table_id
     }
-    gb.BitRead(1);                              // section_syntax_indicator
-    gb.BitRead(1);                              // reserved_future_use
-    gb.BitRead(2);                              // reserved
-    wSectionLength = (WORD)gb.BitRead(12);      // section_length
-    wTSID = (WORD)gb.BitRead(16);               // transport_stream_id
+    // The BDA demux hands us a SECTION/LONG_SECTION struct (mpeg2structs.h), not
+    // raw wire bytes: Header.W and TableIdExtension have already been swapped to
+    // host order for us, which is what the SDK's SWAP_MPEG_SECTION_HEADER_BYTES
+    // macro does. Read those two as little-endian WORDs; everything from
+    // RemainingData onwards is untouched wire payload and stays big-endian.
+    WORD wHeader = (WORD)gb.ReadShortLE();      // section_syntax_indicator, reserved, section_length
+    wSectionLength = wHeader & 0x0FFF;          // section_length
+    wTSID = (WORD)gb.ReadShortLE();             // transport_stream_id
     gb.BitRead(2);                              // reserved
     gb.BitRead(5);                              // version_number
     gb.BitRead(1);                              // current_next_indicator
@@ -434,8 +438,8 @@ HRESULT CMpeg2DataParser::ParseVCT(ULONG ulFrequency, ULONG ulBandwidth, ULONG u
         uint16_t channel_TSID=gb.BitRead(16); //channel_TSID
         uint16_t program_number=gb.BitRead(16); //program_number
         gb.BitRead(2); //ETM_location
-        gb.BitRead(1); //access_controlled
-        gb.BitRead(1); //hidden
+        uint8_t access_controlled = (uint8_t)gb.BitRead(1); //access_controlled
+        uint8_t hidden = (uint8_t)gb.BitRead(1); //hidden
         gb.BitRead(2); //TVCT: reserved(1), CVCT: path_select(1) / out_of_band(1)
         gb.BitRead(1); //hide_guide
         gb.BitRead(3); //reserved
@@ -457,15 +461,30 @@ HRESULT CMpeg2DataParser::ParseVCT(ULONG ulFrequency, ULONG ulBandwidth, ULONG u
         Channel.SetTSID(channel_TSID);
         Channel.SetONID(0); //ATSC doesn't apply
         Channel.SetSID(program_number);
+        // The virtual channel number is the identity a viewer knows a station
+        // by, and is what the scan list and channel ordering should key on.
+        // Without this every ATSC channel carries number 0 and the scan list is
+        // left in discovery order.
+        Channel.SetATSCNumber(major_channel_number, minor_channel_number);
+        // access_controlled is the ATSC equivalent of the DVB free_CA_mode
+        // flag; without it every ATSC service reports as unencrypted.
+        Channel.SetEncrypted(!!access_controlled);
 
         if (!Channels.Lookup(Channel.GetSID())) {
-            switch (serviceType) {
-            case ATSC_DIGITAL_TV:
-                Channels[Channel.GetSID()] = Channel;
-                break;
-            default:
-                BDA_LOG(_T("ATSC: Skipping not supported service: %-20s %lu"), Channel.GetName(), Channel.GetSID());
-                break;
+            if (hidden) {
+                // Not intended for viewers - typically test or data services.
+                // Receivers omit these, and so does the DVB path via the
+                // service descriptor.
+                BDA_LOG(_T("ATSC: Skipping hidden service: %-20s %lu"), Channel.GetName(), Channel.GetSID());
+            } else {
+                switch (serviceType) {
+                case ATSC_DIGITAL_TV:
+                    Channels[Channel.GetSID()] = Channel;
+                    break;
+                default:
+                    BDA_LOG(_T("ATSC: Skipping not supported service: %-20s %lu"), Channel.GetName(), Channel.GetSID());
+                    break;
+                }
             }
         }
     }
@@ -674,7 +693,6 @@ HRESULT CMpeg2DataParser::ParseEIT(ULONG ulSID, EventDescriptor& NowNext)
     HRESULT hr = S_OK;
     DWORD dwLength;
     PSECTION data;
-    ULONG ulGetSID;
     EventInformationSection InfoEvent;
     NowNext = EventDescriptor();
 
@@ -686,12 +704,14 @@ HRESULT CMpeg2DataParser::ParseEIT(ULONG ulSID, EventDescriptor& NowNext)
         CGolombBuffer gb((BYTE*)data, dwLength);
 
         InfoEvent.TableID = (UINT8)gb.BitRead(8);
-        InfoEvent.SectionSyntaxIndicator = (WORD)gb.BitRead(1);
-        gb.BitRead(3);
-        InfoEvent.SectionLength = (WORD)gb.BitRead(12);
-        ulGetSID  = (ULONG)gb.BitRead(8);
-        ulGetSID += 0x100 * (ULONG)gb.BitRead(8);
-        InfoEvent.ServiceId = ulGetSID; // This is really strange, ServiceID should be uimsbf ???
+        // Same host-order header as ParseSIHeader: the BDA demux has already
+        // byte-swapped Header.W and TableIdExtension, so read them as
+        // little-endian WORDs. The hand-rolled little-endian service id this
+        // replaces was correct, and was why it looked "strange" here.
+        WORD wEitHeader = (WORD)gb.ReadShortLE();
+        InfoEvent.SectionSyntaxIndicator = (WORD)(wEitHeader >> 15);
+        InfoEvent.SectionLength = (WORD)(wEitHeader & 0x0FFF);
+        InfoEvent.ServiceId = (ULONG)(WORD)gb.ReadShortLE();
         if (InfoEvent.ServiceId == ulSID) {
             gb.BitRead(2);
             InfoEvent.VersionNumber = (UINT8)gb.BitRead(5);

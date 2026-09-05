@@ -96,6 +96,10 @@ void CBDAChannel::FromString(CString strValue)
         m_nVideoHeight = _tstol(strValue.Tokenize(_T("|"), i));
         m_nVideoAR     = (BDA_AspectRatio_TYPE)_tstol(strValue.Tokenize(_T("|"), i));
     }
+    if (nVersion > FORMAT_VERSION_6) {
+        m_nATSCMajor = _tstol(strValue.Tokenize(_T("|"), i));
+        m_nATSCMinor = _tstol(strValue.Tokenize(_T("|"), i));
+    }
 }
 
 CString CBDAChannel::ToString() const
@@ -146,15 +150,147 @@ CString CBDAChannel::ToString() const
                           m_nVideoHeight,
                           m_nVideoAR);
 
+    strValue.AppendFormat(_T("|%d|%d"),
+                          m_nATSCMajor,
+                          m_nATSCMinor);
+
     return strValue;
+}
+
+// Names rather than raw enum values, so that a consumer of the web interface
+// does not need its own copy of these enums to make sense of the output.
+static LPCSTR StreamTypeName(BDA_STREAM_TYPE type)
+{
+    switch (type) {
+        // Not "MPEG2": ConvertToDVBType folds both VIDEO_STREAM_MPEG1 and
+        // VIDEO_STREAM_MPEG2 into BDA_MPV, and AddStreamInfo does not keep the
+        // PES type for video, so the distinction is not available here.
+        case BDA_MPV:      return "MPEG-Video";
+        case BDA_H264:     return "H264";
+        case BDA_HEVC:     return "HEVC";
+        case BDA_MPA:      return "MPEG-Audio";
+        case BDA_AC3:      return "AC3";
+        case BDA_EAC3:     return "EAC3";
+        case BDA_ADTS:     return "AAC-ADTS";
+        case BDA_LATM:     return "AAC-LATM";
+        case BDA_SUBTITLE: return "DVB-Subtitle";
+        default:           return "unknown";
+    }
+}
+
+static LPCSTR FpsName(BDA_FPS_TYPE fps)
+{
+    switch (fps) {
+        case BDA_FPS_23_976: return "23.976";
+        case BDA_FPS_24_0:   return "24";
+        case BDA_FPS_25_0:   return "25";
+        case BDA_FPS_29_97:  return "29.97";
+        case BDA_FPS_30_0:   return "30";
+        case BDA_FPS_50_0:   return "50";
+        case BDA_FPS_59_94:  return "59.94";
+        case BDA_FPS_60_0:   return "60";
+        default:             return "";
+    }
+}
+
+static LPCSTR AspectRatioName(BDA_AspectRatio_TYPE ar)
+{
+    switch (ar) {
+        case BDA_AR_1:      return "1:1";
+        case BDA_AR_3_4:    return "4:3";
+        case BDA_AR_9_16:   return "16:9";
+        case BDA_AR_1_2_21: return "2.21:1";
+        default:            return "";
+    }
+}
+
+static LPCSTR ChromaName(BDA_CHROMA_TYPE chroma)
+{
+    switch (chroma) {
+        case BDA_Chroma_4_2_0: return "4:2:0";
+        case BDA_Chroma_4_2_2: return "4:2:2";
+        case BDA_Chroma_4_4_4: return "4:4:4";
+        default:               return "";
+    }
+}
+
+static CStringA StreamToJSON(const BDAStreamInfo& stream, bool bDefault)
+{
+    // "pes" is the PMT stream_type the stream was classified from, after any
+    // descriptor that overrides it. It distinguishes branches that share a
+    // BDA type, such as AAC with ADTS (0x0F) against LATM (0x11).
+    CStringA json;
+    json.Format("{ \"pid\" : %lu, \"type\" : \"%s\", \"pes\" : %d, \"language\" : \"%s\", \"default\" : %s }",
+                stream.ulPID,
+                StreamTypeName(stream.nType),
+                stream.nPesType,
+                EscapeJSONString(UTF16To8(stream.sLanguage)).GetString(),
+                bDefault ? "true" : "false");
+    return json;
 }
 
 CStringA CBDAChannel::ToJSON() const
 {
+    // index and name keep their names and stay first: /dvb/channels has
+    // shipped with them, so anything already reading it keeps working.
     CStringA jsonChannel;
-    jsonChannel.Format("{ \"index\" : %d, \"name\" : \"%s\" }",
+    jsonChannel.Format("{ \"index\" : %d, \"name\" : \"%s\"",
                        m_nPrefNumber,
                        EscapeJSONString(UTF16To8(m_strName)).GetString());
+
+    // atscMajor/atscMinor are the two halves of the ATSC virtual channel
+    // number from the VCT; both are zero for DVB, where originNumber carries
+    // the logical channel number instead (and, for ATSC, its
+    // major * 1000 + minor encoding - see SetATSCNumber).
+    jsonChannel.AppendFormat(", \"originNumber\" : %d"
+                             ", \"atscMajor\" : %d, \"atscMinor\" : %d"
+                             ", \"frequency\" : %lu"
+                             ", \"bandwidth\" : %lu"
+                             ", \"symbolRate\" : %lu"
+                             ", \"encrypted\" : %s",
+                             m_nOriginNumber,
+                             m_nATSCMajor,
+                             m_nATSCMinor,
+                             m_ulFrequency,
+                             m_ulBandwidth,
+                             m_ulSymbolRate,
+                             m_bEncrypted ? "true" : "false");
+
+    // The identifiers needed to correlate a channel against the transport
+    // stream it was scanned from.
+    jsonChannel.AppendFormat(", \"onid\" : %lu, \"tsid\" : %lu, \"sid\" : %lu"
+                             ", \"pmtPid\" : %lu, \"pcrPid\" : %lu",
+                             m_ulONID, m_ulTSID, m_ulSID, m_ulPMT, m_ulPCR);
+
+    // No "pes" here: AddStreamInfo keeps the PES type for audio and subtitle
+    // streams but not for video, so it is not available to report.
+    jsonChannel.AppendFormat(", \"video\" : { \"pid\" : %lu, \"type\" : \"%s\""
+                             ", \"width\" : %lu, \"height\" : %lu"
+                             ", \"fps\" : \"%s\", \"aspectRatio\" : \"%s\""
+                             ", \"chroma\" : \"%s\" }",
+                             m_ulVideoPID,
+                             StreamTypeName(m_nVideoType),
+                             m_nVideoWidth,
+                             m_nVideoHeight,
+                             FpsName(m_nVideoFps),
+                             AspectRatioName(m_nVideoAR),
+                             ChromaName(m_nVideoChroma));
+
+    jsonChannel += ", \"audio\" : [";
+    for (int i = 0; i < m_nAudioCount; i++) {
+        jsonChannel += i ? ", " : " ";
+        jsonChannel += StreamToJSON(m_Audios[i], i == m_nDefaultAudio);
+    }
+    jsonChannel += m_nAudioCount ? " ]" : "]";
+
+    jsonChannel += ", \"subtitles\" : [";
+    for (int i = 0; i < m_nSubtitleCount; i++) {
+        jsonChannel += i ? ", " : " ";
+        jsonChannel += StreamToJSON(m_Subtitles[i], i == m_nDefaultSubtitle);
+    }
+    jsonChannel += m_nSubtitleCount ? " ]" : "]";
+
+    jsonChannel += " }";
     return jsonChannel;
 }
 
@@ -307,4 +443,23 @@ DWORD CBDAChannel::GetVideoARy()
             break;
     }
     return Value;
+}
+
+CStringA DVBChannelsToJSON(const std::vector<CBDAChannel>& channels)
+{
+    // begin the JSON object with the "channels" array inside
+    CStringA jsonChannels = "{ \"channels\" : [";
+
+    for (auto it = channels.begin(); it != channels.end();) {
+        // fill the array with individual channel objects
+        jsonChannels += it->ToJSON();
+        if (++it == channels.end()) {
+            break;
+        }
+        jsonChannels += ",";
+    }
+
+    // terminate the array and the object, and return.
+    jsonChannels += "] }";
+    return jsonChannels;
 }

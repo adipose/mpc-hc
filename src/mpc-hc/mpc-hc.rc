@@ -785,18 +785,18 @@ IDD_PPAGEMISC DIALOGEX 0, 0, 355, 289
 STYLE DS_SETFONT | WS_CHILD
 FONT 9, "Segoe UI", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Update check",IDC_STATIC,6,6,343,48
-    CONTROL         "Enable automatic update check",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,21,300,8
+    GROUPBOX        "Update check",IDC_STATIC,6,6,225,48
+    CONTROL         "Enable automatic update check",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,21,213,8
     LTEXT           "Check every:",IDC_STATIC5,12,36,132,8
     EDITTEXT        IDC_EDIT1,144,34,36,13,ES_CENTER | ES_AUTOHSCROLL | ES_NUMBER
     CONTROL         "",IDC_SPIN1,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,180,34,16,14
-    LTEXT           "day(s)",IDC_STATIC6,186,36,60,8
+    LTEXT           "day(s)",IDC_STATIC6,186,36,39,8
+    GROUPBOX        "Color controls",IDC_STATIC,237,6,112,48
+    PUSHBUTTON      "Open",IDC_COLOR_CONTROLS,243,27,100,14
     GROUPBOX        "Settings management",IDC_STATIC,6,60,343,34
     PUSHBUTTON      "Reset",IDC_RESET_SETTINGS,12,72,103,14
     PUSHBUTTON      "Export keys",IDC_EXPORT_KEYS,126,72,103,14
     PUSHBUTTON      "Export",IDC_EXPORT_SETTINGS,240,72,103,14
-    GROUPBOX        "Color controls",IDC_STATIC,6,100,343,34
-    PUSHBUTTON      "Open",IDC_COLOR_CONTROLS,12,112,103,14
 END
 
 IDD_TUNER_SCAN DIALOGEX 0, 0, 407, 246
@@ -862,9 +862,9 @@ FONT 9, "Segoe UI", 400, 0, 0x1
 BEGIN
     GROUPBOX        "Common",IDC_STATIC,6,6,343,116
     LTEXT           "Resizer:",IDC_STATIC,12,22,70,8
-    COMBOBOX        IDC_DX9RESIZER_COMBO,86,19,126,49,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_DX9RESIZER_COMBO,86,19,257,49,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Surface:",IDC_STATIC,12,40,70,8
-    COMBOBOX        IDC_DX_SURFACE,86,37,126,49,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_DX_SURFACE,86,37,257,49,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "EVR Buffers:",IDC_EVR_BUFFERS_TXT,12,58,70,8
     COMBOBOX        IDC_EVR_BUFFERS,86,55,41,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     CONTROL         "Reinitialize when changing display",IDC_RESETDEVICE,
@@ -3557,6 +3557,9 @@ BEGIN
     IDS_MAINFRM_96          "Can't create video capture filter"
     IDS_MAINFRM_98          "No capture filters"
     IDS_MAINFRM_99          "Can't create capture graph builder object"
+    IDS_MAINFRM_RENDERFAIL_DLL     "Cannot render the file. Failure loading internal filter. Could be caused by a missing DLL."
+    IDS_MAINFRM_RENDERFAIL_DLL_SAC "Cannot render the file. Failure loading internal filter. Could be caused by ""Smart App Control""."
+    IDS_MAINFRM_RENDERFAIL_CORRUPT "Cannot render the file. File might be damaged or incomplete. Send file to developers for analysis."
 END
 
 STRINGTABLE

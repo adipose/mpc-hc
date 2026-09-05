@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
 # MPC HC <adiposegithub@gmail.com>, 2020
+# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
 "POT-Creation-Date: 2021-02-17 23:32:57+0000\n"
-"PO-Revision-Date: 2020-01-02 07:46+0000\n"
-"Last-Translator: MPC HC <adiposegithub@gmail.com>, 2020\n"
+"PO-Revision-Date: 2026-09-05 14:52+0000\n"
+"Last-Translator: Transifex sync (Studio)\n"
 "Language-Team: Tatar (https://www.transifex.com/mpchc/teams/106126/tt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2918,6 +2919,24 @@ msgstr "Видеоэләктерү сөзгечләре юк"
 msgctxt "IDS_MAINFRM_99"
 msgid "Can't create capture graph builder object"
 msgstr "Не удаётся создать объект построителя графа видеозахвата"
+
+msgctxt "IDS_MAINFRM_RENDERFAIL_DLL"
+msgid ""
+"Cannot render the file. Failure loading internal filter. Could be caused by "
+"a missing DLL."
+msgstr ""
+
+msgctxt "IDS_MAINFRM_RENDERFAIL_DLL_SAC"
+msgid ""
+"Cannot render the file. Failure loading internal filter. Could be caused by "
+"\"Smart App Control\"."
+msgstr ""
+
+msgctxt "IDS_MAINFRM_RENDERFAIL_CORRUPT"
+msgid ""
+"Cannot render the file. File might be damaged or incomplete. Send file to "
+"developers for analysis."
+msgstr ""
 
 msgctxt "IDS_MAINFRM_108"
 msgid "Couldn't open any device"

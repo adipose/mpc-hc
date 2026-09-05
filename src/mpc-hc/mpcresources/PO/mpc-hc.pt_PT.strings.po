@@ -5,13 +5,14 @@
 # Hugo Simões <hugo.simoes.1984@gmail.com>, 2021
 # Filipe Mota <blackspirits@gmail.com>, 2025
 # Hugo Carvalho <hugokarvalho@hotmail.com>, 2026
+# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
 "POT-Creation-Date: 2026-03-15 15:49:47+0000\n"
-"PO-Revision-Date: 2020-01-02 07:46+0000\n"
-"Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>, 2026\n"
+"PO-Revision-Date: 2026-09-05 14:52+0000\n"
+"Last-Translator: Transifex sync (Studio)\n"
 "Language-Team: Portuguese (Portugal) (https://app.transifex.com/mpchc/teams/106126/pt_PT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -610,7 +611,7 @@ msgstr "Ajustes"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER"
 msgid "Internal Filters::Audio Switcher"
-msgstr "Filtros Internos::Alternador de áudio"
+msgstr "Filtros internos::Alternador de áudio"
 
 msgctxt "IDD_PPAGEEXTERNALFILTERS"
 msgid "External Filters"
@@ -2988,6 +2989,24 @@ msgstr "Sem filtros de captura"
 msgctxt "IDS_MAINFRM_99"
 msgid "Can't create capture graph builder object"
 msgstr "Não se pôde criar objeto gráfico construtor de captura"
+
+msgctxt "IDS_MAINFRM_RENDERFAIL_DLL"
+msgid ""
+"Cannot render the file. Failure loading internal filter. Could be caused by "
+"a missing DLL."
+msgstr ""
+
+msgctxt "IDS_MAINFRM_RENDERFAIL_DLL_SAC"
+msgid ""
+"Cannot render the file. Failure loading internal filter. Could be caused by "
+"\"Smart App Control\"."
+msgstr ""
+
+msgctxt "IDS_MAINFRM_RENDERFAIL_CORRUPT"
+msgid ""
+"Cannot render the file. File might be damaged or incomplete. Send file to "
+"developers for analysis."
+msgstr ""
 
 msgctxt "IDS_MAINFRM_108"
 msgid "Couldn't open any device"

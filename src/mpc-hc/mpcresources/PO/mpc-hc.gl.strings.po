@@ -611,7 +611,7 @@ msgstr "Axustes"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER"
 msgid "Internal Filters::Audio Switcher"
-msgstr "Filtros internos::Cambiar audio"
+msgstr "Filtros Internos::Cambiar audio"
 
 msgctxt "IDD_PPAGEEXTERNALFILTERS"
 msgid "External Filters"
@@ -2962,6 +2962,24 @@ msgstr "Non hai filtros de captura"
 msgctxt "IDS_MAINFRM_99"
 msgid "Can't create capture graph builder object"
 msgstr "Imposible crear obxecto constructor do esquema de captura"
+
+msgctxt "IDS_MAINFRM_RENDERFAIL_DLL"
+msgid ""
+"Cannot render the file. Failure loading internal filter. Could be caused by "
+"a missing DLL."
+msgstr ""
+
+msgctxt "IDS_MAINFRM_RENDERFAIL_DLL_SAC"
+msgid ""
+"Cannot render the file. Failure loading internal filter. Could be caused by "
+"\"Smart App Control\"."
+msgstr ""
+
+msgctxt "IDS_MAINFRM_RENDERFAIL_CORRUPT"
+msgid ""
+"Cannot render the file. File might be damaged or incomplete. Send file to "
+"developers for analysis."
+msgstr ""
 
 msgctxt "IDS_MAINFRM_108"
 msgid "Couldn't open any device"

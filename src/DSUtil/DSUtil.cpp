@@ -1290,6 +1290,13 @@ HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv,
                 hr = pCF->CreateInstance(aggregate, iid, ppv);
             }
         }
+    } else {
+        DWORD lasterr = GetLastError();
+        if (lasterr == ERROR_MOD_NOT_FOUND && ::PathFileExistsW(fullpath)) {
+            // DLL missing or loading was blocked
+            return E_ACCESSDENIED;
+        }
+        return E_FAIL;
     }
 
     if (FAILED(hr) && hInst && !fFound) {

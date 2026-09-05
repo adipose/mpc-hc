@@ -1039,6 +1039,9 @@ HRESULT CFGManager::Connect(IPin* pPinOut, IPin* pPinIn, bool bContinueRender)
                             CMPlayerCApp* pApp = AfxGetMyApp();
                             pApp->WriteProfileInt(IDS_R_INTERNAL_LAVVIDEO_HWACCEL, _T("HWAccel"), 0);
                         }
+                    } else if (hr == E_ACCESSDENIED && (filter == GUID_LAVSplitter || filter == GUID_LAVAudio || filter == GUID_LAVVideo)) {
+                        // DLL was missing or loading was blocked
+                        m_filter_blocked = true;
                     }
                 }
                 continue;

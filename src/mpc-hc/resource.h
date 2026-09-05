@@ -1010,6 +1010,9 @@
 #define IDS_MAINFRM_96                  33099
 #define IDS_MAINFRM_98                  33100
 #define IDS_MAINFRM_99                  33101
+#define IDS_MAINFRM_RENDERFAIL_DLL      33102
+#define IDS_MAINFRM_RENDERFAIL_DLL_SAC  33103
+#define IDS_MAINFRM_RENDERFAIL_CORRUPT  33104
 #define IDS_MAINFRM_108                 33106
 #define IDS_AG_SOUND                    33107
 #define IDS_MAINFRM_114                 33108

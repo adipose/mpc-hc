@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-08-22 12:12:47+0000\n"
+"POT-Creation-Date: 2026-09-03 18:45:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1183,6 +1183,14 @@ msgid "day(s)"
 msgstr ""
 
 msgctxt "IDD_PPAGEMISC_IDC_STATIC"
+msgid "Color controls"
+msgstr ""
+
+msgctxt "IDD_PPAGEMISC_IDC_COLOR_CONTROLS"
+msgid "Open"
+msgstr ""
+
+msgctxt "IDD_PPAGEMISC_IDC_STATIC"
 msgid "Settings management"
 msgstr ""
 
@@ -1196,14 +1204,6 @@ msgstr ""
 
 msgctxt "IDD_PPAGEMISC_IDC_EXPORT_SETTINGS"
 msgid "Export"
-msgstr ""
-
-msgctxt "IDD_PPAGEMISC_IDC_STATIC"
-msgid "Color controls"
-msgstr ""
-
-msgctxt "IDD_PPAGEMISC_IDC_COLOR_CONTROLS"
-msgid "Open"
 msgstr ""
 
 msgctxt "IDD_TUNER_SCAN_CAPTION"

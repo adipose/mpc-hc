@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
 "POT-Creation-Date: 2025-12-14 16:16:34+0000\n"
-"PO-Revision-Date: 2026-08-31 14:27+0000\n"
+"PO-Revision-Date: 2026-08-31 14:37+0000\n"
 "Last-Translator: Transifex sync (Studio)\n"
 "Language-Team: Arabic (https://app.transifex.com/mpchc/teams/106126/ar/)\n"
 "MIME-Version: 1.0\n"
@@ -1207,6 +1207,14 @@ msgid "day(s)"
 msgstr "يوم (أيام)"
 
 msgctxt "IDD_PPAGEMISC_IDC_STATIC"
+msgid "Color controls"
+msgstr ""
+
+msgctxt "IDD_PPAGEMISC_IDC_COLOR_CONTROLS"
+msgid "Open"
+msgstr ""
+
+msgctxt "IDD_PPAGEMISC_IDC_STATIC"
 msgid "Settings management"
 msgstr "إدارة الإعدادات"
 
@@ -1221,14 +1229,6 @@ msgstr "تصدير المفاتيح"
 msgctxt "IDD_PPAGEMISC_IDC_EXPORT_SETTINGS"
 msgid "Export"
 msgstr "تصدير"
-
-msgctxt "IDD_PPAGEMISC_IDC_STATIC"
-msgid "Color controls"
-msgstr ""
-
-msgctxt "IDD_PPAGEMISC_IDC_COLOR_CONTROLS"
-msgid "Open"
-msgstr ""
 
 msgctxt "IDD_TUNER_SCAN_CAPTION"
 msgid "Tuner scan"

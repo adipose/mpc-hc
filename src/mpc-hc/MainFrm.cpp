@@ -328,6 +328,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 
     ON_MESSAGE(WM_POSTOPEN, OnFilePostOpenmedia)
     ON_MESSAGE(WM_OPENFAILED, OnOpenMediaFailed)
+    ON_MESSAGE(WM_TUNER_NEW_CHANNEL, OnHeadlessScanNewChannel)
+    ON_MESSAGE(WM_TUNER_SCAN_END, OnHeadlessScanEnd)
     ON_MESSAGE(WM_DVB_EIT_DATA_READY, OnCurrentChannelInfoUpdated)
 
     ON_COMMAND(ID_BOSS, OnBossKey)
@@ -1293,6 +1295,8 @@ void CMainFrame::OnDestroy()
 void CMainFrame::OnClose()
 {
     CAppSettings& s = AfxGetAppSettings();
+
+    m_OnClose_called = true;
 
     if (USE_LOGGER(s)) {
         PLAYER_LOG(_T("CMainFrame::OnClose"));
@@ -4493,6 +4497,14 @@ LRESULT CMainFrame::OnFilePostOpenmedia(WPARAM wParam, LPARAM lParam)
 
     m_bSettingUpMenus = false;
 
+    // The device is open now, which is the one precondition DoTunerScan has.
+    // Consume the switch so a later open cannot start a second scan.
+    if ((s.nCLSwitches & CLSW_DVBSCAN) && GetPlaybackMode() == PM_DIGITAL_CAPTURE) {
+        s.nCLSwitches &= ~CLSW_DVBSCAN;
+        m_bHeadlessDVBScan = true;
+        StartHeadlessDVBScan();
+    }
+
     return 0;
 }
 
@@ -4507,6 +4519,14 @@ LRESULT CMainFrame::OnOpenMediaFailed(WPARAM wParam, LPARAM lParam)
     if (USE_LOGGER(s)) {
         PLAYER_LOG(_T("CMainFrame::OnOpenMediaFailed (thread %lu)"), GetCurrentThreadId());
         FLUSH_LOGGER();
+    }
+
+    // The other way a headless scan can be left with nothing to wait for: the
+    // device was configured but would not open. Quit rather than sit idle.
+    if (AfxGetAppSettings().nCLSwitches & CLSW_DVBSCAN) {
+        TRACE(_T("/dvbscan: the capture device failed to open, abandoning the scan\n"));
+        AfxGetAppSettings().nCLSwitches &= ~CLSW_DVBSCAN;
+        PostMessage(WM_CLOSE);
     }
 
     m_lastOMD.Free();
@@ -5275,9 +5295,24 @@ BOOL CMainFrame::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCDS)
         applyRandomizeSwitch();
         s.nCLSwitches &= ~CLSW_CD;
         PostMessage(WM_MPC_OPENCURPLAYLIST, 0, 0);
-    } else if (s.nCLSwitches & CLSW_DEVICE) {
-        PostMessage(WM_COMMAND, ID_FILE_OPENDEVICE);
-        s.nCLSwitches &= ~CLSW_DEVICE;
+    } else if (s.nCLSwitches & (CLSW_DEVICE | CLSW_DVBSCAN)) {
+        // OnFileOpendevice shows the capture options page and returns when no
+        // device is configured. Interactively that is a prompt; for a headless
+        // run it is a modal nobody can answer, and the process would sit there
+        // with no device, no scan and nothing to time out. Check the same
+        // condition first and fail the run instead.
+        if ((s.nCLSwitches & CLSW_DVBSCAN) && s.iDefaultCaptureDevice == 0 &&
+                s.strAnalogVideo == L"dummy" && s.strAnalogAudio == L"dummy") {
+            TRACE(_T("/dvbscan: no capture device configured, nothing to scan\n"));
+            s.nCLSwitches &= ~CLSW_DVBSCAN;
+            PostMessage(WM_CLOSE);
+        } else {
+            // /dvbscan implies opening the capture device, because DoTunerScan
+            // only runs in PM_DIGITAL_CAPTURE. CLSW_DVBSCAN is deliberately
+            // left set: OnFilePostOpenmedia consumes it once the device is up.
+            PostMessage(WM_COMMAND, ID_FILE_OPENDEVICE);
+            s.nCLSwitches &= ~CLSW_DEVICE;
+        }
     } else if (!s.slFiles.IsEmpty()) {
         CAtlList<CString> sl;
         sl.AddTailList(&s.slFiles);
@@ -14656,8 +14691,39 @@ void CMainFrame::OpenFile(OpenFileData* pOFD)
                     m_pME->SetNotifyWindow(NULL, 0, 0);
                 }
 
-                if (s.fReportFailedPins) {
-                    ShowMediaTypesDialog();
+                if (hr == VFW_E_CANNOT_RENDER) {
+                    CComPtr<CFGManager> fgm = static_cast<CFGManager*>(m_pGB.p);
+                    if (fgm && fgm->GetInternalFilterLoadingBlocked()) {
+                        DWORD sac;
+                        if (IsWindowsVersionOrGreaterBuild(10,0,22000) && ReadRegistryDWORD(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Control\\CI\\Protected", L"VerifiedAndReputablePolicyStateMinValueSeen", sac) && (sac > 0)) {
+                            throw (UINT)IDS_MAINFRM_RENDERFAIL_DLL_SAC;
+                        } else {
+                            throw (UINT)IDS_MAINFRM_RENDERFAIL_DLL;
+                        }
+                    }
+                }
+
+                if (s.fReportFailedPins && !m_fOpeningAborted) {
+                    CComQIPtr<IGraphBuilderDeadEnd> pGBDE = m_pGB;
+                    if (pGBDE && pGBDE->GetCount()) {
+                        bool showmtdlg = true;
+                        // don't show meaningless dialog when it fails at generic source filter
+                        if (hr == VFW_E_CANNOT_RENDER && pGBDE->GetCount() == 1) {
+                            CAtlList<CStringW> path;
+                            CAtlList<CMediaType> mts;
+                            if (S_OK == pGBDE->GetDeadEnd(0, path, mts) && path.GetCount() == 1) {
+                                if (path.GetHead() == L"File Source (Async.)::Output") {
+                                    showmtdlg = false;
+                                    if (s.SrcFilters[SRC_MP4]) {
+                                        throw (UINT)IDS_MAINFRM_RENDERFAIL_CORRUPT;
+                                    }
+                                }
+                            }
+                        }
+                        if (showmtdlg) {
+                            ShowMediaTypesDialog();
+                        }
+                    }
                 }
 
                 UINT err;
@@ -14814,8 +14880,8 @@ void CMainFrame::OpenFile(OpenFileData* pOFD)
             if (m_bUseSeekPreview) {
                 HRESULT previewHR;
                 if (isRFS) {
-                    CComPtr<CFGManager> fgm = static_cast<CFGManager*>(m_pGB_preview.p);
-                    previewHR = fgm->RenderRFSFileEntry(fn, nullptr, entryRFS);
+                    CComPtr<CFGManager> fgmp = static_cast<CFGManager*>(m_pGB_preview.p);
+                    previewHR = fgmp->RenderRFSFileEntry(fn, nullptr, entryRFS);
                 } else {
                     previewHR = m_pGB_preview->RenderFile(fn, nullptr);
                 }
@@ -16532,7 +16598,7 @@ bool CMainFrame::OpenMediaPrivate(CAutoPtr<OpenMediaData> pOMD)
         FLUSH_LOGGER();
     }
 
-    if (m_pGB || m_ActiveGraphNotifyEvCode == EC_PAUSED || GetLoadState() != MLS::LOADING) {
+    if (m_pGB || m_ActiveGraphNotifyEvCode == EC_PAUSED || GetLoadState() != MLS::LOADING || m_OnClose_called) {
         ASSERT(false);
         #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER && (MPC_VERSION_REV > 10)
         if (CrashReporter::IsEnabled()) {
@@ -17247,6 +17313,51 @@ bool CMainFrame::SearchInDir(bool bDirForward, bool bLoop /*= false*/)
     return true;
 }
 
+static const int ATSC_FIRST_CHANNEL            = 2;
+static const int ATSC_FIRST_UHF_CHANNEL        = 14;
+static const int ATSC_LAST_UHF_CHANNEL         = 51;
+static const int ATSC_RADIO_ASTRONOMY_CHANNEL  = 37;
+
+// Centre frequency in kHz of a US ATSC terrestrial RF channel, or false if the
+// channel number is not one that carries a broadcast.
+//
+// The plan is deliberately a lookup rather than arithmetic, because it is not a
+// uniform raster. Stepping by bandwidth - which is what a DVB scan does, and
+// what this scan used to do for every standard - is correct only within a band:
+// there is a 10 MHz step between channels 4 and 5, the FM broadcast band sits
+// between 6 and 7, and 260 MHz separate 13 from 14. A 6 MHz sweep therefore
+// lands off-channel from channel 5 onwards and wastes some forty tuning
+// attempts crossing the gap below UHF.
+static bool GetATSCChannelFrequency(int nChannel, ULONG& ulFrequency)
+{
+    // VHF low (2-6) and VHF high (7-13) are irregular and are listed out.
+    static const struct { int nChannel; ULONG ulFrequency; } VHFChannels[] = {
+        {  2,  57000 }, {  3,  63000 }, {  4,  69000 },
+        {  5,  79000 }, {  6,  85000 },
+        {  7, 177000 }, {  8, 183000 }, {  9, 189000 }, { 10, 195000 },
+        { 11, 201000 }, { 12, 207000 }, { 13, 213000 },
+    };
+
+    for (const auto& channel : VHFChannels) {
+        if (channel.nChannel == nChannel) {
+            ulFrequency = channel.ulFrequency;
+            return true;
+        }
+    }
+
+    // UHF is a regular 6 MHz raster starting at channel 14 on 473 MHz.
+    // Channel 37 is reserved worldwide for radio astronomy and never carries a
+    // broadcast, so receivers skip it. Above channel 36 the band was reassigned
+    // to mobile use by the 2017 repack, but older recordings may still sit
+    // there, so the plan runs to channel 51.
+    if (nChannel >= ATSC_FIRST_UHF_CHANNEL && nChannel <= ATSC_LAST_UHF_CHANNEL && nChannel != ATSC_RADIO_ASTRONOMY_CHANNEL) {
+        ulFrequency = 473000 + (nChannel - ATSC_FIRST_UHF_CHANNEL) * 6000;
+        return true;
+    }
+
+    return false;
+}
+
 void CMainFrame::DoTunerScan(TunerScanData* pTSD)
 {
     if (GetPlaybackMode() == PM_DIGITAL_CAPTURE) {
@@ -17268,7 +17379,32 @@ void CMainFrame::DoTunerScan(TunerScanData* pTSD)
             m_bStopTunerScan = false;
             pTun->Scan(0, 0, 0, NULL);  // Clear maps
 
-            for (ULONG ulFrequency = pTSD->FrequencyStart; ulFrequency <= pTSD->FrequencyStop; ulFrequency += pTSD->Bandwidth) {
+            // Work out which frequencies to visit before tuning any of them.
+            // For ATSC these come from the RF channel plan, because its
+            // channels are not evenly spaced; for DVB the historical fixed step
+            // by bandwidth is correct. The start and stop frequencies bound the
+            // scan either way, so the dialog keeps working unchanged.
+            bool bIsATSC = false;
+            pTun->IsATSC(bIsATSC);
+
+            std::vector<ULONG> frequencies;
+            if (bIsATSC) {
+                for (int nChannel = ATSC_FIRST_CHANNEL; nChannel <= ATSC_LAST_UHF_CHANNEL; nChannel++) {
+                    ULONG ulChannelFrequency;
+                    if (GetATSCChannelFrequency(nChannel, ulChannelFrequency)
+                            && ulChannelFrequency >= pTSD->FrequencyStart
+                            && ulChannelFrequency <= pTSD->FrequencyStop) {
+                        frequencies.push_back(ulChannelFrequency);
+                    }
+                }
+            } else {
+                for (ULONG ulFrequency = pTSD->FrequencyStart; ulFrequency <= pTSD->FrequencyStop; ulFrequency += pTSD->Bandwidth) {
+                    frequencies.push_back(ulFrequency);
+                }
+            }
+
+            for (size_t nIndex = 0; nIndex < frequencies.size(); nIndex++) {
+                const ULONG ulFrequency = frequencies[nIndex];
                 bool bSucceeded = false;
                 for (int nOffsetPos = 0; nOffsetPos < nOffset && !bSucceeded; nOffsetPos++) {
                     if (SUCCEEDED(pTun->SetFrequency(ulFrequency + lOffsets[nOffsetPos], pTSD->Bandwidth, pTSD->SymbolRate))) {
@@ -17281,7 +17417,9 @@ void CMainFrame::DoTunerScan(TunerScanData* pTSD)
                     }
                 }
 
-                int nProgress = MulDiv(ulFrequency - pTSD->FrequencyStart, 100, pTSD->FrequencyStop - pTSD->FrequencyStart);
+                // Steps are uneven under a channel plan, so progress counts
+                // frequencies visited rather than distance travelled up the band.
+                int nProgress = MulDiv((int)nIndex + 1, 100, (int)frequencies.size());
                 ::SendMessage(pTSD->Hwnd, WM_TUNER_SCAN_PROGRESS, nProgress, 0);
                 ::SendMessage(pTSD->Hwnd, WM_TUNER_STATS, lDbStrength, lPercentQuality);
 
@@ -20337,7 +20475,7 @@ void CMainFrame::OpenMedia(CAutoPtr<OpenMediaData> pOMD)
 
     const auto& s = AfxGetAppSettings();
 
-    if (m_ActiveGraphNotifyEvCode == EC_PAUSED) {
+    if (m_ActiveGraphNotifyEvCode == EC_PAUSED || m_OnClose_called) {
         ASSERT(false);
         #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER && (MPC_VERSION_REV > 10)
         if (CrashReporter::IsEnabled()) {
@@ -21134,6 +21272,101 @@ void CMainFrame::StartTunerScan(CAutoPtr<TunerScanData> pTSD)
 void CMainFrame::StopTunerScan()
 {
     m_bStopTunerScan = true;
+}
+
+void CMainFrame::StartHeadlessDVBScan()
+{
+    const CAppSettings& s = AfxGetAppSettings();
+
+    m_headlessDVBScanChannels.clear();
+
+    CAutoPtr<TunerScanData> pTSD(DEBUG_NEW TunerScanData);
+    pTSD->Hwnd = m_hWnd;
+    pTSD->FrequencyStart = s.cmdlnDVBScan.ulFrequencyStart;
+    pTSD->FrequencyStop = s.cmdlnDVBScan.ulFrequencyStop;
+    // Bandwidth is kHz in TunerScanData and MHz in the profile. This is the
+    // same conversion CTunerScanDlg makes when it loads its fields, so a
+    // headless run and a dialog run scan identically for identical settings.
+    pTSD->Bandwidth = s.cmdlnDVBScan.ulBandwidth ? s.cmdlnDVBScan.ulBandwidth
+                      : (ULONG)s.iBDABandwidth * 1000;
+    pTSD->SymbolRate = s.cmdlnDVBScan.ulSymbolRate ? s.cmdlnDVBScan.ulSymbolRate
+                       : (ULONG)s.iBDASymbolRate;
+    pTSD->Offset = s.fBDAUseOffset ? s.iBDAOffset : 0;
+
+    StartTunerScan(pTSD);
+}
+
+LRESULT CMainFrame::OnHeadlessScanNewChannel(WPARAM wParam, LPARAM lParam)
+{
+    if (!m_bHeadlessDVBScan) {
+        return FALSE;
+    }
+
+    const CAppSettings& s = AfxGetAppSettings();
+    const size_t maxChannelsNum = ID_NAVIGATE_JUMPTO_SUBITEM_END - ID_NAVIGATE_JUMPTO_SUBITEM_START + 1;
+
+    try {
+        CBDAChannel channel((LPCTSTR)lParam);
+        // The dialog applies this filter as it fills its list rather than at
+        // save time, so apply it here too.
+        if (!s.fBDAIgnoreEncryptedChannels || !channel.IsEncrypted()) {
+            if (m_headlessDVBScanChannels.size() < maxChannelsNum) {
+                channel.SetPrefNumber((int)m_headlessDVBScanChannels.size());
+                m_headlessDVBScanChannels.push_back(channel);
+            }
+        }
+    } catch (CException* e) {
+        // A record that will not tokenise is dropped and the scan continues,
+        // which is what CTunerScanDlg::OnNewChannel does with the same failure.
+        TRACE(_T("/dvbscan: failed to parse a scanned channel record\n"));
+        e->Delete();
+    }
+
+    return TRUE;
+}
+
+LRESULT CMainFrame::OnHeadlessScanEnd(WPARAM wParam, LPARAM lParam)
+{
+    if (!m_bHeadlessDVBScan) {
+        return FALSE;
+    }
+    FinishHeadlessDVBScan();
+    return TRUE;
+}
+
+void CMainFrame::FinishHeadlessDVBScan()
+{
+    const CAppSettings& s = AfxGetAppSettings();
+
+    // The serializer the web interface uses, not a second copy of it: whatever
+    // /dvb/channels.json would say about these channels, this file says too.
+    const CStringA json = DVBChannelsToJSON(m_headlessDVBScanChannels);
+
+    bool bWritten = false;
+    if (!s.cmdlnDVBScan.strOutputPath.IsEmpty()) {
+        CFile file;
+        CFileException fe;
+        if (file.Open(s.cmdlnDVBScan.strOutputPath,
+                      CFile::modeCreate | CFile::modeWrite | CFile::typeBinary, &fe)) {
+            try {
+                file.Write((LPCSTR)json, json.GetLength());
+                bWritten = true;
+            } catch (CFileException* pfe) {
+                pfe->Delete();
+            }
+            file.Close();
+        }
+    }
+
+    if (!bWritten) {
+        // Losing the result silently would leave a caller unable to tell an
+        // empty scan from an unwritable path.
+        TRACE(_T("/dvbscan: could not write the result to '%s'\n"),
+              s.cmdlnDVBScan.strOutputPath.GetString());
+    }
+
+    m_bHeadlessDVBScan = false;
+    PostMessage(WM_CLOSE);
 }
 
 HRESULT CMainFrame::SetChannel(int nChannel)
@@ -23045,15 +23278,17 @@ LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
         return 0;
     }
 
-    if (message == WM_MPC_OPENCURPLAYLIST && IsStateClosingAborting()) {
-        // this can happen when a modal dialog is shown during media close, as that runs the main message loop
+    if (message == WM_MPC_OPENCURPLAYLIST && (AfxGetMyApp()->m_fClosingState || m_OnClose_called || IsStateClosingAborting())) {
+        // this can for example happen when a modal dialog is shown during media close, as that runs another message loop
         TRACE(_T("Dropped WindowProc: message 0x%x value %d\n"), message, LOWORD(wParam));
         return 0;
     }
 
+#ifdef DEBUG
     if (message != WM_ENTERIDLE && message != WM_DRAWITEM && IsStateClosingAborting()) {
         TRACE(_T("WindowProc during media close: message 0x%x value %d\n"), message, LOWORD(wParam));
     }
+#endif
 
     if (message == WM_ACTIVATE || message == WM_SETFOCUS || message == WM_GETMINMAXINFO) {
         if (AfxGetMyApp()->m_fClosingState) {
@@ -23065,7 +23300,9 @@ LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
     if (message == WM_SYSCOMMAND) {
         UINT nID = LOWORD(wParam) & 0XFFF0;
         if (nID == SC_CLOSE) {
-            OnClose();
+            if (!AfxGetMyApp()->m_fClosingState || !m_OnClose_called) {
+                OnClose();
+            }
             return 0;
         }
         //TRACE(_T("WM_SYSCOMMAND: value 0x%x\n"), LOWORD(wParam));

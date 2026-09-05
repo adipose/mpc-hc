@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-08-22 17:29:52+0000\n"
+"POT-Creation-Date: 2026-09-02 16:40:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2835,6 +2835,24 @@ msgstr ""
 
 msgctxt "IDS_MAINFRM_99"
 msgid "Can't create capture graph builder object"
+msgstr ""
+
+msgctxt "IDS_MAINFRM_RENDERFAIL_DLL"
+msgid ""
+"Cannot render the file. Failure loading internal filter. Could be caused by "
+"a missing DLL."
+msgstr ""
+
+msgctxt "IDS_MAINFRM_RENDERFAIL_DLL_SAC"
+msgid ""
+"Cannot render the file. Failure loading internal filter. Could be caused by "
+"\"Smart App Control\"."
+msgstr ""
+
+msgctxt "IDS_MAINFRM_RENDERFAIL_CORRUPT"
+msgid ""
+"Cannot render the file. File might be damaged or incomplete. Send file to "
+"developers for analysis."
 msgstr ""
 
 msgctxt "IDS_MAINFRM_108"

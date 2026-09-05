@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
 "POT-Creation-Date: 2022-01-01 22:20:31+0000\n"
-"PO-Revision-Date: 2026-08-31 14:27+0000\n"
+"PO-Revision-Date: 2026-08-31 14:37+0000\n"
 "Last-Translator: Transifex sync (Studio)\n"
 "Language-Team: Basque (https://www.transifex.com/mpchc/teams/106126/eu/)\n"
 "MIME-Version: 1.0\n"
@@ -1206,6 +1206,14 @@ msgid "day(s)"
 msgstr "Egun"
 
 msgctxt "IDD_PPAGEMISC_IDC_STATIC"
+msgid "Color controls"
+msgstr ""
+
+msgctxt "IDD_PPAGEMISC_IDC_COLOR_CONTROLS"
+msgid "Open"
+msgstr ""
+
+msgctxt "IDD_PPAGEMISC_IDC_STATIC"
 msgid "Settings management"
 msgstr "Ezarpen kudeaketa"
 
@@ -1220,14 +1228,6 @@ msgstr "Esportatu giltzak"
 msgctxt "IDD_PPAGEMISC_IDC_EXPORT_SETTINGS"
 msgid "Export"
 msgstr "Esportatu"
-
-msgctxt "IDD_PPAGEMISC_IDC_STATIC"
-msgid "Color controls"
-msgstr ""
-
-msgctxt "IDD_PPAGEMISC_IDC_COLOR_CONTROLS"
-msgid "Open"
-msgstr ""
 
 msgctxt "IDD_TUNER_SCAN_CAPTION"
 msgid "Tuner scan"
