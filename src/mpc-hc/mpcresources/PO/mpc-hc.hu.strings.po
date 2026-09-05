@@ -3708,7 +3708,7 @@ msgstr "Megjelenítési Szándék: Relatív Színmérési"
 
 msgctxt "IDS_OSD_RS_REND_INTENT_SATUR"
 msgid "Rendering Intent: Saturation"
-msgstr "Megjelenítési Szándék: Színtelítettségi"
+msgstr "Renderelési szándék: Telítettség"
 
 msgctxt "IDS_OSD_RS_REND_INTENT_ABSOLUTE"
 msgid "Rendering Intent: Absolute Colorimetric"
