@@ -10,14 +10,13 @@
 # Nico, 2025
 # MPC HC <adiposegithub@gmail.com>, 2025
 # Maik Dießner, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-07 12:27+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-02 16:40:24+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Maik Dießner, 2026\n"
 "Language-Team: German (https://app.transifex.com/mpchc/teams/106126/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3040,18 +3039,25 @@ msgid ""
 "Cannot render the file. Failure loading internal filter. Could be caused by "
 "a missing DLL."
 msgstr ""
+"Die Datei kann nicht gerendert werden. Fehler beim Laden interner Filter. "
+"Dies könnte an einer fehlenden DLL liegen."
 
 msgctxt "IDS_MAINFRM_RENDERFAIL_DLL_SAC"
 msgid ""
 "Cannot render the file. Failure loading internal filter. Could be caused by "
 "\"Smart App Control\"."
 msgstr ""
+"Die Datei kann nicht gerendert werden. Fehler beim Laden interner Filter. "
+"Dies könnte von \"Smart App Control\" verursacht worden sein."
 
 msgctxt "IDS_MAINFRM_RENDERFAIL_CORRUPT"
 msgid ""
 "Cannot render the file. File might be damaged or incomplete. Send file to "
 "developers for analysis."
 msgstr ""
+"Die Datei kann nicht gerendert werden. Die Datei ist möglicherweise "
+"beschädigt oder unvollständig. Sende die Datei zur Analyse an die "
+"Entwickler."
 
 msgctxt "IDS_MAINFRM_108"
 msgid "Couldn't open any device"
