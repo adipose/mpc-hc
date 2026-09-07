@@ -627,6 +627,7 @@ protected:
     int m_iDefRotation;
 
     void ForceCloseProcess();
+    void ThrowAndForceClose();
 
     // Operations
     bool OpenMediaPrivate(CAutoPtr<OpenMediaData> pOMD);
