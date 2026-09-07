@@ -6,14 +6,13 @@
 # MPC HC <adiposegithub@gmail.com>, 2022
 # Sinan H., 2024
 # Mücahid Aksel <mucahidaksel@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-07 12:27+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-02 16:40:24+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Mücahid Aksel <mucahidaksel@gmail.com>, 2026\n"
 "Language-Team: Turkish (https://app.transifex.com/mpchc/teams/106126/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3036,18 +3035,24 @@ msgid ""
 "Cannot render the file. Failure loading internal filter. Could be caused by "
 "a missing DLL."
 msgstr ""
+"Dosya işlenemiyor. Dahili filtre yüklenirken hata oluştu. Eksik bir DLL "
+"dosyasından kaynaklanıyor olabilir."
 
 msgctxt "IDS_MAINFRM_RENDERFAIL_DLL_SAC"
 msgid ""
 "Cannot render the file. Failure loading internal filter. Could be caused by "
 "\"Smart App Control\"."
 msgstr ""
+"Dosya işlenemiyor. Dahili filtre yüklenirken hata oluştu. Bunun nedeni "
+"\"Akıllı Uygulama Kontrolü\" olabilir."
 
 msgctxt "IDS_MAINFRM_RENDERFAIL_CORRUPT"
 msgid ""
 "Cannot render the file. File might be damaged or incomplete. Send file to "
 "developers for analysis."
 msgstr ""
+"Dosya işlenemiyor. Dosya bozuk veya eksik olabilir. Analiz için dosyayı "
+"geliştiricilere gönderiniz."
 
 msgctxt "IDS_MAINFRM_108"
 msgid "Couldn't open any device"
