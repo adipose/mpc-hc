@@ -2965,7 +2965,7 @@ msgctxt "IDS_MAINFRM_RENDERFAIL_CORRUPT"
 msgid ""
 "Cannot render the file. File might be damaged or incomplete. Send file to "
 "developers for analysis."
-msgstr "无法渲染该文件。文件可能已损坏或不完整。请将文件发送给开发者进行分析。"
+msgstr "无法渲染该文件，文件可能已损坏或不完整，请将文件发送给开发者进行分析。"
 
 msgctxt "IDS_MAINFRM_108"
 msgid "Couldn't open any device"
