@@ -2953,7 +2953,7 @@ msgctxt "IDS_MAINFRM_RENDERFAIL_DLL"
 msgid ""
 "Cannot render the file. Failure loading internal filter. Could be caused by "
 "a missing DLL."
-msgstr "无法渲染该文件。加载内部滤镜失败。可能是缺少某个 DLL 文件导致的。"
+msgstr "无法渲染该文件，加载内部滤镜失败，可能是缺少某个 DLL 文件导致的。"
 
 msgctxt "IDS_MAINFRM_RENDERFAIL_DLL_SAC"
 msgid ""
