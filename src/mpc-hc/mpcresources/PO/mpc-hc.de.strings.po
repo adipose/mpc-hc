@@ -3571,7 +3571,7 @@ msgstr "Sun/NeXT Audio"
 
 msgctxt "IDS_MFMT_CDA"
 msgid "Audio CD track"
-msgstr "Audio CD Track"
+msgstr "Audio-CD-Track"
 
 msgctxt "IDS_MFMT_FLAC"
 msgid "FLAC"
