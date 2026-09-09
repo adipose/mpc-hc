@@ -8,14 +8,13 @@
 # alex6dj, 2023
 # Leandro Botella Penalva, 2024
 # Alex Covarrubias, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-06-02 02:11:23+0000\n"
-"PO-Revision-Date: 2026-09-09 11:20+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-09 08:19:27+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Alex Covarrubias, 2026\n"
 "Language-Team: Spanish (https://app.transifex.com/mpchc/teams/106126/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -105,15 +104,15 @@ msgstr "Aumento:"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC7"
 msgid "ReplayGain:"
-msgstr ""
+msgstr "GananciaRep:"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC8"
 msgid "Preamp (dB):"
-msgstr ""
+msgstr "Preamp (dB):"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK7"
 msgid "Prevent clipping"
-msgstr ""
+msgstr "Prevenir Clipping"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK4"
 msgid "Audio time shift (ms):"
@@ -1864,21 +1863,23 @@ msgstr "Cerrar"
 
 msgctxt "IDD_REDIRECT_WAIT_DLG_CAPTION"
 msgid "MPC-HC"
-msgstr ""
+msgstr "MPC-HC"
 
 msgctxt "IDD_REDIRECT_WAIT_DLG_IDC_STATIC"
 msgid ""
 "Opening files is taking some time. Waiting for the first MPC-HC instance to "
 "respond."
 msgstr ""
+"Abrir archivos está llevando algún tiempo. Esperando a que la primera "
+"instancia de MPC-HC responda."
 
 msgctxt "IDD_REDIRECT_WAIT_DLG_IDC_STATIC"
 msgid "Please wait and do not open more files for the next 30 seconds."
-msgstr ""
+msgstr "Por favor espere y no abra más archivos en los próximos 30 segundos."
 
 msgctxt "IDD_REDIRECT_WAIT_DLG_IDCANCEL"
 msgid "Open new window"
-msgstr ""
+msgstr "Abrir nueva ventana"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC1"
 msgid "Theme"
