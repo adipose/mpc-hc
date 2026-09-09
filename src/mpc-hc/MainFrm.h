@@ -332,6 +332,14 @@ private:
     void UpdateDXVAStatus();
 
     void SetVolumeBoost(UINT nAudioBoost);
+    // ReplayGain values found in the tags of the currently open file
+    struct ReplayGainInfo {
+        bool bHasTrackGain = false, bHasAlbumGain = false;
+        float fTrackGain = 0.0f, fAlbumGain = 0.0f; // dB
+        float fTrackPeak = 0.0f, fAlbumPeak = 0.0f; // 0 = unknown
+    } m_replayGain;
+    static bool ParseReplayGainValue(LPCWSTR str, float& value);
+    void ApplyReplayGain();
     void SetBalance(int balance);
 	
 	// temp fonts loader
@@ -477,6 +485,16 @@ private:
 
     ULONGLONG m_dwLastRun;
     int m_nLastAppendSelectionIndex; // playlist index where the current batch of redirected opens started
+
+    // A command line redirected from another instance, waiting to be acted on. OnCopyData only
+    // queues it, so that handler returns immediately instead of probing the filesystem while
+    // the sending instances wait on it.
+    struct PendingCommandLine {
+        CAtlList<CString> cmdln;
+        ULONGLONG tArrived = 0;
+    };
+    std::deque<PendingCommandLine> m_pendingCommandLines;
+    bool m_bProcessingCommandLine = false;
 
     bool m_bBuffering;
 
@@ -1011,6 +1029,8 @@ public:
     afx_msg void OnFileOpenmedia();
     afx_msg void OnUpdateFileOpen(CCmdUI* pCmdUI);
     afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
+    afx_msg LRESULT OnCommandLineReceived(WPARAM wParam, LPARAM lParam);
+    void ProcessCommandLine(CAtlList<CString>& cmdln, ULONGLONG tArrived);
     afx_msg void OnFileOpendvd();
     afx_msg void OnFileOpendevice();
     afx_msg void OnFileOpenOpticalDisk(UINT nID);
