@@ -6,14 +6,13 @@
 # MPC HC <adiposegithub@gmail.com>, 2022
 # Sinan H., 2024
 # Mücahid Aksel <mucahidaksel@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-09 11:20+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-09 08:19:27+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Mücahid Aksel <mucahidaksel@gmail.com>, 2026\n"
 "Language-Team: Turkish (https://app.transifex.com/mpchc/teams/106126/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5360,15 +5359,15 @@ msgstr "Çeşitli"
 
 msgctxt "IDS_REPLAYGAIN_MODE_OFF"
 msgid "Off"
-msgstr ""
+msgstr "Kapalı"
 
 msgctxt "IDS_REPLAYGAIN_MODE_TRACK"
 msgid "Track"
-msgstr ""
+msgstr "Parça"
 
 msgctxt "IDS_REPLAYGAIN_MODE_ALBUM"
 msgid "Album"
-msgstr ""
+msgstr "Albüm"
 
 msgctxt "IDS_AG_COLOR_CONTROLS"
 msgid "Color Controls"
@@ -5386,3 +5385,8 @@ msgid ""
 "\n"
 "Click No to open a new window and leave it running."
 msgstr ""
+"İlk MPC-HC penceresi yanıt vermiyor.\n"
+"\n"
+"Evet: Onu kapatıp bu pencerede devam et. (Kaydedilmemiş ayarlar ve geçmiş kaybolur.)\n"
+"\n"
+"Hayır: Yeni bir pencere aç ve diğerini kendi haline bırak."
