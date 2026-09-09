@@ -9,14 +9,13 @@
 # Krzysztof, 2024
 # Mirosław Żylewicz, 2025
 # Łukasz Janik, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-09 11:20+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-09 08:19:27+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Łukasz Janik, 2026\n"
 "Language-Team: Polish (https://app.transifex.com/mpchc/teams/106126/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5357,15 +5356,15 @@ msgstr "Różne"
 
 msgctxt "IDS_REPLAYGAIN_MODE_OFF"
 msgid "Off"
-msgstr ""
+msgstr "Wyłączone"
 
 msgctxt "IDS_REPLAYGAIN_MODE_TRACK"
 msgid "Track"
-msgstr ""
+msgstr "Ścieżka"
 
 msgctxt "IDS_REPLAYGAIN_MODE_ALBUM"
 msgid "Album"
-msgstr ""
+msgstr "Album"
 
 msgctxt "IDS_AG_COLOR_CONTROLS"
 msgid "Color Controls"
@@ -5383,3 +5382,8 @@ msgid ""
 "\n"
 "Click No to open a new window and leave it running."
 msgstr ""
+"Pierwsza instancja MPC-HC nie odpowiada.\n"
+"\n"
+"Kliknij Tak, aby ją zamknąć i kontynuować w tym oknie. Wszystkie niezapisane ustawienia i historia zostaną utracone.\n"
+"\n"
+"Kliknij Nie, aby otworzyć nowe okno i pozostawić ją uruchomioną."
