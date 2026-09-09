@@ -6,14 +6,13 @@
 # Random Vandal <zettaboy@gmail.com>, 2020
 # Jindřich T, 2026
 # Michal Várady <miko.vaji@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-09 11:20+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-09 08:19:27+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Michal Várady <miko.vaji@gmail.com>, 2026\n"
 "Language-Team: Czech (https://app.transifex.com/mpchc/teams/106126/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -103,15 +102,15 @@ msgstr "Zesílení:"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC7"
 msgid "ReplayGain:"
-msgstr ""
+msgstr "ReplayGain:"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC8"
 msgid "Preamp (dB):"
-msgstr ""
+msgstr "Předzesílení (dB):"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK7"
 msgid "Prevent clipping"
-msgstr ""
+msgstr "Zabránit ořezu signálu"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK4"
 msgid "Audio time shift (ms):"
@@ -1850,21 +1849,22 @@ msgstr "Zavřít"
 
 msgctxt "IDD_REDIRECT_WAIT_DLG_CAPTION"
 msgid "MPC-HC"
-msgstr ""
+msgstr "MPC-HC"
 
 msgctxt "IDD_REDIRECT_WAIT_DLG_IDC_STATIC"
 msgid ""
 "Opening files is taking some time. Waiting for the first MPC-HC instance to "
 "respond."
 msgstr ""
+"Otevírání souborů chvíli trvá. Čeká se na odpověď první instance MPC-HC."
 
 msgctxt "IDD_REDIRECT_WAIT_DLG_IDC_STATIC"
 msgid "Please wait and do not open more files for the next 30 seconds."
-msgstr ""
+msgstr "Počkejte prosím a následujících 30 sekund neotevírejte další soubory."
 
 msgctxt "IDD_REDIRECT_WAIT_DLG_IDCANCEL"
 msgid "Open new window"
-msgstr ""
+msgstr "Otevřít nové okno"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC1"
 msgid "Theme"
