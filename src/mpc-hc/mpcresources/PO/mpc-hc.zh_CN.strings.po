@@ -12,14 +12,13 @@
 # Fentanyl, 2026
 # Phonebook3599, 2026
 # YuanHao Du, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-10 11:18+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-09 08:19:27+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: YuanHao Du, 2026\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/mpchc/teams/106126/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4166,7 +4165,7 @@ msgstr "就绪..."
 
 msgctxt "IDS_CMD_PNS"
 msgid "/pns \"name\"\tSpecify PnS Frame Adjust Preset to use (for example: /pns \"%s\")"
-msgstr "/pns \"name\" 指定使用的画面平移与缩放 (PnS) 预设(例如：/pns \"%s\")"
+msgstr "/pns \"name\" 指定使用的画面平移与缩放 (PnS) 预设(例如：/pns \"1%\")"
 
 msgctxt "IDS_CMD_PNS_VALUES"
 msgid ""
@@ -5200,15 +5199,15 @@ msgstr "其他"
 
 msgctxt "IDS_REPLAYGAIN_MODE_OFF"
 msgid "Off"
-msgstr ""
+msgstr "关闭"
 
 msgctxt "IDS_REPLAYGAIN_MODE_TRACK"
 msgid "Track"
-msgstr ""
+msgstr "单轨"
 
 msgctxt "IDS_REPLAYGAIN_MODE_ALBUM"
 msgid "Album"
-msgstr ""
+msgstr "专辑"
 
 msgctxt "IDS_AG_COLOR_CONTROLS"
 msgid "Color Controls"
@@ -5226,3 +5225,7 @@ msgid ""
 "\n"
 "Click No to open a new window and leave it running."
 msgstr ""
+"第一个 MPC-HC 实例没有响应。\n"
+"单击“是”将其关闭，并在当前窗口继续。\n"
+"它尚未保存的所有设置和播放历史都将丢失。\n"
+"单击“否”将打开一个新窗口，并让其保持运行。"
