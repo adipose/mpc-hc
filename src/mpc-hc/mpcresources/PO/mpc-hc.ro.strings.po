@@ -2,17 +2,16 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
 # Daniel <danny3@tutanota.com>, 2022
+# MPC HC <adiposegithub@gmail.com>, 2026
 # Miloiu Andrei-Valentin <miloiuandrei@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-12 10:45+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-11 12:44:22+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Miloiu Andrei-Valentin <miloiuandrei@gmail.com>, 2026\n"
 "Language-Team: Romanian (https://app.transifex.com/mpchc/teams/106126/ro/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1893,6 +1892,15 @@ msgid ""
 "8: yt-dlp processing\n"
 "16: DVB scanning"
 msgstr ""
+"Permite înregistrarea în fișiere de jurnal (log-uri) (necesită repornirea programului).\n"
+"Această opțiune este doar în scopuri de depanare și nu ar trebui să fie activată în timpul utilizării normale!\n"
+"Jurnalele (Log-urile) sunt salvate în folderul (în dosarul): %appdata%\\MPC-HC\n"
+"Valoarea ce trebuie setată este suma jurnalelor (log-urilor) pe care dorești să le activezi:\n"
+"1: general\n"
+"2: Generator de grafice\n"
+"4: Căutare de subtitrări\n"
+"8: procesare de către yt-dlp\n"
+"16: Scanarea DVB-ului"
 
 msgctxt "IDS_TIMER_REMAINING_TIME"
 msgid "Remaining time"
@@ -5453,12 +5461,17 @@ msgid ""
 "Sort files by creation time instead of file name when skipping to the "
 "next/previous file in a folder."
 msgstr ""
+"Sortează fișierele după momentul creării în loc de numele fișierului când "
+"treci la fișierul următor/anterior dintr-un folder (dintr-un dosar)."
 
 msgctxt "IDS_PPAGEADVANCED_HISTORY_MAX_AGE_DAYS"
 msgid ""
 "Automatically remove entries older than this number of days from the recent "
 "files history. Set to 0 to disable age-based cleanup."
 msgstr ""
+"Elimină automat intrările mai vechi decât acest număr de zile din istoricul "
+"fișierelor recente. Setează la 0 pentru dezactivarea curățării bazată pe "
+"vârstă."
 
 msgctxt "IDS_PPAGEADVANCED_HISTORY_IN_APPDATA"
 msgid ""
@@ -5467,13 +5480,21 @@ msgid ""
 "happens automatically when the player folder is not writable. Requires "
 "restart."
 msgstr ""
+"Stochează fișierul cu istoricul și lista de redare salvată (playlist-ul "
+"salvat) în %APPDATA%\\MPC-HC în loc de folderul (dosarul) playerului, când "
+"setările sunt stocate într-un fișier INI. Acest lucru se întâmplă automat și"
+" atunci când folderul (dosarul) playerului nu poate fi scris. Necesită "
+"repornirea programului."
 
 msgctxt "IDS_PPAGEADVANCED_HISTORY_EXCLUDE_FILTER"
 msgid ""
 "Semicolon separated list of substrings. Files and URLs whose full path contains any of them are not added to the recent files list, the resume position history, or the Windows recent documents list.\n"
 "Example: private;C:\\Videos\\Temp;youtube.com"
 msgstr ""
+"Listă de subșiruri separate prin punct și virgulă. Fișierele și adresele URL a căror cale completă conține oricare dintre ele nu sunt adăugate la lista de fișiere recente, la istoricul poziției reluării fișierelor media sau la lista de documente recente din Windows.\n"
+"De exemplu: privat;C:\\Videoclipuri\\Temp;youtube.com"
 
 msgctxt "IDS_PPAGEADVANCED_SECONDARY_SUB_VERT_POS"
 msgid "Vertical position for secondary subtitle. Percentage offset from top."
 msgstr ""
+"Poziție verticală pentru subtitrarea secundară. Decalaj procentual de sus."
