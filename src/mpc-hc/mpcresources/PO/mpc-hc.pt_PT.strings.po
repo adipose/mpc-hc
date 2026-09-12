@@ -611,7 +611,7 @@ msgstr "Ajustes"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER"
 msgid "Internal Filters::Audio Switcher"
-msgstr "Filtros internos::Alternador de áudio"
+msgstr "Filtros Internos::Alternador de áudio"
 
 msgctxt "IDD_PPAGEEXTERNALFILTERS"
 msgid "External Filters"
