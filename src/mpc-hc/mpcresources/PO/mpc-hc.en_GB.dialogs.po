@@ -5,13 +5,14 @@
 # MPC HC <adiposegithub@gmail.com>, 2020
 # Dogers <dogers@the-marines.com>, 2020
 # Leon S, 2020
+# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
 "POT-Creation-Date: 2022-01-01 22:20:31+0000\n"
-"PO-Revision-Date: 2020-01-02 07:46+0000\n"
-"Last-Translator: Leon S, 2020\n"
+"PO-Revision-Date: 2026-08-31 14:37+0000\n"
+"Last-Translator: Transifex sync (Studio)\n"
 "Language-Team: English (United Kingdom) (https://www.transifex.com/mpchc/teams/106126/en_GB/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -98,6 +99,18 @@ msgstr "Regain volume"
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC6"
 msgid "Boost:"
 msgstr "Boost:"
+
+msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC7"
+msgid "ReplayGain:"
+msgstr ""
+
+msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC8"
+msgid "Preamp (dB):"
+msgstr ""
+
+msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK7"
+msgid "Prevent clipping"
+msgstr ""
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK4"
 msgid "Audio time shift (ms):"
@@ -1206,6 +1219,14 @@ msgid "day(s)"
 msgstr "day(s)"
 
 msgctxt "IDD_PPAGEMISC_IDC_STATIC"
+msgid "Color controls"
+msgstr ""
+
+msgctxt "IDD_PPAGEMISC_IDC_COLOR_CONTROLS"
+msgid "Open"
+msgstr ""
+
+msgctxt "IDD_PPAGEMISC_IDC_STATIC"
 msgid "Settings management"
 msgstr "Settings management"
 
@@ -1220,14 +1241,6 @@ msgstr "Export keys"
 msgctxt "IDD_PPAGEMISC_IDC_EXPORT_SETTINGS"
 msgid "Export"
 msgstr "Export"
-
-msgctxt "IDD_PPAGEMISC_IDC_STATIC"
-msgid "Color controls"
-msgstr ""
-
-msgctxt "IDD_PPAGEMISC_IDC_COLOR_CONTROLS"
-msgid "Open"
-msgstr ""
 
 msgctxt "IDD_TUNER_SCAN_CAPTION"
 msgid "Tuner scan"
@@ -1816,10 +1829,28 @@ msgstr ""
 
 msgctxt "IDD_COLORCONTROLS_DLG_IDC_RESET"
 msgid "Reset"
-msgstr ""
+msgstr "Reset"
 
 msgctxt "IDD_COLORCONTROLS_DLG_IDCANCEL"
 msgid "Close"
+msgstr ""
+
+msgctxt "IDD_REDIRECT_WAIT_DLG_CAPTION"
+msgid "MPC-HC"
+msgstr ""
+
+msgctxt "IDD_REDIRECT_WAIT_DLG_IDC_STATIC"
+msgid ""
+"Opening files is taking some time. Waiting for the first MPC-HC instance to "
+"respond."
+msgstr ""
+
+msgctxt "IDD_REDIRECT_WAIT_DLG_IDC_STATIC"
+msgid "Please wait and do not open more files for the next 30 seconds."
+msgstr ""
+
+msgctxt "IDD_REDIRECT_WAIT_DLG_IDCANCEL"
+msgid "Open new window"
 msgstr ""
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC1"

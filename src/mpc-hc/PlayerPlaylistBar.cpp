@@ -1435,8 +1435,10 @@ bool CPlayerPlaylistBar::IsAtEnd()
     return isAtEnd;
 }
 
-bool CPlayerPlaylistBar::GetCur(CPlaylistItem& pli, bool check_fns) const
+bool CPlayerPlaylistBar::GetCur(CPlaylistItem& pli, bool check_fns)
 {
+    CAutoLock pledit(&m_plEditLock);
+
     if (!m_pl.IsEmpty()) {
         POSITION p = m_pl.GetPos();
         if (p) {

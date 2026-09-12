@@ -164,7 +164,7 @@ public:
     int GetSelIdx() const;
     void SetSelIdx(int i);
     bool IsAtEnd();
-    bool GetCur(CPlaylistItem& pli, bool check_fns = false) const;
+    bool GetCur(CPlaylistItem& pli, bool check_fns = false);
     CString GetCurFileName(bool use_ydl_source = false);
     CString GetCurFileNameTitle();
     bool SetNext();

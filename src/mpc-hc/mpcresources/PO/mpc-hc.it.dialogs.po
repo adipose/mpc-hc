@@ -8,13 +8,14 @@
 # GABG, 2023
 # Donatello, 2024
 # Gianni Chedda <gianni.chedda0@gmail.com>, 2026
+# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
 "POT-Creation-Date: 2026-06-02 02:11:23+0000\n"
-"PO-Revision-Date: 2020-01-02 07:46+0000\n"
-"Last-Translator: Gianni Chedda <gianni.chedda0@gmail.com>, 2026\n"
+"PO-Revision-Date: 2026-08-31 14:37+0000\n"
+"Last-Translator: Transifex sync (Studio)\n"
 "Language-Team: Italian (https://app.transifex.com/mpchc/teams/106126/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -101,6 +102,18 @@ msgstr "Riguadagno volume"
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC6"
 msgid "Boost:"
 msgstr "Aumenta:"
+
+msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC7"
+msgid "ReplayGain:"
+msgstr ""
+
+msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC8"
+msgid "Preamp (dB):"
+msgstr ""
+
+msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK7"
+msgid "Prevent clipping"
+msgstr ""
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK4"
 msgid "Audio time shift (ms):"
@@ -1214,6 +1227,14 @@ msgid "day(s)"
 msgstr "giorno(i)"
 
 msgctxt "IDD_PPAGEMISC_IDC_STATIC"
+msgid "Color controls"
+msgstr ""
+
+msgctxt "IDD_PPAGEMISC_IDC_COLOR_CONTROLS"
+msgid "Open"
+msgstr ""
+
+msgctxt "IDD_PPAGEMISC_IDC_STATIC"
 msgid "Settings management"
 msgstr "Gestione impostazioni"
 
@@ -1228,14 +1249,6 @@ msgstr "Esporta chiavi"
 msgctxt "IDD_PPAGEMISC_IDC_EXPORT_SETTINGS"
 msgid "Export"
 msgstr "Esporta"
-
-msgctxt "IDD_PPAGEMISC_IDC_STATIC"
-msgid "Color controls"
-msgstr ""
-
-msgctxt "IDD_PPAGEMISC_IDC_COLOR_CONTROLS"
-msgid "Open"
-msgstr ""
 
 msgctxt "IDD_TUNER_SCAN_CAPTION"
 msgid "Tuner scan"
@@ -1839,10 +1852,28 @@ msgstr ""
 
 msgctxt "IDD_COLORCONTROLS_DLG_IDC_RESET"
 msgid "Reset"
-msgstr ""
+msgstr "Reimposta"
 
 msgctxt "IDD_COLORCONTROLS_DLG_IDCANCEL"
 msgid "Close"
+msgstr ""
+
+msgctxt "IDD_REDIRECT_WAIT_DLG_CAPTION"
+msgid "MPC-HC"
+msgstr ""
+
+msgctxt "IDD_REDIRECT_WAIT_DLG_IDC_STATIC"
+msgid ""
+"Opening files is taking some time. Waiting for the first MPC-HC instance to "
+"respond."
+msgstr ""
+
+msgctxt "IDD_REDIRECT_WAIT_DLG_IDC_STATIC"
+msgid "Please wait and do not open more files for the next 30 seconds."
+msgstr ""
+
+msgctxt "IDD_REDIRECT_WAIT_DLG_IDCANCEL"
+msgid "Open new window"
 msgstr ""
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC1"

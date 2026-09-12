@@ -72,6 +72,7 @@ interface IMadVRInfo;
 interface IMadVRFrameGrabber;
 interface IMadVRSettings;
 interface IMadVRSubclassReplacement;
+interface IMPCVRSubclassReplacement;
 interface ISubClock;
 interface ISubPicAllocatorPresenter2;
 interface ISubPicAllocatorPresenter;
@@ -302,6 +303,7 @@ private:
 
     CComPtr<IMadVRSettings> m_pMVRS;
     CComPtr<IMadVRSubclassReplacement> m_pMVRSR;
+    CComPtr<IMPCVRSubclassReplacement> m_pMPCVRSR;
     CComPtr<IMadVRCommand> m_pMVRC;
     CComPtr<IMadVRInfo> m_pMVRI;
     CComPtr<IMadVRFrameGrabber> m_pMVRFG;
@@ -332,6 +334,14 @@ private:
     void UpdateDXVAStatus();
 
     void SetVolumeBoost(UINT nAudioBoost);
+    // ReplayGain values found in the tags of the currently open file
+    struct ReplayGainInfo {
+        bool bHasTrackGain = false, bHasAlbumGain = false;
+        float fTrackGain = 0.0f, fAlbumGain = 0.0f; // dB
+        float fTrackPeak = 0.0f, fAlbumPeak = 0.0f; // 0 = unknown
+    } m_replayGain;
+    static bool ParseReplayGainValue(LPCWSTR str, float& value);
+    void ApplyReplayGain();
     void SetBalance(int balance);
 	
 	// temp fonts loader
@@ -478,6 +488,16 @@ private:
     ULONGLONG m_dwLastRun;
     int m_nLastAppendSelectionIndex; // playlist index where the current batch of redirected opens started
 
+    // A command line redirected from another instance, waiting to be acted on. OnCopyData only
+    // queues it, so that handler returns immediately instead of probing the filesystem while
+    // the sending instances wait on it.
+    struct PendingCommandLine {
+        CAtlList<CString> cmdln;
+        ULONGLONG tArrived = 0;
+    };
+    std::deque<PendingCommandLine> m_pendingCommandLines;
+    bool m_bProcessingCommandLine = false;
+
     bool m_bBuffering;
 
     bool m_fLiveWM;
@@ -535,6 +555,7 @@ private:
     OAFilterState m_CachedFilterState;
 
     volatile LONG m_ActiveGraphNotifyEvCode = 0;
+    volatile bool m_OnClose_called = false;
 
     bool m_bSettingUpMenus;
     volatile bool m_bOpenMediaActive;
@@ -626,6 +647,7 @@ protected:
     int m_iDefRotation;
 
     void ForceCloseProcess();
+    void ThrowAndForceClose();
 
     // Operations
     bool OpenMediaPrivate(CAutoPtr<OpenMediaData> pOMD);
@@ -704,6 +726,15 @@ public:
     void StartTunerScan(CAutoPtr<TunerScanData> pTSD);
     void StopTunerScan();
     HRESULT SetChannel(int nChannel);
+
+    // Headless tuner scan, driven by /dvbscan rather than CTunerScanDlg.
+    // DoTunerScan reports through window messages, so this listens for them
+    // instead of the dialog and writes the result out. The scan engine itself
+    // is unchanged and unaware of which listener it is talking to.
+    bool m_bHeadlessDVBScan = false;
+    std::vector<CBDAChannel> m_headlessDVBScanChannels;
+    void StartHeadlessDVBScan();
+    void FinishHeadlessDVBScan();
 
     void AddCurDevToPlaylist();
 
@@ -964,6 +995,11 @@ public:
 
     afx_msg LRESULT OnFilePostOpenmedia(WPARAM wParam, LPARAM lparam);
     afx_msg LRESULT OnOpenMediaFailed(WPARAM wParam, LPARAM lParam);
+
+    // Only reached in headless scan mode: with the dialog running these go to
+    // it instead, because DoTunerScan sends to the HWND it was handed.
+    afx_msg LRESULT OnHeadlessScanNewChannel(WPARAM wParam, LPARAM lParam);
+    afx_msg LRESULT OnHeadlessScanEnd(WPARAM wParam, LPARAM lParam);
     void OnFilePostClosemedia(bool bNextIsQueued = false);
 
     afx_msg void OnBossKey();
@@ -995,6 +1031,8 @@ public:
     afx_msg void OnFileOpenmedia();
     afx_msg void OnUpdateFileOpen(CCmdUI* pCmdUI);
     afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
+    afx_msg LRESULT OnCommandLineReceived(WPARAM wParam, LPARAM lParam);
+    void ProcessCommandLine(CAtlList<CString>& cmdln, ULONGLONG tArrived);
     afx_msg void OnFileOpendvd();
     afx_msg void OnFileOpendevice();
     afx_msg void OnFileOpenOpticalDisk(UINT nID);
@@ -1359,6 +1397,7 @@ protected:
     afx_msg void OnMeasureItem(int nIDCtl, LPMEASUREITEMSTRUCT lpMeasureItemStruct);
     // GDI+
     virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+    bool ForwardMessageToRenderer(HWND hWnd, UINT message, WPARAM& wParam, LPARAM& lParam, LRESULT& ret);
     void WTSRegisterSessionNotification();
     void WTSUnRegisterSessionNotification();
 

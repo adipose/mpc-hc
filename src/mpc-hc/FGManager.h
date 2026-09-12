@@ -56,6 +56,8 @@ private:
 
     bool m_aborted;
 
+    bool m_filter_blocked = false;
+
     CStreamPath m_streampath;
     CAutoPtrArray<CStreamDeadEnd> m_deadends;
 
@@ -140,6 +142,8 @@ public:
 
     void SetUserAgent(CString ua) { m_useragent = ua; };
     void SetReferrer(CString ref) { m_referrer = ref; };
+
+    bool GetInternalFilterLoadingBlocked() { return m_filter_blocked; };
 
     DECLARE_IUNKNOWN;
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);

@@ -92,6 +92,7 @@ configure() {
     --enable-dxva2                  \
     --enable-zlib                   \
     --build-suffix=-lav             \
+    --disable-stripping             \
     --arch=${arch}"
 
   if [ "${COMPILER}" == "GCC" ]; then
@@ -104,8 +105,7 @@ configure() {
     --enable-libspeex               \
     --enable-libopencore-amrnb      \
     --enable-libopencore-amrwb      \
-    --enable-libxml2                \
-    --disable-stripping"
+    --enable-libxml2"
   fi
   
   if [ "${COMPILER}" == "MSVC" ]; then

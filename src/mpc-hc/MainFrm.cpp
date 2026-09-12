@@ -95,6 +95,7 @@
 #include <IPinHook.h>
 
 #include <mvrInterfaces.h>
+#include <IMPCVRSubclassReplacement.h>
 
 #include <Il21dec.h>
 #include <dvdevcod.h>
@@ -299,6 +300,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     ON_MESSAGE(WM_MPC_SHUTDOWN, OnDoShutdown)
     ON_MESSAGE(WM_MPC_LOGOFF, OnDoLogOff)
     ON_MESSAGE(WM_MPC_OPENCURPLAYLIST, OnDoOpenCurPlaylist)
+    ON_MESSAGE(WM_MPC_CMDLINE, OnCommandLineReceived)
 
     ON_MESSAGE(WM_SMTC_SEEK, OnSmtcSeek)
     ON_MESSAGE(WM_SMTC_AUTOREPEAT, OnSmtcAutoRepeat)
@@ -328,6 +330,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 
     ON_MESSAGE(WM_POSTOPEN, OnFilePostOpenmedia)
     ON_MESSAGE(WM_OPENFAILED, OnOpenMediaFailed)
+    ON_MESSAGE(WM_TUNER_NEW_CHANNEL, OnHeadlessScanNewChannel)
+    ON_MESSAGE(WM_TUNER_SCAN_END, OnHeadlessScanEnd)
     ON_MESSAGE(WM_DVB_EIT_DATA_READY, OnCurrentChannelInfoUpdated)
 
     ON_COMMAND(ID_BOSS, OnBossKey)
@@ -1294,6 +1298,8 @@ void CMainFrame::OnClose()
 {
     CAppSettings& s = AfxGetAppSettings();
 
+    m_OnClose_called = true;
+
     if (USE_LOGGER(s)) {
         PLAYER_LOG(_T("CMainFrame::OnClose"));
         FLUSH_LOGGER();
@@ -1331,29 +1337,17 @@ void CMainFrame::OnClose()
 
     ASSERT(!m_bOpenMediaActive);
 
-    #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER && (MPC_VERSION_REV > 10)
-    if (CrashReporter::IsEnabled()) {
-        if (GetCurrentThreadId() != AfxGetApp()->m_nThreadID) {
-            throw 0xdead;
-        }
-    }
-    #endif
-
     if (GetLoadState() != MLS::CLOSED) {
-#if MPC_VERSION_REV > 0
-        AfxMessageBox(L"Unexpected state while closing.\n\nPlease contact the developers, so that we can analyze the problem.\n\nTo enable debug log:\nOptions > Advanced > DebugLogMask = 1\nLog file location:\n%APPDATA%\\MPC-HC\\player.log", MB_OK);
-#endif
         if (USE_LOGGER(s)) {
             PLAYER_LOG(_T("CMainFrame::OnClose - Unexpected loadstate: %d"), (int)GetLoadState());
             FLUSH_LOGGER();
         }
         ASSERT(false);
-        ForceCloseProcess();
+        ThrowAndForceClose();
     }   
 
     {
         CAutoLock ga(&lockGraphAccess);
-        AfxGetMyApp()->SetClosingState();
 
         MSG msg;
         while (PeekMessage(&msg, nullptr, WM_GRAPHNOTIFY, WM_MPC_OPENCURPLAYLIST, PM_REMOVE)) {
@@ -1361,9 +1355,11 @@ void CMainFrame::OnClose()
             ASSERT(false);
         }
         int pm = 0;
-        while ((pm++ < 5) && PeekMessage(&msg, nullptr, WM_ACTIVATE, WM_ACTIVATE, PM_REMOVE)) {
+        while ((pm++ < 10) && PeekMessage(&msg, nullptr, WM_ACTIVATE, WM_ACTIVATE, PM_REMOVE)) {
             TRACE(L"Purged WM_ACTIVATE during player close\n");
         }
+
+        AfxGetMyApp()->SetClosingState();
     }
 
     if (USE_LOGGER(s)) {
@@ -3877,6 +3873,8 @@ void CMainFrame::OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu) 
     if (!AppIsThemeLoaded()) { //themed menus draw accelerators already, no need to append
         for (UINT i = 0; i < uiMenuCount; ++i) {
             UINT nID = pPopupMenu->GetMenuItemID(i);
+            //the dynamically named items not listed here (filters, shader presets, favorite discs, optical drives)
+            //have no accelerator, so the key.IsEmpty() && k < 0 test below already skips them
             if (nID == ID_SEPARATOR || nID == -1
                 || nID >= ID_FAVORITES_FILE_START && nID <= ID_FAVORITES_FILE_END
                 || nID >= ID_RECENT_FILE_START && nID <= ID_RECENT_FILE_END
@@ -3940,7 +3938,7 @@ void CMainFrame::OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu) 
         INT_PTR i = 0, j = s.m_pnspresets.GetCount();
         for (; i < j; i++) {
             int k = 0;
-            CString label = s.m_pnspresets[i].Tokenize(_T(","), k);
+            CString label = SanitizeMenuLabel(s.m_pnspresets[i].Tokenize(_T(","), k));
             VERIFY(pPopupMenu->InsertMenu(ID_VIEW_RESET, MF_BYCOMMAND, ID_PANNSCAN_PRESETS_START + i, label));
             CMPCThemeMenu::fulfillThemeReqsItem(pPopupMenu, (UINT)(ID_PANNSCAN_PRESETS_START + i), true);
         }
@@ -4491,6 +4489,14 @@ LRESULT CMainFrame::OnFilePostOpenmedia(WPARAM wParam, LPARAM lParam)
 
     m_bSettingUpMenus = false;
 
+    // The device is open now, which is the one precondition DoTunerScan has.
+    // Consume the switch so a later open cannot start a second scan.
+    if ((s.nCLSwitches & CLSW_DVBSCAN) && GetPlaybackMode() == PM_DIGITAL_CAPTURE) {
+        s.nCLSwitches &= ~CLSW_DVBSCAN;
+        m_bHeadlessDVBScan = true;
+        StartHeadlessDVBScan();
+    }
+
     return 0;
 }
 
@@ -4505,6 +4511,14 @@ LRESULT CMainFrame::OnOpenMediaFailed(WPARAM wParam, LPARAM lParam)
     if (USE_LOGGER(s)) {
         PLAYER_LOG(_T("CMainFrame::OnOpenMediaFailed (thread %lu)"), GetCurrentThreadId());
         FLUSH_LOGGER();
+    }
+
+    // The other way a headless scan can be left with nothing to wait for: the
+    // device was configured but would not open. Quit rather than sit idle.
+    if (AfxGetAppSettings().nCLSwitches & CLSW_DVBSCAN) {
+        TRACE(_T("/dvbscan: the capture device failed to open, abandoning the scan\n"));
+        AfxGetAppSettings().nCLSwitches &= ~CLSW_DVBSCAN;
+        PostMessage(WM_CLOSE);
     }
 
     m_lastOMD.Free();
@@ -5168,6 +5182,49 @@ BOOL CMainFrame::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCDS)
         cmdln.AddTail(str);
     }
 
+    // Queue the command line and return at once. Everything past this point probes the
+    // filesystem, and a path on an unreachable share blocks it for half a minute. While that
+    // ran inside this handler the window was not pumping messages, so Windows marked it as
+    // not responding and the other instances redirecting to us gave up and each opened a
+    // window of their own (#4149). The arrival time travels with the command line, so a slow
+    // open cannot make the next file of the same Explorer selection look like a new one.
+    m_pendingCommandLines.emplace_back();
+    PendingCommandLine& pending = m_pendingCommandLines.back();
+    pending.tArrived = GetTickCount64();
+    pending.cmdln.AddTailList(&cmdln);
+    VERIFY(PostMessage(WM_MPC_CMDLINE));
+
+    return TRUE;
+}
+
+LRESULT CMainFrame::OnCommandLineReceived(WPARAM wParam, LPARAM lParam)
+{
+    if (m_bProcessingCommandLine) {
+        // Re-entered through a nested message pump: opening and closing the graph both pump
+        // posted messages. The call already running drains the queue before it returns.
+        return 0;
+    }
+
+    m_bProcessingCommandLine = true;
+    while (!m_pendingCommandLines.empty()) {
+        PendingCommandLine& pending = m_pendingCommandLines.front();
+        ProcessCommandLine(pending.cmdln, pending.tArrived);
+        m_pendingCommandLines.pop_front();
+    }
+    m_bProcessingCommandLine = false;
+
+    return 0;
+}
+
+void CMainFrame::ProcessCommandLine(CAtlList<CString>& cmdln, ULONGLONG tArrived)
+{
+    // Re-checked because this now runs later than the message that carried the command line.
+    if (AfxGetMyApp()->m_fClosingState || m_bScanDlgOpened) {
+        return;
+    }
+
+    CAppSettings& s = AfxGetAppSettings();
+
     s.ParseCommandLine(cmdln);
 
     if (s.nCLSwitches & CLSW_SLAVE) {
@@ -5236,7 +5293,7 @@ BOOL CMainFrame::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCDS)
 
     if ((s.nCLSwitches & CLSW_DVD) && !s.slFiles.IsEmpty()) {
         if (!CloseMediaBeforeOpen()) {
-            return TRUE;
+            return;
         }
         fSetForegroundWindow = true;
 
@@ -5273,9 +5330,24 @@ BOOL CMainFrame::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCDS)
         applyRandomizeSwitch();
         s.nCLSwitches &= ~CLSW_CD;
         PostMessage(WM_MPC_OPENCURPLAYLIST, 0, 0);
-    } else if (s.nCLSwitches & CLSW_DEVICE) {
-        PostMessage(WM_COMMAND, ID_FILE_OPENDEVICE);
-        s.nCLSwitches &= ~CLSW_DEVICE;
+    } else if (s.nCLSwitches & (CLSW_DEVICE | CLSW_DVBSCAN)) {
+        // OnFileOpendevice shows the capture options page and returns when no
+        // device is configured. Interactively that is a prompt; for a headless
+        // run it is a modal nobody can answer, and the process would sit there
+        // with no device, no scan and nothing to time out. Check the same
+        // condition first and fail the run instead.
+        if ((s.nCLSwitches & CLSW_DVBSCAN) && s.iDefaultCaptureDevice == 0 &&
+                s.strAnalogVideo == L"dummy" && s.strAnalogAudio == L"dummy") {
+            TRACE(_T("/dvbscan: no capture device configured, nothing to scan\n"));
+            s.nCLSwitches &= ~CLSW_DVBSCAN;
+            PostMessage(WM_CLOSE);
+        } else {
+            // /dvbscan implies opening the capture device, because DoTunerScan
+            // only runs in PM_DIGITAL_CAPTURE. CLSW_DVBSCAN is deliberately
+            // left set: OnFilePostOpenmedia consumes it once the device is up.
+            PostMessage(WM_COMMAND, ID_FILE_OPENDEVICE);
+            s.nCLSwitches &= ~CLSW_DEVICE;
+        }
     } else if (!s.slFiles.IsEmpty()) {
         CAtlList<CString> sl;
         sl.AddTailList(&s.slFiles);
@@ -5305,7 +5377,10 @@ BOOL CMainFrame::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCDS)
             // ToDo: open indirectly
             OpenMedia(p);
         } else {
-            ULONGLONG tcnow = GetTickCount64();
+            // When the command line reached us, not when we got round to acting on it: an open
+            // that took a long time must not make the next file of the same selection, which
+            // arrived while we were busy, look like the start of a new one.
+            const ULONGLONG tcnow = tArrived;
             // Opening a multi-file selection in Explorer spawns one process per file. Those arrive here in
             // arbitrary order, so the entries added by the second and later ones are sorted back into place.
             bool bSameSelection = m_dwLastRun && ((tcnow - m_dwLastRun) < s.iRedirectOpenToAppendThreshold);
@@ -5440,8 +5515,6 @@ BOOL CMainFrame::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCDS)
     if (fSetForegroundWindow && !(s.nCLSwitches & CLSW_NOFOCUS)) {
         SetForegroundWindow();
     }
-
-    return TRUE;
 }
 
 int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData)
@@ -10462,6 +10535,7 @@ void CMainFrame::OnPlayFiltersCopyToClipboard()
     for (int i = 2, count = m_filtersMenu.GetMenuItemCount(); i < count; i++) {
         CString filterName;
         m_filtersMenu.GetMenuString(i, filterName, MF_BYPOSITION);
+        filterName.Replace(_T("&&"), _T("&")); //the label is escaped for the menu, this list is plain text
         filtersList.AppendFormat(_T("  - %s\r\n"), filterName.GetString());
     }
 
@@ -14653,8 +14727,39 @@ void CMainFrame::OpenFile(OpenFileData* pOFD)
                     m_pME->SetNotifyWindow(NULL, 0, 0);
                 }
 
-                if (s.fReportFailedPins) {
-                    ShowMediaTypesDialog();
+                if (hr == VFW_E_CANNOT_RENDER) {
+                    CComPtr<CFGManager> fgm = static_cast<CFGManager*>(m_pGB.p);
+                    if (fgm && fgm->GetInternalFilterLoadingBlocked()) {
+                        DWORD sac;
+                        if (IsWindowsVersionOrGreaterBuild(10,0,22000) && ReadRegistryDWORD(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Control\\CI\\Protected", L"VerifiedAndReputablePolicyStateMinValueSeen", sac) && (sac > 0)) {
+                            throw (UINT)IDS_MAINFRM_RENDERFAIL_DLL_SAC;
+                        } else {
+                            throw (UINT)IDS_MAINFRM_RENDERFAIL_DLL;
+                        }
+                    }
+                }
+
+                if (s.fReportFailedPins && !m_fOpeningAborted) {
+                    CComQIPtr<IGraphBuilderDeadEnd> pGBDE = m_pGB;
+                    if (pGBDE && pGBDE->GetCount()) {
+                        bool showmtdlg = true;
+                        // don't show meaningless dialog when it fails at generic source filter
+                        if (hr == VFW_E_CANNOT_RENDER && pGBDE->GetCount() == 1) {
+                            CAtlList<CStringW> path;
+                            CAtlList<CMediaType> mts;
+                            if (S_OK == pGBDE->GetDeadEnd(0, path, mts) && path.GetCount() == 1) {
+                                if (path.GetHead() == L"File Source (Async.)::Output") {
+                                    showmtdlg = false;
+                                    if (s.SrcFilters[SRC_MP4]) {
+                                        throw (UINT)IDS_MAINFRM_RENDERFAIL_CORRUPT;
+                                    }
+                                }
+                            }
+                        }
+                        if (showmtdlg) {
+                            ShowMediaTypesDialog();
+                        }
+                    }
                 }
 
                 UINT err;
@@ -14811,8 +14916,8 @@ void CMainFrame::OpenFile(OpenFileData* pOFD)
             if (m_bUseSeekPreview) {
                 HRESULT previewHR;
                 if (isRFS) {
-                    CComPtr<CFGManager> fgm = static_cast<CFGManager*>(m_pGB_preview.p);
-                    previewHR = fgm->RenderRFSFileEntry(fn, nullptr, entryRFS);
+                    CComPtr<CFGManager> fgmp = static_cast<CFGManager*>(m_pGB_preview.p);
+                    previewHR = fgmp->RenderRFSFileEntry(fn, nullptr, entryRFS);
                 } else {
                     previewHR = m_pGB_preview->RenderFile(fn, nullptr);
                 }
@@ -16529,17 +16634,21 @@ bool CMainFrame::OpenMediaPrivate(CAutoPtr<OpenMediaData> pOMD)
         FLUSH_LOGGER();
     }
 
-    if (m_pGB || m_ActiveGraphNotifyEvCode == EC_PAUSED || GetLoadState() != MLS::LOADING) {
+    if (m_pGB || m_ActiveGraphNotifyEvCode == EC_PAUSED || GetLoadState() != MLS::LOADING || m_OnClose_called) {
         ASSERT(false);
-        #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER && (MPC_VERSION_REV > 10)
+        #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER
         if (CrashReporter::IsEnabled()) {
             throw 0xdead;
         }
         #endif
+        m_bOpenMediaActive = false;
+        m_closingmsg = L"Aborted due to unexpected state";
+        return false;
     }
 
     m_fValidDVDOpen = false;
     m_iDefRotation = 0;
+    m_replayGain = ReplayGainInfo();
 
     OpenFileData* pFileData = dynamic_cast<OpenFileData*>(pOMD.m_p);
     OpenDVDData* pDVDData = dynamic_cast<OpenDVDData*>(pOMD.m_p);
@@ -16559,6 +16668,7 @@ bool CMainFrame::OpenMediaPrivate(CAutoPtr<OpenMediaData> pOMD)
     m_pMVRI = nullptr;
     m_pMVRS = nullptr;
     m_pMVRSR = nullptr;
+    m_pMPCVRSR = nullptr;
     m_pMVRFG = nullptr;
     m_pMVTO = nullptr;
     m_pD3DFSC = nullptr;
@@ -16632,6 +16742,7 @@ bool CMainFrame::OpenMediaPrivate(CAutoPtr<OpenMediaData> pOMD)
         m_pMVRI = m_pCAP;
         m_pMVRS = m_pCAP;
         m_pMVRSR = m_pCAP;
+        m_pMPCVRSR = m_pCAP;
         m_pMVRFG = m_pCAP;
         m_pMVTO = m_pCAP;
         m_pD3DFSC = m_pCAP;
@@ -16792,12 +16903,27 @@ bool CMainFrame::OpenMediaPrivate(CAutoPtr<OpenMediaData> pOMD)
                             var.Clear();
                         }
                         if (m_pAudioSwitcherSS) {
-                            if (SUCCEEDED(pPB->Read(_T("replaygain_track_gain"), &var, nullptr)) && var.vt == VT_BSTR) {
-                                // ToDo: parse value, add function to audio switcher filter to set replaygain value, apply it similar to boost and skip normalize (and regular boost?)
+                            // ReplayGain tags, as ffmpeg keeps them in the container-level metadata (FLAC, MP4, ID3v2)
+                            auto readGain = [&](LPCWSTR key, float& value) {
+                                bool ok = false;
+                                if (SUCCEEDED(pPB->Read(key, &var, nullptr)) && var.vt == VT_BSTR) {
+                                    ok = ParseReplayGainValue(var.bstrVal, value);
+                                }
                                 var.Clear();
-                            } else if (SUCCEEDED(pPB->Read(_T("replaygain_album_gain"), &var, nullptr)) && var.vt == VT_BSTR) {
-                                var.Clear();
+                                return ok;
+                            };
+                            m_replayGain.bHasTrackGain = readGain(L"replaygain_track_gain", m_replayGain.fTrackGain);
+                            m_replayGain.bHasAlbumGain = readGain(L"replaygain_album_gain", m_replayGain.fAlbumGain);
+                            if (m_replayGain.bHasTrackGain && !readGain(L"replaygain_track_peak", m_replayGain.fTrackPeak)) {
+                                m_replayGain.fTrackPeak = 0.0f;
                             }
+                            if (m_replayGain.bHasAlbumGain && !readGain(L"replaygain_album_peak", m_replayGain.fAlbumPeak)) {
+                                m_replayGain.fAlbumPeak = 0.0f;
+                            }
+                            TRACE(_T("ReplayGain tags: track %d (%.2f dB, peak %f), album %d (%.2f dB, peak %f)\n"),
+                                  m_replayGain.bHasTrackGain, m_replayGain.fTrackGain, m_replayGain.fTrackPeak,
+                                  m_replayGain.bHasAlbumGain, m_replayGain.fAlbumGain, m_replayGain.fAlbumPeak);
+                            ApplyReplayGain();
                         }
                     }
                 }
@@ -16973,6 +17099,7 @@ void CMainFrame::CloseMediaPrivate()
     m_pMVRC.Release();
     m_pMVRI.Release();
     m_pMVTO.Release();
+    m_pMPCVRSR.Release();
     m_pD3DFSC.Release();
     m_pCAP3.Release();
     m_pCAP2.Release();
@@ -17244,6 +17371,51 @@ bool CMainFrame::SearchInDir(bool bDirForward, bool bLoop /*= false*/)
     return true;
 }
 
+static const int ATSC_FIRST_CHANNEL            = 2;
+static const int ATSC_FIRST_UHF_CHANNEL        = 14;
+static const int ATSC_LAST_UHF_CHANNEL         = 51;
+static const int ATSC_RADIO_ASTRONOMY_CHANNEL  = 37;
+
+// Centre frequency in kHz of a US ATSC terrestrial RF channel, or false if the
+// channel number is not one that carries a broadcast.
+//
+// The plan is deliberately a lookup rather than arithmetic, because it is not a
+// uniform raster. Stepping by bandwidth - which is what a DVB scan does, and
+// what this scan used to do for every standard - is correct only within a band:
+// there is a 10 MHz step between channels 4 and 5, the FM broadcast band sits
+// between 6 and 7, and 260 MHz separate 13 from 14. A 6 MHz sweep therefore
+// lands off-channel from channel 5 onwards and wastes some forty tuning
+// attempts crossing the gap below UHF.
+static bool GetATSCChannelFrequency(int nChannel, ULONG& ulFrequency)
+{
+    // VHF low (2-6) and VHF high (7-13) are irregular and are listed out.
+    static const struct { int nChannel; ULONG ulFrequency; } VHFChannels[] = {
+        {  2,  57000 }, {  3,  63000 }, {  4,  69000 },
+        {  5,  79000 }, {  6,  85000 },
+        {  7, 177000 }, {  8, 183000 }, {  9, 189000 }, { 10, 195000 },
+        { 11, 201000 }, { 12, 207000 }, { 13, 213000 },
+    };
+
+    for (const auto& channel : VHFChannels) {
+        if (channel.nChannel == nChannel) {
+            ulFrequency = channel.ulFrequency;
+            return true;
+        }
+    }
+
+    // UHF is a regular 6 MHz raster starting at channel 14 on 473 MHz.
+    // Channel 37 is reserved worldwide for radio astronomy and never carries a
+    // broadcast, so receivers skip it. Above channel 36 the band was reassigned
+    // to mobile use by the 2017 repack, but older recordings may still sit
+    // there, so the plan runs to channel 51.
+    if (nChannel >= ATSC_FIRST_UHF_CHANNEL && nChannel <= ATSC_LAST_UHF_CHANNEL && nChannel != ATSC_RADIO_ASTRONOMY_CHANNEL) {
+        ulFrequency = 473000 + (nChannel - ATSC_FIRST_UHF_CHANNEL) * 6000;
+        return true;
+    }
+
+    return false;
+}
+
 void CMainFrame::DoTunerScan(TunerScanData* pTSD)
 {
     if (GetPlaybackMode() == PM_DIGITAL_CAPTURE) {
@@ -17265,7 +17437,32 @@ void CMainFrame::DoTunerScan(TunerScanData* pTSD)
             m_bStopTunerScan = false;
             pTun->Scan(0, 0, 0, NULL);  // Clear maps
 
-            for (ULONG ulFrequency = pTSD->FrequencyStart; ulFrequency <= pTSD->FrequencyStop; ulFrequency += pTSD->Bandwidth) {
+            // Work out which frequencies to visit before tuning any of them.
+            // For ATSC these come from the RF channel plan, because its
+            // channels are not evenly spaced; for DVB the historical fixed step
+            // by bandwidth is correct. The start and stop frequencies bound the
+            // scan either way, so the dialog keeps working unchanged.
+            bool bIsATSC = false;
+            pTun->IsATSC(bIsATSC);
+
+            std::vector<ULONG> frequencies;
+            if (bIsATSC) {
+                for (int nChannel = ATSC_FIRST_CHANNEL; nChannel <= ATSC_LAST_UHF_CHANNEL; nChannel++) {
+                    ULONG ulChannelFrequency;
+                    if (GetATSCChannelFrequency(nChannel, ulChannelFrequency)
+                            && ulChannelFrequency >= pTSD->FrequencyStart
+                            && ulChannelFrequency <= pTSD->FrequencyStop) {
+                        frequencies.push_back(ulChannelFrequency);
+                    }
+                }
+            } else {
+                for (ULONG ulFrequency = pTSD->FrequencyStart; ulFrequency <= pTSD->FrequencyStop; ulFrequency += pTSD->Bandwidth) {
+                    frequencies.push_back(ulFrequency);
+                }
+            }
+
+            for (size_t nIndex = 0; nIndex < frequencies.size(); nIndex++) {
+                const ULONG ulFrequency = frequencies[nIndex];
                 bool bSucceeded = false;
                 for (int nOffsetPos = 0; nOffsetPos < nOffset && !bSucceeded; nOffsetPos++) {
                     if (SUCCEEDED(pTun->SetFrequency(ulFrequency + lOffsets[nOffsetPos], pTSD->Bandwidth, pTSD->SymbolRate))) {
@@ -17278,7 +17475,9 @@ void CMainFrame::DoTunerScan(TunerScanData* pTSD)
                     }
                 }
 
-                int nProgress = MulDiv(ulFrequency - pTSD->FrequencyStart, 100, pTSD->FrequencyStop - pTSD->FrequencyStart);
+                // Steps are uneven under a channel plan, so progress counts
+                // frequencies visited rather than distance travelled up the band.
+                int nProgress = MulDiv((int)nIndex + 1, 100, (int)frequencies.size());
                 ::SendMessage(pTSD->Hwnd, WM_TUNER_SCAN_PROGRESS, nProgress, 0);
                 ::SendMessage(pTSD->Hwnd, WM_TUNER_STATS, lDbStrength, lPercentQuality);
 
@@ -17384,7 +17583,7 @@ void CMainFrame::SetupOpenCDSubMenu()
             }
 
             CString str;
-            str.Format(_T("%s (%c:)"), label.GetString(), drive);
+            str.Format(_T("%s (%c:)"), SanitizeMenuLabel(label).GetString(), drive);
 
             VERIFY(subMenu.AppendMenu(MF_STRING | MF_ENABLED, id++, str));
         }
@@ -17406,10 +17605,7 @@ void CMainFrame::SetupFiltersSubMenu()
         UINT idl = ID_FILTERSTREAMS_SUBITEM_START;
 
         BeginEnumFilters(m_pGB, pEF, pBF) {
-            CString filterName(GetFilterName(pBF));
-            if (filterName.GetLength() >= 43) {
-                filterName = filterName.Left(40) + _T("...");
-            }
+            CString filterName(SanitizeMenuLabel(GetFilterName(pBF), 43));
 
             CLSID clsid = GetCLSID(pBF);
             if (clsid == CLSID_AVIDec) {
@@ -17466,8 +17662,7 @@ void CMainFrame::SetupFiltersSubMenu()
             nPPages++;
 
             BeginEnumPins(pBF, pEP, pPin) {
-                CString pinName = GetPinName(pPin);
-                pinName.Replace(_T("&"), _T("&&"));
+                CString pinName = SanitizeMenuLabel(GetPinName(pPin));
 
                 if (pSPP = pPin) {
                     CAUUID caGUID;
@@ -17534,8 +17729,7 @@ void CMainFrame::SetupFiltersSubMenu()
                         streamName.LoadString(IDS_AG_UNKNOWN_STREAM);
                         streamName.AppendFormat(_T(" %lu"), i + 1);
                     } else {
-                        streamName = wname;
-                        streamName.Replace(_T("&"), _T("&&"));
+                        streamName = SanitizeMenuLabel(wname);
                         CoTaskMemFree(wname);
                     }
 
@@ -17679,8 +17873,7 @@ void CMainFrame::SetupAudioSubMenu()
                 iSel = i;
             }
 
-            CString name(pName);
-            name.Replace(_T("&"), _T("&&"));
+            CString name(SanitizeMenuLabel(pName));
 
             VERIFY(subMenu.AppendMenu(MF_STRING | MF_ENABLED, id++, name));
 
@@ -17841,20 +18034,20 @@ void CMainFrame::SetupSubtitlesSubMenu()
                         iSelected = i;
                     }
 
-                    CString name(pszName);
+                    //a tab in a name coming from the splitter is part of the name, not a column
+                    CString name = SanitizeMenuLabel(CString(pszName));
                     /*
                     CString lcname = CString(name).MakeLower();
                     if (lcname.Find(_T(" off")) >= 0) {
                         name.LoadString(IDS_AG_DISABLED);
                     }
                     */
-                    if (lcid != 0 && name.Find(L'\t') < 0) {
+                    if (lcid != 0) {
                         CString lcidstr;
                         GetLocaleString(lcid, LOCALE_SENGLANGUAGE, lcidstr);
                         name.Append(_T("\t") + lcidstr);
                     }
 
-                    name.Replace(_T("&"), _T("&&"));
                     VERIFY(subMenu.AppendMenu(MF_STRING | MF_ENABLED, id++, name));
                     i++;
                 }
@@ -17879,7 +18072,7 @@ void CMainFrame::SetupSubtitlesSubMenu()
                             name.Append(_T("\t") + lcidstr);
                         }
 
-                        name.Replace(_T("&"), _T("&&"));
+                        name = SanitizeMenuLabel(name, MENU_NAME_MAX, true);
                         VERIFY(subMenu.AppendMenu(MF_STRING | MF_ENABLED, id++, name));
                     } else {
                         VERIFY(subMenu.AppendMenu(MF_STRING | MF_ENABLED, id++, ResStr(IDS_AG_UNKNOWN_STREAM)));
@@ -18018,8 +18211,7 @@ void CMainFrame::SetupSecondarySubtitleSubMenu()
         CComHeapPtr<WCHAR> pName;
         CString name;
         if (SUCCEEDED(subInput.pSubStream->GetStreamInfo(0, &pName, nullptr)) && pName) {
-            name = pName;
-            name.Replace(_T("&"), _T("&&"));
+            name = SanitizeMenuLabel(CString(pName), MENU_NAME_MAX, true);
         } else {
             name.LoadString(IDS_AG_UNKNOWN_STREAM);
         }
@@ -18138,7 +18330,7 @@ void CMainFrame::SetupJumpToSubMenus(CMenu* parentMenu /*= nullptr*/, int iInser
                     idSelected = id;
                 }
 
-                name.Replace(_T("&"), _T("&&"));
+                name = SanitizeMenuLabel(name);
                 VERIFY(m_BDPlaylistMenu.AppendMenu(flags, id++, name + '\t' + time));
             }
             menuEndRadioSection(m_BDPlaylistMenu);
@@ -18159,9 +18351,7 @@ void CMainFrame::SetupJumpToSubMenus(CMenu* parentMenu /*= nullptr*/, int iInser
 
                 CString time = _T("[") + ReftimeToString2(rt) + _T("]");
 
-                CString name = CString(bstr);
-                name.Replace(_T("&"), _T("&&"));
-                name.Replace(_T("\t"), _T(" "));
+                CString name = SanitizeMenuLabel(CString(bstr));
 
                 UINT flags = MF_BYCOMMAND | MF_STRING | MF_ENABLED;
                 if (i == j) {
@@ -18183,8 +18373,7 @@ void CMainFrame::SetupJumpToSubMenus(CMenu* parentMenu /*= nullptr*/, int iInser
                     idSelected = id;
                 }
                 CPlaylistItem& pli = m_wndPlaylistBar.m_pl.GetNext(pos);
-                CString name = pli.GetLabel();
-                name.Replace(_T("&"), _T("&&"));
+                CString name = SanitizeMenuLabel(pli.GetLabel());
                 VERIFY(m_playlistMenu.AppendMenu(flags, id++, name));
             }
             menuEndRadioSection(m_playlistMenu);
@@ -18243,7 +18432,7 @@ void CMainFrame::SetupJumpToSubMenus(CMenu* parentMenu /*= nullptr*/, int iInser
             if (channel.GetPrefNumber() == s.nDVBLastChannel) {
                 idSelected = id;
             }
-            VERIFY(m_channelsMenu.AppendMenu(flags, ID_NAVIGATE_JUMPTO_SUBITEM_START + channel.GetPrefNumber(), channel.GetName()));
+            VERIFY(m_channelsMenu.AppendMenu(flags, ID_NAVIGATE_JUMPTO_SUBITEM_START + channel.GetPrefNumber(), SanitizeMenuLabel(channel.GetName())));
             id++;
         }
         menuEndRadioSection(m_channelsMenu);
@@ -18277,14 +18466,15 @@ DWORD CMainFrame::SetupNavStreamSelectSubMenu(CMenu& subMenu, UINT id, DWORD dwS
                 continue;
             }
 
-            CString name(pszName);
+            //a tab in a name coming from the splitter is part of the name, not a column
+            CString name = SanitizeMenuLabel(CString(pszName));
             /*
             CString lcname = CString(name).MakeLower();
             if (dwGroup == 2 && lcname.Find(_T(" off")) >= 0) {
                 name.LoadString(IDS_AG_DISABLED);
             }
             */
-            if (dwGroup == 2 && lcid != 0 && name.Find(L'\t') < 0) {
+            if (dwGroup == 2 && lcid != 0) {
                 CString lcidstr;
                 GetLocaleString(lcid, LOCALE_SENGLANGUAGE, lcidstr);
                 name.Append(_T("\t") + lcidstr);
@@ -18304,7 +18494,6 @@ DWORD CMainFrame::SetupNavStreamSelectSubMenu(CMenu& subMenu, UINT id, DWORD dwS
             }
             bAdded = true;
 
-            name.Replace(_T("&"), _T("&&"));
             VERIFY(subMenu.AppendMenu(flags, id++, name));
         }
 
@@ -18547,7 +18736,7 @@ void CMainFrame::SetupRecentFilesSubMenu()
                         p.Format(_T("%s~~~%s"), static_cast<LPCWSTR>(p.Left(60)), static_cast<LPCWSTR>(p.Right(87)));
                     }
                 }
-                p.Replace(_T("&"), _T("&&"));
+                p = SanitizeMenuLabel(p, 0); //already shortened above, in a way that keeps the extension visible
                 VERIFY(subMenu.AppendMenu(flags, id, p));
             } else {
                 ASSERT(false);
@@ -18578,13 +18767,14 @@ void CMainFrame::SetupFavoritesSubMenu()
         UINT flags = MF_BYCOMMAND | MF_STRING | MF_ENABLED;
 
         CString f_str = favs.GetNext(pos);
-        f_str.Replace(_T("&"), _T("&&"));
-        f_str.Replace(_T("\t"), _T(" "));
 
         FileFavorite ff;
-        VERIFY(FileFavorite::TryParse(f_str, ff));
+        VERIFY(FileFavorite::TryParse(f_str, ff)); //parse before sanitizing, the escaping is not part of the format
 
         f_str = ff.Name;
+        if (!f_str.IsEmpty()) {
+            f_str = SanitizeMenuLabel(f_str);
+        }
 
         CString str = ff.ToString();
         if (!str.IsEmpty()) {
@@ -18615,7 +18805,6 @@ void CMainFrame::SetupFavoritesSubMenu()
         UINT flags = MF_BYCOMMAND | MF_STRING | MF_ENABLED;
 
         CString str = favs.GetNext(pos);
-        str.Replace(_T("&"), _T("&&"));
 
         CAtlList<CString> sl;
         ExplodeEsc(str, sl, _T(';'), 2);
@@ -18627,7 +18816,7 @@ void CMainFrame::SetupFavoritesSubMenu()
         }
 
         if (!str.IsEmpty()) {
-            VERIFY(subMenu.AppendMenu(flags, id, str));
+            VERIFY(subMenu.AppendMenu(flags, id, SanitizeMenuLabel(str)));
         }
 
         id++;
@@ -18651,7 +18840,6 @@ void CMainFrame::SetupFavoritesSubMenu()
         UINT flags = MF_BYCOMMAND | MF_STRING | MF_ENABLED;
 
         CString str = favs.GetNext(pos);
-        str.Replace(_T("&"), _T("&&"));
 
         CAtlList<CString> sl;
         ExplodeEsc(str, sl, _T(';'), 2);
@@ -18659,7 +18847,7 @@ void CMainFrame::SetupFavoritesSubMenu()
         str = sl.RemoveHead();
 
         if (!str.IsEmpty()) {
-            VERIFY(subMenu.AppendMenu(flags, id, str));
+            VERIFY(subMenu.AppendMenu(flags, id, SanitizeMenuLabel(str)));
         }
 
         id++;
@@ -18699,7 +18887,7 @@ bool CMainFrame::SetupShadersSubMenu()
                 ASSERT(FALSE);
                 break;
             }
-            VERIFY(subMenu.AppendMenu(MF_STRING | MF_ENABLED, nID, pair.first));
+            VERIFY(subMenu.AppendMenu(MF_STRING | MF_ENABLED, nID, SanitizeMenuLabel(pair.first)));
             if (selected && pair.first == current) {
                 VERIFY(subMenu.CheckMenuRadioItem(nID, nID, nID, MF_BYCOMMAND));
                 selected = false;
@@ -19933,7 +20121,7 @@ bool CMainFrame::BuildGraphVideoAudio(int fVPreview, bool fVCapture, int fAPrevi
         m_pMVRFG.Release();
         m_pMVRSR.Release();
         m_pMVTO.Release();
-
+        m_pMPCVRSR.Release();
         m_pCAP3.Release();
         m_pCAP2.Release();
         m_pCAP.Release();
@@ -20012,6 +20200,7 @@ bool CMainFrame::BuildGraphVideoAudio(int fVPreview, bool fVCapture, int fAPrevi
             m_pMVRSR = m_pCAP;
             m_pMVRS = m_pCAP;
             m_pMVRFG = m_pCAP;
+            m_pMPCVRSR = m_pCAP;
 
             const CAppSettings& s = AfxGetAppSettings();
             m_pVideoWnd = &m_wndView;
@@ -20345,13 +20534,14 @@ void CMainFrame::OpenMedia(CAutoPtr<OpenMediaData> pOMD)
 
     const auto& s = AfxGetAppSettings();
 
-    if (m_ActiveGraphNotifyEvCode == EC_PAUSED) {
+    if (m_ActiveGraphNotifyEvCode == EC_PAUSED || m_OnClose_called) {
         ASSERT(false);
-        #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER && (MPC_VERSION_REV > 10)
+        #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER
         if (CrashReporter::IsEnabled()) {
             throw 0xdead;
         }
         #endif
+        return;
     }
 
     if (m_bOpenMediaActive) {
@@ -20407,7 +20597,7 @@ void CMainFrame::OpenMedia(CAutoPtr<OpenMediaData> pOMD)
     }
 
     if (m_eMediaLoadState != MLS::CLOSED) {
-        #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER && (MPC_VERSION_REV > 10)
+        #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER
         if (CrashReporter::IsEnabled()) {
             throw 0xdead;
         }
@@ -20564,6 +20754,21 @@ void CMainFrame::ForceCloseProcess()
     TerminateProcess(GetCurrentProcess(), 0xDEADBEEF);
 }
 
+void CMainFrame::ThrowAndForceClose()
+{
+    MessageBeep(MB_ICONEXCLAMATION);
+    if (USE_LOGGER(AfxGetAppSettings())) {
+        PLAYER_LOG(_T("CMainFrame::ThrowAndForceClose"));
+        FLUSH_LOGGER();
+    }
+    #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER
+    if (CrashReporter::IsEnabled()) {
+        throw 0xdead;
+    }
+    #endif
+    TerminateProcess(GetCurrentProcess(), 0xDEADBEEF);
+}
+
 void CMainFrame::CloseMedia(bool bNextIsQueued/* = false*/, bool bPendingFileDelete/* = false*/)
 {
     TRACE(_T("CMainFrame::CloseMedia\n"));
@@ -20580,12 +20785,7 @@ void CMainFrame::CloseMedia(bool bNextIsQueued/* = false*/, bool bPendingFileDel
     m_bDVDStillOn = false;
 
     if (m_ActiveGraphNotifyEvCode == EC_PAUSED) {
-        ASSERT(false);
-        #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER && (MPC_VERSION_REV > 10)
-        if (CrashReporter::IsEnabled()) {
-            throw 0xdead;
-        }
-        #endif
+        ThrowAndForceClose();
     }
 
     if (m_eMediaLoadState == MLS::CLOSED) {
@@ -21144,6 +21344,101 @@ void CMainFrame::StopTunerScan()
     m_bStopTunerScan = true;
 }
 
+void CMainFrame::StartHeadlessDVBScan()
+{
+    const CAppSettings& s = AfxGetAppSettings();
+
+    m_headlessDVBScanChannels.clear();
+
+    CAutoPtr<TunerScanData> pTSD(DEBUG_NEW TunerScanData);
+    pTSD->Hwnd = m_hWnd;
+    pTSD->FrequencyStart = s.cmdlnDVBScan.ulFrequencyStart;
+    pTSD->FrequencyStop = s.cmdlnDVBScan.ulFrequencyStop;
+    // Bandwidth is kHz in TunerScanData and MHz in the profile. This is the
+    // same conversion CTunerScanDlg makes when it loads its fields, so a
+    // headless run and a dialog run scan identically for identical settings.
+    pTSD->Bandwidth = s.cmdlnDVBScan.ulBandwidth ? s.cmdlnDVBScan.ulBandwidth
+                      : (ULONG)s.iBDABandwidth * 1000;
+    pTSD->SymbolRate = s.cmdlnDVBScan.ulSymbolRate ? s.cmdlnDVBScan.ulSymbolRate
+                       : (ULONG)s.iBDASymbolRate;
+    pTSD->Offset = s.fBDAUseOffset ? s.iBDAOffset : 0;
+
+    StartTunerScan(pTSD);
+}
+
+LRESULT CMainFrame::OnHeadlessScanNewChannel(WPARAM wParam, LPARAM lParam)
+{
+    if (!m_bHeadlessDVBScan) {
+        return FALSE;
+    }
+
+    const CAppSettings& s = AfxGetAppSettings();
+    const size_t maxChannelsNum = ID_NAVIGATE_JUMPTO_SUBITEM_END - ID_NAVIGATE_JUMPTO_SUBITEM_START + 1;
+
+    try {
+        CBDAChannel channel((LPCTSTR)lParam);
+        // The dialog applies this filter as it fills its list rather than at
+        // save time, so apply it here too.
+        if (!s.fBDAIgnoreEncryptedChannels || !channel.IsEncrypted()) {
+            if (m_headlessDVBScanChannels.size() < maxChannelsNum) {
+                channel.SetPrefNumber((int)m_headlessDVBScanChannels.size());
+                m_headlessDVBScanChannels.push_back(channel);
+            }
+        }
+    } catch (CException* e) {
+        // A record that will not tokenise is dropped and the scan continues,
+        // which is what CTunerScanDlg::OnNewChannel does with the same failure.
+        TRACE(_T("/dvbscan: failed to parse a scanned channel record\n"));
+        e->Delete();
+    }
+
+    return TRUE;
+}
+
+LRESULT CMainFrame::OnHeadlessScanEnd(WPARAM wParam, LPARAM lParam)
+{
+    if (!m_bHeadlessDVBScan) {
+        return FALSE;
+    }
+    FinishHeadlessDVBScan();
+    return TRUE;
+}
+
+void CMainFrame::FinishHeadlessDVBScan()
+{
+    const CAppSettings& s = AfxGetAppSettings();
+
+    // The serializer the web interface uses, not a second copy of it: whatever
+    // /dvb/channels.json would say about these channels, this file says too.
+    const CStringA json = DVBChannelsToJSON(m_headlessDVBScanChannels);
+
+    bool bWritten = false;
+    if (!s.cmdlnDVBScan.strOutputPath.IsEmpty()) {
+        CFile file;
+        CFileException fe;
+        if (file.Open(s.cmdlnDVBScan.strOutputPath,
+                      CFile::modeCreate | CFile::modeWrite | CFile::typeBinary, &fe)) {
+            try {
+                file.Write((LPCSTR)json, json.GetLength());
+                bWritten = true;
+            } catch (CFileException* pfe) {
+                pfe->Delete();
+            }
+            file.Close();
+        }
+    }
+
+    if (!bWritten) {
+        // Losing the result silently would leave a caller unable to tell an
+        // empty scan from an unwritable path.
+        TRACE(_T("/dvbscan: could not write the result to '%s'\n"),
+              s.cmdlnDVBScan.strOutputPath.GetString());
+    }
+
+    m_bHeadlessDVBScan = false;
+    PostMessage(WM_CLOSE);
+}
+
 HRESULT CMainFrame::SetChannel(int nChannel)
 {
     CAppSettings& s = AfxGetAppSettings();
@@ -21335,7 +21630,7 @@ void CMainFrame::SetLoadState(MLS eState)
             PLAYER_LOG(_T("CMainFrame::SetLoadState - unexpected state change: %d -> %d"), m_eMediaLoadState, eState);
             FLUSH_LOGGER();
         }
-        #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER && (MPC_VERSION_REV > 10)
+        #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER
         if (CrashReporter::IsEnabled()) {
             if (GetCurrentThreadId() != AfxGetApp()->m_nThreadID) {
                 throw 0xdead;
@@ -23048,35 +23343,40 @@ bool CMainFrame::isSafeZone(CPoint pt) {
 
 LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
+    if (AfxGetMyApp()->m_fClosingState) {
+        if (message == WM_MPC_OPENCURPLAYLIST || message == WM_ACTIVATE || message == WM_SETFOCUS || message == WM_GETMINMAXINFO) {
+            TRACE(_T("Dropped WindowProc because mainframe was destroyed: message 0x%x value %d\n"), message, LOWORD(wParam));
+            return 0;
+        }
+        return __super::WindowProc(message, wParam, lParam);
+    }
+
     if (!m_hWnd) {
         ASSERT(false);
         return 0;
     }
 
-    if (message == WM_MPC_OPENCURPLAYLIST && IsStateClosingAborting()) {
-        // this can happen when a modal dialog is shown during media close, as that runs the main message loop
+    if (message == WM_MPC_OPENCURPLAYLIST && (m_OnClose_called || IsStateClosingAborting())) {
+        // this can for example happen when a modal dialog is shown during media close, as that runs another message loop
         TRACE(_T("Dropped WindowProc: message 0x%x value %d\n"), message, LOWORD(wParam));
         return 0;
     }
 
+#ifdef DEBUG
     if (message != WM_ENTERIDLE && message != WM_DRAWITEM && IsStateClosingAborting()) {
         TRACE(_T("WindowProc during media close: message 0x%x value %d\n"), message, LOWORD(wParam));
     }
-
-    if (message == WM_ACTIVATE || message == WM_SETFOCUS || message == WM_GETMINMAXINFO) {
-        if (AfxGetMyApp()->m_fClosingState) {
-            TRACE(_T("Dropped WindowProc: message 0x%x value %d\n"), message, LOWORD(wParam));
-            return 0;
-        }
-    }
+#endif
 
     if (message == WM_SYSCOMMAND) {
         UINT nID = LOWORD(wParam) & 0XFFF0;
         if (nID == SC_CLOSE) {
-            OnClose();
+            if (!m_OnClose_called) {
+                OnClose();
+            }
             return 0;
         }
-        //TRACE(_T("WM_SYSCOMMAND: value 0x%x\n"), LOWORD(wParam));
+        return __super::WindowProc(message, wParam, lParam);
     }
 
     if ((message == WM_COMMAND) && (THBN_CLICKED == HIWORD(wParam))) {
@@ -23127,8 +23427,8 @@ LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 
     LRESULT ret = 0;
     bool bCallOurProc = true;
-    if (m_pMVRSR) {
-        // call madVR window proc directly when the interface is available
+    if (m_pMVRSR || m_pMPCVRSR) {
+        // call the video renderer window proc directly when the interface is available
         switch (message) {
             case WM_CLOSE:
             case WM_SYSCOMMAND:
@@ -23139,7 +23439,11 @@ LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
                 // CMouseWnd will call madVR window proc
                 break;
             default:
-                bCallOurProc = !m_pMVRSR->ParentWindowProc(m_hWnd, message, &wParam, &lParam, &ret);
+                // when the dedicated fullscreen window hosts the video, CFullscreenWnd forwards its own messages
+                // keyboard messages are re-posted from there to this window, so those still go through here
+                if (m_pVideoWnd != m_pDedicatedFSVideoWnd || (message >= WM_KEYFIRST && message <= WM_KEYLAST) && m_pMVRSR) {
+                    bCallOurProc = !ForwardMessageToRenderer(m_hWnd, message, wParam, lParam, ret);
+                }
         }
     }
     if (bCallOurProc && m_hWnd) {
@@ -23147,6 +23451,18 @@ LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
     }
 
     return ret;
+}
+
+// Forwards a message to the renderer that would otherwise have subclassed hWnd; returns true when it handled the message
+inline bool CMainFrame::ForwardMessageToRenderer(HWND hWnd, UINT message, WPARAM& wParam, LPARAM& lParam, LRESULT& ret)
+{
+    if (m_pMVRSR) {
+        return !!m_pMVRSR->ParentWindowProc(hWnd, message, &wParam, &lParam, &ret);
+    }
+    if (m_pMPCVRSR && (message == WM_MOVE || message == WM_DISPLAYCHANGE)) {
+        return !!m_pMPCVRSR->WindowProcFromParent(hWnd, message, &wParam, &lParam, &ret);
+    }
+    return false;
 }
 
 bool CMainFrame::IsAeroSnapped()
@@ -23302,7 +23618,63 @@ void CMainFrame::UpdateAudioSwitcher()
         pASF->SetSpeakerConfig(s.fCustomChannelMapping, s.pSpeakerToChannelMap);
         pASF->SetAudioTimeShift(s.fAudioTimeShift ? 10000i64 * s.iAudioTimeShift : 0);
         pASF->SetNormalizeBoost2(s.fAudioNormalize, s.nAudioMaxNormFactor, s.fAudioNormalizeRecover, s.nAudioBoost);
+        ApplyReplayGain();
     }
+}
+
+// Parses a ReplayGain tag value such as "-6.20 dB", "+1.5" or "0.988525" (peak)
+bool CMainFrame::ParseReplayGainValue(LPCWSTR str, float& value)
+{
+    if (!str) {
+        return false;
+    }
+    while (*str == L' ' || *str == L'\t') {
+        str++;
+    }
+    wchar_t* end = nullptr;
+    double d = wcstod(str, &end);
+    if (end == str || !std::isfinite(d)) {
+        return false;
+    }
+    value = float(d);
+    return true;
+}
+
+// Pushes the gain for the current file into the audio switcher, according to the ReplayGain settings
+void CMainFrame::ApplyReplayGain()
+{
+    CComQIPtr<IAudioSwitcherFilter> pASF = FindFilter(__uuidof(CAudioSwitcherFilter), m_pGB);
+    if (!pASF) {
+        return;
+    }
+
+    const CAppSettings& s = AfxGetAppSettings();
+    bool bApply = false;
+    float gain_dB = 0.0f, peak = 0.0f;
+
+    if (s.iReplayGainMode == 1 || s.iReplayGainMode == 2) {
+        // use the preferred tag, falling back to the other one when it is missing
+        bool bUseAlbum = (s.iReplayGainMode == 2) ? m_replayGain.bHasAlbumGain : !m_replayGain.bHasTrackGain;
+        if (bUseAlbum && m_replayGain.bHasAlbumGain) {
+            bApply = true;
+            gain_dB = m_replayGain.fAlbumGain;
+            peak = m_replayGain.fAlbumPeak;
+        } else if (m_replayGain.bHasTrackGain) {
+            bApply = true;
+            gain_dB = m_replayGain.fTrackGain;
+            peak = m_replayGain.fTrackPeak;
+        }
+    }
+
+    if (bApply) {
+        gain_dB = std::clamp(gain_dB, -60.0f, 60.0f) + s.iReplayGainPreamp;
+        if (s.bReplayGainPreventClipping && peak > 0.0f) {
+            // do not raise the tagged peak above full scale
+            gain_dB = std::min(gain_dB, float(-20.0 * log10(peak)));
+        }
+    }
+    TRACE(_T("ReplayGain: %s, %.2f dB\n"), bApply ? _T("on") : _T("off"), gain_dB);
+    pASF->SetReplayGain(bApply, gain_dB);
 }
 
 void CMainFrame::LoadArtToViews(const CString& imagePath)
@@ -24314,7 +24686,7 @@ CHdmvClipInfo::BDMVMeta CMainFrame::GetBDMVMeta()
 
 BOOL CMainFrame::AppendMenuEx(CMenu& menu, UINT nFlags, UINT nIDNewItem, CString& text)
 {
-    text.Replace(_T("&"), _T("&&"));
+    text = SanitizeMenuLabel(text);
     auto bResult = menu.AppendMenu(nFlags, nIDNewItem, text.GetString());
     if (bResult && (nFlags & MF_DEFAULT)) {
         bResult = menu.SetDefaultItem(nIDNewItem);

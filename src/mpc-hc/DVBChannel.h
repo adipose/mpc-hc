@@ -29,7 +29,8 @@
 #define FORMAT_VERSION_3       3
 #define FORMAT_VERSION_4       4
 #define FORMAT_VERSION_5       5
-#define FORMAT_VERSION_CURRENT 6
+#define FORMAT_VERSION_6       6
+#define FORMAT_VERSION_CURRENT 7
 
 #define BDA_MAX_AUDIO    10
 #define BDA_MAX_SUBTITLE 10
@@ -110,8 +111,15 @@ public:
     CString ToString() const;
     /**
      * @brief Output a JSON representation of a BDA channel.
-     * @note The object contains two elements : "index", which corresponds to
-     * @c m_nPrefNumber, and "name", which contains @c m_strName.
+     * @note "index" corresponds to @c m_nPrefNumber and "name" to
+     * @c m_strName. These come first and keep their names, because the web
+     * interface has shipped with them. The rest of the record follows: the
+     * tuning parameters, the identifiers needed to correlate a channel with
+     * the transport stream it was scanned from, a "video" object, and "audio"
+     * and "subtitles" arrays of @c BDAStreamInfo entries.
+     * @note Stream types, frame rates and aspect ratios are emitted as names
+     * rather than raw enum values, so a consumer does not need its own copy of
+     * the enums in this header to read the output.
      * @returns A string representing a JSON object containing the
      * aforementioned elements.
      */
@@ -123,6 +131,13 @@ public:
     ULONG GetSymbolRate() const { return m_ulSymbolRate; }
     int GetPrefNumber() const { return m_nPrefNumber; };
     int GetOriginNumber() const { return m_nOriginNumber; };
+    // ATSC identifies a service by a two-part virtual channel number carried in
+    // the VCT, which is independent of the RF channel it arrives on. Both parts
+    // are zero for DVB, where the logical channel number in m_nOriginNumber is
+    // the equivalent concept.
+    int GetATSCMajor() const { return m_nATSCMajor; };
+    int GetATSCMinor() const { return m_nATSCMinor; };
+    bool HasATSCNumber() const { return m_nATSCMajor != 0; };
     ULONG GetONID() const { return m_ulONID; };
     ULONG GetTSID() const { return m_ulTSID; };
     ULONG GetSID() const { return m_ulSID; };
@@ -160,6 +175,15 @@ public:
     void SetSymbolRate(ULONG ulSymbolRate) { m_ulSymbolRate = ulSymbolRate; }
     void SetPrefNumber(int Value) { m_nPrefNumber = Value; };
     void SetOriginNumber(int Value) { m_nOriginNumber = Value; };
+    // Also derives m_nOriginNumber, so that everything already keying off the
+    // logical channel number - sorting in the scan dialog, the channel list -
+    // orders ATSC services correctly without needing to know about ATSC.
+    // 9.1 < 9.2 < 9.91 < 10.1 < 50.1 holds under this encoding.
+    void SetATSCNumber(int nMajor, int nMinor) {
+        m_nATSCMajor = nMajor;
+        m_nATSCMinor = nMinor;
+        m_nOriginNumber = nMajor * 1000 + nMinor;
+    };
     void SetEncrypted(bool Value) { m_bEncrypted = Value; };
     void SetNowNextFlag(bool Value) { m_bNowNextFlag = Value; };
     void SetONID(ULONG Value) { m_ulONID = Value; };
@@ -196,6 +220,8 @@ private:
     ULONG m_ulSymbolRate            = 0;
     int m_nPrefNumber               = 0;
     int m_nOriginNumber             = 0;
+    int m_nATSCMajor                = 0;
+    int m_nATSCMinor                = 0;
     bool m_bEncrypted               = false;
     bool m_bNowNextFlag             = false;
     ULONG m_ulONID                  = 0;
@@ -219,3 +245,13 @@ private:
 
     void FromString(CString strValue);
 };
+
+/**
+ * @brief Serialize a list of channels as the JSON object the web interface
+ *        serves from /dvb/channels.json.
+ * @note Shared so that the endpoint and any other consumer emit the same
+ * document. A second copy of this loop would be free to drift from the first.
+ * @returns @c { "channels" : [ ... ] } with one @c CBDAChannel::ToJSON() per
+ * entry.
+ */
+CStringA DVBChannelsToJSON(const std::vector<CBDAChannel>& channels);
