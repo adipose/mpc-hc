@@ -4931,11 +4931,11 @@ msgstr "Yüzde değerini ses seviyesi kaydırıcısında göster (modern tema i�
 
 msgctxt "IDS_TIME_ON_SEEKBAR_NEVER"
 msgid "Never"
-msgstr "Hiç"
+msgstr "Asla"
 
 msgctxt "IDS_TIME_ON_SEEKBAR_ALWAYS"
 msgid "Always"
-msgstr "Hep"
+msgstr "Her zaman"
 
 msgctxt "IDS_TIME_ON_SEEKBAR_WHEN_STATUSBAR_HIDDEN"
 msgid "When status bar is hidden"
