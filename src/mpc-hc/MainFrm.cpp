@@ -5182,19 +5182,25 @@ BOOL CMainFrame::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCDS)
         cmdln.AddTail(str);
     }
 
-    // Queue the command line and return at once. Everything past this point probes the
-    // filesystem, and a path on an unreachable share blocks it for half a minute. While that
-    // ran inside this handler the window was not pumping messages, so Windows marked it as
-    // not responding and the other instances redirecting to us gave up and each opened a
-    // window of their own (#4149). The arrival time travels with the command line, so a slow
-    // open cannot make the next file of the same Explorer selection look like a new one.
+    QueueCommandLine(cmdln);
+
+    return TRUE;
+}
+
+// Queue a command line and return at once. Everything that acts on it probes the filesystem,
+// and a path on an unreachable share blocks that for half a minute. While it ran inside the
+// WM_COPYDATA handler the window was not pumping messages, so Windows marked it as not
+// responding and the other instances redirecting to us gave up and each opened a window of
+// their own (#4149). The arrival time travels with the command line, so a slow open cannot
+// make the next file of the same Explorer selection look like a new one. The Explorer drop
+// target (ShellDropTarget.cpp) comes in here too, with Explorer itself waiting on the return.
+void CMainFrame::QueueCommandLine(const CAtlList<CString>& cmdln)
+{
     m_pendingCommandLines.emplace_back();
     PendingCommandLine& pending = m_pendingCommandLines.back();
     pending.tArrived = GetTickCount64();
     pending.cmdln.AddTailList(&cmdln);
     VERIFY(PostMessage(WM_MPC_CMDLINE));
-
-    return TRUE;
 }
 
 LRESULT CMainFrame::OnCommandLineReceived(WPARAM wParam, LPARAM lParam)
@@ -5426,7 +5432,10 @@ void CMainFrame::ProcessCommandLine(CAtlList<CString>& cmdln, ULONGLONG tArrived
                 }
             } else {
                 fSetForegroundWindow = true;
-                m_nLastAppendSelectionIndex = 0; // the playlist gets replaced below
+                // The playlist gets replaced below and its first item starts playing. The rest of
+                // the selection is sorted in under it, so the playing item stays on top: sorting
+                // from 0 moved it into the middle and everything sorted before it never played.
+                m_nLastAppendSelectionIndex = 1;
 
                 if (GetMediaState() == State_Running) {
                     MediaControlPause(true);
@@ -6542,9 +6551,18 @@ void CMainFrame::SaveThumbnails(LPCTSTR fn)
     double fontscale = width / 1280.0;
     int fontsize = (int)(fontscale * 16);
     const int infoheight = 4 * fontsize + 6 + 2 * margin;
-    int height = width * szVideoARCorrected.cy / szVideoARCorrected.cx * rows / cols + infoheight;
+    // Values the dialog accepts (width 3840, 40 rows, 1 column) on a portrait video
+    // make width * height * 4 wrap in int, so size the sheet in 64 bit and refuse
+    // anything a bitmap cannot hold.
+    const LONGLONG llHeight = (LONGLONG)width * szVideoARCorrected.cy / szVideoARCorrected.cx * rows / cols + infoheight;
+    const LONGLONG llImageSize = (LONGLONG)width * llHeight * 4;
+    if (llHeight <= 0 || llHeight > 32767 || llImageSize > INT_MAX - (LONGLONG)sizeof(BITMAPINFOHEADER)) {
+        AfxMessageBox(IDS_OUT_OF_MEMORY, MB_ICONWARNING | MB_OK, 0);
+        return;
+    }
+    int height = (int)llHeight;
 
-    int dibsize = sizeof(BITMAPINFOHEADER) + width * height * 4;
+    int dibsize = sizeof(BITMAPINFOHEADER) + (int)llImageSize;
 
     CAutoVectorPtr<BYTE> dib;
     if (!dib.Allocate(dibsize)) {
@@ -6596,16 +6614,19 @@ void CMainFrame::SaveThumbnails(LPCTSTR fn)
         return;
     }
 
+    // Allocate before muting, so a failure here does not leave the player silent
+    std::unique_ptr<BYTE[]> thumb(new(std::nothrow) BYTE[szThumbnail.cx * szThumbnail.cy * 4]);
+    if (!thumb) {
+        AfxMessageBox(IDS_OUT_OF_MEMORY, MB_ICONWARNING | MB_OK, 0);
+        return;
+    }
+
     m_nVolumeBeforeFrameStepping = m_wndToolBar.Volume;
     if (m_pBA) {
         m_pBA->put_Volume(-10000);
     }
 
     // Draw the thumbnails
-    std::unique_ptr<BYTE[]> thumb(new(std::nothrow) BYTE[szThumbnail.cx * szThumbnail.cy * 4]);
-    if (!thumb) {
-        return;
-    }
 
     int pics = cols * rows;
     REFERENCE_TIME rtInterval = rtDur / (pics + 1LL);
@@ -10610,7 +10631,14 @@ void CMainFrame::OnPlayFilters(UINT nID)
 {
     //ShowPPage(m_spparray[nID - ID_FILTERS_SUBITEM_START], m_hWnd);
 
-    CComPtr<IUnknown> pUnk = m_pparray[nID - ID_FILTERS_SUBITEM_START];
+    // the command id can come from outside the menu (web interface, API), and the
+    // array is only filled once the filters submenu has been built
+    size_t i = nID - ID_FILTERS_SUBITEM_START;
+    if (i >= m_pparray.GetCount()) {
+        return;
+    }
+
+    CComPtr<IUnknown> pUnk = m_pparray[i];
 
     FilterSettings(pUnk, GetModalParent());
 }
@@ -10993,6 +11021,10 @@ void CMainFrame::OnPlayVideoStreams(UINT nID)
 void CMainFrame::OnPlayFiltersStreams(UINT nID)
 {
     nID -= ID_FILTERSTREAMS_SUBITEM_START;
+    if (nID >= m_ssarray.GetCount()) {
+        // stale or injected command id (web interface, API)
+        return;
+    }
     CComPtr<IAMStreamSelect> pAMSS = m_ssarray[nID];
     UINT i = nID;
 
