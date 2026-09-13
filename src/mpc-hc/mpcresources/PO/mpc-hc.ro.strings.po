@@ -4886,11 +4886,11 @@ msgstr "Rotița în jos"
 
 msgctxt "IDS_MOUSE_WHEEL_LEFT"
 msgid "Wheel Left"
-msgstr "Rotița din stânga"
+msgstr "Rotița în stânga"
 
 msgctxt "IDS_MOUSE_WHEEL_RIGHT"
 msgid "Wheel Right"
-msgstr "Rotița din dreapta"
+msgstr "Rotița în dreapta"
 
 msgctxt "IDS_MOUSE_ACTION"
 msgid "Action"
