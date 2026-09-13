@@ -795,7 +795,7 @@ msgstr "Player::Siglă (Logo)"
 
 msgctxt "IDD_PPAGETHEME"
 msgid "Player::User Interface"
-msgstr "Player::Interfața utilizatorului"
+msgstr "Player::Interfața cu utilizatorul"
 
 msgctxt "IDD_PPAGEOUTPUT"
 msgid "Playback::Output"
