@@ -6,14 +6,13 @@
 # O SA, 2021
 # Sonozaki Shion <mskt01a@gmail.com>, 2021
 # ever_green, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-13 11:49+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-09 08:19:27+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: ever_green, 2026\n"
 "Language-Team: Japanese (https://app.transifex.com/mpchc/teams/106126/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -582,7 +581,7 @@ msgid ""
 "videocard's settings, subtitles aren't going to look any better but it will "
 "surely eat your CPU."
 msgstr ""
-"字幕の配置を強制的に指定して、ビデオカードの設定で全画面アンチエイリアスを有効にしても、字幕はまったく綺麗にならず、CPU を余計に消費するだけです。"
+"字幕の配置を強制的に指定して、ビデオカードの設定で全画面アンチエイリアスを有効にしても、字幕はまったく綺麗にならず、CPU を余計に消費するのみです。"
 
 msgctxt "IDD_PPAGEFORMATS_IDC_STATIC2"
 msgid "File extensions"
