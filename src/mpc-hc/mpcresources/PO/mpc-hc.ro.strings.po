@@ -795,7 +795,7 @@ msgstr "Player::Siglă (Logo)"
 
 msgctxt "IDD_PPAGETHEME"
 msgid "Player::User Interface"
-msgstr "Player::Interfața cu utilizatorul"
+msgstr "Player::Interfața utilizatorului"
 
 msgctxt "IDD_PPAGEOUTPUT"
 msgid "Playback::Output"
@@ -5402,7 +5402,7 @@ msgstr "Resetează selecția pistei"
 
 msgctxt "IDS_PPAGEADVANCED_GRP_USER_INTERFACE"
 msgid "User Interface"
-msgstr "Interfața cu utilizatorul"
+msgstr "Interfața utilizatorului"
 
 msgctxt "IDS_PPAGEADVANCED_GRP_PLAYBACK"
 msgid "Playback"
