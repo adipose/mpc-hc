@@ -5402,7 +5402,7 @@ msgstr "Resetează selecția pistei"
 
 msgctxt "IDS_PPAGEADVANCED_GRP_USER_INTERFACE"
 msgid "User Interface"
-msgstr "Interfața utilizatorului"
+msgstr "Interfața cu utilizatorul"
 
 msgctxt "IDS_PPAGEADVANCED_GRP_PLAYBACK"
 msgid "Playback"
