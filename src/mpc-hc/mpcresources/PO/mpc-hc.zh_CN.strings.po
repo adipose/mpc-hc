@@ -5274,4 +5274,4 @@ msgstr ""
 
 msgctxt "IDS_PPAGEADVANCED_SECONDARY_SUB_VERT_POS"
 msgid "Vertical position for secondary subtitle. Percentage offset from top."
-msgstr "次字幕的垂直位置，以从顶部偏移的百分比表示。"
+msgstr "次字幕的垂直位置，从顶部偏移，以百分比表示。"
