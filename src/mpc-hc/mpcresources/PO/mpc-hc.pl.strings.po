@@ -2910,7 +2910,7 @@ msgstr "Proporcje obrazu: Domyślne (DAR)"
 
 msgctxt "IDS_MAINFRM_70"
 msgid "Audio delay: %I64d ms"
-msgstr "Przesunięcie dźwięku: %I64d ms"
+msgstr "Opóźnienie dźwięku: %I64d ms"
 
 msgctxt "IDS_AG_CHAPTER"
 msgid "Chapter %d"
