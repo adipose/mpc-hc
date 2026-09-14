@@ -1081,7 +1081,7 @@ msgstr "Pobierz napisy..."
 
 msgctxt "IDS_SUBFILE_DELAY"
 msgid "Delay (ms):"
-msgstr "Przesunięcie (ms):"
+msgstr "Opóźnienie (ms):"
 
 msgctxt "IDS_SPEEDSTEP_AUTO"
 msgid "Auto"
