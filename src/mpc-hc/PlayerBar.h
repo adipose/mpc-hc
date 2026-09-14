@@ -57,6 +57,9 @@ public:
 
     BOOL Create(LPCTSTR lpszWindowName, CWnd* pParentWnd, UINT nID, UINT defDockBarID, CString const& strSettingName);
 
+    // hides CControlBar::EnableDocking to create a CPlayerBarDockContext
+    void EnableDocking(DWORD dwDockStyle);
+
     virtual void ReloadTranslatableResources() PURE;
 
     virtual void LoadState(CFrameWnd* pParent);

@@ -22,6 +22,7 @@
 #include "PlayerBar.h"
 #include "MainFrm.h"
 #include "mplayerc.h"
+#include "PlayerBarDockContext.h"
 
 IMPLEMENT_DYNAMIC(CPlayerBar, CSizingControlBarG)
 CPlayerBar::CPlayerBar()
@@ -103,6 +104,23 @@ BOOL CPlayerBar::Create(LPCTSTR lpszWindowName, CWnd* pParentWnd, UINT nID, UINT
     m_strSettingName = strSettingName;
 
     return __super::Create(lpszWindowName, pParentWnd, nID);
+}
+
+void CPlayerBar::EnableDocking(DWORD dwDockStyle)
+{
+    // same as CControlBar::EnableDocking, but with our own dock context
+    ASSERT((dwDockStyle & ~(CBRS_ALIGN_ANY | CBRS_FLOAT_MULTI)) == 0);
+    ASSERT(((dwDockStyle & CBRS_FLOAT_MULTI) == 0) || ((m_dwStyle & CBRS_SIZE_DYNAMIC) == 0));
+
+    m_dwDockStyle = dwDockStyle;
+    if (m_pDockContext == nullptr) {
+        m_pDockContext = DEBUG_NEW CPlayerBarDockContext(this);
+    }
+
+    // permanently wire the bar's owner to its current parent
+    if (m_hWndOwner == nullptr) {
+        m_hWndOwner = ::GetParent(m_hWnd);
+    }
 }
 
 void CPlayerBar::LoadState(CFrameWnd* pParent)
