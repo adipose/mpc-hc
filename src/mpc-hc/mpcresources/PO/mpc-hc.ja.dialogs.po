@@ -581,7 +581,7 @@ msgid ""
 "videocard's settings, subtitles aren't going to look any better but it will "
 "surely eat your CPU."
 msgstr ""
-"字幕の配置を強制的に指定して、ビデオカードの設定で全画面アンチエイリアスを有効にしても、字幕はまったく綺麗にならず、CPU を余計に消費するのみです。"
+"字幕の配置を強制的に指定して、ビデオカードの設定で全画面アンチエイリアスを有効にしても、字幕はまったく綺麗にならず、CPU を余計に消費するだけです。"
 
 msgctxt "IDD_PPAGEFORMATS_IDC_STATIC2"
 msgid "File extensions"
