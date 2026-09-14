@@ -2151,11 +2151,11 @@ msgstr "Resetuj tempo"
 
 msgctxt "IDS_MPLAYERC_21"
 msgid "Audio Delay +10 ms"
-msgstr "Przesunięcie dźwięku +10 ms"
+msgstr "Opóźnienie dźwięku +10 ms"
 
 msgctxt "IDS_MPLAYERC_22"
 msgid "Audio Delay -10 ms"
-msgstr "Przesunięcie dźwięku -10 ms"
+msgstr "Opóźnienie dźwięku -10 ms"
 
 msgctxt "IDS_MPLAYERC_23"
 msgid "Jump Forward (small)"
@@ -2762,7 +2762,7 @@ msgstr ""
 
 msgctxt "IDS_MAINFRM_139"
 msgid "Sub delay: %ld ms"
-msgstr "Przesunięcie napisów: %ld ms"
+msgstr "Opóźnienie napisów: %ld ms"
 
 msgctxt "IDS_AG_TITLE2"
 msgid "Title: %02d/%02d"
