@@ -783,19 +783,18 @@ bool CWebTextFile::Open(LPCTSTR lpszFileName, DWORD& dwError)
 
         CAutoPtr<CStdioFile> f(is.OpenURL(fn, 1, INTERNET_FLAG_TRANSFER_BINARY | INTERNET_FLAG_EXISTING_CONNECT));
         if (!f) {
+            dwError = GetLastError();
             return false;
         }
 
-        TCHAR path[MAX_PATH];
-        GetTempPath(MAX_PATH, path);
+        TCHAR temppath[MAX_PATH];
+        GetTempPath(MAX_PATH, temppath);
 
-        fn = path + fn.Mid(fn.ReverseFind('/') + 1);
-        int i = fn.Find(_T("?"));
-        if (i > 0) {
-            fn = fn.Left(i);
-        }
+        CString tempfn = temppath;
+        tempfn.AppendFormat(L"\mpc_%llu.tmp", GetTickCount64());
+
         CFile temp;
-        if (!temp.Open(fn, modeCreate | modeWrite | typeBinary | shareDenyWrite)) {
+        if (!temp.Open(tempfn, modeCreate | modeWrite | typeBinary | shareDenyWrite)) {
             f->Close();
             return false;
         }
@@ -810,7 +809,7 @@ bool CWebTextFile::Open(LPCTSTR lpszFileName, DWORD& dwError)
             }
         }
 
-        m_tempfn = fn;
+        m_tempfn = tempfn;
 
         f->Close(); // must close it because the desctructor doesn't seem to do it and we will get an exception when "is" is destroying
     } catch (CInternetException* ie) {
