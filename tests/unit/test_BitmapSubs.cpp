@@ -94,9 +94,9 @@ TEST_CASE(VobSub_DecodeValidPacketDoesNotCrash)
 // #4192: the next-control-block offset comes from the packet. Here the first
 // block points at a second block that sits in the last two bytes, so reading
 // that block's 4-byte header runs off the end.
-TEST_CASE_EXPECTED_FAILURE(VobSub_GetPacketInfoTruncatedControlBlock,
-                           "fixed upstream by #4192 (634d51b20b), not yet on this branch's base: GetPacketInfo reads a control block's "
-                           "date and next-offset without checking i + 4 against packetSize, reading past the packet")
+// #4192: GetPacketInfo read a control block's date and next-offset without
+// checking i + 4 against packetSize.
+TEST_CASE(VobSub_GetPacketInfoTruncatedControlBlock)
 {
     Bytes b;
     b.fill(4, 0x00);           // data area, dataSize = 4
@@ -117,10 +117,9 @@ TEST_CASE_EXPECTED_FAILURE(VobSub_GetPacketInfoTruncatedControlBlock,
     CHECK_FALSE(img.GetPacketInfo(buf.data(), buf.size(), 4));
 }
 
-// #4192: plane offsets from the packet drive the RLE read in Decode.
-TEST_CASE_EXPECTED_FAILURE(VobSub_DecodeRejectsOutOfRangeOffsets,
-                           "fixed upstream by #4192 (634d51b20b), not yet on this branch's base: Decode reads the two RLE planes from "
-                           "nOffset[0]/nOffset[1] up to dataSize without checking them, so an offset past the data area reads out of bounds")
+// #4192: plane offsets from the packet drive the RLE read in Decode, and
+// were once trusted as far as dataSize without a check.
+TEST_CASE(VobSub_DecodeRejectsOutOfRangeOffsets)
 {
     Bytes packet = VobSubPacket(8, 0, 0x7000, 0, 0, 2, 2); // nOffset[1] far past dataSize
     GuardedBuffer buf(packet);

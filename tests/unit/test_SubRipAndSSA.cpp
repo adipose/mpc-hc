@@ -255,11 +255,9 @@ TEST_CASE(LibassSrt_GetTagAndConsumeAttribute)
 // #4185. Tag and attribute names and values were copied into BUFSIZ (512)
 // byte stack buffers with strncpy_s, which treats a too-small destination as
 // a fatal error, and were then terminated at an index past the buffer. One
-// long run of letters after '<' ended the player. Isolated because on the
-// old code this does not fail, it dies.
-TEST_CASE_ISOLATED_EXPECTED_FAILURE(LibassSrt_LongTagName,
-                                    "fixed upstream by #4185 (fcd8e15803), which this branch's base predates: a tag name longer than "
-                                    "BUFSIZ overruns a stack buffer in GetTag. Remove the marker once the branch is rebased onto develop")
+// long run of letters after '<' ended the player (#4185). Isolated because
+// before the fix this did not fail, it died -- and would again.
+TEST_CASE_ISOLATED(LibassSrt_LongTagName)
 {
     const std::string name(3000, 'a');
     CHECK_EQ(SrtToAss("<" + name + ">text</" + name + ">"), "text");
@@ -270,9 +268,9 @@ TEST_CASE_ISOLATED_EXPECTED_FAILURE(LibassSrt_LongTagName,
     CHECK_EQ(GetTag(&p, false).size(), name.size());
 }
 
-TEST_CASE_ISOLATED_EXPECTED_FAILURE(LibassSrt_LongAttribute,
-                                    "fixed upstream by #4185 (fcd8e15803), which this branch's base predates: an attribute name or value "
-                                    "longer than BUFSIZ overruns a stack buffer in ConsumeAttribute. Remove the marker after the rebase")
+// #4185 again: an attribute name or value longer than BUFSIZ overran a
+// stack buffer in ConsumeAttribute.
+TEST_CASE_ISOLATED(LibassSrt_LongAttribute)
 {
     const std::string longValue(3000, 'x');
     const std::string longName(3000, 'n');
