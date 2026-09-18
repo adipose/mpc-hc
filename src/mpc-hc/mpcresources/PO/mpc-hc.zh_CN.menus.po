@@ -676,11 +676,11 @@ msgstr "着色器(&H)"
 
 msgctxt "ID_AUDIOS"
 msgid "&Audio Track"
-msgstr "音频轨(&A)"
+msgstr "音频轨道(&A)"
 
 msgctxt "ID_SUBTITLES"
 msgid "Su&btitle Track"
-msgstr "字幕轨(&B)"
+msgstr "主字幕轨道(&B)"
 
 msgctxt "ID_SUBTITLES_SECONDARY"
 msgid "Secondary Subtitle Track"
@@ -688,7 +688,7 @@ msgstr "副字幕轨道"
 
 msgctxt "ID_VIDEO_STREAMS"
 msgid "Vide&o Track"
-msgstr "视频轨(&O)"
+msgstr "视频轨道(&O)"
 
 msgctxt "POPUP"
 msgid "&Volume"
