@@ -2118,11 +2118,11 @@ msgstr "向后跳 (关键帧)"
 
 msgctxt "IDS_AG_NEXT"
 msgid "Next"
-msgstr "下一首"
+msgstr "下一个"
 
 msgctxt "IDS_AG_PREVIOUS"
 msgid "Previous"
-msgstr "上一首"
+msgstr "上一个"
 
 msgctxt "IDS_AG_NEXT_FILE"
 msgid "Next File"
