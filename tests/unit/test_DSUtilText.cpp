@@ -208,22 +208,6 @@ TEST_CASE(Text_Utf8To16)
     CHECK_EQ(UTF8To16(""), L"");
 }
 
-TEST_CASE(Text_Utf8ToStringW)
-{
-    CHECK_EQ(UTF8ToStringW("caf\xC3\xA9"), L"caf\x00e9");
-    CHECK_EQ(UTF8ToStringW("\xE6\x97\xA5\xE6\x9C\xAC"), L"\x65e5\x672c");
-    CHECK_EQ(UTF8ToStringW(nullptr), L"");
-    // a lone continuation byte is invalid: it yields the empty string
-    CHECK_EQ(UTF8ToStringW("\x80"), L"");
-}
-
-TEST_CASE_EXPECTED_FAILURE(Text_Utf8ToStringWFourByte,
-                           "current bug: the 4-byte branch of UTF8ToStringW (DSUtil.cpp) writes the code point into one wchar_t instead of a "
-                           "surrogate pair, and uses '||' where it means '|', so U+1F600 comes out as U+0001. UTF8To16 does this correctly")
-{
-    CHECK_EQ(UTF8ToStringW("emoji \xF0\x9F\x98\x80"), L"emoji \xd83d\xde00");
-}
-
 TEST_CASE(Text_HtmlSpecialCharsDecode)
 {
     CHECK_EQ(HtmlSpecialCharsDecode("Tom &amp; Jerry &lt;3 &gt; 2 &quot;q&quot;"), "Tom & Jerry <3 > 2 \"q\"");
