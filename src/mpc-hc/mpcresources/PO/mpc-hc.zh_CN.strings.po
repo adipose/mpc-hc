@@ -649,7 +649,7 @@ msgstr "MediaInfo"
 
 msgctxt "IDD_PPAGECAPTURE"
 msgid "Playback::Capture"
-msgstr "回放::采集"
+msgstr "播放::采集"
 
 msgctxt "IDD_PPAGEFULLSCREEN"
 msgid "Playback::Fullscreen"
@@ -4049,7 +4049,7 @@ msgstr "回放结束后: 关闭显示器"
 
 msgctxt "IDS_AFTERPLAYBACK_PLAYNEXT"
 msgid "After Playback: Play next file in the folder"
-msgstr "回放结束后: 播放文件夹中的下一个文件"
+msgstr "播放结束后: 播放文件夹中的下一个文件"
 
 msgctxt "IDS_AFTERPLAYBACK_DONOTHING"
 msgid "After Playback: Do nothing"
