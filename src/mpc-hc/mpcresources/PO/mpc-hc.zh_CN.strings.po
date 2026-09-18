@@ -12,14 +12,13 @@
 # Fentanyl, 2026
 # Phonebook3599, 2026
 # YuanHao Du, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-17 11:38+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-11 12:44:22+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: YuanHao Du, 2026\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/mpchc/teams/106126/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4178,7 +4177,7 @@ msgstr "就绪..."
 
 msgctxt "IDS_CMD_PNS"
 msgid "/pns \"name\"\tSpecify PnS Frame Adjust Preset to use (for example: /pns \"%s\")"
-msgstr "/pns \"name\" 指定使用的画面平移与缩放 (PnS) 预设(例如：/pns \"%s\")"
+msgstr "/pns \"name\" 指定使用的画面平移与缩放 (PnS) 预设(例如：/pns \"1%\")"
 
 msgctxt "IDS_CMD_PNS_VALUES"
 msgid ""
@@ -4797,7 +4796,7 @@ msgstr "在音量滑块上显示百分比值（在现代主题中）"
 
 msgctxt "IDS_TIME_ON_SEEKBAR_NEVER"
 msgid "Never"
-msgstr "从不"
+msgstr "从不显示"
 
 msgctxt "IDS_TIME_ON_SEEKBAR_ALWAYS"
 msgid "Always"
