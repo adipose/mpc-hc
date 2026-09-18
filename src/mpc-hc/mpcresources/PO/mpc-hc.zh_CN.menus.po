@@ -144,7 +144,7 @@ msgstr "导航(&V)"
 
 msgctxt "POPUP"
 msgid "&Presets..."
-msgstr "窗口布局(&P)..."
+msgstr "窗口预设(&P)..."
 
 msgctxt "ID_VIEW_PRESETS_MINIMAL"
 msgid "&Minimal"
