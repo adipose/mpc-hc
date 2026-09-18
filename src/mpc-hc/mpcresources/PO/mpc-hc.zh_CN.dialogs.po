@@ -1865,7 +1865,7 @@ msgstr "进度条时间"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC8"
 msgid "Seekbar Hover"
-msgstr "鼠标悬停在进度条时"
+msgstr "鼠标悬停于进度条时"
 
 msgctxt "IDD_PPAGETHEME_IDC_SEEK_PREVIEW"
 msgid "Show video preview"
