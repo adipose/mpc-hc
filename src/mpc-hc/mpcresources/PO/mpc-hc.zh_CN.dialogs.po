@@ -1965,7 +1965,7 @@ msgstr "通过 Windows UI 来控制 (SMTC)"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC"
 msgid "Custom Preset (4)"
-msgstr "查看->窗口预设->自定义"
+msgstr "查看->预设布局->自定义"
 
 msgctxt "IDD_PPAGETHEME_IDC_CUSTOMPRESET_MENU"
 msgid "Menu"
