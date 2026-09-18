@@ -103,7 +103,7 @@ msgstr "Lautstärke zurücksetzen"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC6"
 msgid "Boost:"
-msgstr "Tonverstärkung:"
+msgstr "Lautstärkeverstärkung:"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC7"
 msgid "ReplayGain:"
