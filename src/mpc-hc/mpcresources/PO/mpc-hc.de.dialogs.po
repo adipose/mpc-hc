@@ -540,7 +540,7 @@ msgstr "ms"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
 msgid "Texture settings (open the video again to see the changes)"
-msgstr "Untertitel-Textur (Neuladen des Videos erforderlich)"
+msgstr "Textur-Einstellungen (Neuladen des Videos erforderlich)"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC9"
 msgid "Sub pictures to buffer:"
@@ -684,7 +684,7 @@ msgid ""
 "only one item in playlist"
 msgstr ""
 "Vorherige/nächste Datei im Ordner bei nur einem Eintrag in der "
-"Wiedergabeliste durch \"Vorherige/nächste Datei öffnen\"-Befehl öffnen."
+"Wiedergabeliste durch \"Vorherige/nächste Datei öffnen\"-Befehl öffnen"
 
 msgctxt "IDD_PPAGETWEAKS_IDC_FASTSEEK_CHECK"
 msgid "Fast seek (on keyframe)"
