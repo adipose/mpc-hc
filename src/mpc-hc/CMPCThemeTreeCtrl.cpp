@@ -150,9 +150,16 @@ void CMPCThemeTreeCtrl::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
                     pstCD->clrText = CMPCTheme::ButtonDisabledFGColor;
                 }
                 *pResult = CDRF_DODEFAULT;
+                if (isHot) { //TVS_TRACKSELECT hot font is underlined; redundant with our hover background
+                    CFont* font = GetFont();
+                    if (font) {
+                        ::SelectObject(pNMCD->hdc, font->GetSafeHandle());
+                        *pResult = CDRF_NEWFONT;
+                    }
+                }
                 break;
             default:
-                pResult = CDRF_DODEFAULT;
+                *pResult = CDRF_DODEFAULT;
                 break;
         }
     } else {
