@@ -585,7 +585,7 @@ msgstr "增大字幕字号"
 
 msgctxt "IDD_PPAGEPLAYBACK"
 msgid "Playback::General"
-msgstr "回放::常规"
+msgstr "播放::常规"
 
 msgctxt "IDD_PPAGEPLAYER"
 msgid "Player::General"
@@ -593,7 +593,7 @@ msgstr "播放器::常规"
 
 msgctxt "IDD_PPAGEDVD"
 msgid "Playback::DVD"
-msgstr "回放::DVD"
+msgstr " 播放::DVD"
 
 msgctxt "IDD_PPAGESUBTITLES"
 msgid "Subtitles::General"
@@ -653,7 +653,7 @@ msgstr "回放::采集"
 
 msgctxt "IDD_PPAGEFULLSCREEN"
 msgid "Playback::Fullscreen"
-msgstr "回放::全屏幕"
+msgstr "播放::全屏幕"
 
 msgctxt "IDS_AUDIOSWITCHER"
 msgid "Audio Switcher"
@@ -787,7 +787,7 @@ msgstr "播放器::用户界面"
 
 msgctxt "IDD_PPAGEOUTPUT"
 msgid "Playback::Output"
-msgstr "回放::输出"
+msgstr "播放::输出"
 
 msgctxt "IDD_PPAGEWEBSERVER"
 msgid "Player::Web Interface"
@@ -4025,7 +4025,7 @@ msgstr "回放结束后: 退出"
 
 msgctxt "IDS_AFTERPLAYBACK_STANDBY"
 msgid "After Playback: Stand By"
-msgstr "回放结束后: 待机"
+msgstr "播放结束后: 待机"
 
 msgctxt "IDS_AFTERPLAYBACK_HIBERNATE"
 msgid "After Playback: Hibernate"
@@ -4033,7 +4033,7 @@ msgstr "回放结束后: 休眠"
 
 msgctxt "IDS_AFTERPLAYBACK_SHUTDOWN"
 msgid "After Playback: Shutdown"
-msgstr "回放结束后: 关机"
+msgstr "播放结束后: 关机"
 
 msgctxt "IDS_AFTERPLAYBACK_LOGOFF"
 msgid "After Playback: Log Off"
@@ -4041,7 +4041,7 @@ msgstr "回放结束后: 注销"
 
 msgctxt "IDS_AFTERPLAYBACK_LOCK"
 msgid "After Playback: Lock"
-msgstr "回放结束后: 锁定"
+msgstr "播放结束后: 锁定"
 
 msgctxt "IDS_AFTERPLAYBACK_MONITOROFF"
 msgid "After Playback: Turn off the monitor"
