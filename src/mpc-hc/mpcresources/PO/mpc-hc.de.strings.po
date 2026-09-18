@@ -2957,7 +2957,7 @@ msgstr "Lautstärke: %d %%"
 
 msgctxt "IDS_BOOST_OSD"
 msgid "Boost: +%u%%"
-msgstr "Tonverstärkung: +%u %%"
+msgstr "Lautstärkeverstärkung: +%u %%"
 
 msgctxt "IDS_BALANCE_OSD"
 msgid "Balance: %s"
