@@ -9,14 +9,13 @@
 # Gaugg_Markus, 2021
 # Nico, 2025
 # Maik Dießner, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-08-31 14:37+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-08-22 12:16:02+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Maik Dießner, 2026\n"
 "Language-Team: German (https://app.transifex.com/mpchc/teams/106126/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -294,15 +293,15 @@ msgstr "&Umgebungslicht"
 
 msgctxt "ID_VIEW_CM_AMBIENTLIGHT_BRIGHT"
 msgid "&Bright (2.2 Gamma)"
-msgstr "&Hell (Gamma: 2.2)"
+msgstr "&Hell (Gamma: 2,2)"
 
 msgctxt "ID_VIEW_CM_AMBIENTLIGHT_DIM"
 msgid "&Dim (2.35 Gamma)"
-msgstr "&Schwach (Gamma: 2.35)"
+msgstr "&Schwach (Gamma: 2,35)"
 
 msgctxt "ID_VIEW_CM_AMBIENTLIGHT_DARK"
 msgid "D&ark (2.4 Gamma)"
-msgstr "&Dunkel (Gamma: 2.4)"
+msgstr "&Dunkel (Gamma: 2,4)"
 
 msgctxt "POPUP"
 msgid "&Rendering Intent"
