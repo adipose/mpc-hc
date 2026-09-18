@@ -692,7 +692,7 @@ msgstr "视频轨道(&O)"
 
 msgctxt "POPUP"
 msgid "&Volume"
-msgstr "音量(&V)"
+msgstr "音量调节(&V)"
 
 msgctxt "ID_VOLUME_UP"
 msgid "&Up"
