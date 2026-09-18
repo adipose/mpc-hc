@@ -315,7 +315,7 @@ msgstr "历史"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK1"
 msgid "Keep history of recently opened files"
-msgstr "记住最近打开过的文件"
+msgstr "记住最近打开的文件"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK2"
 msgid "Remember last playlist"
@@ -323,7 +323,7 @@ msgstr "记住最后的播放列表"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_FILE_POS"
 msgid "Remember File position"
-msgstr "记住文件播放位置"
+msgstr "记住文件的播放位置"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_DVD_POS"
 msgid "Remember DVD position"
