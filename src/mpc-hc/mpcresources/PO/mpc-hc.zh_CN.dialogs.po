@@ -1917,7 +1917,7 @@ msgstr "语言: "
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC9"
 msgid "On Screen Display (OSD)"
-msgstr "画面上层显示 (OSD)"
+msgstr "画面左上角显示 (OSD)"
 
 msgctxt "IDD_PPAGETHEME_IDC_SHOW_OSD"
 msgid "Show OSD (requires restart)"
