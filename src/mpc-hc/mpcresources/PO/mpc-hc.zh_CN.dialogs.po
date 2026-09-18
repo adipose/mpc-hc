@@ -319,23 +319,23 @@ msgstr "保存最近打开文件的历史记录"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK2"
 msgid "Remember last playlist"
-msgstr "记忆最后的播放列表"
+msgstr "记住最后的播放列表"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_FILE_POS"
 msgid "Remember File position"
-msgstr "记忆文件播放位置"
+msgstr "记住文件播放位置"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_DVD_POS"
 msgid "Remember DVD position"
-msgstr "记忆 DVD 播放位置"
+msgstr "记住 DVD 播放位置"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK6"
 msgid "Remember last window position"
-msgstr "记忆最后的窗口位置"
+msgstr "记住最后的窗口位置"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK7"
 msgid "Remember last window size"
-msgstr "记忆最后的窗口大小"
+msgstr "记住最后的窗口大小"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK11"
 msgid "Remember last Pan && Scan Zoom"
@@ -773,11 +773,11 @@ msgstr "为您的快捷方式选择一个名称:"
 
 msgctxt "IDD_FAVADD_IDC_CHECK1"
 msgid "Remember position"
-msgstr "记忆位置"
+msgstr "记住位置"
 
 msgctxt "IDD_FAVADD_IDC_CHECK3"
 msgid "Remember A-B repeat marks"
-msgstr "记忆A-B重复标记"
+msgstr "记住A-B重复标记"
 
 msgctxt "IDD_FAVADD_IDC_CHECK2"
 msgid "Relative drive"
