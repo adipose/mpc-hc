@@ -2753,7 +2753,7 @@ msgstr "选择 DVD/BD 的路径:"
 
 msgctxt "IDS_SUB_LOADED_SUCCESS"
 msgid " loaded successfully"
-msgstr " 已成功装载"
+msgstr " 加载成功"
 
 msgctxt "IDS_ALL_FILES_FILTER"
 msgid "All files (*.*)|*.*||"
