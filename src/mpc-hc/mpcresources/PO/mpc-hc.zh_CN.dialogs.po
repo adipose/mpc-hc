@@ -1985,7 +1985,7 @@ msgstr "信息栏"
 
 msgctxt "IDD_PPAGETHEME_IDC_CUSTOMPRESET_TOOLBAR"
 msgid "Controls"
-msgstr "控件"
+msgstr "控制栏"
 
 msgctxt "IDD_PPAGETHEME_IDC_CUSTOMPRESET_STATS"
 msgid "Statistics"
