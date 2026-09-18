@@ -315,7 +315,7 @@ msgstr "历史"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK1"
 msgid "Keep history of recently opened files"
-msgstr "保存最近打开文件的历史记录"
+msgstr "记住最近打开过的文件"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK2"
 msgid "Remember last playlist"
