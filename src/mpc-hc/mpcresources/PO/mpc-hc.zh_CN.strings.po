@@ -1489,7 +1489,7 @@ msgstr "样式(&S)..."
 
 msgctxt "IDS_SUBTITLES_RELOAD"
 msgid "&Reload"
-msgstr "重装载(&R)"
+msgstr "重新加载(&R)"
 
 msgctxt "IDS_SUBTITLES_HIDE"
 msgid "&Hide Subtitles"
@@ -2480,7 +2480,7 @@ msgstr "开/关字幕"
 
 msgctxt "IDS_MPLAYERC_86"
 msgid "Reload Subtitles"
-msgstr "重新装载字幕"
+msgstr "重新加载字幕"
 
 msgctxt "IDS_MPLAYERC_91"
 msgid "Next Angle (DVD)"
