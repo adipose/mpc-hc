@@ -38,6 +38,8 @@ suites/
                       probes
   chromecast/         Cast sender behaviour against the mock receiver
                       (scaffold; see its README)
+  dvb-playback/       Tunes channels on the virtual tuner; asserts each
+                      channel's tone reaches the virtual sound card
   playback/           Plays generated clips; asserts on the audio and the
                       frames that reached a virtual sound card and a
                       virtual monitor on the target
