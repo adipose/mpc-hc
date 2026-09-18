@@ -499,7 +499,7 @@ msgstr "渲染失败时报告 pin"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_CHECK2"
 msgid "Auto-load audio files"
-msgstr "自动装载音频文件"
+msgstr "自动加载音频文件"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_CHECK3"
 msgid "Override placement"
@@ -1165,7 +1165,7 @@ msgstr "下载字幕"
 
 msgctxt "IDD_SUBTITLEDL_DLG_IDC_CHECK1"
 msgid "Replace currently loaded subtitles"
-msgstr "替换当前已装载的字幕"
+msgstr "替换当前已加载的字幕"
 
 msgctxt "IDD_SUBTITLEDL_DLG_IDOK"
 msgid "Download"
