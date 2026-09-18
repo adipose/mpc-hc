@@ -4804,7 +4804,7 @@ msgstr "总是显示"
 
 msgctxt "IDS_TIME_ON_SEEKBAR_WHEN_STATUSBAR_HIDDEN"
 msgid "When status bar is hidden"
-msgstr "当状态栏隐藏时"
+msgstr "当状态栏隐藏时显示"
 
 msgctxt "IDS_PPAGEADVANCED_STARTUP_PRESET"
 msgid "View preset to apply at startup"
