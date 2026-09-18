@@ -4951,7 +4951,7 @@ msgstr "Fenster-Profil beim Start"
 
 msgctxt "IDS_STARTUP_PRESET_REMEMBER"
 msgid "Remember last"
-msgstr "Letzte merken"
+msgstr "Letztes merken"
 
 msgctxt "IDS_PPAGEADVANCED_TIME_ON_SEEKBAR_LEFT"
 msgid ""
