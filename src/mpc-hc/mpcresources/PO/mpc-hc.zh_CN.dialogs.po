@@ -259,11 +259,11 @@ msgstr "打开选项"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_RADIO1"
 msgid "Use the same player for each media file"
-msgstr "为每个媒体文件使用相同的播放器"
+msgstr "使用同一播放进程"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_RADIO2"
 msgid "Open a new player for each media file played"
-msgstr "为每个播放的媒体文件打开一个新的播放器"
+msgstr "新开播放进程播放"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_STATIC"
 msgid "Title bar"
