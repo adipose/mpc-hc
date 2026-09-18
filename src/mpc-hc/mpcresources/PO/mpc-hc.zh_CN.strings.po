@@ -1828,7 +1828,7 @@ msgstr "高精确度"
 
 msgctxt "IDS_AFTERPLAYBACK_REWIND"
 msgid "After Playback: Rewind current file"
-msgstr "回放结束后: 返回当前文件"
+msgstr "播放结束后: 返回当前文件"
 
 msgctxt "IDS_AFTERPLAYBACK_CLOSE"
 msgid "After Playback: Close"
@@ -4053,7 +4053,7 @@ msgstr "回放结束后: 播放文件夹中的下一个文件"
 
 msgctxt "IDS_AFTERPLAYBACK_DONOTHING"
 msgid "After Playback: Do nothing"
-msgstr "回放结束后: 什么都不做"
+msgstr "播放结束后: 什么都不做"
 
 msgctxt "IDS_OSD_BRIGHTNESS"
 msgid "Brightness: %s"
