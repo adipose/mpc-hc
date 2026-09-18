@@ -2899,7 +2899,7 @@ msgstr "切换标题与菜单"
 
 msgctxt "IDS_AG_TOGGLE_SEEKER"
 msgid "Toggle Seekbar"
-msgstr "切换进度条"
+msgstr "切换进度栏"
 
 msgctxt "IDS_AG_TOGGLE_CONTROLS"
 msgid "Toggle Controls"
@@ -3149,11 +3149,11 @@ msgstr "视频画面绕 X 轴向正方向旋转"
 
 msgctxt "IDS_TIME_TOOLTIP_ABOVE"
 msgid "Above seekbar"
-msgstr "进度条上方"
+msgstr "进度栏上方"
 
 msgctxt "IDS_TIME_TOOLTIP_BELOW"
 msgid "Below seekbar"
-msgstr "进度条下方"
+msgstr "进度栏下方"
 
 msgctxt "IDS_VIDEO_STREAM"
 msgid "Video: %s"
@@ -4817,7 +4817,7 @@ msgstr "记住最后"
 msgctxt "IDS_PPAGEADVANCED_TIME_ON_SEEKBAR_LEFT"
 msgid ""
 "Show the time on the left side of the seekbar instead of the right side"
-msgstr "在进度条的左侧显示时间，而不是右侧。"
+msgstr "在进度栏的左侧显示时间，而不是右侧。"
 
 msgctxt "IDS_PPAGEADVANCED_SHOW_LANG_STATUSBAR"
 msgid "Display current audio and subtitle language in status bar"
@@ -4847,7 +4847,7 @@ msgstr "在状态栏中显示视频信息 (编码名称、分辨率) 。"
 
 msgctxt "IDS_PPAGEADVANCED_PAUSE_WHILE_DRAGGING_SEEKBAR"
 msgid "Pause playback while dragging the seekbar."
-msgstr "拖动进度条时暂停播放"
+msgstr "拖动进度栏时暂停播放"
 
 msgctxt "IDS_PPAGEADVANCED_CONFIRM_FILE_DELETE"
 msgid "Show confirmation prompt before deleting file"
