@@ -49,3 +49,7 @@ tests/testbed.config.psd1
 tests/results/
 tests/unit/results/
 tests/suites/*/results/
+
+# playback suite: generated clips and run artefacts
+tests/suites/playback/media/
+tests/suites/playback/results/

@@ -2,7 +2,7 @@
 
 Integration tests for MPC-HC, run against the build from this repository.
 The framework lives in the tree so tests and player change together: a fix
-and the test that proves it share a commit. It is this directory and two
+and the test that proves it share a commit. It is this directory and four
 optional submodules; nothing under `src/` depends on it, and a checkout
 that never initialises the submodules is unaffected by it.
 
@@ -22,6 +22,12 @@ emulator/             bda-vtuner (submodule): virtual DVB/ATSC BDA tuner
 cast-mock/            castv2-mock-device (submodule): mock Google Cast
                       receiver -- mDNS, TLS, CastV2 protobuf, adversarial
                       failure switches
+vaudio/               vaudio-endpoint (submodule): virtual sound card that
+                      records what is played to it -- stereo to 7.1, shared
+                      and exclusive mode
+vdisplay/             idd-vdisplay (submodule): virtual monitor that can be
+                      plugged, unplugged and read back -- chosen modes, HDR on
+                      Windows 11
 suites/
   unit/               the unit tier as a suite: builds and runs unit/, needs
                       no rig (its probe reports NeedsRig = $false)
@@ -32,6 +38,9 @@ suites/
                       probes
   chromecast/         Cast sender behaviour against the mock receiver
                       (scaffold; see its README)
+  playback/           Plays generated clips; asserts on the audio and the
+                      frames that reached a virtual sound card and a
+                      virtual monitor on the target
 ```
 
 ## Unit tests
@@ -77,7 +86,7 @@ coverage map, and the smallest steps that complete the `dvb` and
 ## Setup
 
 ```powershell
-git submodule update --init tests/emulator tests/cast-mock
+git submodule update --init tests/emulator tests/cast-mock tests/vaudio tests/vdisplay
 .\tests\emulator\tools\Install-TestBed.ps1    # WDK ISO, TSDuck, ffmpeg, config
 ```
 

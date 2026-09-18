@@ -57,3 +57,11 @@
 	path = tests/cast-mock
 	url = https://github.com/adipose/castv2-mock-device.git
 	branch = main
+[submodule "tests/vdisplay"]
+	path = tests/vdisplay
+	url = https://github.com/adipose/idd-vdisplay.git
+	branch = main
+[submodule "tests/vaudio"]
+	path = tests/vaudio
+	url = https://github.com/adipose/vaudio-endpoint.git
+	branch = main
