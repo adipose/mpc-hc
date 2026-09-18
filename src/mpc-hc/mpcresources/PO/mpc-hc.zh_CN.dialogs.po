@@ -543,7 +543,7 @@ msgstr "最大纹理分辨率:"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_CHECK_NO_SUB_ANIM"
 msgid "Never animate the subtitles"
-msgstr "永不播放字幕动画"
+msgstr "从不播放字幕动画"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC5"
 msgid "Render at"
