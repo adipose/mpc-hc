@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6D0E1C0B-6C0F-4E0E-9A43-5B1D0A7C3F21}</ProjectGuid>
+    <RootNamespace>MpcUnitTests</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+    <ProjectName>MpcUnitTests</ProjectName>
+    <!-- Not part of mpc-hc.sln. common.props derives IntDir/OutDir from
+         SolutionDir, so point it at the repository root; the referenced
+         projects inherit it and their libs land where a solution build
+         puts them (bin\lib\<cfg>_x64). -->
+    <SolutionDir Condition="'$(SolutionDir)'=='' Or '$(SolutionDir)'=='*Undefined*'">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\'))</SolutionDir>
+    <!-- libass.vcxproj merges freetype2/fribidi/harfbuzz/iconv/zlib/unibreak
+         into its lib but names them only as solution-level dependencies.
+         Without the solution the order has to come from here: references
+         build one at a time, in the order listed below. -->
+    <BuildInParallel>false</BuildInParallel>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="..\..\src\platform.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\src\common.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir Condition="'$(Configuration)'=='Release'">$(SolutionDir)bin\tests_x64\</OutDir>
+    <OutDir Condition="'$(Configuration)'=='Debug'">$(SolutionDir)bin\tests_x64_Debug\</OutDir>
+    <UseCommonOutputDirectory>False</UseCommonOutputDirectory>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\include;..\..\src;..\..\src\DSUtil;..\..\src\thirdparty;..\..\src\thirdparty\freetype2\freetype2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\lib\$(Configuration)_$(PlatformName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>strmiids.lib;Uuid.lib;Version.lib;Vfw32.lib;Winmm.lib;Shlwapi.lib;dxguid.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SetChecksum>false</SetChecksum>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="HostHooks.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="test_Harness.cpp" />
+    <ClCompile Include="test_SubRipAndSSA.cpp" />
+    <ClCompile Include="test_BitmapSubs.cpp" />
+    <ClCompile Include="test_DSUtilText.cpp" />
+    <ClCompile Include="test_TextFile.cpp" />
+    <ClCompile Include="test_WebVTT.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HostHooks.h" />
+    <ClInclude Include="MpcTest.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SubtitleTestUtil.h" />
+    <ClInclude Include="TestUtil.h" />
+  </ItemGroup>
+  <ItemDefinitionGroup>
+    <!-- Only global properties reach a referenced project. -->
+    <ProjectReference>
+      <AdditionalProperties>SolutionDir=$(SolutionDir)</AdditionalProperties>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <!-- Leaves of the libass chain first; libass.lib already contains them,
+         so they are built here but not linked a second time. -->
+    <ProjectReference Include="..\..\src\thirdparty\zlib\zlib.vcxproj">
+      <Project>{2fcd4b66-9cf9-4c8f-bc70-37cd20002d49}</Project>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\thirdparty\libiconv\libiconv.vcxproj">
+      <Project>{1704ea01-6b21-4362-9f1f-44d25cf2e0d7}</Project>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\thirdparty\fribidi\libfribidi.vcxproj">
+      <Project>{08091723-a142-478b-a092-20741ba8fae2}</Project>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\thirdparty\freetype2\freetype2.vcxproj">
+      <Project>{78b079bd-9fc7-4b9e-b4a6-96da0f00248b}</Project>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\thirdparty\harfbuzz\libharfbuzz.vcxproj">
+      <Project>{9db795b7-e8bd-4846-82a5-c6d2577b1aaf}</Project>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\thirdparty\libunibreak\libunibreak.vcxproj">
+      <Project>{51abbf2b-fb42-4d88-ab50-3ce956014b5c}</Project>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\thirdparty\libass\libass.vcxproj">
+      <Project>{19677dfd-c020-434d-9cb1-d0f105e72770}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\thirdparty\BaseClasses\BaseClasses.vcxproj">
+      <Project>{e8a3f6fa-ae1c-4c8e-a0b6-9c8480324eaa}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\thirdparty\unrar\unrar.vcxproj">
+      <Project>{da8461c4-7683-4360-9372-2a9e0f1795c2}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\thirdparty\tinyxml2\tinyxml2.vcxproj">
+      <Project>{e02f0c35-fb01-4059-90f9-9ac19dc22fba}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\DSUtil\DSUtil.vcxproj">
+      <Project>{fc70988b-1ae5-4381-866d-4f405e28ac42}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\SubPic\SubPic.vcxproj">
+      <Project>{d514ea4d-eafb-47a9-a437-a582ca571251}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Subtitles\Subtitles.vcxproj">
+      <Project>{5e56335f-0fb1-4eea-b240-d8dc5e0608e4}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

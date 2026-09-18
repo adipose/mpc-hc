@@ -1,0 +1,40 @@
+WEBVTT - written for the MPC-HC unit tests
+
+NOTE
+A comment block. It must not become a cue.
+
+1
+00:00:01.000 --> 00:00:02.500
+Plain first cue
+
+intro
+00:00:03.000 --> 00:00:04.000
+<i>italic</i> <b>bold</b> <u>underline</u>
+
+00:05.000 --> 00:06.250
+No hours in the timestamps
+
+00:00:07.000 --> 00:00:08.000
+<v Roger Bingham>Voice span</v> and <v.loud Neil>another</v>
+
+00:00:09.000 --> 00:00:10.000
+<c>class-less</c> <c.unknownclass>unknown class</c> <lang en-GB>language</lang>
+
+00:00:11.000 --> 00:00:12.000
+Karaoke <00:00:11.250>timestamps <00:00:11.500>vanish
+
+00:00:13.000 --> 00:00:14.000
+Tom &amp; Jerry: 1 &lt; 2 &gt; 0, non&nbsp;breaking, marks&lrm;&rlm; gone
+
+00:00:15.000 --> 00:00:16.000
+first line
+second line
+
+00:00:17.000 --> 00:00:18.000 align:start line:0 position:10%
+Aligned to the start
+
+00:00:19.000 --> 00:00:20.000 align:center
+Aligned to the centre
+
+00:00:21.000 --> 00:00:22.000 align:end
+Aligned to the end

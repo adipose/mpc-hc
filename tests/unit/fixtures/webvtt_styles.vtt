@@ -1,0 +1,31 @@
+WEBVTT
+
+STYLE
+::cue(.warn) {
+  color: #ff0000;
+}
+/* a comment between rules */
+::cue(.shade) { background-color: rgb(0, 0, 255); }
+::cue(c.both) { color: lime; background: #000080; }
+::cue(b) { color: yellow; }
+
+00:00:01.000 --> 00:00:02.000
+<c.warn>red text</c>
+
+00:00:03.000 --> 00:00:04.000
+<c.shade>blue background</c>
+
+00:00:05.000 --> 00:00:06.000
+<c.both>lime on black</c>
+
+00:00:07.000 --> 00:00:08.000
+<c.yellow>default class</c> then plain
+
+00:00:09.000 --> 00:00:10.000
+<c.bg_red>default background class</c>
+
+00:00:11.000 --> 00:00:12.000
+<b>styled bold</b>
+
+00:00:13.000 --> 00:00:14.000
+<c.warn>outer <c.yellow>inner</c> outer again</c>

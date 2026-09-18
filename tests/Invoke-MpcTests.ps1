@@ -12,8 +12,10 @@
     The suite contract -- what suites\<name>\Invoke-Suite.ps1 implements:
 
       -Probe        Print a readiness object and do nothing else:
-                      @{ Suite; Description; Ready; Reason }
-                    Probing is cheap and touches no rig.
+                      @{ Suite; Description; Ready; Reason [; NeedsRig] }
+                    Probing is cheap and touches no rig. NeedsRig defaults to
+                    true; a suite that runs no player (the unit tier) sets it
+                    false, and then the orchestrator claims no rig for it.
 
       (run)         Parameters -VMName (the claimed guest; empty on a
                     single-target bench), -OutDir (artefact directory,
@@ -105,9 +107,19 @@ New-Item -ItemType Directory -Force $OutDir | Out-Null
 
 # --- claim once, run everything ---------------------------------------------
 
+# A suite that runs no player -- the native unit tests -- declares NeedsRig
+# = $false in its probe. If nothing runnable needs a rig, none is claimed, so
+# the unit tier runs on a bare bench with no test guest in the pool.
+$needRig = @($runnable | Where-Object { $_.PSObject.Properties['NeedsRig'] -eq $null -or $_.NeedsRig -ne $false })
+
 . (Join-Path $TestsRoot 'emulator\tools\RigClaim.ps1')
-$claim = Enter-RigClaim -VMName $VMName
-Write-Host "rig: $($claim.Guest)" -ForegroundColor DarkGray
+if ($needRig) {
+    $claim = Enter-RigClaim -VMName $VMName
+    Write-Host "rig: $($claim.Guest)" -ForegroundColor DarkGray
+} else {
+    $claim = @{ Guest = '' }
+    Write-Host 'rig: none needed (no runnable suite requires one)' -ForegroundColor DarkGray
+}
 
 $results = [System.Collections.Generic.List[object]]::new()
 try {
@@ -129,7 +141,7 @@ try {
         $results.Add($entry)
     }
 } finally {
-    Exit-RigClaim -Claim $claim
+    if ($needRig) { Exit-RigClaim -Claim $claim }
 }
 
 # --- summarise --------------------------------------------------------------

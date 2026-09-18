@@ -8,7 +8,14 @@ that never initialises the submodules is unaffected by it.
 
 ```
 Invoke-MpcTests.ps1   the orchestrator: probes every suite, claims a test
-                      rig once, runs what is runnable, aggregates results
+                      rig once (only if a runnable suite needs one), runs what
+                      is runnable, aggregates results
+unit/                 native unit tests: a console exe linking the player's
+                      DSUtil/Subtitles/SubPic static libraries and exercising
+                      pure logic (parsers, path/text/language helpers) with
+                      fixture input -- no player, no rig, runs in seconds. A
+                      small in-tree harness (MpcTest.h), a fixture corpus, and
+                      Invoke-UnitTests.ps1 to build and run it
 emulator/             bda-vtuner (submodule): virtual DVB/ATSC BDA tuner
                       driver, generated transport streams, encoding matrix,
                       and the host-to-target transport every suite uses
@@ -16,6 +23,8 @@ cast-mock/            castv2-mock-device (submodule): mock Google Cast
                       receiver -- mDNS, TLS, CastV2 protobuf, adversarial
                       failure switches
 suites/
+  unit/               the unit tier as a suite: builds and runs unit/, needs
+                      no rig (its probe reports NeedsRig = $false)
   dvb/                Digital TV: headless tuner scans (/dvbscan) against
                       the virtual tuner, channel records asserted against
                       the emulator's encoding matrix; deeper standalone
@@ -24,6 +33,24 @@ suites/
   chromecast/         Cast sender behaviour against the mock receiver
                       (scaffold; see its README)
 ```
+
+## Unit tests
+
+The unit tier stands apart from the rest of the framework: it runs no player
+and needs no rig, so it is the one tier that works on a bare bench.
+
+```powershell
+.\tests\unit\Invoke-UnitTests.ps1 -InitSubmodules   # first run: fetch libs, build, run
+.\tests\unit\Invoke-UnitTests.ps1                   # thereafter: incremental build + run
+.\tests\unit\Invoke-UnitTests.ps1 -NoBuild WebVTT,TextFile   # a subset, no rebuild
+.\tests\unit\Invoke-UnitTests.ps1 -NoBuild -List
+.\tests\Invoke-MpcTests.ps1 -Suite unit             # or through the orchestrator
+```
+
+It needs a Visual Studio with the C++ toolset and `nasm.exe` on `PATH` (libass
+assembles its kernels with it), the same as the player's own build. The build
+step fetches the submodules the linked libraries need. Tests, fixtures and the
+harness live in `tests\unit`; the orchestrator wrapper is `suites\unit`.
 
 A suite is `suites/<name>/` with a README and an `Invoke-Suite.ps1`
 implementing the contract documented in `Invoke-MpcTests.ps1`: `-Probe`

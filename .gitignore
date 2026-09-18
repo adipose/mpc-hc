@@ -47,4 +47,5 @@ ipch
 # regenerated, not archived.
 tests/testbed.config.psd1
 tests/results/
+tests/unit/results/
 tests/suites/*/results/
