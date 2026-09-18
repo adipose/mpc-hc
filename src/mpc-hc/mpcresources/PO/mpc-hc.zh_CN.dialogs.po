@@ -327,7 +327,7 @@ msgstr "记住文件的播放位置"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_DVD_POS"
 msgid "Remember DVD position"
-msgstr "记住 DVD 播放位置"
+msgstr "记住DVD的播放位置"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK6"
 msgid "Remember last window position"
