@@ -88,7 +88,7 @@ msgstr "启用内置音频切换滤镜 (需要重新启动)"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK5"
 msgid "Normalize"
-msgstr "归一化"
+msgstr "音量标准化"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC4"
 msgid "Max amplification:"
