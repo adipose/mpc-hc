@@ -227,9 +227,9 @@ TEST_CASE(WebVTT_StyleRuleColourFirstDeclarationIsApplied)
     CHECK_EQ(sts.GetStrW(S_BOTH), L"lime on black");
 }
 
-TEST_CASE_EXPECTED_FAILURE(WebVTT_StyleRuleWithColourAndBackground,
-                           "current bug: since #1806 anchored the declaration regex at the start of the rule body, only the FIRST "
-                           "declaration of a ::cue rule is read; '{ color: lime; background: #000080; }' loses its background")
+// #4216: from #1806 until then only the FIRST declaration of a ::cue rule was
+// read, so '{ color: lime; background: #000080; }' lost its background.
+TEST_CASE(WebVTT_StyleRuleWithColourAndBackground)
 {
     CSimpleTextSubtitle sts;
     REQUIRE(OpenFixture(sts, L"webvtt_styles.vtt"));
@@ -238,9 +238,9 @@ TEST_CASE_EXPECTED_FAILURE(WebVTT_StyleRuleWithColourAndBackground,
     CHECK(sts[S_BOTH].str.Find(L"{\\3c&H800000&}") >= 0);
 }
 
-TEST_CASE_EXPECTED_FAILURE(WebVTT_BlackIsBlack,
-                           "current bug: SSAColorTag treats a parsed value of 0 as 'could not parse' and substitutes white, so the default "
-                           "class .black, '#000000' and rgb(0,0,0) all render white (the named colour 'black' works)")
+// #4216: SSAColorTag treated a parsed value of 0 as 'could not parse' and
+// substituted white, so .black, '#000000' and rgb(0,0,0) all rendered white.
+TEST_CASE(WebVTT_BlackIsBlack)
 {
     CSimpleTextSubtitle sts;
     REQUIRE(OpenText(sts, L"black.vtt",

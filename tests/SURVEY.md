@@ -267,9 +267,11 @@ with a suite so far, is the smallest row in the table.
    `SubPic` and `DSUtil` with a fixture corpus, run by
    `tests/unit/Invoke-UnitTests.ps1` or as the `unit` suite. Highest yield
    per hour, no rig, and the natural home for a test accompanying every
-   parser fix. Its first pass already documents five open bugs as expected
-   failures. Playlist, MPLS and INI logic still need extracting from MFC
-   classes before it can reach them.
+   parser fix. Its first pass found six bugs in the parsers; within a day
+   five were fixed (#4216, #4217) and the sixth was dead code and removed
+   (#4215), and the tests that found them are now their regression tests.
+   Playlist, MPLS and INI logic still need extracting from MFC classes
+   before it can reach them.
 2. `tests/lint/` for resources and translations is nearly free and aims at
    the most frequently reported cosmetic class.
 3. For integration, keep the command line and `/slave`; do not invent a

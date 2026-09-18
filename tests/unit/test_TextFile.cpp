@@ -139,9 +139,9 @@ TEST_CASE(TextFile_InvalidUtf8AfterABomIsReplacedNotReinterpreted)
     CHECK_EQ(f.GetEncoding(), CTextFile::UTF8);
 }
 
-TEST_CASE_EXPECTED_FAILURE(TextFile_InvalidUtf8AfterABomDoesNotSplitTheLine,
-                           "current bug: in the UTF-8 branch of CTextFile::ReadString an invalid byte ends the read loop (bValid stays false), "
-                           "so in a file with a BOM the line is returned in two pieces, 'ab?' and 'cd'")
+// #4217: in the UTF-8 branch of CTextFile::ReadString an invalid byte used to
+// end the read loop, so in a file with a BOM the line came back in two pieces.
+TEST_CASE(TextFile_InvalidUtf8AfterABomDoesNotSplitTheLine)
 {
     CTextFile f(CTextFile::UTF8);
     REQUIRE(f.Open(WriteTemp(L"bom-bad2.txt", std::string("\xEF\xBB\xBF" "ab\xFF" "cd\n"))));
@@ -207,9 +207,9 @@ TEST_CASE(TextFile_LoneCarriageReturnEndsALine)
     CHECK_EQ(lines[1], L"last");
 }
 
-TEST_CASE_EXPECTED_FAILURE(TextFile_LoneCarriageReturnEndsALineUtf8,
-                           "current bug (harmless to the subtitle parsers, which trim): the UTF-8 branch of CTextFile::ReadString ends the line "
-                           "at a lone CR but leaves the CR in the returned string, unlike the UTF-16 and ANSI branches")
+// #4217: the UTF-8 branch of CTextFile::ReadString ended the line at a lone CR
+// but left the CR in the returned string, unlike the UTF-16 and ANSI branches.
+TEST_CASE(TextFile_LoneCarriageReturnEndsALineUtf8)
 {
     CTextFile f(CTextFile::UTF8);
     REQUIRE(f.Open(WriteTemp(L"cr-utf8.txt", std::string("old mac\rlast"))));
@@ -229,9 +229,10 @@ TEST_CASE(TextFile_DuplicateUtf8Bom)
     CHECK_EQ(lines[0], L"text");
 }
 
-TEST_CASE_EXPECTED_FAILURE(TextFile_DuplicateUtf16LeBom,
-                           "current bug: the duplicate-BOM workaround in CTextFile::FillBuffer tests for FF EF where the UTF-16 LE BOM is FF FE "
-                           "(the big-endian FE FF beside it is right), so a second LE BOM is returned as U+FEFF at the start of the first line")
+// #4217: the duplicate-BOM workaround in CTextFile::FillBuffer tested for
+// FF EF where the UTF-16 LE BOM is FF FE, so a second LE BOM leaked into the
+// first line as U+FEFF.
+TEST_CASE(TextFile_DuplicateUtf16LeBom)
 {
     CTextFile f(CTextFile::UTF8);
     REQUIRE(f.Open(WriteTemp(L"bom2-le.txt", "\xFF\xFE" + Utf16(L"text\n", false))));
