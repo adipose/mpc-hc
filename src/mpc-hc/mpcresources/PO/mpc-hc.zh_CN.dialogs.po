@@ -443,7 +443,7 @@ msgstr "重复模式:"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "After Playback"
-msgstr "回放结束后"
+msgstr "播放结束后"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "Zoom and Alignment"
@@ -654,7 +654,7 @@ msgstr "默认"
 
 msgctxt "IDD_PPAGETWEAKS_IDC_CHECK3"
 msgid "Auto-hide the mouse pointer during playback in windowed mode"
-msgstr "在窗口模式回放时自动隐藏鼠标指针"
+msgstr "在窗口模式播放时自动隐藏鼠标指针"
 
 msgctxt "IDD_PPAGETWEAKS_IDC_CHECK_LCD"
 msgid "Enable Logitech LCD support (experimental)"
@@ -1449,7 +1449,7 @@ msgstr "分离控制栏窗口"
 
 msgctxt "IDD_PPAGEFULLSCREEN_IDC_CHECK5"
 msgid "Exit fullscreen at the end of playback"
-msgstr "在回放结束后退出全屏幕"
+msgstr "在播放结束后退出全屏幕"
 
 msgctxt "IDD_PPAGEFULLSCREEN_IDC_CHECK4"
 msgid "Hide controls in fullscreen"
