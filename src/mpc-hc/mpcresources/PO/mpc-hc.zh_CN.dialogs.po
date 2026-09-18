@@ -777,7 +777,7 @@ msgstr "记住位置"
 
 msgctxt "IDD_FAVADD_IDC_CHECK3"
 msgid "Remember A-B repeat marks"
-msgstr "记住A-B重复标记"
+msgstr "记住A-B重复标记点"
 
 msgctxt "IDD_FAVADD_IDC_CHECK2"
 msgid "Relative drive"
