@@ -1997,7 +1997,7 @@ msgstr "在 RAR 中选取媒体"
 
 msgctxt "IDD_RAR_ENTRY_SELECTOR_IDOK"
 msgid "Select"
-msgstr "选取"
+msgstr "选择"
 
 msgctxt "IDD_RAR_ENTRY_SELECTOR_IDCANCEL"
 msgid "Cancel"
