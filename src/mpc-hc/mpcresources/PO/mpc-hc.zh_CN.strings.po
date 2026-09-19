@@ -5079,7 +5079,7 @@ msgstr "退出全屏"
 
 msgctxt "IDS_AG_SHOW_PLAYLIST"
 msgid "Show Playlist"
-msgstr "播放列表"
+msgstr "显示播放列表"
 
 msgctxt "IDS_AG_HIDE_PLAYLIST"
 msgid "Hide Playlist"
