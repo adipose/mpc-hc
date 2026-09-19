@@ -49,3 +49,6 @@
 [submodule "src/thirdparty/ResizableLib/ResizableLib"]
 	path = src/thirdparty/ResizableLib/ResizableLib
 	url = https://github.com/adipose/resizablelib
+[submodule "tests"]
+	path = tests
+	url = https://github.com/adipose/mpc-hc-tests.git
