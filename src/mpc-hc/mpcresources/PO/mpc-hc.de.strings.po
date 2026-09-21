@@ -10,14 +10,13 @@
 # Nico, 2025
 # MPC HC <adiposegithub@gmail.com>, 2025
 # Maik Dießner, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-21 12:45+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-11 12:44:22+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Maik Dießner, 2026\n"
 "Language-Team: German (https://app.transifex.com/mpchc/teams/106126/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -962,8 +961,8 @@ msgid ""
 "If there is no Pixel Shader 2.0 support, simple bilinear is used "
 "automatically."
 msgstr ""
-"Verwendet ohne Pixel-Shader 2.0 automatisch den einfachen bilinearer "
-"Resizer."
+"Wenn keine Unterstützung für Pixel-Shader 2.0 vorhanden ist, wird "
+"automatisch die einfache bilineare Interpolation verwendet."
 
 msgctxt "IDC_DSVMR9LOADMIXER"
 msgid ""
