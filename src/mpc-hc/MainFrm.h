@@ -558,6 +558,7 @@ private:
 
     volatile LONG m_ActiveGraphNotifyEvCode = 0;
     volatile bool m_OnClose_called = false;
+    volatile bool m_OnClose_queued = false;
 
     bool m_bSettingUpMenus;
     volatile bool m_bOpenMediaActive;
