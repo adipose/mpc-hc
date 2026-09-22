@@ -2,16 +2,15 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
+# MPC HC <adiposegithub@gmail.com>, 2026
 # Marián Hikaník, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-22 11:36+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-21 12:13:34+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Marián Hikaník, 2026\n"
 "Language-Team: Slovak (https://app.transifex.com/mpchc/teams/106126/sk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4791,6 +4790,11 @@ msgid ""
 "the found channels as JSON, /dvbbandwidth kHz and /dvbsymbolrate N override "
 "the saved scan settings"
 msgstr ""
+"/dvbscan start-stop\tSkenovanie predvoleného digitálneho zaznamenávacieho "
+"zariadenia od začiatku po zastavenie (kHz), bez dialógu pre skenovanie. "
+"Potom nasleduje ukončenie. /dvbscanout \"súbor\" zapíše nájdené kanály ako "
+"JSON, /dvbbandwidth kHz a /dvbsymbolrate N potlačí uložené nastavenia "
+"skenovania"
 
 msgctxt "IDS_CMD_DVBSCANSAVE"
 msgid ""
@@ -4798,6 +4802,9 @@ msgid ""
 "channels found and make the first one the current channel. The saved list is"
 " kept when nothing is found"
 msgstr ""
+"/dvbscansave\tVoľba /dvbscan sa nahradí zoznam uložených kanálov nájdenými "
+"kanálmi a prvý z nich bude aktuálnym kanálom. Ak sa nenašlo nič, zostane "
+"zachovaný uložený zoznam"
 
 msgctxt "IDS_MESSAGEBOX_CANCEL"
 msgid "Cancel"
