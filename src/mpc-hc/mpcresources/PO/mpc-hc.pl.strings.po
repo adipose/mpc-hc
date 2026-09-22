@@ -9,14 +9,13 @@
 # Krzysztof, 2024
 # Mirosław Żylewicz, 2025
 # Łukasz Janik, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-22 11:36+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-21 12:13:34+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Łukasz Janik, 2026\n"
 "Language-Team: Polish (https://app.transifex.com/mpchc/teams/106126/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4808,6 +4807,11 @@ msgid ""
 "the found channels as JSON, /dvbbandwidth kHz and /dvbsymbolrate N override "
 "the saved scan settings"
 msgstr ""
+"/dvbscan start-stop\tSkanuj domyślne cyfrowe urządzenie przechwytujące od "
+"częstotliwości początkowej do końcowej (kHz) bez wyświetlania okna "
+"skanowania, a następnie zakończ działanie. /dvbscanout \"file\" zapisuje "
+"znalezione kanały w formacie JSON. /dvbbandwidth kHz i /dvbsymbolrate N "
+"zastępują zapisane ustawienia skanowania"
 
 msgctxt "IDS_CMD_DVBSCANSAVE"
 msgid ""
@@ -4815,6 +4819,9 @@ msgid ""
 "channels found and make the first one the current channel. The saved list is"
 " kept when nothing is found"
 msgstr ""
+"/dvbscansave\tWraz z /dvbscan zastępuje zapisaną listę kanałów znalezionymi "
+"kanałami i ustawia pierwszy z nich jako bieżący kanał. Zapisana lista "
+"zostaje zachowana, jeśli nie znaleziono żadnych kanałów."
 
 msgctxt "IDS_MESSAGEBOX_CANCEL"
 msgid "Cancel"
