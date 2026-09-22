@@ -4821,7 +4821,7 @@ msgid ""
 msgstr ""
 "/dvbscansave\tWraz z /dvbscan zastępuje zapisaną listę kanałów znalezionymi "
 "kanałami i ustawia pierwszy z nich jako bieżący kanał. Zapisana lista "
-"zostaje zachowana, jeśli nie znaleziono żadnych kanałów."
+"zostaje zachowana, jeśli nie znaleziono żadnych kanałów"
 
 msgctxt "IDS_MESSAGEBOX_CANCEL"
 msgid "Cancel"
