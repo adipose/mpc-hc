@@ -10,13 +10,14 @@
 # Nico, 2025
 # MPC HC <adiposegithub@gmail.com>, 2025
 # Maik Dießner, 2026
+# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-09-11 12:44:22+0000\n"
-"PO-Revision-Date: 2020-01-02 07:46+0000\n"
-"Last-Translator: Maik Dießner, 2026\n"
+"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
+"PO-Revision-Date: 2026-09-22 11:36+0000\n"
+"Last-Translator: Transifex sync (Studio)\n"
 "Language-Team: German (https://app.transifex.com/mpchc/teams/106126/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4804,6 +4805,21 @@ msgid ""
 msgstr ""
 "Dieses Untertitelformat kann nicht als zweite Untertitelspur verwendet "
 "werden. Es werden nur einfache Textformate wie SRT unterstützt."
+
+msgctxt "IDS_CMD_DVBSCAN"
+msgid ""
+"/dvbscan start-stop\tScan the default digital capture device from start to "
+"stop (kHz) without the scan dialog, then exit. /dvbscanout \"file\" writes "
+"the found channels as JSON, /dvbbandwidth kHz and /dvbsymbolrate N override "
+"the saved scan settings"
+msgstr ""
+
+msgctxt "IDS_CMD_DVBSCANSAVE"
+msgid ""
+"/dvbscansave\tWith /dvbscan, replace the saved channel list with the "
+"channels found and make the first one the current channel. The saved list is"
+" kept when nothing is found"
+msgstr ""
 
 msgctxt "IDS_MESSAGEBOX_CANCEL"
 msgid "Cancel"
