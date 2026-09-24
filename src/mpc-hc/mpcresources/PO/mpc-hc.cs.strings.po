@@ -5,14 +5,13 @@
 # MPC HC <adiposegithub@gmail.com>, 2020
 # Jindřich T, 2026
 # Michal Várady <miko.vaji@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-24 11:42+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-23 13:11:48+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Michal Várady <miko.vaji@gmail.com>, 2026\n"
 "Language-Team: Czech (https://app.transifex.com/mpchc/teams/106126/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5452,3 +5451,11 @@ msgid ""
 "To increase loudness of voices, set center mix level to 1.0 in the mixing settings.\n"
 "2) Enable Normalize"
 msgstr ""
+"VAROVÁNÍ: Zesílení hlasitosti může v některých případech zhoršit kvalitu zvuku, pokud signál překročí povolený rozsah.\n"
+"\n"
+"Existují dva lepší a bezpečnější způsoby, jak zvýšit hlasitost:\n"
+"1) Zapněte směšování v nastavení interního dekodéru zvuku.\n"
+"Interní filtry > Dekodér zvuku > Mixing\n"
+"Tento postup se doporučuje při použití stereofonních reproduktorů nebo sluchátek.\n"
+"Chcete-li zvýšit hlasitost hlasů, nastavte v nastavení směšování úroveň středového kanálu na 1.0.\n"
+"2) Zapněte volbu Normalizace."
