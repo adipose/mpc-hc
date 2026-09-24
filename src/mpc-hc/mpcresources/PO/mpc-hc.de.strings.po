@@ -10,14 +10,13 @@
 # Nico, 2025
 # MPC HC <adiposegithub@gmail.com>, 2025
 # Maik Dießner, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-24 11:42+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-23 13:11:48+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Maik Dießner, 2026\n"
 "Language-Team: German (https://app.transifex.com/mpchc/teams/106126/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5491,3 +5490,10 @@ msgid ""
 "To increase loudness of voices, set center mix level to 1.0 in the mixing settings.\n"
 "2) Enable Normalize"
 msgstr ""
+"WARNUNG: Das Erhöhen der Lautstärke kann sich in manchen Situationen aufgrund von Übersteuerung negativ auf die Audioqualität auswirken.\n"
+"\n"
+"Es gibt zwei bessere und sicherere Methoden, um die Lautstärke zu erhöhen:\n"
+"\n"
+"1) \"Enable Mixing\" in den Einstellungen des internen Audio-Decoders aktivieren: Interne Filter > Audio-Decoder > Mixing (Dies wird empfohlen, wenn Stereolautsprecher oder Kopfhörer verwendet werden. Um die Lautstärke von Stimmen zu erhöhen, \"Center Mix Level\" auf 1.0 setzen.)\n"
+"\n"
+"2) \"Ton normalisieren\" aktivieren"
