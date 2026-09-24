@@ -1754,7 +1754,6 @@ static bool LoadUUEFont(CTextFile* file, CString firstfontname)
 bool OpenSubStationAlpha(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet)
 {
     bool fRet = false;
-    int style_version = 3;
     CStringW buff;
     int ignore_count = 0;
     bool first_line = true;
@@ -1926,7 +1925,7 @@ bool OpenSubStationAlpha(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet)
                     style->relativeTo = (STSStyle::RelativeTo)GetInt(pszBuff, nBuffLength);
                 }
 
-                if (style_version <= 4)  {
+                if (style_param == style_param_v4 || style_param == style_param_v3 || style_param == style_param_var1)  {
                     style->colors[2] = style->colors[3];    // style->colors[2] is used for drawing the outline
                     alpha = std::max(std::min(alpha, 0xff), 0);
                     for (size_t i = 0; i < 3; i++) {
@@ -1934,7 +1933,7 @@ bool OpenSubStationAlpha(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet)
                     }
                     style->alpha[3] = 0x80;
                 }
-                if (style_version >= 5) {
+                if (style_param == style_param_v4p || style_param == style_param_v4pp)  {
                     for (size_t i = 0; i < 4; i++) {
                         style->alpha[i] = (BYTE)(style->colors[i] >> 24);
                         style->colors[i] &= 0xffffff;
@@ -1948,7 +1947,7 @@ bool OpenSubStationAlpha(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet)
                 style->outlineWidthY = std::max(style->outlineWidthY, 0.0);
                 style->shadowDepthX = std::max(style->shadowDepthX, 0.0);
                 style->shadowDepthY = std::max(style->shadowDepthY, 0.0);
-                if (style_version <= 4) {
+                if (style_param == style_param_v4 || style_param == style_param_v3 || style_param == style_param_var1)  {
                     style->scrAlignment = (style->scrAlignment & 4) ? ((style->scrAlignment & 3) + 6) // top
                                           : (style->scrAlignment & 8) ? ((style->scrAlignment & 3) + 3) // mid
                                           : (style->scrAlignment & 3); // bottom
@@ -2021,15 +2020,12 @@ bool OpenSubStationAlpha(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet)
             }
         } else if (entry == L"scripttype") {
             if (buff.GetLength() >= 4 && !buff.Right(4).CompareNoCase(L"4.00")) {
-                style_version = 4;
                 style_param = style_param_v4;
                 ret.event_param = event_param_v4;
             } else if (buff.GetLength() >= 5 && !buff.Right(5).CompareNoCase(L"4.00+")) {
-                style_version = 5;
                 style_param = style_param_v4p;
                 ret.event_param = event_param_v4p;
             } else if (buff.GetLength() >= 6 && !buff.Right(6).CompareNoCase(L"4.00++")) {
-                style_version = 6;
                 style_param = style_param_v4pp;
                 ret.event_param = event_param_v4pp;
             }
