@@ -12,14 +12,13 @@
 # Fentanyl, 2026
 # Phonebook3599, 2026
 # YuanHao Du, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-25 11:49+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-23 13:11:48+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: YuanHao Du, 2026\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/mpchc/teams/106126/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4178,7 +4177,7 @@ msgstr "就绪..."
 
 msgctxt "IDS_CMD_PNS"
 msgid "/pns \"name\"\tSpecify PnS Frame Adjust Preset to use (for example: /pns \"%s\")"
-msgstr "/pns \"name\" 指定使用的画面平移与缩放 (PnS) 预设(例如：/pns \"%s\")"
+msgstr "/pns \"name\" 指定使用的画面平移与缩放 (PnS) 预设(例如：/pns \"1%\")"
 
 msgctxt "IDS_CMD_PNS_VALUES"
 msgid ""
@@ -5313,3 +5312,12 @@ msgid ""
 "To increase loudness of voices, set center mix level to 1.0 in the mixing settings.\n"
 "2) Enable Normalize"
 msgstr ""
+"警告：在某些情况下，提高音频音量会因溢出而对音频质量产生负面影响。\n"
+"有两种更好且更安全的增大音量方法：\n"
+"\n"
+"1、在内部音频解码器设置中启用混音。\n"
+"内部滤镜 > 音频解码器 > 混音\n"
+"如果你使用立体声扬声器或耳机，建议使用此方法。\n"
+"要增加人声响度，请在混音设置中将中央混音电平设为 1.0。\n"
+"\n"
+"2、启用规范化"
