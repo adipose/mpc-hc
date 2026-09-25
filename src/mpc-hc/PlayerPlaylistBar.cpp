@@ -567,12 +567,12 @@ static CString CombinePath(CString base, CString fn, bool base_is_url)
     return base + fn;
 }
 
-static CString CombinePath(CPath p, CString fn)
+static CString CombinePath(CLongPath p, CString fn)
 {
     if (PathUtils::IsFullFilePath(fn)) {
         return fn;
     }
-    p.Append(CPath(fn));
+    p.Append(CLongPath(fn));
     return (LPCTSTR)p;
 }
 
@@ -582,7 +582,7 @@ bool CPlayerPlaylistBar::ParseBDMVPlayList(CString fn)
     CString strPlaylistFile;
     CHdmvClipInfo::HdmvPlaylist MainPlaylist;
 
-    CPath Path(fn);
+    CLongPath Path(fn);
     Path.RemoveFileSpec();
     Path.RemoveFileSpec();
 
@@ -621,7 +621,7 @@ bool CPlayerPlaylistBar::ParseCUESheet(CString cuefn) {
         }
     }
     else {
-        CPath basefilepath(cuefn);
+        CLongPath basefilepath(cuefn);
         basefilepath.RemoveFileSpec();
         basefilepath.AddBackslash();
         base = basefilepath.m_strPath;
@@ -690,7 +690,7 @@ bool CPlayerPlaylistBar::ParseCUESheet(CString cuefn) {
         trackl.AddTail(track);
     }
 
-    CPath cp(cuefn);
+    CLongPath cp(cuefn);
     CString fn_no_ext;
     CString fdir;
     if (cp.FileExists()) {
@@ -773,7 +773,7 @@ bool CPlayerPlaylistBar::ParseM3UPlayList(CString fn, bool* lav_fallback) {
         }
     }
     else {
-        CPath basefilepath(fn);
+        CLongPath basefilepath(fn);
         basefilepath.RemoveFileSpec();
         basefilepath.AddBackslash();
         base = basefilepath.m_strPath;
@@ -874,7 +874,7 @@ bool CPlayerPlaylistBar::ParseMPCPlayList(CString fn)
         return false;
     }
 
-    CPath base(fn);
+    CLongPath base(fn);
     base.RemoveFileSpec();
 
     while (f.ReadString(str)) {
@@ -955,7 +955,7 @@ bool CPlayerPlaylistBar::ParseMPCPlayList(CString fn)
 
 bool CPlayerPlaylistBar::PlaylistCanStripPath(CString path)
 {
-    CPath p(path);
+    CLongPath p(path);
     p.RemoveFileSpec();
     CString base = p.m_strPath + L"\\";
     int baselen = base.GetLength();
@@ -1014,7 +1014,7 @@ bool CPlayerPlaylistBar::SaveMPCPlayList(CString fn, CTextFile::enc e)
 
     bool bRemovePath = PlaylistCanStripPath(fn);
 
-    CPath pl_path(fn);
+    CLongPath pl_path(fn);
     pl_path.RemoveFileSpec();
     CString pl_path_str = pl_path.m_strPath + L"\\";
     int pl_path_len = pl_path_str.GetLength();
@@ -1148,7 +1148,7 @@ void CPlayerPlaylistBar::Open(CAtlList<CString>& fns, bool fMulti, CAtlList<CStr
     Empty();
     Append(fns, fMulti, subs, label, ydl_src, ydl_ua, cue);
 
-    CString ext = CPath(fns.GetHead()).GetExtension().MakeLower();
+    CString ext = CLongPath(fns.GetHead()).GetExtension().MakeLower();
     if (!fMulti && (ext == _T(".mpcpl"))) {
         m_playListPath = fns.GetHead();
     }
@@ -1212,16 +1212,16 @@ void CPlayerPlaylistBar::OpenDVD(CString fn)
 
     CString fnifo;
     if (fn.Find(L".ifo") == -1) {
-        if (CPath(fn).IsDirectory()) {
+        if (CLongPath(fn).IsDirectory()) {
             fn = ForceTrailingSlash(fn);
             fnifo = fn + L"VIDEO_TS.IFO";
-            if (!CPath(fnifo).FileExists()) {
+            if (!CLongPath(fnifo).FileExists()) {
                 fnifo = fn + L"VIDEO_TS\\VIDEO_TS.IFO";
-                if (!CPath(fnifo).FileExists()) {
+                if (!CLongPath(fnifo).FileExists()) {
                     fnifo = fn + L"AUDIO_TS.IFO";
-                    if (!CPath(fnifo).FileExists()) {
+                    if (!CLongPath(fnifo).FileExists()) {
                         fnifo = fn + L"AUDIO_TS\\AUDIO_TS.IFO";
-                        if (!CPath(fnifo).FileExists()) {
+                        if (!CLongPath(fnifo).FileExists()) {
                             return;
                         }
                     }
@@ -1231,7 +1231,7 @@ void CPlayerPlaylistBar::OpenDVD(CString fn)
             return;
         }
     } else {
-        if (CPath(fn).FileExists()) {
+        if (CLongPath(fn).FileExists()) {
             fnifo = fn;
         } else {
             return;
@@ -1797,7 +1797,7 @@ void CPlayerPlaylistBar::LoadPlaylist(LPCTSTR filename)
     m_list.SetRedraw(FALSE);
 
     if (AfxGetMyApp()->GetPlaylistSavePath(base)) {
-        CPath p;
+        CLongPath p;
         p.Combine(base, _T("default.mpcpl"));
 
         if (p.FileExists()) {
@@ -1830,7 +1830,7 @@ void CPlayerPlaylistBar::SavePlaylist(bool can_delay /* = false*/)
     CString base;
 
     if (AfxGetMyApp()->GetPlaylistSavePath(base)) {
-        CPath p;
+        CLongPath p;
         p.Combine(base, _T("default.mpcpl"));
 
         if (AfxGetAppSettings().bRememberPlaylistItems) {
@@ -2713,7 +2713,7 @@ void CPlayerPlaylistBar::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
                 }
             }
 
-            CPath path(fd.GetPathName());
+            CLongPath path(fd.GetPathName());
 
             switch (idx) {
                 case 1:
@@ -2764,7 +2764,7 @@ void CPlayerPlaylistBar::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
                 /*
                 if (idx != 4 && PlaylistCanStripPath(path))
                 {
-                    CPath p(path);
+                    CLongPath p(path);
                     p.StripPath();
                     fn = (LPCTSTR)p;
                 }
