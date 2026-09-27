@@ -29,6 +29,7 @@
 #include <atlcoll.h>
 #include <atlpath.h>
 #include "MFCHelper.h"
+#include "PathUtils.h"
 #include "Utils.h"
 
 #define LCID_NOSUBTITLES -1
@@ -82,7 +83,7 @@ enum OpticalDiskType_t {
 };
 extern OpticalDiskType_t GetOpticalDiskType(TCHAR drive, CAtlList<CString>& files);
 extern CString GetDriveLabel(TCHAR drive);
-extern CString GetDriveLabel(CPath path);
+extern CString GetDriveLabel(CLongPath path);
 bool IsDriveVirtual(CString drive);
 extern bool GetKeyFrames(CString fn, CUIntArray& kfs);
 extern DVD_HMSF_TIMECODE RT2HMSF(REFERENCE_TIME rt, double fps = 0.0); // used to remember the current position
@@ -113,7 +114,6 @@ extern HRESULT GUIDFromCString(CString str, GUID& guid);
 extern CString CStringFromGUID(const GUID& guid);
 extern CStringW UTF8To16(LPCSTR utf8);
 extern CStringA UTF16To8(LPCWSTR utf16);
-extern CStringW UTF8ToStringW(const char* S);
 extern CStringW LocalToStringW(const char* S);
 extern BOOL CFileGetStatus(LPCTSTR lpszFileName, CFileStatus& status);
 extern bool DeleteRegKey(LPCTSTR pszKey, LPCTSTR pszSubkey);

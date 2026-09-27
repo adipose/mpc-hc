@@ -99,6 +99,7 @@ enum : UINT64 {
     CLSW_THUMBNAILS = CLSW_VOLUME << 1,
     CLSW_DVBSCAN = CLSW_THUMBNAILS << 1,
     CLSW_UNRECOGNIZEDSWITCH = CLSW_DVBSCAN << 1, // 48
+    CLSW_EMBEDDING = CLSW_UNRECOGNIZEDSWITCH << 1, // started by COM to serve an Explorer verb, see ShellDropTarget.h
 };
 
 enum MpcCaptionState {
@@ -805,6 +806,7 @@ public:
         ULONG   ulBandwidth;        // kHz; 0 means use iBDABandwidth
         ULONG   ulSymbolRate;       // 0 means use iBDASymbolRate
         CString strOutputPath;      // where the JSON is written
+        bool    bSaveChannels;      // /dvbscansave: the result becomes the saved channel list
     } cmdlnDVBScan;
 
     // Internal Filters

@@ -970,6 +970,8 @@ BOOL CPPageAccelTbl::OnInitDialog()
     m_list.SetColumnWidth(COL_KEY, LVSCW_AUTOSIZE);
     m_list.SetColumnWidth(COL_ID, LVSCW_AUTOSIZE_USEHEADER);
 
+    m_list.SetWindowPos(GetDlgItem(IDC_EDIT3), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+
     // subclass the keylist control
     OldControlProc = (WNDPROC)SetWindowLongPtr(m_list.m_hWnd, GWLP_WNDPROC, (LONG_PTR)ControlProc);
 

@@ -2729,6 +2729,7 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
     cmdlnDVBScan.ulBandwidth = 0;
     cmdlnDVBScan.ulSymbolRate = 0;
     cmdlnDVBScan.strOutputPath.Empty();
+    cmdlnDVBScan.bSaveChannels = false;
 
     POSITION pos = cmdln.GetHeadPosition();
     while (pos) {
@@ -2749,6 +2750,8 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
                 nCLSwitches |= CLSW_MINIMIZED;
             } else if (sw == _T("new")) {
                 nCLSwitches |= CLSW_NEW;
+            } else if (sw == _T("embedding")) { // COM appends -Embedding when it starts a local server
+                nCLSwitches |= CLSW_EMBEDDING;
             } else if (sw == _T("help") || sw == _T("h") || sw == _T("?")) {
                 nCLSwitches |= CLSW_HELP;
             } else if (sw == _T("dub") && pos) {
@@ -2897,6 +2900,10 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
                 cmdlnDVBScan.ulBandwidth = _tcstoul(cmdln.GetNext(pos), nullptr, 10);
             } else if (sw == _T("dvbsymbolrate") && pos) {
                 cmdlnDVBScan.ulSymbolRate = _tcstoul(cmdln.GetNext(pos), nullptr, 10);
+            } else if (sw == _T("dvbscansave")) {
+                // Only means anything together with /dvbscan; see
+                // CMainFrame::FinishHeadlessDVBScan for what gets stored.
+                cmdlnDVBScan.bSaveChannels = true;
             } else if (sw == _T("debug")) {
                 fShowDebugInfo = true;
             } else if (sw == _T("nocrashreporter")) {

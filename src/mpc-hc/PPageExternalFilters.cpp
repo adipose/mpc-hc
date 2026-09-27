@@ -421,19 +421,27 @@ void CPPageExternalFilters::OnAddRegistered()
 void CPPageExternalFilters::OnRemoveFilter()
 {
     POSITION pos = m_filters.GetFirstSelectedItemPosition();
-    ASSERT(pos);
-    int i = m_filters.GetNextSelectedItem(pos);
-    m_pFilters.RemoveAt((POSITION)m_filters.GetItemData(i));
-    m_filters.DeleteItem(i);
-
-    if (i >= m_filters.GetItemCount()) {
-        i--;
+    if (pos) {
+        int i = m_filters.GetNextSelectedItem(pos);
+        POSITION pos2 = (POSITION)m_filters.GetItemData(i);
+        if (!m_pFilters.IsEmpty() && pos2) {
+            m_pFilters.RemoveAt(pos2);
+            m_filters.DeleteItem(i);
+            if (i >= m_filters.GetItemCount()) {
+                i--;
+            }
+            if (i >= 0) {
+                m_filters.SetItemState(i, LVIS_SELECTED, LVIS_SELECTED);
+                m_filters.SetSelectionMark(i);
+            }
+            OnFilterSelectionChange();
+            SetModified();
+        } else {
+            ASSERT(false);
+        }
+    } else {
+        ASSERT(false);
     }
-    m_filters.SetItemState(i, LVIS_SELECTED, LVIS_SELECTED);
-    m_filters.SetSelectionMark(i);
-    OnFilterSelectionChange();
-
-    SetModified();
 }
 
 void CPPageExternalFilters::OnMoveFilterUp()

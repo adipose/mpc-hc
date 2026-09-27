@@ -25,6 +25,7 @@
 #include "winddk/devioctl.h"
 #include "winddk/ntddcdrm.h"
 #include "DSUtil.h"
+#include "PathUtils.h"
 #include "Mpeg2Def.h"
 #include <emmintrin.h>
 #include <d3d9.h>
@@ -853,10 +854,10 @@ CString GetDriveLabel(TCHAR drive)
     CString path;
     path.Format(_T("%c:\\"), drive);
 
-    return GetDriveLabel(CPath(path));
+    return GetDriveLabel(CLongPath(path));
 }
 
-CString GetDriveLabel(CPath path)
+CString GetDriveLabel(CLongPath path)
 {
     CString label;
     path.StripToRoot();
@@ -1439,20 +1440,20 @@ CString MakeFullPath(LPCTSTR path)
         if (full[1] != '\\') {
             CString fn;
             fn.ReleaseBuffer(GetModuleFileName(AfxGetInstanceHandle(), fn.GetBuffer(MAX_PATH), MAX_PATH));
-            CPath p(fn);
+            CLongPath p(fn);
             p.StripToRoot();
             full = CString(p) + full.Mid(1);
         }
     } else if (full.Find(_T(":\\")) < 0) {
         CString fn;
         fn.ReleaseBuffer(GetModuleFileName(AfxGetInstanceHandle(), fn.GetBuffer(MAX_PATH), MAX_PATH));
-        CPath p(fn);
+        CLongPath p(fn);
         p.RemoveFileSpec();
         p.AddBackslash();
         full = CString(p) + full;
     }
 
-    CPath c(full);
+    CLongPath c(full);
     c.Canonicalize();
     return CString(c);
 }
@@ -1543,58 +1544,6 @@ CStringA UTF16To8(LPCWSTR utf16)
         return str;
     }
     str.ReleaseBuffer(WideCharToMultiByte(CP_UTF8, 0, utf16, -1, str.GetBuffer(n), n + 1, nullptr, nullptr) - 1);
-    return str;
-}
-
-CStringW UTF8ToStringW(const char* S)
-{
-    CStringW str;
-    if (S == nullptr) {
-        return str;
-    }
-
-    // Don't use MultiByteToWideChar(), some characters are not well decoded
-    const unsigned char* Z = (const unsigned char*)S;
-    while (*Z) { //0 is end
-        //1 byte
-        if (*Z < 0x80) {
-            str += (wchar_t)(*Z);
-            Z++;
-        }
-        //2 bytes
-        else if ((*Z & 0xE0) == 0xC0) {
-            if ((*(Z + 1) & 0xC0) == 0x80) {
-                str += (wchar_t)((((wchar_t)(*Z & 0x1F)) << 6) | (*(Z + 1) & 0x3F));
-                Z += 2;
-            } else {
-                str.Empty();
-                return str; //Bad character
-            }
-        }
-        //3 bytes
-        else if ((*Z & 0xF0) == 0xE0) {
-            if ((*(Z + 1) & 0xC0) == 0x80 && (*(Z + 2) & 0xC0) == 0x80) {
-                str += (wchar_t)((((wchar_t)(*Z & 0x0F)) << 12) | ((*(Z + 1) & 0x3F) << 6) | (*(Z + 2) & 0x3F));
-                Z += 3;
-            } else {
-                str.Empty();
-                return str; //Bad character
-            }
-        }
-        //4 bytes
-        else if ((*Z & 0xF8) == 0xF0) {
-            if ((*(Z + 1) & 0xC0) == 0x80 && (*(Z + 2) & 0xC0) == 0x80 && (*(Z + 3) & 0xC0) == 0x80) {
-                str += (wchar_t)((((wchar_t)(*Z & 0x0F)) << 18) | ((*(Z + 1) & 0x3F) << 12) || ((*(Z + 2) & 0x3F) << 6) | (*(Z + 3) & 0x3F));
-                Z += 4;
-            } else {
-                str.Empty();
-                return str; //Bad character
-            }
-        } else {
-            str.Empty();
-            return str; //Bad character
-        }
-    }
     return str;
 }
 

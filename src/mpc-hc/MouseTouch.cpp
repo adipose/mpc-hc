@@ -665,15 +665,17 @@ void CMouse::InternalOnMouseMove(UINT nFlags, const CPoint& point)
 
 void CMouse::InternalOnMouseLeave()
 {
-    // A renderer child window created on our thread (MPCVR in exclusive mode)
-    // makes TrackMouseEvent report a leave while the cursor is still on the video.
-    // Ignore it; the next mouse move re-arms the tracker.
-    CPoint screenPoint;
-    if (GetCursorPos(&screenPoint)) {
-        HWND hUnder = ::WindowFromPoint(screenPoint);
-        if (hUnder && (hUnder == GetWnd().m_hWnd || ::IsChild(GetWnd().m_hWnd, hUnder))) {
-            m_bTrackingMouseLeave = false;
-            return;
+    if (m_pMainFrame->m_bIsMPCVRExclusiveMode) {
+        // A renderer child window created on our thread (MPCVR in exclusive mode)
+        // makes TrackMouseEvent report a leave while the cursor is still on the video.
+        // Ignore it; the next mouse move re-arms the tracker.
+        CPoint screenPoint;
+        if (GetCursorPos(&screenPoint)) {
+            HWND hUnder = ::WindowFromPoint(screenPoint);
+            if (hUnder && (hUnder == GetWnd().m_hWnd || ::IsChild(GetWnd().m_hWnd, hUnder))) {
+                m_bTrackingMouseLeave = false;
+                return;
+            }
         }
     }
     StopMouseHider();
