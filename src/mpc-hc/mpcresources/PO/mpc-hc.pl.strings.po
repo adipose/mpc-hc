@@ -3158,7 +3158,7 @@ msgstr "Maksymalne wzmocnienie głośności"
 
 msgctxt "IDS_USAGE"
 msgid "Usage: mpc-hc.exe \"pathname\" [switches]"
-msgstr "Użycie: mpc-hc.exe \"ścieżka\" [przełączniki]"
+msgstr "Użycie: mpc-hc.exe „ścieżka\" [przełączniki]"
 
 msgctxt "IDS_UNKNOWN_SWITCH"
 msgid ""
