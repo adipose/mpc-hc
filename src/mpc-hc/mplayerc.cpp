@@ -2481,6 +2481,7 @@ BOOL CMPlayerCApp::InitInstance()
 
     if (bMinimized && bMaximized) {
         WINDOWPLACEMENT wp;
+        wp.length = sizeof(wp);
         GetWindowPlacement(*pFrame, &wp);
         wp.flags = WPF_RESTORETOMAXIMIZED;
         SetWindowPlacement(*pFrame, &wp);
