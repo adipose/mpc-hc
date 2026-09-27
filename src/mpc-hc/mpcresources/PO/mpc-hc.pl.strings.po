@@ -4770,7 +4770,7 @@ msgstr ""
 
 msgctxt "IDS_CMD_SHADERPRESET"
 msgid "/shaderpreset \"Pr\"\tStart using \"Pr\" shader preset"
-msgstr "/shaderpreset „Pr”\tRozpocznij używanie presetu shaderów 'Pr"
+msgstr "/shaderpreset „Pr”\tRozpocznij używanie presetu shaderów „Pr”"
 
 msgctxt "IDS_TOOLBAR_ALIGNMENT_LEFT"
 msgid "Left"
