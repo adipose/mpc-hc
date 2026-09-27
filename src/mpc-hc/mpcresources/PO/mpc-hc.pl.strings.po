@@ -4028,7 +4028,7 @@ msgid ""
 "The \"Save Image\" and \"Save Thumbnails\" functions do not work for "
 "Shockwave files."
 msgstr ""
-"Funkcje 'Zapisz obraz' oraz 'Zapisz miniatury' nie działają z plikami "
+"Funkcje „Zapisz obraz\" oraz „Zapisz miniatury\" nie działają z plikami "
 "Shockwave."
 
 msgctxt "IDS_SCREENSHOT_ERROR_OVERLAY"
