@@ -469,7 +469,7 @@ msgstr "保存(&V)"
 
 msgctxt "IDS_PLAYLIST_SAVEAS"
 msgid "&Save As..."
-msgstr "另存为(&S)..."
+msgstr "保存播放列表(&S)..."
 
 msgctxt "IDS_PLAYLIST_SORTBYLABEL"
 msgid "Sort by &label"
