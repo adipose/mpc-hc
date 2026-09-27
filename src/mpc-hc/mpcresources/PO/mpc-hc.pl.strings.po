@@ -4734,7 +4734,7 @@ msgstr "/unregall\t\tUsuń wszystkie skojarzenia plików"
 
 msgctxt "IDS_CMD_START"
 msgid "/start ms\t\tStart playing at \"ms\" (= milliseconds)"
-msgstr "/start ms\t\tRozpocznij odtwarzanie od \"ms\" (= milisekundy)"
+msgstr "/start ms\t\tRozpocznij odtwarzanie od „ms\" (= milisekundy)"
 
 msgctxt "IDS_CMD_STARTPOS"
 msgid "/startpos hh:mm:ss\tStart playing at position hh:mm:ss"
