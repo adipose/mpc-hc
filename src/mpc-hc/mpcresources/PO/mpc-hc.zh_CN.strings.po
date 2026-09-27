@@ -497,7 +497,7 @@ msgstr "还原(&E)"
 
 msgctxt "IDS_PLAYLIST_SORT"
 msgid "&Sort"
-msgstr "排序(&S)"
+msgstr "播放列表排序(&S)"
 
 msgctxt "IDS_SUBRESYNC_SEPARATOR"
 msgid "&Separator"
@@ -1259,7 +1259,7 @@ msgstr "整理收藏夹"
 
 msgctxt "IDS_PLAYLIST_SHUFFLE"
 msgid "Sh&uffle"
-msgstr "乱序(&U)"
+msgstr "随机播放(&U)"
 
 msgctxt "IDS_PLAYLIST_SHOWFOLDER"
 msgid "Ope&n file location"
