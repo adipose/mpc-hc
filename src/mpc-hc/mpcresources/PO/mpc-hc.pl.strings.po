@@ -2343,7 +2343,7 @@ msgstr "Klatka wideo – zmniejsz wysokość"
 
 msgctxt "IDS_SUBDL_DLG_DOWNLOADING"
 msgid "Downloading [%s] \"%s\""
-msgstr "Pobieranie [%s] \"%s\""
+msgstr "Pobieranie [%s] „%s\""
 
 msgctxt "IDS_SUBDL_DLG_PARSING"
 msgid "Parsing list..."
