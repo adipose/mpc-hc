@@ -1649,7 +1649,7 @@ msgstr "+%d%%"
 
 msgctxt "IDS_PLAYLIST_ADDFOLDER"
 msgid "Add containing &folder"
-msgstr "添加子文件夹(&F)"
+msgstr "添加同目录视频(&F)"
 
 msgctxt "IDS_HW_INDICATOR"
 msgid "[H/W]"
