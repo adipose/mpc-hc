@@ -4766,7 +4766,7 @@ msgid ""
 "\"Output\" settings)"
 msgstr ""
 "/audiorenderer N\tUruchom używanie audiorenderera N, gdzie N zaczyna się od "
-"1 (zobacz ustawienia 'Wyjście')"
+"1 (zobacz ustawienia „Wyjście\")"
 
 msgctxt "IDS_CMD_SHADERPRESET"
 msgid "/shaderpreset \"Pr\"\tStart using \"Pr\" shader preset"
