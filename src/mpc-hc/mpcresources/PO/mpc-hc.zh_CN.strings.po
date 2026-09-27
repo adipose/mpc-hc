@@ -445,7 +445,7 @@ msgstr "渲染 DVD 导航滤镜的所有 pin 失败"
 
 msgctxt "IDS_PLAYLIST_OPEN"
 msgid "&Open"
-msgstr "打开(&O)"
+msgstr "播放(&O)"
 
 msgctxt "IDS_PLAYLIST_ADD"
 msgid "A&dd"
