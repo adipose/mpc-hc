@@ -1427,7 +1427,7 @@ msgstr "缩放至超宽屏幕,%.3f,%.3f,%.3f,%.3f"
 
 msgctxt "IDS_PLAYLIST_HIDEFS"
 msgid "&Hide on Fullscreen"
-msgstr "在全屏幕中隐藏(&H)"
+msgstr "全屏时隐藏列表(&H)"
 
 msgctxt "IDS_PLAYLIST_POSITION"
 msgid "&Position"
