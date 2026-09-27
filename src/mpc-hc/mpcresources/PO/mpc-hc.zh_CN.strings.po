@@ -461,7 +461,7 @@ msgstr "清空播放列表(&L)"
 
 msgctxt "IDS_PLAYLIST_COPYTOCLIPBOARD"
 msgid "&Copy to clipboard"
-msgstr "复制到剪贴板(&C)"
+msgstr "复制文件路径(&C)"
 
 msgctxt "IDS_PLAYLIST_SAVE"
 msgid "Sa&ve"
