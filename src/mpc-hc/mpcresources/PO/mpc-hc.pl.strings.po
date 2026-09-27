@@ -4425,7 +4425,7 @@ msgstr "Proporcje obrazu: Załóż kwadratowe piksele (SAR)"
 
 msgctxt "IDS_SUBDL_DLG_DOWNLOADED"
 msgid "Downloaded [%s] \"%s\""
-msgstr "Pobrano [%s] \"%s\""
+msgstr "Pobrano [%s] „%s\""
 
 msgctxt "IDS_SUBUL_DLG_TITLE"
 msgid "Upload subtitles"
