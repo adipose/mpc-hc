@@ -741,7 +741,7 @@ msgid ""
 "External splitters can have their own language preference options thus MPC-HC default behavior is not to change their initial choice.\n"
 "Enable this option if you want MPC-HC to control external splitters."
 msgstr ""
-"Separatoarele externe pot avea propriile opțiuni privind preferințele pentru limbă, de aceea comportamentul implicit al MPC-HC este să nu schimbe alegerea inițială a acestora.\n"
+"Separatoarele externe (Splitterele externe) pot avea propriile opțiuni privind preferințele pentru limbă, de aceea comportamentul implicit al MPC-HC este să nu schimbe alegerea inițială a acestora.\n"
 "Activează această opțiune dacă dorești ca MPC-HC să controleze separatoarele externe."
 
 msgctxt "IDS_NAVIGATE_BD_PLAYLISTS"
