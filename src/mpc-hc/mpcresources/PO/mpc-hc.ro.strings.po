@@ -2,17 +2,16 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
 # Daniel <danny3@tutanota.com>, 2022
+# MPC HC <adiposegithub@gmail.com>, 2026
 # Miloiu Andrei-Valentin <miloiuandrei@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-27 12:00+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-26 14:02:27+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Miloiu Andrei-Valentin <miloiuandrei@gmail.com>, 2026\n"
 "Language-Team: Romanian (https://app.transifex.com/mpchc/teams/106126/ro/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -345,7 +344,7 @@ msgstr "Dispozitivul de captură nu a putut fi deschis."
 
 msgctxt "IDS_INVALID_PARAMS_ERROR"
 msgid "Can't open, invalid input parameters"
-msgstr "Nu se poate deschide, parametri nevalizi de intrare"
+msgstr "Nu se poate deschide, parametri invalizi de intrare"
 
 msgctxt "IDS_EDIT_LIST_EDITOR"
 msgid "Edit List Editor"
@@ -1146,8 +1145,7 @@ msgstr ""
 msgctxt "IDS_SRC_VTS"
 msgid "Open VTS_xx_0.ifo to load VTS_xx_x.vob files in one piece"
 msgstr ""
-"Deschideți VTS_xx_0.ifo pentru a încărca fișierele VTS_xx_x.vob dintr-o "
-"bucată"
+"Deschide VTS_xx_0.ifo pentru a încărca fișierele VTS_xx_x.vob dintr-o bucată"
 
 msgctxt "IDS_SRC_RFS"
 msgid "Based on RARFileSource, doesn't support compressed files"
@@ -4850,18 +4848,26 @@ msgid ""
 "/dvbscan N-M\tScan the default digital capture device from N to M (kHz)\n"
 "\t\twithout the scan dialog, then exit"
 msgstr ""
+"/dvbscan N-M\t Scanează dispozitivul implicit de captură digitală de la N la M (kHz)\n"
+"\t\tfără a afișa fereastra de scanare, apoi închide programul."
 
 msgctxt "IDS_CMD_DVBSCANOUT"
 msgid "/dvbscanout \"file\"\tWrite the channels found by /dvbscan to \"file\" as JSON"
 msgstr ""
+"/dvbscanout \"fișier\" \t Scrie canalele găsite prin /dvbscan în \"fișier\" "
+"sub formă JSON."
 
 msgctxt "IDS_CMD_DVBBANDWIDTH"
 msgid "/dvbbandwidth N\tOverride the saved bandwidth (kHz) used by /dvbscan"
 msgstr ""
+"/dvbbandwidth N \tSuprascrie lățimea de bandă salvată (în kHz) utilizată de "
+"/dvbscan"
 
 msgctxt "IDS_CMD_DVBSYMBOLRATE"
 msgid "/dvbsymbolrate N\tOverride the saved symbol rate used by /dvbscan"
 msgstr ""
+"/dvbsymbolrate N\t Suprascrie rata de simboluri salvată, utilizată de "
+"/dvbscan"
 
 msgctxt "IDS_CMD_DVBSCANSAVE"
 msgid ""
@@ -4869,6 +4875,9 @@ msgid ""
 "\t\tand make the first one the current channel. The saved list is kept\n"
 "\t\twhen nothing is found"
 msgstr ""
+"/dvbscansave \t Cu /dvbscansave, înlocuiește lista de canale salvată cu canalele găsite\n"
+"\t\tși setează primul canal drept canal curent. Lista salvată este păstrată\n"
+"\t\tdacă nu se găsește niciun canal."
 
 msgctxt "IDS_MESSAGEBOX_CANCEL"
 msgid "Cancel"
