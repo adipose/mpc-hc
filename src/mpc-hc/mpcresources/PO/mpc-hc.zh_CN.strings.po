@@ -2,7 +2,6 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
 # lifegpc <g1710431395@gmail.com>, 2021
 # BCZJG6GT <luticliu@foxmail.com>, 2021
 # Jackson Chen, 2022
@@ -11,15 +10,15 @@
 # KaiHuaDou, 2026
 # Fentanyl, 2026
 # Phonebook3599, 2026
+# MPC HC <adiposegithub@gmail.com>, 2026
 # YuanHao Du, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-28 13:51+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-26 14:02:27+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: YuanHao Du, 2026\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/mpchc/teams/106126/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4178,7 +4177,7 @@ msgstr "就绪..."
 
 msgctxt "IDS_CMD_PNS"
 msgid "/pns \"name\"\tSpecify PnS Frame Adjust Preset to use (for example: /pns \"%s\")"
-msgstr "/pns \"name\" 指定使用的画面平移与缩放 (PnS) 预设(例如：/pns \"%s\")"
+msgstr "/pns \"name\" 指定使用的画面平移与缩放 (PnS) 预设(例如：/pns \"1%\")"
 
 msgctxt "IDS_CMD_PNS_VALUES"
 msgid ""
@@ -4677,19 +4676,19 @@ msgctxt "IDS_CMD_DVBSCAN"
 msgid ""
 "/dvbscan N-M\tScan the default digital capture device from N to M (kHz)\n"
 "\t\twithout the scan dialog, then exit"
-msgstr ""
+msgstr "/dvbscan N-M：无扫描对话框，从 N 到 M（kHz）扫描默认数字采集设备，然后退出。"
 
 msgctxt "IDS_CMD_DVBSCANOUT"
 msgid "/dvbscanout \"file\"\tWrite the channels found by /dvbscan to \"file\" as JSON"
-msgstr ""
+msgstr "/dvbscanout \"file\"：将 /dvbscan 找到的频道以 JSON 格式写入“file”。"
 
 msgctxt "IDS_CMD_DVBBANDWIDTH"
 msgid "/dvbbandwidth N\tOverride the saved bandwidth (kHz) used by /dvbscan"
-msgstr ""
+msgstr "/dvbbandwidth N：覆盖 /dvbscan 使用的已保存带宽（kHz）。"
 
 msgctxt "IDS_CMD_DVBSYMBOLRATE"
 msgid "/dvbsymbolrate N\tOverride the saved symbol rate used by /dvbscan"
-msgstr ""
+msgstr "/dvbsymbolrate N：覆盖 /dvbscan 使用的已保存符号率。"
 
 msgctxt "IDS_CMD_DVBSCANSAVE"
 msgid ""
@@ -4697,6 +4696,8 @@ msgid ""
 "\t\tand make the first one the current channel. The saved list is kept\n"
 "\t\twhen nothing is found"
 msgstr ""
+"/dvbscansave：与 /dvbscan 搭配使用时，用扫描到的频道替换已保存的频道列表，\n"
+"并将第一个频道设为当前频道。若未扫描到任何频道，则保留原已保存的列表。"
 
 msgctxt "IDS_MESSAGEBOX_CANCEL"
 msgid "Cancel"
