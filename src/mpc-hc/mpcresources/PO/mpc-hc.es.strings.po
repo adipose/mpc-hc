@@ -5489,6 +5489,30 @@ msgctxt "IDS_PPAGEADVANCED_SECONDARY_SUB_VERT_POS"
 msgid "Vertical position for secondary subtitle. Percentage offset from top."
 msgstr ""
 
+msgctxt "IDS_PPAGEADVANCED_WIN11_NATIVE_MENUS"
+msgid ""
+"Use native Windows 11 menus instead of the modern theme's own menus. The "
+"menu bar stays themed. Requires restart."
+msgstr ""
+
+msgctxt "IDS_PPAGEADVANCED_MODERN_THEME_STYLE"
+msgid ""
+"Which Windows version the modern theme's colors are based on. Requires "
+"restart."
+msgstr ""
+
+msgctxt "IDS_MODERN_THEME_STYLE_FOLLOW_OS"
+msgid "Follow Windows version"
+msgstr ""
+
+msgctxt "IDS_MODERN_THEME_STYLE_WINDOWS10"
+msgid "Windows 10"
+msgstr ""
+
+msgctxt "IDS_MODERN_THEME_STYLE_WINDOWS11"
+msgid "Windows 11"
+msgstr ""
+
 msgctxt "IDS_AUDIO_BOOST_WARNING"
 msgid ""
 "WARNING: Boosting audio volume can in some situations have a negative effect on audio quality due to overflow.\n"

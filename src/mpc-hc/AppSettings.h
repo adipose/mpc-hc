@@ -865,6 +865,7 @@ public:
     int             iModernSeekbarHeight;
 
     CMPCTheme::ModernThemeMode eModernThemeMode;
+    int             iModernThemeStyle;
 
     int             iFullscreenDelay;
 
@@ -1050,6 +1051,7 @@ public:
     int iRedirectOpenToAppendThreshold;
     bool bFullscreenSeparateControls;
     bool bAlwaysUseShortMenu;
+    bool bWin11NativeMenus;
     int iStillVideoDuration;
     int iMouseLeftUpDelay;
 

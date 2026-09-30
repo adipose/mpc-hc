@@ -988,7 +988,76 @@ inline void FastFrameRect(CDC* pDC, const CRect& rect, COLORREF color) {
     pDC->FillSolidRect(rect.right - 1, rect.top, 1, rect.Height(), color);
 }
 
-void CMPCThemeUtil::drawCheckBoxInternal(UINT checkState, bool isHover, bool useSystemSize, CRect rectCheck, CDC* pDC, bool isRadio, CPngImage* image, int size) {
+//windows 11 style: a fluent check box or radio, drawn instead of the windows 10 images, which exist because windows 10
+//had no clean way to draw dark ones. it keeps the image's size for this dpi, so the gap to the label is unchanged
+static void drawFluentCheckOrRadio(UINT checkState, bool isHover, CRect rect, CDC* pDC, bool isRadio, int size, bool isDisabled) {
+    const int side = (std::min)({ size > 0 ? size : INT_MAX, rect.Width(), rect.Height() });
+    CRect box(CPoint(rect.left, rect.top + (rect.Height() - side) / 2), CSize(side, side));
+
+    //the top left pixel lies outside both the rounded box and the circle, so it holds the background. repaint the square
+    //with it first, or antialiased edges drawn over the previous frame would darken with every repaint
+    COLORREF bg = pDC->GetPixel(box.left, box.top);
+    if (bg != CLR_INVALID) {
+        pDC->FillSolidRect(box, bg);
+    }
+
+    const bool on = checkState != BST_UNCHECKED;
+    auto gdip = [](COLORREF c) { return Gdiplus::Color(GetRValue(c), GetGValue(c), GetBValue(c)); };
+    Gdiplus::Graphics gfx(pDC->m_hDC);
+    gfx.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias8x8);
+    gfx.SetPixelOffsetMode(Gdiplus::PixelOffsetModeHalf); //pixel edges on whole coordinates, or the stroke straddles two rows and the bottom one is cut
+
+    const Gdiplus::REAL x = (Gdiplus::REAL)box.left, y = (Gdiplus::REAL)box.top, d = (Gdiplus::REAL)side;
+    const Gdiplus::REAL half = 0.5f, inner = d - 1.0f; //1px stroke centred on the pixel grid
+    COLORREF fillClr, borderClr, glyphClr;
+    if (isDisabled) {
+        fillClr = on ? CMPCTheme::CheckboxDisabledCheckedColor : CMPCTheme::WindowBGColor;
+        borderClr = on ? CMPCTheme::CheckboxDisabledCheckedColor : CMPCTheme::CheckboxDisabledBorderColor;
+        glyphClr = CMPCTheme::CheckboxDisabledGlyphColor;
+    } else {
+        fillClr = on ? CMPCTheme::CheckboxCheckedColor : isHover ? CMPCTheme::CheckboxBGHoverColor : CMPCTheme::CheckboxBGColor;
+        borderClr = on ? CMPCTheme::CheckboxCheckedColor : isHover ? CMPCTheme::CheckboxBorderHoverColor : CMPCTheme::CheckboxBorderColor;
+        glyphClr = CMPCTheme::CheckboxGlyphColor;
+    }
+    Gdiplus::SolidBrush fill(gdip(fillClr));
+    Gdiplus::Pen border(gdip(borderClr), 1.0f);
+    Gdiplus::Pen glyph(gdip(glyphClr), (std::max)(1.3f, d * 0.11f));
+    glyph.SetLineCap(Gdiplus::LineCapRound, Gdiplus::LineCapRound, Gdiplus::DashCapRound);
+    glyph.SetLineJoin(Gdiplus::LineJoinRound);
+
+    if (isRadio) {
+        gfx.FillEllipse(&fill, x + half, y + half, inner, inner);
+        gfx.DrawEllipse(&border, x + half, y + half, inner, inner);
+        if (on) {
+            Gdiplus::SolidBrush dot(gdip(glyphClr));
+            const Gdiplus::REAL dd = d * 0.42f;
+            gfx.FillEllipse(&dot, x + (d - dd) / 2, y + (d - dd) / 2, dd, dd);
+        }
+    } else {
+        const Gdiplus::REAL e = 2 * (std::max)(2.0f, d * 0.2f); //corner diameter; fluent rounds a 20px box by 4px
+        const Gdiplus::REAL l = x + half, t = y + half;
+        Gdiplus::GraphicsPath path;
+        path.AddArc(l, t, e, e, 180, 90);
+        path.AddArc(l + inner - e, t, e, e, 270, 90);
+        path.AddArc(l + inner - e, t + inner - e, e, e, 0, 90);
+        path.AddArc(l, t + inner - e, e, e, 90, 90);
+        path.CloseFigure();
+        gfx.FillPath(&fill, &path);
+        gfx.DrawPath(&border, &path);
+        if (checkState == BST_CHECKED) {
+            Gdiplus::PointF pts[] = { { x + d * 0.25f, y + d * 0.52f }, { x + d * 0.43f, y + d * 0.70f }, { x + d * 0.76f, y + d * 0.33f } };
+            gfx.DrawLines(&glyph, pts, 3);
+        } else if (checkState == BST_INDETERMINATE) {
+            gfx.DrawLine(&glyph, x + d * 0.3f, y + d * 0.5f, x + d * 0.7f, y + d * 0.5f);
+        }
+    }
+}
+
+void CMPCThemeUtil::drawCheckBoxInternal(UINT checkState, bool isHover, bool useSystemSize, CRect rectCheck, CDC* pDC, bool isRadio, CPngImage* image, int size, bool isDisabled) {
+    if (CMPCTheme::isWindows11Style) {
+        drawFluentCheckOrRadio(checkState, isHover, rectCheck, pDC, isRadio, size, isDisabled);
+        return;
+    }
     COLORREF borderClr, bgClr;
     COLORREF oldBkClr = pDC->GetBkColor(), oldTextClr = pDC->GetTextColor();
     if (isHover) {
@@ -1061,7 +1130,7 @@ void CMPCThemeUtil::drawCheckBoxInternal(UINT checkState, bool isHover, bool use
     pDC->SetTextColor(oldTextClr);
 }
 
-void CMPCThemeUtil::drawCheckBox(CWnd* window, UINT checkState, bool isHover, bool useSystemSize, CRect rectCheck, CDC* pDC, bool isRadio /*= false*/, UINT resourceID /*= 0*/) {
+void CMPCThemeUtil::drawCheckBox(CWnd* window, UINT checkState, bool isHover, bool useSystemSize, CRect rectCheck, CDC* pDC, bool isRadio /*= false*/, UINT resourceID /*= 0*/, bool isDisabled /*= false*/) {
     struct ImageCache {
         CPngImage image;
         int size;
@@ -1080,18 +1149,32 @@ void CMPCThemeUtil::drawCheckBox(CWnd* window, UINT checkState, bool isHover, bo
         newCache.size = bm.bmHeight;
     }
 
-    drawCheckBoxInternal(checkState, isHover, useSystemSize, rectCheck, pDC, isRadio, &cache[resourceID].image, cache[resourceID].size);
+    drawCheckBoxInternal(checkState, isHover, useSystemSize, rectCheck, pDC, isRadio, &cache[resourceID].image, cache[resourceID].size, isDisabled);
 }
 
+//themed controls in dark mode on an os with the dark explorer theme: such windows get DarkMode_Explorer and the dark frame
 bool CMPCThemeUtil::canUseWin10DarkTheme()
 {
-    if (AppNeedsThemedControls()) {
+    if (AppNeedsThemedControls() && CMPCTheme::EffectiveThemeMode() == CMPCTheme::ModernThemeMode::DARK) {
         //        return false; //FIXME.  return false to test behavior for OS < Win10 1809
         RTL_OSVERSIONINFOW osvi = GetRealOSVersion();
-        bool ret = (osvi.dwMajorVersion = 10 && osvi.dwMajorVersion >= 0 && osvi.dwBuildNumber >= 17763); //dark theme first available in win 10 1809
+        bool ret = (osvi.dwMajorVersion >= 10 && osvi.dwBuildNumber >= 17763); //dark theme first available in win 10 1809
         return ret;
     }
     return false;
+}
+
+//the explorer visual style for the controls the theme dresses but does not fully draw (tree, list box, combo list, edit):
+//the dark one where canUseWin10DarkTheme, the light one where the light palette draws the controls (Windows 11 style),
+//and none where the controls are drawn without a visual style
+bool CMPCThemeUtil::canUseExplorerTheme()
+{
+    return canUseWin10DarkTheme() || (AppNeedsThemedControls() && CMPCTheme::EffectiveThemeMode() == CMPCTheme::ModernThemeMode::LIGHT);
+}
+
+LPCWSTR CMPCThemeUtil::explorerThemeName()
+{
+    return canUseWin10DarkTheme() ? L"DarkMode_Explorer" : canUseExplorerTheme() ? L"Explorer" : L"";
 }
 
 bool CMPCThemeUtil::IsBasicMode()
@@ -1168,6 +1251,27 @@ void CMPCThemeUtil::enableWindows10DarkFrame(CWnd* window)
                 data.cbData = sizeof(accent);
                 setWindowCompositionAttribute(window->GetSafeHwnd(), &data);
             }
+        }
+    }
+}
+
+void CMPCThemeUtil::applyNativeMenuMode()
+{
+    if (!static_cast<CMPlayerCApp*>(AfxGetApp())->m_bNativeMenus) {
+        return;
+    }
+    //undocumented uxtheme exports. native menus are only offered on windows 11, where these ordinals are stable
+    enum PreferredAppMode { Default, AllowDark, ForceDark, ForceLight };
+    typedef PreferredAppMode(WINAPI* pfnSetPreferredAppMode)(PreferredAppMode);
+    typedef void (WINAPI* pfnFlushMenuThemes)();
+    HMODULE hUxtheme = GetModuleHandleW(L"uxtheme.dll");
+    if (hUxtheme) {
+        pfnSetPreferredAppMode setPreferredAppMode = (pfnSetPreferredAppMode)GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135));
+        pfnFlushMenuThemes flushMenuThemes = (pfnFlushMenuThemes)GetProcAddress(hUxtheme, MAKEINTRESOURCEA(136));
+        if (setPreferredAppMode && flushMenuThemes) {
+            //force rather than allow, so menus follow the player theme even when it differs from the os
+            setPreferredAppMode(CMPCTheme::EffectiveThemeMode() == CMPCTheme::ModernThemeMode::DARK ? ForceDark : ForceLight);
+            flushMenuThemes();
         }
     }
 }

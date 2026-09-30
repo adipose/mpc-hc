@@ -196,6 +196,7 @@ CAppSettings::CAppSettings()
     , bWindows10AccentColorsEnabled(false)
     , iModernSeekbarHeight(DEF_MODERN_SEEKBAR_HEIGHT)
     , eModernThemeMode(CMPCTheme::ModernThemeMode::WINDOWSDEFAULT)
+    , iModernThemeStyle(static_cast<int>(CMPCTheme::ModernThemeStyle::WINDOWSDEFAULT))
     , iFullscreenDelay(MIN_FULLSCREEN_DELAY)
     , iVerticalAlignVideo(verticalAlignVideoType::ALIGN_MIDDLE)
     , nJumpDistS(DEFAULT_JUMPDISTANCE_1)
@@ -298,6 +299,7 @@ CAppSettings::CAppSettings()
     , iRedirectOpenToAppendThreshold(1000)
     , bFullscreenSeparateControls(true)
     , bAlwaysUseShortMenu(false)
+    , bWin11NativeMenus(false)
     , iStillVideoDuration(10)
     , iMouseLeftUpDelay(0)
     , bUseFreeType(false)
@@ -1078,6 +1080,7 @@ void CAppSettings::SaveSettings(bool write_full_history /* = false */)
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_MPCTHEME, bMPCTheme);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_MODERNSEEKBARHEIGHT, iModernSeekbarHeight);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_MODERNTHEMEMODE, static_cast<int>(eModernThemeMode));
+    pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_MODERNTHEMESTYLE, iModernThemeStyle);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_FULLSCREEN_DELAY, iFullscreenDelay);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_VERTICALALIGNVIDEO, static_cast<int>(iVerticalAlignVideo));
 
@@ -1413,6 +1416,7 @@ void CAppSettings::SaveSettings(bool write_full_history /* = false */)
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_REDIRECT_OPEN_TO_APPEND_THRESHOLD, iRedirectOpenToAppendThreshold);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_FULLSCREEN_SEPARATE_CONTROLS, bFullscreenSeparateControls);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_ALWAYS_USE_SHORT_MENU, bAlwaysUseShortMenu);
+    pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_WIN11_NATIVE_MENUS, bWin11NativeMenus);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_STILL_VIDEO_DURATION, iStillVideoDuration);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_MOUSE_LEFTUP_DELAY, iMouseLeftUpDelay);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_CAPTURE_DEINTERLACE, bCaptureDeinterlace);
@@ -1966,6 +1970,10 @@ void CAppSettings::LoadSettings()
     }
 
     eModernThemeMode = static_cast<CMPCTheme::ModernThemeMode>(pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_MODERNTHEMEMODE, static_cast<int>(CMPCTheme::ModernThemeMode::WINDOWSDEFAULT)));
+    iModernThemeStyle = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_MODERNTHEMESTYLE, static_cast<int>(CMPCTheme::ModernThemeStyle::WINDOWSDEFAULT));
+    if (iModernThemeStyle < static_cast<int>(CMPCTheme::ModernThemeStyle::WINDOWSDEFAULT) || iModernThemeStyle > static_cast<int>(CMPCTheme::ModernThemeStyle::WINDOWS11)) {
+        iModernThemeStyle = static_cast<int>(CMPCTheme::ModernThemeStyle::WINDOWSDEFAULT);
+    }
 
     iFullscreenDelay = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_FULLSCREEN_DELAY, MIN_FULLSCREEN_DELAY);
     if (iFullscreenDelay < MIN_FULLSCREEN_DELAY || iFullscreenDelay > MAX_FULLSCREEN_DELAY) {
@@ -2395,6 +2403,7 @@ void CAppSettings::LoadSettings()
     iRedirectOpenToAppendThreshold = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_REDIRECT_OPEN_TO_APPEND_THRESHOLD, 1000);
     bFullscreenSeparateControls = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_FULLSCREEN_SEPARATE_CONTROLS, TRUE);
     bAlwaysUseShortMenu = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_ALWAYS_USE_SHORT_MENU, FALSE);
+    bWin11NativeMenus = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_WIN11_NATIVE_MENUS, FALSE);
     iStillVideoDuration = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_STILL_VIDEO_DURATION, 10);
     iMouseLeftUpDelay = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_MOUSE_LEFTUP_DELAY, 0);
 
@@ -2458,11 +2467,21 @@ void CAppSettings::LoadSettings()
         }
     }
 
-    if (bMPCTheme) {
+    // a contrast theme brings its own colours, which the modern palette cannot follow;
+    // step aside for the session and let the classic path draw with the system colours
+    HIGHCONTRAST hc = { sizeof(hc) };
+    bool bHighContrast = SystemParametersInfo(SPI_GETHIGHCONTRAST, sizeof(hc), &hc, 0) && (hc.dwFlags & HCF_HIGHCONTRASTON);
+    bool bThemeLoaded = bMPCTheme && !bHighContrast;
+    if (bHighContrast) {
+        bWindows10DarkThemeActive = false; //also stops the dark file dialog workaround, which runs even without the theme
+    }
+    if (bThemeLoaded) {
         CMPCTheme::InitializeColors();
     }
     // GUI theme can be used now
-    static_cast<CMPlayerCApp*>(AfxGetApp())->m_bThemeLoaded = bMPCTheme;
+    static_cast<CMPlayerCApp*>(AfxGetApp())->m_bThemeLoaded = bThemeLoaded;
+    // like the theme itself, native menus are fixed for the session
+    static_cast<CMPlayerCApp*>(AfxGetApp())->m_bNativeMenus = bThemeLoaded && bWin11NativeMenus && IsWindowsVersionOrGreaterBuild(10, 0, 22000);
 
     if (fLaunchfullscreen && slFiles.GetCount() > 0) {
         nCLSwitches |= CLSW_FULLSCREEN;

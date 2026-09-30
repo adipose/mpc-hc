@@ -60,10 +60,10 @@ CMPCThemeComboBox::~CMPCThemeComboBox()
 void CMPCThemeComboBox::themeControls()
 {
     if (AppNeedsThemedControls()) {
-        if (CMPCThemeUtil::canUseWin10DarkTheme() && !hasThemedControls) {
+        if (CMPCThemeUtil::canUseExplorerTheme() && !hasThemedControls) {
             COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
             if (GetComboBoxInfo(&info)) {
-                SetWindowTheme(info.hwndList, L"DarkMode_Explorer", NULL);
+                SetWindowTheme(info.hwndList, CMPCThemeUtil::explorerThemeName(), NULL);
                 DWORD dropdownType = GetStyle() & 3;
                 if (CBS_DROPDOWN == dropdownType || CBS_SIMPLE == dropdownType) {
                     cbEdit.SubclassWindow(info.hwndItem);
@@ -139,6 +139,8 @@ void CMPCThemeComboBox::OnPaint()
 
         CBrush fb;
         bool isFocused, drawDotted = false;
+        //the windows 11 inner stroke is about the fill colour, so a frame drawn with it alone disappears
+        const COLORREF frameColor = CMPCTheme::isWindows11Style ? CMPCTheme::ButtonBorderOuterColor : CMPCTheme::ButtonBorderInnerColor;
 
         if (pCBEdit) {
             CRect editRect;
@@ -149,14 +151,14 @@ void CMPCThemeComboBox::OnPaint()
             if (isFocused) {
                 fb.CreateSolidBrush(CMPCTheme::ButtonBorderInnerFocusedColor);
             } else {
-                fb.CreateSolidBrush(CMPCTheme::ButtonBorderInnerColor);
+                fb.CreateSolidBrush(frameColor);
             }
         } else {
             isFocused = (GetFocus() == this);
             if (isFocused) {
                 drawDotted = true;
             }
-            fb.CreateSolidBrush(CMPCTheme::ButtonBorderInnerColor);
+            fb.CreateSolidBrush(frameColor);
         }
 
         COLORREF bkColor, fgColor = CMPCTheme::TextFGColor, arrowColor = CMPCTheme::ComboboxArrowColor;
@@ -182,7 +184,7 @@ void CMPCThemeComboBox::OnPaint()
             CMPCThemeUtil::drawParentDialogBGClr(this, &dc, rBG, true);
             rBG.left = rBG.right;
             rBG.right += 1;
-            dc.FillSolidRect(rBG, CMPCTheme::ButtonBorderInnerColor);
+            dc.FillSolidRect(rBG, frameColor);
         } else {
             dc.FillSolidRect(rBG, bkColor);
             rText = r;

@@ -4014,7 +4014,7 @@ void CMainFrame::OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu) 
         return;
     }
 
-    if (!AppIsThemeLoaded()) { //themed menus draw accelerators already, no need to append
+    if (!AppNeedsThemedMenus()) { //themed menus draw accelerators already, no need to append
         for (UINT i = 0; i < uiMenuCount; ++i) {
             UINT nID = pPopupMenu->GetMenuItemID(i);
             //the dynamically named items not listed here (filters, shader presets, favorite discs, optical drives)
@@ -6800,7 +6800,7 @@ bool CMainFrame::SaveThumbnails(LPCTSTR fn)
     spd.vidrect = CRect(0, 0, width, height);
     spd.bits = (BYTE*)(bih + 1) + (width * 4) * (height - 1);
 
-    bool darktheme = s.bMPCTheme && s.eModernThemeMode == CMPCTheme::ModernThemeMode::DARK;
+    bool darktheme = AppIsThemeLoaded() && s.eModernThemeMode == CMPCTheme::ModernThemeMode::DARK;
 
     int gradientBase = 0xe0;
     if (darktheme) {
@@ -25050,6 +25050,11 @@ bool CMainFrame::DownloadWithYoutubeDL(CString url, CString filename)
 void CMainFrame::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 {
     __super::OnSettingChange(uFlags, lpszSection);
+    if (lpszSection && 0 == _tcscmp(lpszSection, _T("ImmersiveColorSet")) && AppIsThemeLoaded() && CMPCTheme::EffectiveThemeStyle() == CMPCTheme::ModernThemeStyle::WINDOWS11) {
+        //the accent colour changed; only the Windows 11 style follows it
+        CMPCTheme::ApplyAccentColors();
+        RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
+    }
     if (SPI_SETNONCLIENTMETRICS == uFlags) {
         CMPCThemeUtil::GetMetrics(true);
         CMPCThemeMenu::clearDimensions();

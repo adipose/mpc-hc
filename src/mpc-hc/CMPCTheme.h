@@ -9,6 +9,12 @@ public:
         WINDOWSDEFAULT
     };
 
+    enum class ModernThemeStyle {
+        WINDOWSDEFAULT, //follow the windows version
+        WINDOWS10,
+        WINDOWS11
+    };
+
     static COLORREF MenuBGColor;
     static COLORREF MenubarBGColor;
     static COLORREF WindowBGColor;  //used in explorer for left nav
@@ -137,6 +143,33 @@ public:
     static COLORREF SeekbarChapterColor;
     static COLORREF SeekbarABColor;
 
+    //accent shades reported by Windows, see ReadAccentColors; used by the Windows 11 style only
+    static COLORREF AccentDark3;
+    static COLORREF AccentDark2;
+    static COLORREF AccentDark1;
+    static COLORREF Accent;
+    static COLORREF AccentLight1;
+    static COLORREF AccentLight2;
+    static COLORREF AccentLight3;
+
+    //Windows 11 style only: the playlist's selected row (neutral) and its accent indicator
+    static COLORREF PlaylistSelectedColor;
+    static COLORREF PlaylistIndicatorColor;
+    //Windows 11 style only: fill of a checked check box or radio, and the glyph drawn on it
+    static COLORREF CheckboxCheckedColor;
+    static COLORREF CheckboxGlyphColor;
+    //Windows 11 style only: a disabled check box or radio
+    static COLORREF CheckboxDisabledBorderColor;
+    static COLORREF CheckboxDisabledCheckedColor;
+    static COLORREF CheckboxDisabledGlyphColor;
+    //Windows 11 style only: the round slider thumb and its outline
+    static COLORREF SliderThumbColor;
+    static COLORREF SliderThumbBorderColor;
+    //the statistics and status bars: black everywhere except the Windows 11 light style
+    static COLORREF InfoBarBGColor;
+    static COLORREF InfoBarTextColor;
+    static COLORREF InfoBarBorderColor;
+
     static const int GroupBoxTextIndent;
 
 
@@ -150,10 +183,10 @@ public:
     static wchar_t* const uiSymbolFont;
 
 
-    static const COLORREF ComboboxArrowColor;
-    static const COLORREF ComboboxArrowColorDisabled;
+    static COLORREF ComboboxArrowColor;
+    static COLORREF ComboboxArrowColorDisabled;
 
-    static const COLORREF HeaderCtrlSortArrowColor;
+    static COLORREF HeaderCtrlSortArrowColor;
 
     static const BYTE CheckBits[14];
     static const int CheckWidth;
@@ -190,8 +223,15 @@ public:
 
 
     static bool drawThemedControls;
+    static bool isWindows11Style; //set by InitializeColors, so drawing code can test it cheaply
 
     static CMPCTheme::ModernThemeMode EffectiveThemeMode();
+    static CMPCTheme::ModernThemeStyle EffectiveThemeStyle();
 
     static void InitializeColors();
+    static void InitializeWindows10Colors();
+    static void InitializeWindows11Colors();
+    static void ReadAccentColors();
+    static void ApplyAccentColors();
+    static COLORREF EnsureContrast(COLORREF fg, COLORREF bg, double minRatio);
 };

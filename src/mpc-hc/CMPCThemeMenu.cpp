@@ -23,6 +23,7 @@ int CMPCThemeMenu::separatorPadding;
 int CMPCThemeMenu::separatorHeight;
 int CMPCThemeMenu::postTextSpacing;
 int CMPCThemeMenu::accelSpacing;
+int CMPCThemeMenu::hoverInsetX, CMPCThemeMenu::hoverInsetY, CMPCThemeMenu::hoverRadius;
 CCritSec CMPCThemeMenu::resourceLock;
 std::mutex CMPCThemeMenu::submenuMutex;
 
@@ -71,6 +72,9 @@ void CMPCThemeMenu::initDimensions()
         separatorHeight = dpi.ScaleX(7);
         postTextSpacing = dpi.ScaleX(20);
         accelSpacing = dpi.ScaleX(30);
+        hoverInsetX = dpi.ScaleX(5); //windows 11 insets the hover about 5px from the popup edge and rounds it by 4px, measured at 100%
+        hoverInsetY = dpi.ScaleY(2);
+        hoverRadius = dpi.ScaleX(4);
         {
             CAutoLock cAutoLock(&resourceLock);
             if (font.m_hObject) {
@@ -213,30 +217,42 @@ BOOL CMPCThemeMenu::AppendMenu(UINT nFlags, UINT_PTR nIDNewItem, LPCTSTR lpszNew
 void CMPCThemeMenu::fulfillThemeReqs(bool isMenubar)
 {
     if (AppIsThemeLoaded()) {
-        MENUINFO oldInfo = { sizeof(MENUINFO) };
-        oldInfo.fMask = MIM_STYLE;
-        GetMenuInfo(&oldInfo);
+        //with native menus only the menubar is drawn by us--popups are left to windows
+        bool ownerDraw = isMenubar || AppNeedsThemedMenus();
 
-        MENUINFO MenuInfo = { 0 };
-        MenuInfo.cbSize = sizeof(MENUINFO);
-        MenuInfo.fMask = MIM_BACKGROUND | MIM_STYLE | MIM_APPLYTOSUBMENUS;
-        MenuInfo.dwStyle = oldInfo.dwStyle;
-        if (!bgBrush) {
-            bgBrush = ::CreateSolidBrush(CMPCTheme::MenuBGColor);
+        if (ownerDraw) {
+            MENUINFO oldInfo = { sizeof(MENUINFO) };
+            oldInfo.fMask = MIM_STYLE;
+            GetMenuInfo(&oldInfo);
+
+            MENUINFO MenuInfo = { 0 };
+            MenuInfo.cbSize = sizeof(MENUINFO);
+            MenuInfo.fMask = MIM_BACKGROUND | MIM_STYLE;
+            if (AppNeedsThemedMenus()) {
+                MenuInfo.fMask |= MIM_APPLYTOSUBMENUS;
+            }
+            MenuInfo.dwStyle = oldInfo.dwStyle;
+            if (!bgBrush) {
+                bgBrush = ::CreateSolidBrush(CMPCTheme::MenuBGColor);
+            }
+            if (!bgMenubarBrush) {
+                bgMenubarBrush = ::CreateSolidBrush(CMPCTheme::MenubarBGColor);
+            }
+            if (isMenubar) {
+                MenuInfo.hbrBack = bgMenubarBrush;
+            } else {
+                MenuInfo.hbrBack = bgBrush;
+            }
+            SetMenuInfo(&MenuInfo);
         }
-        if (!bgMenubarBrush) {
-            bgMenubarBrush = ::CreateSolidBrush(CMPCTheme::MenubarBGColor);
-        }
-        if (isMenubar) {
-            MenuInfo.hbrBack = bgMenubarBrush;
-        } else {
-            MenuInfo.hbrBack = bgBrush;
-        }
-        SetMenuInfo(&MenuInfo);
 
         int iMaxItems = GetMenuItemCount();
         for (int i = 0; i < iMaxItems; i++) {
             cleanupItem(i, MF_BYPOSITION);
+            if (!ownerDraw) {
+                fulfillThemeReqsSubMenu(i);
+                continue;
+            }
             CString nameHolder;
             MenuObject* pObject = DEBUG_NEW MenuObject;
             allocatedItems.push_back(pObject);
@@ -274,25 +290,35 @@ void CMPCThemeMenu::fulfillThemeReqs(bool isMenubar)
             mInfo.dwItemData = (ULONG_PTR)pObject;
             CMenu::SetMenuItemInfo(i, &mInfo, true);
 
-            CMenu* t = GetSubMenu(i);
-            if (nullptr != t) {
-                CMPCThemeMenu* pSubMenu;
-                pSubMenu = DYNAMIC_DOWNCAST(CMPCThemeMenu, t);
-                if (!pSubMenu) {
-                    pSubMenu = DEBUG_NEW CMPCThemeMenu;
-                    pSubMenu->setOSMenu(isOSMenu);
-                    allocatedMenus.push_back(pSubMenu);
-                    pSubMenu->Attach(t->Detach());
-                }
-                pSubMenu->fulfillThemeReqs();
-            }
+            fulfillThemeReqsSubMenu(i);
         }
+    }
+}
+
+void CMPCThemeMenu::fulfillThemeReqsSubMenu(UINT nPos)
+{
+    CMenu* t = GetSubMenu(nPos);
+    if (nullptr != t) {
+        CMPCThemeMenu* pSubMenu;
+        pSubMenu = DYNAMIC_DOWNCAST(CMPCThemeMenu, t);
+        if (!pSubMenu) {
+            pSubMenu = DEBUG_NEW CMPCThemeMenu;
+            pSubMenu->setOSMenu(isOSMenu);
+            allocatedMenus.push_back(pSubMenu);
+            pSubMenu->Attach(t->Detach());
+        }
+        pSubMenu->fulfillThemeReqs();
     }
 }
 
 void CMPCThemeMenu::fulfillThemeReqsItem(UINT i, bool byCommand, bool isMenuBar)
 {
-    if (AppIsThemeLoaded()) {
+    if (AppIsThemeLoaded() && !isMenuBar && !AppNeedsThemedMenus()) {
+        UINT nPos = i;
+        if (findID(nPos, byCommand) != (UINT)-1) {
+            fulfillThemeReqsSubMenu(nPos);
+        }
+    } else if (AppIsThemeLoaded()) {
         MENUITEMINFO tInfo = { sizeof(MENUITEMINFO) };
         tInfo.fMask = MIIM_DATA | MIIM_FTYPE;
         GetMenuItemInfo(i, &tInfo, !byCommand);
@@ -330,18 +356,7 @@ void CMPCThemeMenu::fulfillThemeReqsItem(UINT i, bool byCommand, bool isMenuBar)
             mInfo.dwItemData = (ULONG_PTR)pObject;
             CMenu::SetMenuItemInfo(nPos, &mInfo, true);
 
-            CMenu* t = GetSubMenu(nPos);
-            if (nullptr != t) {
-                CMPCThemeMenu* pSubMenu;
-                pSubMenu = DYNAMIC_DOWNCAST(CMPCThemeMenu, t);
-                if (!pSubMenu) {
-                    pSubMenu = DEBUG_NEW CMPCThemeMenu;
-                    pSubMenu->setOSMenu(isOSMenu);
-                    allocatedMenus.push_back(pSubMenu);
-                    pSubMenu->Attach(t->Detach());
-                }
-                pSubMenu->fulfillThemeReqs();
-            }
+            fulfillThemeReqsSubMenu(nPos);
         }
     }
 }
@@ -480,7 +495,25 @@ void CMPCThemeMenu::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
             CFont* pOldFont = pDC->GetCurrentFont();
             pDC->SelectObject(&font);
             if ((lpDrawItemStruct->itemState & (ODS_SELECTED | ODS_HOTLIGHT)) && (lpDrawItemStruct->itemAction & (ODA_SELECT | ODA_DRAWENTIRE))) {
-                pDC->FillSolidRect(&rectM, TextSelectColor);
+                if (CMPCTheme::isWindows11Style && !menuObject->isMenubar) {
+                    //windows 11 style: the hover is an inset rounded pill rather than the full row
+                    Gdiplus::Graphics gfx(pDC->m_hDC);
+                    gfx.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias8x8);
+                    gfx.SetPixelOffsetMode(Gdiplus::PixelOffsetModeHalf);
+                    const Gdiplus::REAL l = (Gdiplus::REAL)(rectM.left + hoverInsetX), t = (Gdiplus::REAL)(rectM.top + hoverInsetY);
+                    const Gdiplus::REAL w = (Gdiplus::REAL)(rectM.Width() - 2 * hoverInsetX), h = (Gdiplus::REAL)(rectM.Height() - 2 * hoverInsetY);
+                    const Gdiplus::REAL e = (Gdiplus::REAL)(2 * hoverRadius);
+                    Gdiplus::GraphicsPath path;
+                    path.AddArc(l, t, e, e, 180, 90);
+                    path.AddArc(l + w - e, t, e, e, 270, 90);
+                    path.AddArc(l + w - e, t + h - e, e, e, 0, 90);
+                    path.AddArc(l, t + h - e, e, e, 90, 90);
+                    path.CloseFigure();
+                    Gdiplus::SolidBrush brush(Gdiplus::Color(GetRValue(TextSelectColor), GetGValue(TextSelectColor), GetBValue(TextSelectColor)));
+                    gfx.FillPath(&brush, &path);
+                } else {
+                    pDC->FillSolidRect(&rectM, TextSelectColor);
+                }
             }
             CString left, right;
             GetStrings(menuObject, left, right);
@@ -595,6 +628,8 @@ void CMPCThemeMenu::updateItem(CCmdUI* pCmdUI)
         VERIFY(cm->GetMenuItemInfo(pCmdUI->m_nID, &mInfo));
 
         MenuObject* menuObject = (MenuObject*)mInfo.dwItemData;
-        cm->GetMenuString(pCmdUI->m_nID, menuObject->m_strCaption, MF_BYCOMMAND);
+        if (menuObject) {
+            cm->GetMenuString(pCmdUI->m_nID, menuObject->m_strCaption, MF_BYCOMMAND);
+        }
     }
 }
