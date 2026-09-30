@@ -5495,7 +5495,7 @@ msgid ""
 "Which Windows version the modern theme's colors are based on. Requires "
 "restart."
 msgstr ""
-"Meghatározza, hogy a modern téma színei melyik Windows-verzióra épüljenek. "
+"Meghatározza, hogy a modern téma színei melyik Windows verzióra épüljenek. "
 "Újraindítás szükséges."
 
 msgctxt "IDS_MODERN_THEME_STYLE_FOLLOW_OS"
