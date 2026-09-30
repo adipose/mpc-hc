@@ -5,14 +5,13 @@
 # MPC HC <adiposegithub@gmail.com>, 2020
 # Jindřich T, 2026
 # Michal Várady <miko.vaji@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-30 10:01+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-29 14:33:19+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Michal Várady <miko.vaji@gmail.com>, 2026\n"
 "Language-Team: Czech (https://app.transifex.com/mpchc/teams/106126/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5460,24 +5459,28 @@ msgid ""
 "Use native Windows 11 menus instead of the modern theme's own menus. The "
 "menu bar stays themed. Requires restart."
 msgstr ""
+"Použít nativní nabídky Windows 11 místo nabídek moderního motivu. Panel "
+"nabídek si zachová vzhled moderního motivu. Vyžaduje restart."
 
 msgctxt "IDS_PPAGEADVANCED_MODERN_THEME_STYLE"
 msgid ""
 "Which Windows version the modern theme's colors are based on. Requires "
 "restart."
 msgstr ""
+"Určuje, ze vzhledu které verze Windows vycházejí barvy moderního motivu. "
+"Vyžaduje restart."
 
 msgctxt "IDS_MODERN_THEME_STYLE_FOLLOW_OS"
 msgid "Follow Windows version"
-msgstr ""
+msgstr "Podle verze Windows"
 
 msgctxt "IDS_MODERN_THEME_STYLE_WINDOWS10"
 msgid "Windows 10"
-msgstr ""
+msgstr "Windows 10"
 
 msgctxt "IDS_MODERN_THEME_STYLE_WINDOWS11"
 msgid "Windows 11"
-msgstr ""
+msgstr "Windows 11"
 
 msgctxt "IDS_AUDIO_BOOST_WARNING"
 msgid ""
