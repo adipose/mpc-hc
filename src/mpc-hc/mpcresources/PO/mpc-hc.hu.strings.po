@@ -2,21 +2,20 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
 # Nagy Imre <nagyimre1980@gmail.com>, 2020
 # Peter Gyetvai <gyetpet@mailbox.org>, 2020
 # Speeder, 2022
 # Péter Patkós, 2024
 # Evin, 2024
+# MPC HC <adiposegithub@gmail.com>, 2026
 # Hevesi J. <hevesi2010@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-30 16:26+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-29 14:33:19+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Hevesi J. <hevesi2010@gmail.com>, 2026\n"
 "Language-Team: Hungarian (https://app.transifex.com/mpchc/teams/106126/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5488,24 +5487,28 @@ msgid ""
 "Use native Windows 11 menus instead of the modern theme's own menus. The "
 "menu bar stays themed. Requires restart."
 msgstr ""
+"A modern téma saját menüi helyett a Windows 11 natív menüit használja. A "
+"menüsor továbbra is a téma stílusát követi. Újraindítás szükséges."
 
 msgctxt "IDS_PPAGEADVANCED_MODERN_THEME_STYLE"
 msgid ""
 "Which Windows version the modern theme's colors are based on. Requires "
 "restart."
 msgstr ""
+"Meghatározza, hogy a modern téma színei melyik Windows-verzióra épüljenek. "
+"Újraindítás szükséges."
 
 msgctxt "IDS_MODERN_THEME_STYLE_FOLLOW_OS"
 msgid "Follow Windows version"
-msgstr ""
+msgstr "Kövesse a Windows verziót"
 
 msgctxt "IDS_MODERN_THEME_STYLE_WINDOWS10"
 msgid "Windows 10"
-msgstr ""
+msgstr "Windows 10"
 
 msgctxt "IDS_MODERN_THEME_STYLE_WINDOWS11"
 msgid "Windows 11"
-msgstr ""
+msgstr "Windows 11"
 
 msgctxt "IDS_AUDIO_BOOST_WARNING"
 msgid ""
