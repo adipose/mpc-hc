@@ -9,14 +9,13 @@
 # Krzysztof, 2024
 # Mirosław Żylewicz, 2025
 # Łukasz Janik, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-30 10:01+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-29 14:33:19+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Łukasz Janik, 2026\n"
 "Language-Team: Polish (https://app.transifex.com/mpchc/teams/106126/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4270,7 +4269,7 @@ msgctxt "IDS_CMD_PNS"
 msgid "/pns \"name\"\tSpecify PnS Frame Adjust Preset to use (for example: /pns \"%s\")"
 msgstr ""
 "/pns „nazwa\"\t Określa preset dopasowania klatki PnS do użycia (np.: /pns "
-"\"%s \")"
+"„%s \")"
 
 msgctxt "IDS_CMD_PNS_VALUES"
 msgid ""
@@ -4573,7 +4572,7 @@ msgid ""
 "\t\twhere N is one of \"1\" Minimal, \"2\" Compact, \"3\" Normal, or \"4\" Custom"
 msgstr ""
 "/viewpreset N\tUruchamia z określonym ustawieniem widoku,\n"
-"\t\tgdzie N oznacza: \"1\" Minimalny, \"2\" Kompaktowy, \"3\" Normalny lub \"4\" Niestandardowy"
+"\t\tgdzie N oznacza: „1\" Minimalny, „2\" Kompaktowy, „3\" Normalny lub „4\" Niestandardowy"
 
 msgctxt "IDS_CMD_MUTE"
 msgid "/mute\t\tMute the audio"
@@ -5482,24 +5481,28 @@ msgid ""
 "Use native Windows 11 menus instead of the modern theme's own menus. The "
 "menu bar stays themed. Requires restart."
 msgstr ""
+"Używaj natywnych menu systemu Windows 11 zamiast własnych menu nowoczesnego "
+"motywu. Pasek menu pozostaje w motywie. Wymaga ponownego uruchomienia."
 
 msgctxt "IDS_PPAGEADVANCED_MODERN_THEME_STYLE"
 msgid ""
 "Which Windows version the modern theme's colors are based on. Requires "
 "restart."
 msgstr ""
+"Wersja systemu Windows, na której bazują kolory nowoczesnego motywu. Wymaga "
+"ponownego uruchomienia."
 
 msgctxt "IDS_MODERN_THEME_STYLE_FOLLOW_OS"
 msgid "Follow Windows version"
-msgstr ""
+msgstr "Podążaj za Windowsem"
 
 msgctxt "IDS_MODERN_THEME_STYLE_WINDOWS10"
 msgid "Windows 10"
-msgstr ""
+msgstr "Windows 10"
 
 msgctxt "IDS_MODERN_THEME_STYLE_WINDOWS11"
 msgid "Windows 11"
-msgstr ""
+msgstr "Windows 11"
 
 msgctxt "IDS_AUDIO_BOOST_WARNING"
 msgid ""
