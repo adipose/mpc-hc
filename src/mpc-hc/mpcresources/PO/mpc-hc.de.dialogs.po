@@ -11,14 +11,13 @@
 # Jan Klass <kissaki@posteo.de>, 2024
 # Nico, 2025
 # Maik Dießner, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-10-01 07:15+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-09 08:19:27+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Maik Dießner, 2026\n"
 "Language-Team: German (https://app.transifex.com/mpchc/teams/106126/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1675,7 +1674,7 @@ msgctxt "IDD_PPAGEADVANCED_IDC_STATIC"
 msgid "Advanced Settings, do not edit unless you know what you are doing."
 msgstr ""
 "Folgende Werte bitte nur bei genauer Kenntnis der jeweiligen Einstellung "
-"anpassen."
+"anpassen:"
 
 msgctxt "IDD_PPAGEADVANCED_IDC_RADIO1"
 msgid "True"
