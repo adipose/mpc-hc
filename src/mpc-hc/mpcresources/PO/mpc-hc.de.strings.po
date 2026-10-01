@@ -5475,7 +5475,7 @@ msgstr ""
 "Speichert die Verlaufsdatei und die gespeicherte Wiedergabeliste im Ordner "
 "%APPDATA%\\MPC-HC anstelle des Player-Ordners, wenn die Einstellungen in "
 "einer INI-Datei gespeichert sind. Dies geschieht auch automatisch, wenn der "
-"Player-Ordner nicht beschreibbar ist. Ein Neustart ist erforderlich."
+"Player-Ordner nicht beschreibbar ist. Erfordert einen Neustart."
 
 msgctxt "IDS_PPAGEADVANCED_HISTORY_EXCLUDE_FILTER"
 msgid ""
