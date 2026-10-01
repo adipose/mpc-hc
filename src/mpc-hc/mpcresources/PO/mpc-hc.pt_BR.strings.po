@@ -2,18 +2,17 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
 # Zyz696 Paga, 2020
 # MPC-HC Developer, 2025
+# MPC HC <adiposegithub@gmail.com>, 2026
 # Felipefpl, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-10-01 07:15+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-09-29 14:33:19+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Felipefpl, 2026\n"
 "Language-Team: Portuguese (Brazil) (https://app.transifex.com/mpchc/teams/106126/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5488,24 +5487,28 @@ msgid ""
 "Use native Windows 11 menus instead of the modern theme's own menus. The "
 "menu bar stays themed. Requires restart."
 msgstr ""
+"Usar os menus nativos do Windows 11 em vez dos próprios menus do tema "
+"moderno. A barra de menus permanece temática. Requer reiniciar."
 
 msgctxt "IDS_PPAGEADVANCED_MODERN_THEME_STYLE"
 msgid ""
 "Which Windows version the modern theme's colors are based on. Requires "
 "restart."
 msgstr ""
+"Em qual versão do Windows as cores do tema moderno são baseadas. Requer "
+"reiniciar."
 
 msgctxt "IDS_MODERN_THEME_STYLE_FOLLOW_OS"
 msgid "Follow Windows version"
-msgstr ""
+msgstr "Seguir a versão para Windows"
 
 msgctxt "IDS_MODERN_THEME_STYLE_WINDOWS10"
 msgid "Windows 10"
-msgstr ""
+msgstr "Windows 10"
 
 msgctxt "IDS_MODERN_THEME_STYLE_WINDOWS11"
 msgid "Windows 11"
-msgstr ""
+msgstr "Windows 11"
 
 msgctxt "IDS_AUDIO_BOOST_WARNING"
 msgid ""
