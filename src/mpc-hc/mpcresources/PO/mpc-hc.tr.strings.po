@@ -6,14 +6,13 @@
 # MPC HC <adiposegithub@gmail.com>, 2022
 # Sinan H., 2024
 # Mücahid Aksel <mucahidaksel@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-30 21:28+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-10-03 13:02:08+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Mücahid Aksel <mucahidaksel@gmail.com>, 2026\n"
 "Language-Team: Turkish (https://app.transifex.com/mpchc/teams/106126/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5487,10 +5486,12 @@ msgid ""
 "Use native Windows 11 menus instead of the modern theme's own menus. The "
 "menu bar stays themed."
 msgstr ""
+"Modern temanın kendi menü tasarımı yerine yerleşik Windows 11 menüsünü "
+"kullan. Menü çubuğu temasını muhafaza eder."
 
 msgctxt "IDS_PPAGEADVANCED_MODERN_THEME_STYLE"
 msgid "Which Windows version the modern theme's colors are based on."
-msgstr ""
+msgstr "Modern tema renklerinin hangi Windows sürümüne dayanacağını belirle."
 
 msgctxt "IDS_MODERN_THEME_STYLE_FOLLOW_OS"
 msgid "Follow Windows version"
