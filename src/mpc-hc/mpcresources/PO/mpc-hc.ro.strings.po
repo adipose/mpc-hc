@@ -2220,7 +2220,7 @@ msgstr "Următorul"
 
 msgctxt "IDS_AG_PREVIOUS"
 msgid "Previous"
-msgstr "Precedentul"
+msgstr "Anteriorul"
 
 msgctxt "IDS_AG_NEXT_FILE"
 msgid "Next File"
@@ -2228,7 +2228,7 @@ msgstr "Fișierul următor"
 
 msgctxt "IDS_AG_PREVIOUS_FILE"
 msgid "Previous File"
-msgstr "Fișierul precedent"
+msgstr "Fișierul anterior"
 
 msgctxt "IDS_MPLAYERC_99"
 msgid "Toggle Direct3D fullscreen"
