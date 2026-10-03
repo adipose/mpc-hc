@@ -664,7 +664,7 @@ msgstr "Redare::Ecran complet"
 
 msgctxt "IDS_AUDIOSWITCHER"
 msgid "Audio Switcher"
-msgstr "Comutator Audio"
+msgstr "Comutator audio"
 
 msgctxt "IDS_ICONS_REASSOC_DLG_TITLE"
 msgid "New version of the icon library"
