@@ -5,14 +5,13 @@
 # MPC HC <adiposegithub@gmail.com>, 2020
 # Sonozaki Shion <mskt01a@gmail.com>, 2021
 # ever_green, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-10-03 17:58+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-10-03 13:02:08+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: ever_green, 2026\n"
 "Language-Team: Japanese (https://app.transifex.com/mpchc/teams/106126/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5332,11 +5331,11 @@ msgctxt "IDS_PPAGEADVANCED_WIN11_NATIVE_MENUS"
 msgid ""
 "Use native Windows 11 menus instead of the modern theme's own menus. The "
 "menu bar stays themed."
-msgstr ""
+msgstr "モダン テーマ独自のメニューではなく、Windows 11 の標準メニューを使用します。メニュー バーはテーマが適用されたままです。"
 
 msgctxt "IDS_PPAGEADVANCED_MODERN_THEME_STYLE"
 msgid "Which Windows version the modern theme's colors are based on."
-msgstr ""
+msgstr "モダン テーマの色に適用する Windows のバージョン。"
 
 msgctxt "IDS_MODERN_THEME_STYLE_FOLLOW_OS"
 msgid "Follow Windows version"
