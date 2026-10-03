@@ -348,7 +348,7 @@ msgstr "Nu se poate deschide, parametri invalizi de intrare"
 
 msgctxt "IDS_EDIT_LIST_EDITOR"
 msgid "Edit List Editor"
-msgstr "Editorul listei de editare"
+msgstr "Editorul listei de editare (Editorul playlistului)"
 
 msgctxt "IDS_GOTO_ERROR_INVALID_TIME"
 msgid "The entered time is greater than the file duration."
@@ -422,7 +422,7 @@ msgstr "La (FPS)"
 
 msgctxt "IDS_PPAGE_FS_CLN_DISPLAY_MODE"
 msgid "Display mode (Hz)"
-msgstr "Mod afișare (Hz)"
+msgstr "Mod afișare (în Hz)"
 
 msgctxt "IDS_PPAGE_FS_DEFAULT"
 msgid "Default"
