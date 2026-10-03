@@ -1149,7 +1149,7 @@ msgstr ""
 
 msgctxt "IDS_SRC_RFS"
 msgid "Based on RARFileSource, doesn't support compressed files"
-msgstr "Bazat pe RARFileSource, nu sprijină fișierele comprimate"
+msgstr "Bazat pe RARFileSource, nu acceptă fișiere comprimate"
 
 msgctxt "IDS_INTERNAL_LAVF"
 msgid "Uses LAV Filters"
