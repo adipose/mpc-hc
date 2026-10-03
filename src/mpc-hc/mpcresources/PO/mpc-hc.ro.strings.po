@@ -496,7 +496,7 @@ msgstr "S&ortează după dată (întâi cel mai vechi)"
 
 msgctxt "IDS_PLAYLIST_RANDOMIZE"
 msgid "R&andomize"
-msgstr "&Amestecă în mod aleator"
+msgstr "Redă în mod &aleator"
 
 msgctxt "IDS_PLAYLIST_RESTORE"
 msgid "R&estore"
@@ -528,7 +528,7 @@ msgstr "&Original"
 
 msgctxt "IDS_SUBRESYNC_CURRENT"
 msgid "&Current"
-msgstr "&Actual"
+msgstr "A&ctual"
 
 msgctxt "IDS_SUBRESYNC_EDIT"
 msgid "&Edit"
