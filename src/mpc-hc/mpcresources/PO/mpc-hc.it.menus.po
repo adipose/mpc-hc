@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2025-04-26 17:38:13+0000\n"
+"POT-Creation-Date: 2026-08-22 12:16:02+0000\n"
 "PO-Revision-Date: 2020-01-02 07:46+0000\n"
 "Last-Translator: Gianni Chedda <gianni.chedda0@gmail.com>, 2026\n"
 "Language-Team: Italian (https://app.transifex.com/mpchc/teams/106126/it/)\n"
@@ -157,7 +157,7 @@ msgstr "Normale"
 
 msgctxt "ID_VIEW_PRESETS_CUSTOM"
 msgid "C&ustom"
-msgstr ""
+msgstr "P&ersonalizzato"
 
 msgctxt "ID_VIEW_FULLSCREEN"
 msgid "F&ull Screen"
@@ -665,7 +665,7 @@ msgstr "&Filtri"
 
 msgctxt "ID_COLOR_CONTROLS"
 msgid "&Color controls..."
-msgstr ""
+msgstr "&Controlli colore..."
 
 msgctxt "ID_SHADERS"
 msgid "S&haders"
@@ -681,7 +681,7 @@ msgstr "&Traccia Sottotitolo"
 
 msgctxt "ID_SUBTITLES_SECONDARY"
 msgid "Secondary Subtitle Track"
-msgstr ""
+msgstr "Traccia Sottotitoli Secondaria"
 
 msgctxt "ID_VIDEO_STREAMS"
 msgid "Vide&o Track"
