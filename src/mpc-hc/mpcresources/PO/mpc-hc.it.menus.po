@@ -337,7 +337,7 @@ msgstr "VSync alternativo"
 
 msgctxt "ID_VIEW_VSYNCOFFSET_DECREASE"
 msgid "&Decrease VSync Offset"
-msgstr "&Decrementa offset VSync"
+msgstr "&Diminuisci offset VSync"
 
 msgctxt "ID_VIEW_VSYNCOFFSET_INCREASE"
 msgid "&Increase VSync Offset"
