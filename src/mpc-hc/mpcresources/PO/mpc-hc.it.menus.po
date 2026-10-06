@@ -25,11 +25,11 @@ msgstr "&File"
 
 msgctxt "ID_FILE_OPENQUICK"
 msgid "&Quick Open File..."
-msgstr "&Apertura Rapida File..."
+msgstr "&Apertura rapida file..."
 
 msgctxt "ID_FILE_OPENMEDIA"
 msgid "&Open File/URL..."
-msgstr "Apri &File/URL..."
+msgstr "Apri &file/URL..."
 
 msgctxt "ID_FILE_OPENDVDBD"
 msgid "Open &DVD/BD..."
@@ -41,7 +41,7 @@ msgstr "Apri &periferica..."
 
 msgctxt "ID_FILE_OPENDIRECTORY"
 msgid "Open Dir&ectory..."
-msgstr "Apri &Cartella..."
+msgstr "Apri &cartella..."
 
 msgctxt "ID_FILE_OPENDISC"
 msgid "O&pen Disc"
@@ -89,7 +89,7 @@ msgstr "P&roprietà"
 
 msgctxt "ID_FILE_OPEN_LOCATION"
 msgid "Open File &Location"
-msgstr "Apri Percorso Fi&le"
+msgstr "Apri percorso fi&le"
 
 msgctxt "ID_FILE_EXIT"
 msgid "E&xit"
