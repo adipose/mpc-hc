@@ -2218,7 +2218,7 @@ msgstr "预设视图"
 
 msgctxt "IDS_AG_FULLSCREEN"
 msgid "Fullscreen"
-msgstr "全屏幕"
+msgstr "全屏/恢复"
 
 msgctxt "IDS_MPLAYERC_39"
 msgid "Fullscreen (w/o res.change)"
