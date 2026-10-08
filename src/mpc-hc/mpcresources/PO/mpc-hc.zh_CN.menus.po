@@ -6,7 +6,6 @@
 # lifegpc <g1710431395@gmail.com>, 2020
 # CyanVesper <SharpNight93@gmail.com>, 2023
 # KaiHuaDou, 2026
-# Phonebook3599, 2026
 # YuanHao Du, 2026
 # 
 msgid ""
@@ -668,7 +667,7 @@ msgstr "滤镜(&F)"
 
 msgctxt "ID_COLOR_CONTROLS"
 msgid "&Color controls..."
-msgstr "颜色控制(&C)…"
+msgstr "颜色设置(&C)…"
 
 msgctxt "ID_SHADERS"
 msgid "S&haders"
