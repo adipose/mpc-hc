@@ -10,14 +10,13 @@
 # Nico, 2025
 # MPC HC <adiposegithub@gmail.com>, 2025
 # Maik Dießner, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-10-08 16:29+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-10-03 13:02:08+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Maik Dießner, 2026\n"
 "Language-Team: German (https://app.transifex.com/mpchc/teams/106126/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3341,7 +3340,7 @@ msgstr "Vorne rechts (FR)"
 
 msgctxt "IDS_FRONT_CENTER"
 msgid "Front Center"
-msgstr "Vorne-Center (FC)"
+msgstr "Vorn Center (FC)"
 
 msgctxt "IDS_LOW_FREQUENCY"
 msgid "Low Frequency"
@@ -3357,15 +3356,15 @@ msgstr "Hinten rechts (BR)"
 
 msgctxt "IDS_FRONT_LEFT_OF_CENTER"
 msgid "Front Left of Center"
-msgstr "Vorne links mittig (FLc)"
+msgstr "Vorn links Center (FLc)"
 
 msgctxt "IDS_FRONT_RIGHT_OF_CENTER"
 msgid "Front Right of Center"
-msgstr "Vorne rechts mittig (FRc)"
+msgstr "Vorn rechts Center (FRc)"
 
 msgctxt "IDS_BACK_CENTER"
 msgid "Back Center"
-msgstr "Hinten-Center (BC)"
+msgstr "Hinten Center (BC)"
 
 msgctxt "IDS_SIDE_LEFT"
 msgid "Side Left"
@@ -3377,7 +3376,7 @@ msgstr "Seite rechts (SiR)"
 
 msgctxt "IDS_TOP_CENTER"
 msgid "Top Center"
-msgstr "Oben-Center (TpC)"
+msgstr "Oben Center (TpC)"
 
 msgctxt "IDS_TOP_FRONT_LEFT"
 msgid "Top Front Left"
@@ -3385,7 +3384,7 @@ msgstr "Oben vorne links (TpFL)"
 
 msgctxt "IDS_TOP_FRONT_CENTER"
 msgid "Top Front Center"
-msgstr "Oben-vorne-Center (TpFC)"
+msgstr "Oben vorn Center (TpFC)"
 
 msgctxt "IDS_TOP_FRONT_RIGHT"
 msgid "Top Front Right"
@@ -3397,7 +3396,7 @@ msgstr "Oben hinten links (TpBL)"
 
 msgctxt "IDS_TOP_BACK_CENTER"
 msgid "Top Back Center"
-msgstr "Oben-hinten-Center (TpBC)"
+msgstr "Oben hinten Center (TpBC)"
 
 msgctxt "IDS_TOP_BACK_RIGHT"
 msgid "Top Back Right"
