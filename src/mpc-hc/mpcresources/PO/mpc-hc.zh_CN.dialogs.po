@@ -1063,7 +1063,7 @@ msgctxt "IDD_PPAGEINTERNALFILTERS_IDC_STATIC"
 msgid ""
 "If you would like to use the stand-alone versions of these filters or "
 "another replacement, disable them here."
-msgstr "如果您希望使用这些滤镜的独立版本或其它可替代品,请在此禁用它。"
+msgstr "如果你想使用这些滤镜的独立版本或其它替代品，请在此处将其禁用。"
 
 msgctxt "IDD_PPAGEINTERNALFILTERS_IDC_STATIC"
 msgid "Source Filters"
