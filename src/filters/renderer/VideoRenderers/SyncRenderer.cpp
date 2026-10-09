@@ -50,6 +50,7 @@
 #include "Utils.h"
 #include "Variables.h"
 #include "HLGInput.h"
+#include "HLGToSDR.h"
 
 #if (0)     // Set to 1 to activate SyncRenderer traces
 #define TRACE_SR   TRACE
@@ -71,6 +72,7 @@ extern bool LoadResource(UINT resid, CStringA& str, LPCTSTR restype);
 
 CBaseAP::CBaseAP(HWND hWnd, bool bFullscreen, HRESULT& hr, CString& _Error)
     : CSubPicAllocatorPresenterImpl(hWnd, hr, &_Error)
+    , m_nRenderState(Shutdown)
     , m_hDWMAPI(nullptr)
     , m_pDwmIsCompositionEnabled(nullptr)
     , m_pDwmEnableComposition(nullptr)
@@ -2518,11 +2520,32 @@ STDMETHODIMP CBaseAP::SetPixelShader(LPCSTR pSrcData, LPCSTR pTarget)
     return SetPixelShader2(pSrcData, pTarget, false);
 }
 
+bool CBaseAP::InputPinIsHLGNow()
+{
+    if (m_nRenderState != Started && m_nRenderState != Paused) {
+        return false;
+    }
+
+    CComPtr<IPin> pPin;
+    CMediaType    mt;
+    if (SUCCEEDED(m_pOuterEVR->FindPin(L"EVR Input0", &pPin)) && SUCCEEDED(pPin->ConnectionMediaType(&mt))) {
+        if (mt.formattype == FORMAT_VideoInfo2 || mt.formattype == FORMAT_MPEG2_VIDEO) {
+            VIDEOINFOHEADER2& vih2 = *(VIDEOINFOHEADER2*)mt.pbFormat;
+            if (vih2.dwControlFlags & AMCONTROL_COLORINFO_PRESENT) {
+                DXVA2_ExtendedFormat exfmt;
+                exfmt.value = vih2.dwControlFlags;
+                return exfmt.VideoTransferFunction == TRANSFER_FUNCTION_HLG;
+            }
+        }
+    }
+    return false;
+}
+
 bool CBaseAP::HLGToSDRActive()
 {
     if (m_bHLGPinCheck) {
         m_bHLGPinCheck = false;
-        m_bHLGInput = InputPinIsHLG(m_pOuterEVR);
+        m_bHLGInput = InputPinIsHLGNow();
     }
     if (!m_bHLGInput || !GetRenderersSettings().m_AdvRendSets.bHLGToSDR
             || m_caps.PixelShaderVersion < D3DPS_VERSION(3, 0)) {
@@ -2591,7 +2614,6 @@ CSyncAP::CSyncAP(HWND hWnd, bool bFullscreen, HRESULT& hr, CString& _Error)
     , m_bPrerolled(false)
     , m_hRenderThread(nullptr)
     , m_hMixerThread(nullptr)
-    , m_nRenderState(Shutdown)
     , m_bStepping(false)
     , m_nCurrentGroupId(0)
     , m_nResetToken(0)

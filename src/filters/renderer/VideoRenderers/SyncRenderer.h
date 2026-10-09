@@ -128,6 +128,14 @@ namespace GothSync
         CComPtr<ID3DXSprite> m_pSprite;
         CSyncRenderer* m_pOuterEVR;
 
+        enum RENDER_STATE {
+            Started  = State_Running,
+            Stopped  = State_Stopped,
+            Paused   = State_Paused,
+            Shutdown = State_Running + 1
+        };
+        RENDER_STATE m_nRenderState;
+
         class CExternalPixelShader
         {
         public:
@@ -148,6 +156,7 @@ namespace GothSync
         CExternalPixelShader m_HLGToSDRShader; // run before m_pPixelShaders while the input is HLG
         bool m_bHLGInput = false;              // set from the mixer's input type
         bool m_bHLGPinCheck = false;           // check the input pin before the next frame
+        bool InputPinIsHLGNow();
         bool HLGToSDRActive();
         CAtlList<CExternalPixelShader> m_pPixelShadersScreenSpace;
         CComPtr<IDirect3DPixelShader9> m_pResizerPixelShader[4]; // bl, bc1, bc2_1, bc2_2
@@ -469,13 +478,6 @@ namespace GothSync
         MFCLOCK_STATE m_LastClockState;
 
     private:
-        enum RENDER_STATE {
-            Started  = State_Running,
-            Stopped  = State_Stopped,
-            Paused   = State_Paused,
-            Shutdown = State_Running + 1
-        };
-
         CComPtr<IMFClock> m_pClock;
         CComPtr<IDirect3DDeviceManager9> m_pD3DManager;
         CComPtr<IMFTransform> m_pMixer;
@@ -500,7 +502,6 @@ namespace GothSync
 
         HANDLE m_hRenderThread;
         HANDLE m_hMixerThread;
-        RENDER_STATE m_nRenderState;
         bool m_bStepping;
 
         CCritSec m_SampleQueueLock;
