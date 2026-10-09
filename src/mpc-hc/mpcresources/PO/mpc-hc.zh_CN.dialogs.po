@@ -1611,7 +1611,7 @@ msgstr "删除"
 
 msgctxt "IDD_PPAGESHADERS_IDC_STATIC"
 msgid "Active pre-resize shaders"
-msgstr "重绘尺寸前激活的着色器"
+msgstr "缩放前激活的着色器"
 
 msgctxt "IDD_PPAGESHADERS_IDC_STATIC"
 msgid "Active post-resize shaders"
