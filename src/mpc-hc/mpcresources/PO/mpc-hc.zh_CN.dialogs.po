@@ -1879,7 +1879,7 @@ msgstr "显示时间"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC11"
 msgid "Hover Position:"
-msgstr "画面显示位置:"
+msgstr "预览图位置:"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC7"
 msgid "Preview width (% of screen)"
