@@ -1883,7 +1883,7 @@ msgstr "画面显示位置:"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC7"
 msgid "Preview width (% of screen)"
-msgstr "预览画面宽度：（屏幕百分比）"
+msgstr "预览窗口大小：（画面百分比）"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC10"
 msgid "Status Bar Elements"
