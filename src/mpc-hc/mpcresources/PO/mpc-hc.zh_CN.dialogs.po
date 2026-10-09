@@ -1615,7 +1615,7 @@ msgstr "缩放前激活的着色器"
 
 msgctxt "IDD_PPAGESHADERS_IDC_STATIC"
 msgid "Active post-resize shaders"
-msgstr "重绘尺寸后激活的着色器"
+msgstr "缩放后激活的着色器"
 
 msgctxt "IDD_PPAGESHADERS_IDC_STATIC5"
 msgid ""
