@@ -4795,11 +4795,11 @@ msgstr "缩放前的像素着色器: 开"
 
 msgctxt "IDS_PRESIZE_SHADERS_DISABLED"
 msgid "Pre-Resize Pixel Shaders: off"
-msgstr "重绘尺寸前的像素着色器: 关"
+msgstr "缩放前的像素着色器: 关"
 
 msgctxt "IDS_PRESIZE_SHADERS_TOGGLE"
 msgid "Enable Pre-Resize Pixel Shaders"
-msgstr "启用重绘尺寸前的像素着色器"
+msgstr "启用缩放前的像素着色器"
 
 msgctxt "IDS_POSTSIZE_SHADERS_ENABLED"
 msgid "Post-Resize Pixel Shaders: on"
