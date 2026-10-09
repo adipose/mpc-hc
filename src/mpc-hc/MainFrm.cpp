@@ -944,8 +944,6 @@ CMainFrame::CMainFrame()
     , m_bExtOnTop(false)
     , m_bIsBDPlay(false)
     , m_bHasBDMeta(false)
-    , watchingDialog(themableDialogTypes::None)
-    , dialogHookHelper(nullptr)
     , delayingFullScreen(false)
     , restoringWindowRect(false)
     , mediaTypesErrorDlg(nullptr)
@@ -20514,8 +20512,11 @@ bool CMainFrame::BuildGraphVideoAudio(int fVPreview, bool fVCapture, int fAPrevi
         m_pMVRS.Release();
         m_pMVRFG.Release();
         m_pMVRSR.Release();
+        m_pMVRC.Release();
+        m_pMVRI.Release();
         m_pMVTO.Release();
         m_pMPCVRSR.Release();
+        m_pD3DFSC.Release();
         m_pCAP3.Release();
         m_pCAP2.Release();
         m_pCAP.Release();
@@ -20604,6 +20605,9 @@ bool CMainFrame::BuildGraphVideoAudio(int fVPreview, bool fVCapture, int fAPrevi
         m_pMVRS = m_pCAP;
         m_pMVRFG = m_pCAP;
         m_pMPCVRSR = m_pCAP;
+        m_pMVRC = m_pCAP;
+        m_pMVRI = m_pCAP;
+        m_pD3DFSC = m_pCAP;
 
         const CAppSettings& s = AfxGetAppSettings();
         m_pVideoWnd = &m_wndView;
@@ -23804,20 +23808,6 @@ BOOL CMainFrame::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwS
     return FALSE;
 }
 
-void CMainFrame::enableFileDialogHook(CMPCThemeUtil* helper) {
-    if (AfxGetAppSettings().bWindows10DarkThemeActive) { //hard coded behavior for windows 10 dark theme file dialogs, irrespsective of theme loaded by user (fixing windows bugs)
-        watchingDialog = themableDialogTypes::windowsFileDialog;
-        dialogHookHelper = helper;
-    }
-}
-
-void CMainFrame::enableDialogHook(CMPCThemeUtil* helper, themableDialogTypes type) {
-    if (AppIsThemeLoaded()) {
-        watchingDialog = type;
-        dialogHookHelper = helper;
-    }
-}
-
 bool CMainFrame::isSafeZone(CPoint pt) {
     CRect r;
     m_wndSeekBar.GetClientRect(r);
@@ -23916,14 +23906,6 @@ LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
                 break;
         }
         return 0;
-    } else if (watchingDialog != themableDialogTypes::None && nullptr != dialogHookHelper && message == WM_ACTIVATE && LOWORD(wParam) == WA_INACTIVE) {
-        dialogHookHelper->themableDialogHandle = (HWND)lParam;
-        foundDialog = watchingDialog;
-        watchingDialog = themableDialogTypes::None;
-        //capture but process message normally
-    } else if (message == WM_GETICON && foundDialog == themableDialogTypes::windowsFileDialog && nullptr != dialogHookHelper && nullptr != dialogHookHelper->themableDialogHandle) {
-        dialogHookHelper->subClassFileDialog(this);
-        foundDialog = themableDialogTypes::None;
     }
 
     if (message == WM_NCLBUTTONDOWN && wParam == HTCAPTION && !m_pMVRSR) {
