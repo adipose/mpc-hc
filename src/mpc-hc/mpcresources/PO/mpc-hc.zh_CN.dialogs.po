@@ -1045,7 +1045,7 @@ msgstr "按键"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
 msgid "Click"
-msgstr "左键点击"
+msgstr "左键单击"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
 msgid "Double click"
@@ -1053,7 +1053,7 @@ msgstr "左键双击"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
 msgid "Right click"
-msgstr "右键点击"
+msgstr "右键单击"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_BUTTON2"
 msgid "Default"
@@ -2027,11 +2027,11 @@ msgstr "自定义按钮 1"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Click"
-msgstr "左键点击"
+msgstr "左键单击"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Right click"
-msgstr "右键点击"
+msgstr "右键单击"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Custom Button 2"
