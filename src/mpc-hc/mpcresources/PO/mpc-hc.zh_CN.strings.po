@@ -4721,7 +4721,7 @@ msgstr "确定"
 
 msgctxt "IDS_MOUSE_CLICK_MIDDLE"
 msgid "Middle click"
-msgstr "中键点击"
+msgstr "中键单击"
 
 msgctxt "IDS_MOUSE_CLICK_X1"
 msgid "X1 click"
