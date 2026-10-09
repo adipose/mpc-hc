@@ -4811,7 +4811,7 @@ msgstr "缩放后的像素着色器: 关"
 
 msgctxt "IDS_POSTSIZE_SHADERS_TOGGLE"
 msgid "Enable Post-Resize Pixel Shaders"
-msgstr "启用重绘尺寸后的像素着色器"
+msgstr "启用缩放后的像素着色器"
 
 msgctxt "IDS_PPAGEADVANCED_TIME_REFRESH_INTERVAL"
 msgid "Refresh interval (in milliseconds) of time in status bar"
