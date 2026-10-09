@@ -4791,7 +4791,7 @@ msgstr "保留视频文件扩展名作为屏幕截图文件名的一部分（例
 
 msgctxt "IDS_PRESIZE_SHADERS_ENABLED"
 msgid "Pre-Resize Pixel Shaders: on"
-msgstr "重绘尺寸前的像素着色器: 开"
+msgstr "缩放前的像素着色器: 开"
 
 msgctxt "IDS_PRESIZE_SHADERS_DISABLED"
 msgid "Pre-Resize Pixel Shaders: off"
