@@ -4803,7 +4803,7 @@ msgstr "启用缩放前的像素着色器"
 
 msgctxt "IDS_POSTSIZE_SHADERS_ENABLED"
 msgid "Post-Resize Pixel Shaders: on"
-msgstr "重绘尺寸后的像素着色器: 开"
+msgstr "缩放后的像素着色器: 开"
 
 msgctxt "IDS_POSTSIZE_SHADERS_DISABLED"
 msgid "Post-Resize Pixel Shaders: off"
