@@ -1575,7 +1575,7 @@ msgctxt "IDD_PPAGESHADERS_IDC_STATIC"
 msgid ""
 "Shaders contain special effects which can be added to the video rendering "
 "process."
-msgstr "着色器包含可以被添加到视频渲染过程中的特殊效果。"
+msgstr "着色器包含一些特殊效果，可以添加到视频渲染过程中。"
 
 msgctxt "IDD_PPAGESHADERS_IDC_BUTTON12"
 msgid "Add shader file"
