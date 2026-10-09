@@ -1587,11 +1587,11 @@ msgstr "移除"
 
 msgctxt "IDD_PPAGESHADERS_IDC_BUTTON1"
 msgid "Add to pre-resize"
-msgstr "添加到重绘尺寸前"
+msgstr "添加到缩放前"
 
 msgctxt "IDD_PPAGESHADERS_IDC_BUTTON2"
 msgid "Add to post-resize"
-msgstr "添加到重绘尺寸后"
+msgstr "添加到缩放后"
 
 msgctxt "IDD_PPAGESHADERS_IDC_STATIC"
 msgid "Shader presets"
