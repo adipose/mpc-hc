@@ -459,7 +459,7 @@ msgstr "自动适应因数:"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "min %"
-msgstr "最小%"
+msgstr "最小 %"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "max %"
