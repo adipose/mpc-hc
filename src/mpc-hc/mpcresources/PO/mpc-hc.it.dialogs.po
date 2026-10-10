@@ -568,8 +568,7 @@ msgstr "% del numero di frame video"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_CHECK_ALLOW_DROPPING_SUBPIC"
 msgid "Allow dropping some subpictures if the queue is running late"
-msgstr ""
-"Consenti di tralasciare alcune immagini secondarie se la coda è in ritardo"
+msgstr "Consenti di scartare alcuni sottotitoli se la coda è in ritardo"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
 msgid "Renderer Layout"
