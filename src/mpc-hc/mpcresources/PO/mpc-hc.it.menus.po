@@ -353,7 +353,7 @@ msgstr "Svuota GPU prima del VSync"
 
 msgctxt "ID_VIEW_FLUSHGPU_AFTERPRESENT"
 msgid "Flush GPU &after Present"
-msgstr "Svuota GPU %dopo il present"
+msgstr "Svuot&a GPU dopo il present"
 
 msgctxt "ID_VIEW_FLUSHGPU_WAIT"
 msgid "&Wait for flushes"
