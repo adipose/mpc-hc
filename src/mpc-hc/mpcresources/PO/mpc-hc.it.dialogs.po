@@ -1058,7 +1058,7 @@ msgstr "Pulsanti"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
 msgid "Click"
-msgstr "Clic"
+msgstr "Click"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
 msgid "Double click"
