@@ -329,7 +329,7 @@ msgstr "Ricorda ultima playlist"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_FILE_POS"
 msgid "Remember File position"
-msgstr "Ricorda posizione File"
+msgstr "Ricorda posizione file"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_DVD_POS"
 msgid "Remember DVD position"
