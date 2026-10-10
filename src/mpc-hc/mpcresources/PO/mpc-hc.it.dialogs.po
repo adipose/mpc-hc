@@ -337,11 +337,11 @@ msgstr "Ricorda posizione DVD"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK6"
 msgid "Remember last window position"
-msgstr "Ricorda l'ultima posizione della finestra"
+msgstr "Ricorda ultima posizione della finestra"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK7"
 msgid "Remember last window size"
-msgstr "Ricorda le ultime dimensioni della finestra"
+msgstr "Ricorda ultime dimensioni della finestra"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK11"
 msgid "Remember last Pan && Scan Zoom"
