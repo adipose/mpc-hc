@@ -496,7 +496,7 @@ msgstr "Impostazioni all'apertura"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_CHECK7"
 msgid "Use worker thread to construct the filter graph"
-msgstr "Usa il worker thread per costruire il filter graph"
+msgstr "Usa il worker thread per costruire il grafico di filtro"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_CHECK6"
 msgid "Report pins which fail to render"
