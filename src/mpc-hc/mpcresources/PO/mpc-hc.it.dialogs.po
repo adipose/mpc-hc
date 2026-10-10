@@ -552,7 +552,7 @@ msgstr "Non usare mai le animazioni per i sottotitoli"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC5"
 msgid "Render at"
-msgstr "Rendimento a"
+msgstr "Render al"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC6"
 msgid "% of the animation"
