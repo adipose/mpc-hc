@@ -241,7 +241,7 @@ msgstr "Forza &input 10-bit RGB"
 
 msgctxt "ID_VIEW_FULLFLOATINGPOINTPROCESSING"
 msgid "&Full Floating Point Processing"
-msgstr "Calcolo completo a virgola mobile"
+msgstr "Elaborazione in virgola mobile a 16 bit"
 
 msgctxt "ID_VIEW_HALFFLOATINGPOINTPROCESSING"
 msgid "&Half Floating Point Processing"
