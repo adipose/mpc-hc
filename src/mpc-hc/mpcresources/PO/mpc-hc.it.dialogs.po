@@ -6,14 +6,14 @@
 # ThePiratePeter, 2020
 # Massimiliano F. <garfield002@gmail.com>, 2020
 # Donatello, 2024
-# Gianni Chedda <gianni.chedda0@gmail.com>, 2026
+# Van Matten <gianni.chedda0@gmail.com>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
 "POT-Creation-Date: 2026-09-09 08:19:27+0000\n"
 "PO-Revision-Date: 2020-01-02 07:46+0000\n"
-"Last-Translator: Gianni Chedda <gianni.chedda0@gmail.com>, 2026\n"
+"Last-Translator: Van Matten <gianni.chedda0@gmail.com>, 2026\n"
 "Language-Team: Italian (https://app.transifex.com/mpchc/teams/106126/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -115,7 +115,7 @@ msgstr "Previeni clipping"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK4"
 msgid "Audio time shift (ms):"
-msgstr "Spostamento audio (ms):"
+msgstr "Sfasamento audio (ms):"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK1"
 msgid "Enable custom channel mapping"
@@ -304,7 +304,7 @@ msgstr "Salva le impostazioni nel file .ini"
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK10"
 msgid "Disable \"Open Disc\" menu"
-msgstr "Disabilita il menù \"Apri disco\""
+msgstr "Disabilita il menu \"Apri disco\""
 
 msgctxt "IDD_PPAGEPLAYER_IDC_CHECK9"
 msgid "Process priority above normal"
@@ -364,7 +364,7 @@ msgstr "Lingua preferita per i DVD"
 
 msgctxt "IDD_PPAGEDVD_IDC_RADIO3"
 msgid "Menu"
-msgstr "Menù"
+msgstr "Menu"
 
 msgctxt "IDD_PPAGEDVD_IDC_RADIO4"
 msgid "Audio"
@@ -544,7 +544,7 @@ msgstr "Numero di sottotitoli bitmap da precaricare:"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC21"
 msgid "Maximum texture resolution:"
-msgstr "Risoluzione massima delle texture"
+msgstr "Risoluzione massima delle texture:"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_CHECK_NO_SUB_ANIM"
 msgid "Never animate the subtitles"
@@ -622,7 +622,7 @@ msgstr "Imposta come programma &predefinito"
 
 msgctxt "IDD_PPAGEFORMATS_IDC_STATIC"
 msgid "Explorer Context Menu"
-msgstr "Menù contestuale di Windows"
+msgstr "Menu contestuale di Windows"
 
 msgctxt "IDD_PPAGEFORMATS_IDC_CHECK6"
 msgid "Directory"
@@ -1294,7 +1294,7 @@ msgstr "Usa offset"
 
 msgctxt "IDD_TUNER_SCAN_IDC_STATIC"
 msgid "Symbol Rate"
-msgstr " Frequenza di simbolo"
+msgstr "Symbol rate"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_STATIC"
 msgid "Default Device"
@@ -1358,7 +1358,7 @@ msgstr "Comune"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC"
 msgid "Resizer:"
-msgstr "Resizer:"
+msgstr "Ridimensionatore:"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC"
 msgid "Surface:"
@@ -1448,7 +1448,7 @@ msgstr ""
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC"
 msgid "More renderer settings are available in the Play menu"
-msgstr "Più impostazioni del render nel menù Riproduzione"
+msgstr "Più impostazioni del render nel menu Riproduzione"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_RESET"
 msgid "Reset"
@@ -1480,7 +1480,7 @@ msgstr "ms"
 
 msgctxt "IDD_PPAGEFULLSCREEN_IDC_CHECK6"
 msgid "Hide docked panels"
-msgstr "Nascondo pannelli aggancaiti"
+msgstr "Nascondo pannelli agganciati"
 
 msgctxt "IDD_PPAGEFULLSCREEN_IDC_CHECK2"
 msgid "Use autochange fullscreen monitor mode"
@@ -1614,11 +1614,11 @@ msgstr "Rimuovi"
 
 msgctxt "IDD_PPAGESHADERS_IDC_BUTTON1"
 msgid "Add to pre-resize"
-msgstr "Aggiungi al pre-resize"
+msgstr "Aggiungi al pre-ridimensionamento"
 
 msgctxt "IDD_PPAGESHADERS_IDC_BUTTON2"
 msgid "Add to post-resize"
-msgstr "Aggiungi al post-resize"
+msgstr "Aggiungi al post-ridimensionamento"
 
 msgctxt "IDD_PPAGESHADERS_IDC_STATIC"
 msgid "Shader presets"
@@ -1638,19 +1638,19 @@ msgstr "Elimina"
 
 msgctxt "IDD_PPAGESHADERS_IDC_STATIC"
 msgid "Active pre-resize shaders"
-msgstr "Shader pre-resize attivi"
+msgstr "Shader pre-ridimensionamento attivi"
 
 msgctxt "IDD_PPAGESHADERS_IDC_STATIC"
 msgid "Active post-resize shaders"
-msgstr "Shader post-resize attivi"
+msgstr "Shader post-ridimensionamento attivi"
 
 msgctxt "IDD_PPAGESHADERS_IDC_STATIC5"
 msgid ""
 "MPC-VR does not support pre-resize shaders. It will run them after resize, "
 "before the post-resize shaders."
 msgstr ""
-"MPC-VR non supporta shader pre-ridimensionamento. Li eseguirà dopo il ridimensionamento, prima degli shader post-ridimensionamento.\n"
-" "
+"MPC-VR non supporta shader pre-ridimensionamento. Li eseguirà dopo il "
+"ridimensionamento, prima degli shader post-ridimensionamento."
 
 msgctxt "IDD_DEBUGSHADERS_DLG_CAPTION"
 msgid "Debug Shaders"
@@ -1796,7 +1796,7 @@ msgstr "Chiudi MPC-HC"
 
 msgctxt "IDD_PPAGEDPICALC_IDC_STATIC1"
 msgid "Groupbox"
-msgstr "Groupbox"
+msgstr "Riquadro di gruppo"
 
 msgctxt "IDD_PPAGEDPICALC_IDC_STATIC2"
 msgid "Autoplay"
@@ -1824,7 +1824,7 @@ msgstr "Cronologia"
 
 msgctxt "IDD_HISTORY_IDC_BUTTON1"
 msgid "Menu"
-msgstr "Menù"
+msgstr "Menu"
 
 msgctxt "IDD_HISTORY_IDC_BUTTON2"
 msgid "Remove selected"
@@ -1889,7 +1889,7 @@ msgstr "Usa tema moderno"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC2"
 msgid "Modern Theme Color:"
-msgstr "Colore tema moderno"
+msgstr "Colore tema moderno:"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC4"
 msgid "Seekbar"
@@ -2013,7 +2013,7 @@ msgstr "Interfaccia personalizzata (4)"
 
 msgctxt "IDD_PPAGETHEME_IDC_CUSTOMPRESET_MENU"
 msgid "Menu"
-msgstr "Menù"
+msgstr "Menu"
 
 msgctxt "IDD_PPAGETHEME_IDC_CUSTOMPRESET_STATUSBAR"
 msgid "Status"
