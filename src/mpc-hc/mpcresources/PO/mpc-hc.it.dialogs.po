@@ -577,7 +577,7 @@ msgstr "Layout Renderer"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_CHECK_SUB_AR_COMPENSATION"
 msgid "Apply aspect ratio compensation for anamorphic videos"
-msgstr "Applica compensazione del rapporto d'aspetto per video anamorfici"
+msgstr "Applica compensazione delle proporzioni per video anamorfici"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
 msgid "Warning"
