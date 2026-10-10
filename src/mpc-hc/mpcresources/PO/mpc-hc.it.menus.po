@@ -85,7 +85,7 @@ msgstr "Scarica Sottotitoli..."
 
 msgctxt "ID_FILE_PROPERTIES"
 msgid "P&roperties"
-msgstr "Propr&ietà"
+msgstr "Proprie&tà"
 
 msgctxt "ID_FILE_OPEN_LOCATION"
 msgid "Open File &Location"
