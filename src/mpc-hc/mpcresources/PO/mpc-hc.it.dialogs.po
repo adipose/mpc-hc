@@ -858,11 +858,11 @@ msgstr "Giù"
 
 msgctxt "IDD_PNSPRESET_DLG_IDC_BUTTON1"
 msgid "&Set"
-msgstr "&Imposta"
+msgstr "Imposta"
 
 msgctxt "IDD_PNSPRESET_DLG_IDCANCEL"
 msgid "&Cancel"
-msgstr "&Annulla"
+msgstr "Annulla"
 
 msgctxt "IDD_PNSPRESET_DLG_IDOK"
 msgid "&Save"
