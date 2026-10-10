@@ -229,7 +229,7 @@ msgstr "Schermo intero D3D"
 
 msgctxt "ID_VIEW_FULLSCREENGUISUPPORT"
 msgid "D3D Fullscreen &GUI Support"
-msgstr "Schermo intero D3D con supporto GUI"
+msgstr "Schermo intero D3D con supporto &GUI"
 
 msgctxt "ID_VIEW_HIGHCOLORRESOLUTION"
 msgid "10-bit &RGB Output"
