@@ -862,7 +862,7 @@ msgstr "Imposta"
 
 msgctxt "IDD_PNSPRESET_DLG_IDCANCEL"
 msgid "&Cancel"
-msgstr "&Annulla"
+msgstr "Annulla"
 
 msgctxt "IDD_PNSPRESET_DLG_IDOK"
 msgid "&Save"
