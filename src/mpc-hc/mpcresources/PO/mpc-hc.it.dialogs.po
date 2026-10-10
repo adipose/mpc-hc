@@ -1350,7 +1350,7 @@ msgstr "Ricostruisci grafico filtro"
 
 msgctxt "IDD_PPAGECAPTURE_IDC_PPAGECAPTURE_ST12"
 msgid "Stop filter graph"
-msgstr "Interrompi grafico filtro"
+msgstr "Interrompi grafo di filtro"
 
 msgctxt "IDD_PPAGEVIDEORENDERER_IDC_STATIC"
 msgid "Common"
