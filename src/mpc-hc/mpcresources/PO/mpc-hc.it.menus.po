@@ -4,15 +4,14 @@
 # Translators:
 # MPC HC <adiposegithub@gmail.com>, 2020
 # ThePiratePeter, 2020
-# Gianni Chedda <gianni.chedda0@gmail.com>, 2026
-# Transifex sync (Studio), 2026
+# Van Matten <gianni.chedda0@gmail.com>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2025-04-26 17:38:13+0000\n"
-"PO-Revision-Date: 2026-10-10 13:41+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-08-22 12:16:02+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Van Matten <gianni.chedda0@gmail.com>, 2026\n"
 "Language-Team: Italian (https://app.transifex.com/mpchc/teams/106126/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -74,15 +73,15 @@ msgstr "S&ottotitoli"
 
 msgctxt "ID_FILE_SUBTITLES_LOAD"
 msgid "&Load Subtitles..."
-msgstr "Carica Sottotitoli..."
+msgstr "&Carica sottotitoli..."
 
 msgctxt "ID_FILE_SUBTITLES_SAVE"
 msgid "Save S&ubtitles..."
-msgstr "Salva Sottotitoli..."
+msgstr "&Salva sottotitoli..."
 
 msgctxt "ID_FILE_SUBTITLES_DOWNLOAD"
 msgid "&Download Subtitles..."
-msgstr "Scarica Sottotitoli..."
+msgstr "Sc&arica sottotitoli..."
 
 msgctxt "ID_FILE_PROPERTIES"
 msgid "P&roperties"
@@ -102,7 +101,7 @@ msgstr "&Visualizza"
 
 msgctxt "ID_VIEW_CAPTIONMENU"
 msgid "Caption&&Menu"
-msgstr "Menù e intestazioni"
+msgstr "Menu e intestazioni"
 
 msgctxt "ID_VIEW_SEEKER"
 msgid "See&k Bar"
@@ -322,7 +321,7 @@ msgstr "Colorimetrico assoluto"
 
 msgctxt "POPUP"
 msgid "&VSync"
-msgstr "VSync"
+msgstr "&VSync"
 
 msgctxt "ID_VIEW_VSYNC"
 msgid "&VSync"
@@ -366,7 +365,7 @@ msgstr "Ripristina le impostazioni &predefinite del renderer"
 
 msgctxt "POPUP"
 msgid "Video &Frame"
-msgstr "Finestra &Video"
+msgstr "Finestra &video"
 
 msgctxt "ID_VIEW_VF_HALF"
 msgid "&Half Size"
@@ -722,7 +721,7 @@ msgstr "Spegni il &monitor"
 
 msgctxt "ID_AFTERPLAYBACK_EXIT"
 msgid "&Exit"
-msgstr "Chiudi "
+msgstr "&Esci"
 
 msgctxt "ID_AFTERPLAYBACK_STANDBY"
 msgid "&Stand By"
@@ -762,27 +761,27 @@ msgstr "&Vai a..."
 
 msgctxt "ID_NAVIGATE_TITLEMENU"
 msgid "&Title Menu"
-msgstr "Menù &titoli"
+msgstr "Menu &titoli"
 
 msgctxt "ID_NAVIGATE_ROOTMENU"
 msgid "&Root Menu"
-msgstr "Menù &radice"
+msgstr "Menu &radice"
 
 msgctxt "ID_NAVIGATE_SUBPICTUREMENU"
 msgid "&Subtitle Menu"
-msgstr "Menù &sottotitoli"
+msgstr "Menu &sottotitoli"
 
 msgctxt "ID_NAVIGATE_AUDIOMENU"
 msgid "&Audio Menu"
-msgstr "Menù &audio"
+msgstr "Menu &audio"
 
 msgctxt "ID_NAVIGATE_ANGLEMENU"
 msgid "An&gle Menu"
-msgstr "Menù ango&lazione"
+msgstr "Menu ango&lazione"
 
 msgctxt "ID_NAVIGATE_CHAPTERMENU"
 msgid "&Chapter Menu"
-msgstr "Menù &capitoli"
+msgstr "Menu &capitoli"
 
 msgctxt "ID_FAVORITES"
 msgid "F&avorites"
