@@ -33,7 +33,7 @@ msgstr "Apri &file/URL..."
 
 msgctxt "ID_FILE_OPENDVDBD"
 msgid "Open &DVD/BD..."
-msgstr "Apri &DVD/BD..."
+msgstr "Apri DVD/&BD..."
 
 msgctxt "ID_FILE_OPENDEVICE"
 msgid "Open De&vice..."
