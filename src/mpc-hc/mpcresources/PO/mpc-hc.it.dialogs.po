@@ -5,7 +5,6 @@
 # MPC HC <adiposegithub@gmail.com>, 2020
 # ThePiratePeter, 2020
 # Massimiliano F. <garfield002@gmail.com>, 2020
-# GABG, 2023
 # Donatello, 2024
 # Gianni Chedda <gianni.chedda0@gmail.com>, 2026
 # 
@@ -1890,7 +1889,7 @@ msgstr "Usa tema moderno"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC2"
 msgid "Modern Theme Color:"
-msgstr "Colore Tema Moderno"
+msgstr "Colore tema moderno"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC4"
 msgid "Seekbar"
