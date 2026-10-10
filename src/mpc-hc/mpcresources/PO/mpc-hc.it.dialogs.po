@@ -472,7 +472,7 @@ msgstr "max %"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC4"
 msgid "Vertical Alignment:"
-msgstr "Allineamento Verticale:"
+msgstr "Allineamento verticale:"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "Default track preference"
