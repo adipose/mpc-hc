@@ -1062,7 +1062,7 @@ msgstr "Clic"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
 msgid "Double click"
-msgstr "Doppio clic"
+msgstr "Doppio click"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
 msgid "Right click"
@@ -2069,7 +2069,7 @@ msgstr "Pulsante personalizzato 1"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Click"
-msgstr "Clic"
+msgstr "Click"
 
 msgctxt "IDD_PPAGETOOLBAR_IDC_STATIC"
 msgid "Right click"
