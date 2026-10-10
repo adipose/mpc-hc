@@ -785,7 +785,7 @@ msgstr "Menù &capitoli"
 
 msgctxt "ID_FAVORITES"
 msgid "F&avorites"
-msgstr "P&referiti"
+msgstr "&Preferiti"
 
 msgctxt "POPUP"
 msgid "&Help"
