@@ -245,8 +245,7 @@ msgstr "Elaborazione in virgola mobile a 32 bit"
 
 msgctxt "ID_VIEW_HALFFLOATINGPOINTPROCESSING"
 msgid "&Half Floating Point Processing"
-msgstr ""
-"Calcolo parziale a virgola mobileElaborazione in virgola mobile a 16 bit"
+msgstr "Elaborazione in virgola mobile a 16 bit"
 
 msgctxt "ID_VIEW_DISABLEDESKTOPCOMPOSITION"
 msgid "Disable desktop composition (&Aero)"
