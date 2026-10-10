@@ -1066,7 +1066,7 @@ msgstr "Doppio click"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
 msgid "Right click"
-msgstr "Clic destro"
+msgstr "Click destro"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_BUTTON2"
 msgid "Default"
