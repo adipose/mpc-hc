@@ -540,7 +540,7 @@ msgstr "Impostazioni texture (richiedono la riapertura del video)"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC9"
 msgid "Sub pictures to buffer:"
-msgstr "Numero di sub-picture da precaricare:"
+msgstr "Numero di sottotitoli bitmap da precaricare:"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC21"
 msgid "Maximum texture resolution:"
