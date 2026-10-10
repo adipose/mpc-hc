@@ -49,7 +49,7 @@ msgstr "Apri &disco"
 
 msgctxt "ID_RECENT_FILES"
 msgid "Recent &Files"
-msgstr "File recenti"
+msgstr "File &recenti"
 
 msgctxt "ID_FILE_CLOSE_AND_RESTORE"
 msgid "&Close"
