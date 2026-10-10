@@ -401,7 +401,7 @@ msgstr "Ritocca la finestra dall'&esterno"
 
 msgctxt "POPUP"
 msgid "&Aspect Ratio"
-msgstr "R&apporto d'Aspetto"
+msgstr "&Proporzioni"
 
 msgctxt "ID_ASPECTRATIO_DAR"
 msgid "&Default (DAR)"
