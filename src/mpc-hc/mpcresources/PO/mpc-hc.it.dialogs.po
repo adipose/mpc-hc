@@ -970,7 +970,7 @@ msgstr "Contorno"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_RADIO2"
 msgid "Opaque box"
-msgstr "Box opaco"
+msgstr "Riquadro opaco"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC5"
 msgid "Width"
