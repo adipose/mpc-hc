@@ -69,7 +69,7 @@ msgstr "Salva &miniature..."
 
 msgctxt "POPUP"
 msgid "S&ubtitles"
-msgstr "Sottotitoli"
+msgstr "S&ottotitoli"
 
 msgctxt "ID_FILE_SUBTITLES_LOAD"
 msgid "&Load Subtitles..."
