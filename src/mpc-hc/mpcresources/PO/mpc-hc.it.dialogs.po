@@ -1590,7 +1590,7 @@ msgstr "&Scarica ora"
 
 msgctxt "IDD_UPDATE_DIALOG_IDC_UPDATE_LATER_BUTTON"
 msgid "Remind me &later"
-msgstr "Ricordamelo &più tardi"
+msgstr "Ricordamelo più &tardi"
 
 msgctxt "IDD_UPDATE_DIALOG_IDC_UPDATE_IGNORE_BUTTON"
 msgid "&Ignore this update"
