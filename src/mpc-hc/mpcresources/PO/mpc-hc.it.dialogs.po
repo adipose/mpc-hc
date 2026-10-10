@@ -79,7 +79,7 @@ msgstr "Registra"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK2"
 msgid "Enable built-in audio switcher filter (requires restart)"
-msgstr "Attiva il filtro audio switcher integrato (richiede riavvio)"
+msgstr "Attiva il filtro audio integrato (richiede riavvio)"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK5"
 msgid "Normalize"
