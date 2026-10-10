@@ -325,7 +325,7 @@ msgstr "VSync"
 
 msgctxt "ID_VIEW_VSYNC"
 msgid "&VSync"
-msgstr "VSync"
+msgstr "&VSync"
 
 msgctxt "ID_VIEW_VSYNCACCURATE"
 msgid "&Accurate VSync"
@@ -753,7 +753,7 @@ msgstr "&Precedente"
 
 msgctxt "ID_NAVIGATE_SKIPFORWARD"
 msgid "&Next"
-msgstr "&Successivo"
+msgstr "Successivo"
 
 msgctxt "ID_NAVIGATE_GOTO"
 msgid "&Go To..."
