@@ -7,14 +7,14 @@
 # Massimiliano F. <garfield002@gmail.com>, 2020
 # GABG, 2024
 # Donatello, 2024
-# Gianni Chedda <gianni.chedda0@gmail.com>, 2026
+# Van Matten <gianni.chedda0@gmail.com>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
 "POT-Creation-Date: 2026-10-03 13:02:08+0000\n"
 "PO-Revision-Date: 2020-01-02 07:46+0000\n"
-"Last-Translator: Gianni Chedda <gianni.chedda0@gmail.com>, 2026\n"
+"Last-Translator: Van Matten <gianni.chedda0@gmail.com>, 2026\n"
 "Language-Team: Italian (https://app.transifex.com/mpchc/teams/106126/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -558,7 +558,7 @@ msgstr "&Seleziona shaders..."
 
 msgctxt "IDS_SHADERS_DEBUG"
 msgid "&Debug Shaders..."
-msgstr "&Debug Shaders"
+msgstr "&Debug shader..."
 
 msgctxt "IDS_MPLAYERC_104"
 msgid "Subtitle Delay -"
@@ -614,7 +614,7 @@ msgstr "Modifiche"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER"
 msgid "Internal Filters::Audio Switcher"
-msgstr "Filtri Interni::Elaborazione Audio"
+msgstr "Filtri Interni::Elaborazione audio"
 
 msgctxt "IDD_PPAGEEXTERNALFILTERS"
 msgid "External Filters"
@@ -662,7 +662,7 @@ msgstr "Riproduzione::Schermo intero"
 
 msgctxt "IDS_AUDIOSWITCHER"
 msgid "Audio Switcher"
-msgstr "Elaborazione Audio"
+msgstr "Elaborazione audio"
 
 msgctxt "IDS_ICONS_REASSOC_DLG_TITLE"
 msgid "New version of the icon library"
@@ -768,7 +768,7 @@ msgstr "Video Mixing Renderer 7"
 
 msgctxt "IDD_PPAGEACCELTBL"
 msgid "Player::Keys"
-msgstr "Lettore::Tasti"
+msgstr "Lettore::Tasti di scelta rapida"
 
 msgctxt "IDD_PPAGEMOUSE"
 msgid "Player::Mouse"
@@ -796,7 +796,7 @@ msgstr "Riproduzione::Output"
 
 msgctxt "IDD_PPAGEWEBSERVER"
 msgid "Player::Web Interface"
-msgstr "Lettore::Interfaccia Web"
+msgstr "Lettore::Interfaccia web"
 
 msgctxt "IDD_FILEPROPDETAILS"
 msgid "Details"
@@ -875,7 +875,7 @@ msgid ""
 "Same as the normal Null renderer, but this will only connect to uncompressed"
 " types."
 msgstr ""
-"Come il renderer Nessuno normale, ma supporta solo tipi non compressi."
+"Come il renderer normale Nessuno, ma supporta solo tipi non compressi."
 
 msgctxt "IDC_DSEVR_CUSTOM"
 msgid ""
@@ -998,7 +998,7 @@ msgstr "Superfice 2D"
 
 msgctxt "IDS_PPAGE_OUTPUT_SURF_3D"
 msgid "3D surfaces (recommended)"
-msgstr "Supefice 3D (consigliata)"
+msgstr "Superfice 3D (consigliata)"
 
 msgctxt "IDS_PPAGE_OUTPUT_RESIZE_NN"
 msgid "Nearest neighbor"
@@ -1092,7 +1092,7 @@ msgstr "Non ci sono combinazioni personalizzate da esportare."
 
 msgctxt "IDS_RFS_NO_FILES"
 msgid "No media files found in the archive"
-msgstr "Nessun file media trovaro nell'archivio"
+msgstr "Nessun file media trovato nell'archivio"
 
 msgctxt "IDS_RFS_COMPRESSED"
 msgid "Compressed files are not supported"
@@ -1104,7 +1104,7 @@ msgstr "I file crittografati non sono supportati"
 
 msgctxt "IDS_RFS_MISSING_VOLS"
 msgid "Couldn't find all archive volumes"
-msgstr "Npn posso trovare tutti i volumi archivio"
+msgstr "Impossibile trovare tutti i volumi archivio"
 
 msgctxt "IDC_FULLSCREEN_MONITOR_CHECK"
 msgid "Reduces tearing but prevents the toolbar from being shown."
@@ -1136,7 +1136,7 @@ msgstr "Apri VTS_xx_0.ifo per caricare i file VTS_xx_x.vob tutti insieme"
 
 msgctxt "IDS_SRC_RFS"
 msgid "Based on RARFileSource, doesn't support compressed files"
-msgstr "Basato su RARFileSource, non supporta i fie compressi"
+msgstr "Basato su RARFileSource, non supporta i file compressi"
 
 msgctxt "IDS_INTERNAL_LAVF"
 msgid "Uses LAV Filters"
@@ -1624,7 +1624,7 @@ msgstr "Sconosciuto"
 
 msgctxt "IDS_MPLAYERC_0"
 msgid "Quick Open File"
-msgstr "Apertura rapida file..."
+msgstr "Apertura rapida file"
 
 msgctxt "IDS_AG_OPEN_FILE"
 msgid "Open File/URL"
@@ -1766,7 +1766,7 @@ msgid ""
 "Maximum number of files shown in the \"Recent files\" menu and for which the"
 " position is potentially saved."
 msgstr ""
-"Numero massimo di file da mostrare nel menù \"File recenti\" e per i quali "
+"Numero massimo di file da mostrare nel menu \"File recenti\" e per i quali "
 "sarà salvata la posizione."
 
 msgctxt "IDS_PPAGEADVANCED_FILE_POS_LONGER"
@@ -1826,7 +1826,7 @@ msgstr ""
 
 msgctxt "IDS_HOTKEY_NOT_DEFINED"
 msgid "<not defined>"
-msgstr "<not defined>"
+msgstr "<non definito>"
 
 msgctxt "IDS_NAVIGATION_WATCH"
 msgid "Watch"
@@ -1878,7 +1878,7 @@ msgid ""
 msgstr ""
 "Attiva il log su file (richiede il riavvio).\n"
 "Questa opzione serve solo per debug e non dovrebbe essere attiva durante il normale uso!\n"
-"I log sono salvati nella cartella 1%APPDATA%\\MPC-HC\n"
+"I log sono salvati nella cartella %APPDATA%\\MPC-HC\n"
 "Il valore da impostare è la somma delle opzioni che desideri abilitare:\n"
 "1: Generale\n"
 "2: Costruttore di grafi\n"
@@ -1936,7 +1936,7 @@ msgstr "Renderer Sottotitoli Interno"
 
 msgctxt "IDS_AG_OPEN_DEVICE"
 msgid "Open Device"
-msgstr "Apri periferica..."
+msgstr "Apri periferica"
 
 msgctxt "IDS_AG_SAVE_AS"
 msgid "Save As"
@@ -2055,7 +2055,7 @@ msgstr ""
 
 msgctxt "IDS_PPAGEFULLSCREEN_SHOWNEVER"
 msgid "Never show"
-msgstr "Non mosrtrare mai"
+msgstr "Non mostrare mai"
 
 msgctxt "IDS_PPAGEFULLSCREEN_SHOWMOVED"
 msgid "Show when moving the cursor, hide after:"
@@ -2270,11 +2270,11 @@ msgstr "Solo video"
 
 msgctxt "IDS_VIEW_CAPTIONMENU"
 msgid "Sho&w Caption&&Menu"
-msgstr "Mostr&a menù e intestazioni"
+msgstr "Mostr&a menu e intestazioni"
 
 msgctxt "IDS_VIEW_HIDEMENU"
 msgid "Hide &Menu"
-msgstr "Nascondi menù"
+msgstr "Nascondi menu"
 
 msgctxt "IDD_PPAGEADVANCED"
 msgid "Advanced"
@@ -2464,55 +2464,55 @@ msgstr "Volume Muto"
 
 msgctxt "IDS_MPLAYERC_63"
 msgid "DVD Title Menu"
-msgstr "DVD Menù titoli"
+msgstr "DVD Menu titoli"
 
 msgctxt "IDS_AG_DVD_ROOT_MENU"
 msgid "DVD Root Menu"
-msgstr "DVD Menù Radice"
+msgstr "DVD Menu Radice"
 
 msgctxt "IDS_MPLAYERC_65"
 msgid "DVD Subtitle Menu"
-msgstr "DVD Menù sottotitoli"
+msgstr "DVD Menu sottotitoli"
 
 msgctxt "IDS_MPLAYERC_66"
 msgid "DVD Audio Menu"
-msgstr "DVD Menù audio"
+msgstr "DVD Menu audio"
 
 msgctxt "IDS_MPLAYERC_67"
 msgid "DVD Angle Menu"
-msgstr "DVD Menù angolazione"
+msgstr "DVD Menu angolazione"
 
 msgctxt "IDS_MPLAYERC_68"
 msgid "DVD Chapter Menu"
-msgstr "DVD Menù capitoli"
+msgstr "DVD Menu capitoli"
 
 msgctxt "IDS_AG_DVD_MENU_LEFT"
 msgid "DVD Menu Left"
-msgstr "DVD Menù Sinistra"
+msgstr "DVD Menu Sinistra"
 
 msgctxt "IDS_MPLAYERC_70"
 msgid "DVD Menu Right"
-msgstr "DVD Menù destra"
+msgstr "DVD Menu destra"
 
 msgctxt "IDS_AG_DVD_MENU_UP"
 msgid "DVD Menu Up"
-msgstr "DVD Menù Su"
+msgstr "DVD Menu Su"
 
 msgctxt "IDS_AG_DVD_MENU_DOWN"
 msgid "DVD Menu Down"
-msgstr "DVD Menù Giù"
+msgstr "DVD Menu Giù"
 
 msgctxt "IDS_MPLAYERC_73"
 msgid "DVD Menu Activate"
-msgstr "DVD Menù attiva"
+msgstr "DVD Menu attiva"
 
 msgctxt "IDS_AG_DVD_MENU_BACK"
 msgid "DVD Menu Back"
-msgstr "DVD Menù Indietro"
+msgstr "DVD Menu Indietro"
 
 msgctxt "IDS_MPLAYERC_75"
 msgid "DVD Menu Leave"
-msgstr "DVD Menù abbandona"
+msgstr "DVD Menu abbandona"
 
 msgctxt "IDS_AG_BOSS_KEY"
 msgid "Boss key"
@@ -2520,15 +2520,15 @@ msgstr "Tasto Boss"
 
 msgctxt "IDS_MPLAYERC_77"
 msgid "Player Menu"
-msgstr "Menù Lettore"
+msgstr "Menu lettore"
 
 msgctxt "IDS_MPLAYERC_78"
 msgid "Player Menu (full)"
-msgstr "Menù Lettore (completo)"
+msgstr "Menu lettore (completo)"
 
 msgctxt "IDS_AG_FILTERS_MENU"
 msgid "Filters Menu"
-msgstr "Menù filtri"
+msgstr "Menu filtri"
 
 msgctxt "IDS_AG_OPTIONS"
 msgid "Options"
@@ -2735,7 +2735,7 @@ msgstr "DVD: errore di protezione dalla copia"
 
 msgctxt "IDS_MAINFRM_18"
 msgid "DVD: Invalid DVD 1.x Disc"
-msgstr "DVD: disco DVD 1.x non valid"
+msgstr "DVD: disco DVD 1.x non valido"
 
 msgctxt "IDS_MAINFRM_19"
 msgid "DVD: Invalid Disc Region"
@@ -2763,7 +2763,7 @@ msgid ""
 "\n"
 "Do you really want to activate this option?"
 msgstr ""
-"Questa opzione è progettata per mitigare l'effetto tearing. Tuttavia, impedirà anche la visualizazione dei menù contestuali e delle finestre di dialogo durante la riproduzione.\n"
+"Questa opzione è progettata per mitigare l'effetto tearing. Tuttavia, impedirà anche la visualizzazione dei menu contestuali e delle finestre di dialogo durante la riproduzione.\n"
 "\n"
 "Sei sicuro di voler attivare questa opzione?"
 
@@ -2973,7 +2973,7 @@ msgstr "Seleziona cartella"
 
 msgctxt "IDS_MAINFRM_DIR_CHECK"
 msgid "Include subdirectories"
-msgstr "Includi sottocart."
+msgstr "Includi sottocartelle"
 
 msgctxt "IDS_AG_PAUSE"
 msgid "Pause"
@@ -2981,7 +2981,7 @@ msgstr "Pausa"
 
 msgctxt "IDS_AG_TOGGLE_CAPTION"
 msgid "Toggle Caption&Menu"
-msgstr "Mostra Titolo&Menù"
+msgstr "Mostra Titolo&Menu"
 
 msgctxt "IDS_AG_TOGGLE_SEEKER"
 msgid "Toggle Seekbar"
@@ -3539,7 +3539,7 @@ msgstr "Shockwave Flash"
 
 msgctxt "IDS_MFMT_OTHER_AUDIO"
 msgid "Other Audio"
-msgstr "Altro Audio"
+msgstr "Altro audio"
 
 msgctxt "IDS_MFMT_AC3"
 msgid "AC-3"
@@ -3739,19 +3739,19 @@ msgstr "Luce ambientale: Scuro (Gamma 2.4)"
 
 msgctxt "IDS_OSD_RS_REND_INTENT_PERCEPT"
 msgid "Rendering Intent: Perceptual"
-msgstr "Rendering Intent: Percettivo"
+msgstr "Intento di rendering: Percettivo"
 
 msgctxt "IDS_OSD_RS_REND_INTENT_RELATIVE"
 msgid "Rendering Intent: Relative Colorimetric"
-msgstr "Rendering Intent: Colorimetrico relativo"
+msgstr "Intento di rendering: Colorimetrico relativo"
 
 msgctxt "IDS_OSD_RS_REND_INTENT_SATUR"
 msgid "Rendering Intent: Saturation"
-msgstr "Rendering Intent: Saturazione"
+msgstr "Intento di rendering: Saturazione"
 
 msgctxt "IDS_OSD_RS_REND_INTENT_ABSOLUTE"
 msgid "Rendering Intent: Absolute Colorimetric"
-msgstr "Rendering Intent: Colorimetrico assoluto"
+msgstr "Intento di rendering: Colorimetrico assoluto"
 
 msgctxt "IDS_OSD_RS_OUTPUT_RANGE"
 msgid "Output Range: %s"
@@ -4189,7 +4189,7 @@ msgid ""
 msgstr ""
 "Se si seleziona \"ultimo keyframe\", il primo keyframe viene cercato prima "
 "dell'attuale punto. Se si seleziona \"keyframe più vicino\", il primo "
-"keyframe viene cercato prima o dopo il punto a seconda di qual'è più vicino."
+"keyframe viene cercato prima o dopo il punto a seconda di qual è più vicino."
 
 msgctxt "IDC_ASSOCIATE_ALL_FORMATS"
 msgid "Associate with all formats"
@@ -4428,7 +4428,7 @@ msgstr "Inserisci credenziali sito"
 
 msgctxt "IDS_SUB_CREDENTIALS_MSG"
 msgid "Enter your credentials to connect to: "
-msgstr "Inserisci le tue credenziali per connetterti a:"
+msgstr "Inserisci le tue credenziali per connetterti a: "
 
 msgctxt "IDS_ASPECT_RATIO_SAR"
 msgid "Aspect Ratio: Assume square pixels (SAR)"
@@ -4511,7 +4511,7 @@ msgstr ""
 msgctxt "IDS_CMD_DVD"
 msgid "/dvd\t\tRun in DVD mode, \"pathname\" means the DVD folder (optional)"
 msgstr ""
-"/dvd\t\tAvvia in modaltà DVD, \"percorso\" indica la cartella del DVD "
+"/dvd\t\tAvvia in modalità DVD, \"percorso\" indica la cartella del DVD "
 "(facoltativo)"
 
 msgctxt "IDS_CMD_DVDPOS_TC"
@@ -4552,7 +4552,7 @@ msgstr ""
 
 msgctxt "IDS_CMD_SHUTDOWN"
 msgid "/shutdown\tShutdown the operating system after playback"
-msgstr "/shutdown\tArresta il sistema operativo dopo la riproduzione "
+msgstr "/shutdown\tArresta il sistema operativo dopo la riproduzione"
 
 msgctxt "IDS_CMD_STANDBY"
 msgid "/standby\t\tPut the operating system in standby mode after playback"
@@ -4594,7 +4594,7 @@ msgstr "/mute\t\tMuta l'audio"
 
 msgctxt "IDS_CMD_VOLUME"
 msgid "/volume N\tSet Volume, where N is a range from 0 to 100"
-msgstr "/volume N\tImposta il volume, dove N è è un intervallo da 0 a 100"
+msgstr "/volume N\tImposta il volume, dove N è un intervallo da 0 a 100"
 
 msgctxt "IDS_YOUTUBEDL_NOT_FOUND"
 msgid ""
@@ -4610,15 +4610,15 @@ msgstr "Chiamando yt-dlp/youtube-dl..."
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_TOP"
 msgid "Align Top"
-msgstr "Allinea in Alto"
+msgstr "Allinea in alto"
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_MIDDLE"
 msgid "Align Middle"
-msgstr "Allinea a Metà"
+msgstr "Allinea al centro"
 
 msgctxt "IDS_VERTICAL_ALIGN_VIDEO_BOTTOM"
 msgid "Align Bottom"
-msgstr "Allinea in Fondo"
+msgstr "Allinea in basso"
 
 msgctxt "IDS_PPAGEADVANCED_USE_YDL"
 msgid ""
@@ -5023,11 +5023,11 @@ msgstr "Usa titolo nella lista dei file recenti."
 
 msgctxt "IDS_PPAGEADVANCED_SHOW_ABMARKS_STATUSBAR"
 msgid "Display current A-B repeat marks in status bar."
-msgstr "Mostra marcatori ripetizione A-B correnti nella barra di stato"
+msgstr "Mostra marcatori ripetizione A-B correnti nella barra di stato."
 
 msgctxt "IDS_PPAGEADVANCED_SHOW_VIDEOINFO_STATUSBAR"
 msgid "Display video info (codec name, resolution) in status bar."
-msgstr "Mostra informazioni video (codec, risoluzione) nella barra di stato"
+msgstr "Mostra informazioni video (codec, risoluzione) nella barra di stato."
 
 msgctxt "IDS_PPAGEADVANCED_PAUSE_WHILE_DRAGGING_SEEKBAR"
 msgid "Pause playback while dragging the seekbar."
@@ -5060,7 +5060,7 @@ msgid ""
 "menu is hidden."
 msgstr ""
 "Le scorciatoie del menu del lettore e il click con il tasto destro mostrano "
-"il menu compatto, anche quando il menu principale è nascosto"
+"il menu compatto, anche quando il menu principale è nascosto."
 
 msgctxt "IDS_PPAGEADVANCED_FULLSCREEN_SEPARATE_CONTROLS"
 msgid ""
@@ -5438,7 +5438,7 @@ msgstr "Controlli colore"
 
 msgctxt "IDC_COLOR_CONTROLS"
 msgid "You can also open Color controls from the Play menu"
-msgstr "Puoi aprire Controlli calore anche dal Menù riproduzione"
+msgstr "Puoi aprire Controlli calore anche dal Menu riproduzione"
 
 msgctxt "IDS_REDIRECT_HUNG_INSTANCE"
 msgid ""
@@ -5502,8 +5502,8 @@ msgid ""
 "Use native Windows 11 menus instead of the modern theme's own menus. The "
 "menu bar stays themed."
 msgstr ""
-"Usa i menù nativi di Windows 11 invece di quelli propri del tema moderno. La"
-" barra dei menù rimane con il tema."
+"Usa i menu nativi di Windows 11 invece di quelli propri del tema moderno. La"
+" barra dei menu rimane con il tema."
 
 msgctxt "IDS_PPAGEADVANCED_MODERN_THEME_STYLE"
 msgid "Which Windows version the modern theme's colors are based on."
