@@ -556,7 +556,7 @@ msgstr "Render al"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC6"
 msgid "% of the animation"
-msgstr "% di animazione"
+msgstr "% dell'animazione"
 
 msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC7"
 msgid "Animate at"
