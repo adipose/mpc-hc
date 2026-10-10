@@ -1062,11 +1062,11 @@ msgstr "Clic"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
 msgid "Double click"
-msgstr "Doppio click"
+msgstr "Doppio clic"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
 msgid "Right click"
-msgstr "Click destro"
+msgstr "Clic destro"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_BUTTON2"
 msgid "Default"
