@@ -1242,7 +1242,7 @@ msgstr "Reimposta"
 
 msgctxt "IDD_PPAGEMISC_IDC_EXPORT_KEYS"
 msgid "Export keys"
-msgstr "Esporta chiavi"
+msgstr "Esporta combinazioni"
 
 msgctxt "IDD_PPAGEMISC_IDC_EXPORT_SETTINGS"
 msgid "Export"
