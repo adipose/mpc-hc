@@ -53,7 +53,7 @@ msgstr "File &recenti"
 
 msgctxt "ID_FILE_CLOSE_AND_RESTORE"
 msgid "&Close"
-msgstr "&Chiudi"
+msgstr "C&hiudi"
 
 msgctxt "ID_FILE_SAVE_COPY"
 msgid "&Save a Copy..."
