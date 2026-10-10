@@ -1922,7 +1922,7 @@ msgstr "Mostra tempo"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC11"
 msgid "Hover Position:"
-msgstr "Posizione al passaggio del mouse:"
+msgstr "Posizione:"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC7"
 msgid "Preview width (% of screen)"
