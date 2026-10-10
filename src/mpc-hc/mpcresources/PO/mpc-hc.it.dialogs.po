@@ -488,7 +488,7 @@ msgstr "Audio:"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_CHECK4"
 msgid "Allow overriding external splitter choice"
-msgstr "Consenti esclusione dello splitter esterno"
+msgstr "Consenti di ignorare la scelta dello splitter esterno"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "Open settings"
