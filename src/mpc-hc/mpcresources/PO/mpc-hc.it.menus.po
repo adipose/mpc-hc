@@ -253,7 +253,7 @@ msgstr "Disabilita la composizione del desktop (Aero)"
 
 msgctxt "ID_VIEW_ENABLEFRAMETIMECORRECTION"
 msgid "Enable Frame Time &Correction"
-msgstr "Abilita correzione a tempo di frame"
+msgstr "Abilita &correzione del frame time"
 
 msgctxt "POPUP"
 msgid "&Color Management"
