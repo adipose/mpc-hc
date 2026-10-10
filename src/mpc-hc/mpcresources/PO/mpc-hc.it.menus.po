@@ -237,7 +237,7 @@ msgstr "Output 10-bit RGB"
 
 msgctxt "ID_VIEW_FORCEINPUTHIGHCOLORRESOLUTION"
 msgid "Force 10-bit RGB &Input"
-msgstr "Forza input 10-bit RGB"
+msgstr "Forza &input 10-bit RGB"
 
 msgctxt "ID_VIEW_FULLFLOATINGPOINTPROCESSING"
 msgid "&Full Floating Point Processing"
