@@ -6,14 +6,13 @@
 # MPC HC <adiposegithub@gmail.com>, 2022
 # Sinan H., 2024
 # Mücahid Aksel <mucahidaksel@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-10-11 20:16+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-10-11 19:41:24+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Mücahid Aksel <mucahidaksel@gmail.com>, 2026\n"
 "Language-Team: Turkish (https://app.transifex.com/mpchc/teams/106126/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1874,6 +1873,15 @@ msgid ""
 "8: Subtitle search\n"
 "16: DVB scanning"
 msgstr ""
+"Dosyaya kayıt (log) tutmayı etkinleştirir (yeniden başlatma gerektirir).\n"
+"Bu seçenek yalnızca hata ayıklama amaçlıdır ve normal kullanım sırasında etkinleştirilmemelidir!\n"
+"Kayıtlar şu klasöre kaydedilir: %appdata%\\MPC-HC\n"
+"Atanacak değer, etkinleştirmek istediğiniz kayıt öğelerinin değerleri toplamıdır:\n"
+"1: Genel\n"
+"2: Zincir oluşturucu (Graph builder)\n"
+"4: yt-dlp işleme\n"
+"8: Altyazı arama\n"
+"16: DVB tarama"
 
 msgctxt "IDS_TIMER_REMAINING_TIME"
 msgid "Remaining time"
