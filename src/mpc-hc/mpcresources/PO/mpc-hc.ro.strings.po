@@ -2,17 +2,16 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
 # Daniel <danny3@tutanota.com>, 2022
+# MPC HC <adiposegithub@gmail.com>, 2026
 # Miloiu Andrei-Valentin <miloiuandrei@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-10-11 20:16+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-10-11 19:41:24+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Miloiu Andrei-Valentin <miloiuandrei@gmail.com>, 2026\n"
 "Language-Team: Romanian (https://app.transifex.com/mpchc/teams/106126/ro/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1894,6 +1893,15 @@ msgid ""
 "8: Subtitle search\n"
 "16: DVB scanning"
 msgstr ""
+"Activează înregistrarea în fișier (necesită repornire).\n"
+"Această opțiune este doar în scopuri de depanare și nu ar trebui să fie activată în timpul utilizării normale!\n"
+"Jurnalele sunt salvate în folderul (în dosarul): %appdata%\\MPC-HC\n"
+"Valoarea de setare este suma jurnalelor pe care dorești să le activezi:\n"
+"1: general\n"
+"2: Generator de grafice\n"
+"4: procesare yt-dlp\n"
+"8: Căutare de subtitrări\n"
+"16: Scanarea DVB-ului"
 
 msgctxt "IDS_TIMER_REMAINING_TIME"
 msgid "Remaining time"
