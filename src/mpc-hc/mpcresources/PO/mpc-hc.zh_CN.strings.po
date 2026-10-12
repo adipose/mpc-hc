@@ -2,7 +2,6 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
 # lifegpc <g1710431395@gmail.com>, 2021
 # BCZJG6GT <luticliu@foxmail.com>, 2021
 # Jackson Chen, 2022
@@ -11,15 +10,15 @@
 # KaiHuaDou, 2026
 # Fentanyl, 2026
 # Phonebook3599, 2026
+# MPC HC <adiposegithub@gmail.com>, 2026
 # YuanHao Du, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-10-11 23:42+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-10-11 21:29:51+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: YuanHao Du, 2026\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/mpchc/teams/106126/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1809,6 +1808,15 @@ msgid ""
 "8: Subtitle search\n"
 "16: DVB scanning"
 msgstr ""
+"启用日志记录到文件（需要重启）。\n"
+"此选项仅用于调试目的，正常使用时不应启用！\n"
+"日志保存在文件夹：ppdata%\\MPC-HC\n"
+"要设置的值是你想启用的日志记录器对应数值之和：\n"
+"1：常规\n"
+"2：滤镜图构建器\n"
+"4：yt-dlp 处理\n"
+"8：字幕搜索\n"
+"16：DVB 扫描"
 
 msgctxt "IDS_TIMER_REMAINING_TIME"
 msgid "Remaining time"
@@ -4169,7 +4177,7 @@ msgstr "就绪..."
 
 msgctxt "IDS_CMD_PNS"
 msgid "/pns \"name\"\tSpecify PnS Frame Adjust Preset to use (for example: /pns \"%s\")"
-msgstr "/pns \"name\" 指定使用的画面平移与缩放 (PnS) 预设(例如：/pns \"%s\")"
+msgstr "/pns \"name\" 指定使用的画面平移与缩放 (PnS) 预设(例如：/pns \"1%\")"
 
 msgctxt "IDS_CMD_PNS_VALUES"
 msgid ""
