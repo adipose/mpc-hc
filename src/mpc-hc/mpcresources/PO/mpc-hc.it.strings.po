@@ -7,15 +7,14 @@
 # Massimiliano F. <garfield002@gmail.com>, 2020
 # GABG, 2024
 # Donatello, 2024
-# Gianni Chedda <gianni.chedda0@gmail.com>, 2026
-# Transifex sync (Studio), 2026
+# Van Matten <gianni.chedda0@gmail.com>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-04-12 02:38:36+0000\n"
-"PO-Revision-Date: 2026-10-12 05:54+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-10-11 21:29:51+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Van Matten <gianni.chedda0@gmail.com>, 2026\n"
 "Language-Team: Italian (https://app.transifex.com/mpchc/teams/106126/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1877,6 +1876,15 @@ msgid ""
 "8: Subtitle search\n"
 "16: DVB scanning"
 msgstr ""
+"Attiva il log su file (richiede il riavvio).\n"
+"Questa opzione serve solo per debug e non dovrebbe essere attiva durante il normale uso!\n"
+"I log sono salvati nella cartella %APPDATA%\\MPC-HC\n"
+"Il valore da impostare è la somma delle opzioni che desideri abilitare:\n"
+"1: Generale\n"
+"2: Costruttore di grafi\n"
+"4: Elaborazione yt-dlp\n"
+"8: Ricerca sottotitoli\n"
+"16: Scansione DVB"
 
 msgctxt "IDS_TIMER_REMAINING_TIME"
 msgid "Remaining time"
