@@ -4676,7 +4676,7 @@ msgstr ""
 
 msgctxt "IDS_PPAGEADVANCED_SAVEIMAGE_POSITION"
 msgid "Include video position in filename"
-msgstr "Video-Position in Dateinamen aufnehmen"
+msgstr "Videoposition in Dateinamen aufnehmen"
 
 msgctxt "IDS_PPAGEADVANCED_SAVEIMAGE_CURRENTTIME"
 msgid "Include current time in filename"
