@@ -5536,7 +5536,7 @@ msgstr ""
 
 msgctxt "IDS_MODERN_THEME_STYLE_FOLLOW_OS"
 msgid "Follow Windows version"
-msgstr "Observer la version de Windows"
+msgstr "Suivre la version de Windows"
 
 msgctxt "IDS_MODERN_THEME_STYLE_WINDOWS10"
 msgid "Windows 10"
