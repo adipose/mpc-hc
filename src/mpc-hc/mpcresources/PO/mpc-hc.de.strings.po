@@ -1042,11 +1042,11 @@ msgstr "Der gewählte Renderer ist nicht verfügbar."
 
 msgctxt "IDS_PPAGE_OUTPUT_SUPPORT_ALL_HDR"
 msgid "Supports all player functionality, including HDR video."
-msgstr "Unterstützt alle Player-Funktionen (auch HDR-Video)."
+msgstr "Unterstützt alle Player-Funktionen (auch HDR-Video)"
 
 msgctxt "IDS_PPAGE_OUTPUT_SUPPORT_NO_HDR"
 msgid "Supports all player functionality, except HDR video."
-msgstr "Unterstützt alle Player-Funktionen (außer HDR-Video)."
+msgstr "Unterstützt alle Player-Funktionen (außer HDR-Video)"
 
 msgctxt "IDS_PPAGE_OUTPUT_SUPPORT_LIMITED"
 msgid "Does not support all player functionality."
