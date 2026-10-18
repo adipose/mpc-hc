@@ -3381,7 +3381,7 @@ msgstr "Oben vorne links (TpFL)"
 
 msgctxt "IDS_TOP_FRONT_CENTER"
 msgid "Top Front Center"
-msgstr "Oben vorn Center (TpFC)"
+msgstr "Center oben vorn (TpFC)"
 
 msgctxt "IDS_TOP_FRONT_RIGHT"
 msgid "Top Front Right"
