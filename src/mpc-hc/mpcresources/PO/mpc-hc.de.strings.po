@@ -3329,11 +3329,11 @@ msgstr "Letzte Datei im Ordner erreicht."
 
 msgctxt "IDS_FRONT_LEFT"
 msgid "Front Left"
-msgstr "Vorne links (FL)"
+msgstr "Vorn links (FL)"
 
 msgctxt "IDS_FRONT_RIGHT"
 msgid "Front Right"
-msgstr "Vorne rechts (FR)"
+msgstr "Vorn rechts (FR)"
 
 msgctxt "IDS_FRONT_CENTER"
 msgid "Front Center"
@@ -3377,7 +3377,7 @@ msgstr "Center oben (TpC)"
 
 msgctxt "IDS_TOP_FRONT_LEFT"
 msgid "Top Front Left"
-msgstr "Oben vorne links (TpFL)"
+msgstr "Oben vorn links (TpFL)"
 
 msgctxt "IDS_TOP_FRONT_CENTER"
 msgid "Top Front Center"
@@ -3385,7 +3385,7 @@ msgstr "Center oben vorn (TpFC)"
 
 msgctxt "IDS_TOP_FRONT_RIGHT"
 msgid "Top Front Right"
-msgstr "Oben vorne rechts (TpFR)"
+msgstr "Oben vorn rechts (TpFR)"
 
 msgctxt "IDS_TOP_BACK_LEFT"
 msgid "Top Back Left"
