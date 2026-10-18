@@ -3373,7 +3373,7 @@ msgstr "Seite rechts (SiR)"
 
 msgctxt "IDS_TOP_CENTER"
 msgid "Top Center"
-msgstr "Oben Center (TpC)"
+msgstr "Center oben (TpC)"
 
 msgctxt "IDS_TOP_FRONT_LEFT"
 msgid "Top Front Left"
