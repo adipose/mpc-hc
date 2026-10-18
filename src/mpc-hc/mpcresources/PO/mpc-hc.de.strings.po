@@ -3361,7 +3361,7 @@ msgstr "Vorn rechts Center (FRc)"
 
 msgctxt "IDS_BACK_CENTER"
 msgid "Back Center"
-msgstr "Hinten Center (BC)"
+msgstr "Center hinten (BC)"
 
 msgctxt "IDS_SIDE_LEFT"
 msgid "Side Left"
