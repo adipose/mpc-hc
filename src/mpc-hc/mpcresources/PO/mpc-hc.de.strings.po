@@ -3353,7 +3353,7 @@ msgstr "Hinten rechts (BR)"
 
 msgctxt "IDS_FRONT_LEFT_OF_CENTER"
 msgid "Front Left of Center"
-msgstr "Vorn links Center (FLc)"
+msgstr "Vorn links vom Center (FLc)"
 
 msgctxt "IDS_FRONT_RIGHT_OF_CENTER"
 msgid "Front Right of Center"
