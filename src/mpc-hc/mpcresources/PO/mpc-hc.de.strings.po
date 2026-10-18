@@ -3337,7 +3337,7 @@ msgstr "Vorne rechts (FR)"
 
 msgctxt "IDS_FRONT_CENTER"
 msgid "Front Center"
-msgstr "Vorn Center (FC)"
+msgstr "Center vorn (FC)"
 
 msgctxt "IDS_LOW_FREQUENCY"
 msgid "Low Frequency"
