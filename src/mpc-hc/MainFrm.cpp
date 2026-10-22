@@ -333,6 +333,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     ON_MESSAGE(WM_POSTOPEN, OnFilePostOpenmedia)
     ON_MESSAGE(WM_OPENFAILED, OnOpenMediaFailed)
     ON_MESSAGE(WM_MPC_RUN_DEFERRED, OnRunDeferredActions)
+    ON_MESSAGE(WM_MPC_UI_REQUEST, OnUIRequest)
     ON_MESSAGE(WM_TUNER_NEW_CHANNEL, OnHeadlessScanNewChannel)
     ON_MESSAGE(WM_TUNER_SCAN_END, OnHeadlessScanEnd)
     ON_MESSAGE(WM_DVB_EIT_DATA_READY, OnCurrentChannelInfoUpdated)
@@ -1421,6 +1422,18 @@ bool CMainFrame::DeferIfNested(DeferredActionType type, std::function<void()> ac
     return true;
 }
 
+// A sent message is dispatched wherever this thread next retrieves one, which
+// includes the waits on the graph thread while a file opens or closes; the
+// builders only read the lists while the load state is LOADED, and that state
+// changes on this thread, so nothing is read while the graph thread rewrites it.
+LRESULT CMainFrame::OnUIRequest(WPARAM wParam, LPARAM lParam)
+{
+    auto pRequest = reinterpret_cast<UIRequest*>(lParam);
+    pRequest->build(this, pRequest->body);
+    pRequest->Release();
+    return 0;
+}
+
 void CMainFrame::OnClose()
 {
     CAppSettings& s = AfxGetAppSettings();
@@ -1491,7 +1504,7 @@ void CMainFrame::OnClose()
     m_wndPlaylistBar.SavePlaylist();
     m_wndPlaylistBar.ClearExternalPlaylistIfInvalid();
 
-    if (GetLoadState() == MLS::LOADED || GetLoadState() == MLS::LOADING) {
+    if (GetLoadState() == MLS::LOADED || GetLoadState() == MLS::LOADING || GetLoadState() == MLS::FAILING) {
         CloseMediaInternal();
     }
 
@@ -21606,11 +21619,11 @@ void CMainFrame::CloseMediaInternal(bool bNextIsQueued/* = false*/, bool bPendin
 
         // purge possible queued OnFilePostOpenmedia()
         if (PeekMessage(&msg, m_hWnd, WM_POSTOPEN, WM_POSTOPEN, PM_REMOVE | PM_NOYIELD)) {
-            free((OpenMediaData*)msg.lParam);
+            delete (OpenMediaData*)msg.lParam;
         }
         // purge possible queued OnOpenMediaFailed()
         if (PeekMessage(&msg, m_hWnd, WM_OPENFAILED, WM_OPENFAILED, PM_REMOVE | PM_NOYIELD)) {
-            free((OpenMediaData*)msg.lParam);
+            delete (OpenMediaData*)msg.lParam;
         }
 
         // abort finished, unset the flag
