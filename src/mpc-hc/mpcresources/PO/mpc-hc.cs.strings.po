@@ -4790,7 +4790,7 @@ msgstr ""
 msgctxt "IDS_CMD_DVBSCANOUT"
 msgid "/dvbscanout \"file\"\tWrite the channels found by /dvbscan to \"file\" as JSON"
 msgstr ""
-"/dvbscanout \"file\"\tZapíše kanály nalezené příkazem /dvbscan do souboru "
+"/dvbscanout \"soubor\"\tZapíše kanály nalezené příkazem /dvbscan do souboru "
 "\"soubor\" ve formátu JSON"
 
 msgctxt "IDS_CMD_DVBBANDWIDTH"
