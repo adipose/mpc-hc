@@ -57,19 +57,42 @@ void alpha_mask_deleter::operator()(CAlphaMask* ptr) const noexcept
 
 // CMyFont
 
-CMyFont::CMyFont(const STSStyle& style)
+void CMyFont::GetLogFont(const STSStyle& style, LOGFONT& lf)
 {
-    LOGFONT lf;
+    // What lf <<= style sets, without its GetDC for an lfHeight overwritten here
     ZeroMemory(&lf, sizeof(lf));
-    lf <<= style;
+    lf.lfCharSet = (BYTE)style.charSet;
+    wcsncpy_s(lf.lfFaceName, LF_FACESIZE, style.fontName, _TRUNCATE);
     lf.lfHeight = (LONG)(style.fontSize + 0.5);
+    lf.lfWeight = style.fontWeight;
+    lf.lfItalic = style.fItalic ? -1 : 0;
+    lf.lfUnderline = style.fUnderline ? -1 : 0;
+    lf.lfStrikeOut = style.fStrikeOut ? -1 : 0;
     lf.lfOutPrecision = OUT_TT_PRECIS;
     lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
     lf.lfQuality = ANTIALIASED_QUALITY;
     lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
     if (lf.lfCharSet == 0)
         lf.lfCharSet = DEFAULT_CHARSET;
+}
 
+// Callers keep the returned pointer while the font is selected into g_hDC, so an eviction cannot delete it
+CMyFontSharedPtr CMyFont::Get(const STSStyle& style, RenderingCaches& renderingCaches)
+{
+    LOGFONT lf;
+    GetLogFont(style, lf);
+
+    CFontKey fontKey(lf);
+    CMyFontSharedPtr font;
+    if (!renderingCaches.fontCache.Lookup(fontKey, font)) {
+        font = std::make_shared<CMyFont>(lf);
+        renderingCaches.fontCache.SetAt(fontKey, font);
+    }
+    return font;
+}
+
+CMyFont::CMyFont(LOGFONT lf)
+{
     if (!CreateFontIndirect(&lf)) {
         _tcscpy_s(lf.lfFaceName, _T("Calibri"));
         VERIFY(CreateFontIndirect(&lf));
@@ -580,11 +603,11 @@ CText::CText(const STSStyle& style, CStringW str, int ktype, int kstart, int ken
     CTextDimsKey textDimsKey(m_str, m_style);
     CTextDims textDims;
     if (!renderingCaches.textDimsCache.Lookup(textDimsKey, textDims)) {
-        CMyFont font(m_style);
-        m_ascent  = font.m_ascent;
-        m_descent = font.m_descent;
+        CMyFontSharedPtr font = CMyFont::Get(m_style, renderingCaches);
+        m_ascent  = font->m_ascent;
+        m_descent = font->m_descent;
 
-        HFONT hOldFont = SelectFont(g_hDC, font);
+        HFONT hOldFont = SelectFont(g_hDC, *font);
 
         if (m_style.fontSpacing) {
             for (LPCWSTR s = m_str; *s; s++) {
@@ -643,9 +666,16 @@ bool CText::Append(CWord* w)
 
 bool CText::CreatePath()
 {
-    CMyFont font(m_style);
+    // The path only depends on the text and font, not on the transforms animated afterwards
+    CTextDimsKey pathKey(m_str, m_style);
+    CTextPathSharedPtr path;
+    if (m_renderingCaches.textPathCache.Lookup(pathKey, path)) {
+        return SetPath(path->types.data(), path->points.data(), (int)path->points.size());
+    }
 
-    HFONT hOldFont = SelectFont(g_hDC, font);
+    CMyFontSharedPtr font = CMyFont::Get(m_style, m_renderingCaches);
+
+    HFONT hOldFont = SelectFont(g_hDC, *font);
 
     LONG cx = 0;
     auto getExtent = [&](LPCWSTR s, int len) {
@@ -734,6 +764,7 @@ bool CText::CreatePath()
         if (!getExtent(m_str, strlen) || cx == 0) {
             // possible unhandled unprintable character
             ASSERT(false);
+            SelectFont(g_hDC, hOldFont);
             return false;
         }
 
@@ -771,6 +802,11 @@ bool CText::CreatePath()
     }
 
     SelectFont(g_hDC, hOldFont);
+
+    path = std::make_shared<CTextPath>();
+    path->types.assign(mpPathTypes, mpPathTypes + mPathPoints);
+    path->points.assign(mpPathPoints, mpPathPoints + mPathPoints);
+    m_renderingCaches.textPathCache.SetAt(pathKey, path);
 
     return true;
 }
@@ -3171,6 +3207,7 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
     }
 
     const CRenderersSettings& r = GetRenderersSettings();
+    m_renderingCaches.overlayCache.SetMaxBytes(size_t(r.iSubGlyphCacheMB) << 20);
     if (r.fontScaleOverride != 1.0) {
         stss.fontSize *= r.fontScaleOverride;
     }

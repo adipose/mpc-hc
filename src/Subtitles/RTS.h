@@ -76,20 +76,35 @@ struct CAlphaMask final : std::unique_ptr<BYTE[]> {
 };
 
 typedef std::shared_ptr<CPolygonPath> CPolygonPathSharedPtr;
+struct CTextPath {
+    std::vector<BYTE> types;
+    std::vector<POINT> points;
+};
+typedef std::shared_ptr<CTextPath> CTextPathSharedPtr;
 struct SSATag;
 typedef std::shared_ptr<CAtlList<SSATag>> SSATagsList;
 typedef std::shared_ptr<CAlphaMask> CAlphaMaskSharedPtr;
+class CMyFont;
+typedef std::shared_ptr<CMyFont> CMyFontSharedPtr;
 
 typedef CRenderingCache<CTextDimsKey, CTextDims, CKeyTraits<CTextDimsKey>> CTextDimsCache;
+typedef CRenderingCache<CTextDimsKey, CTextPathSharedPtr, CKeyTraits<CTextDimsKey>> CTextPathCache;
 typedef CRenderingCache<CPolygonPathKey, CPolygonPathSharedPtr, CKeyTraits<CPolygonPathKey>> CPolygonCache;
 typedef CRenderingCache<CStringW, SSATagsList, CStringElementTraits<CStringW>> CSSATagsCache;
 typedef CRenderingCache<CEllipseKey, CEllipseSharedPtr, CKeyTraits<CEllipseKey>> CEllipseCache;
 typedef CRenderingCache<COutlineKey, COutlineDataSharedPtr, CKeyTraits<COutlineKey>> COutlineCache;
 typedef CRenderingCache<COverlayKey, COverlayDataSharedPtr, CKeyTraits<COverlayKey>> COverlayCache;
 typedef CRenderingCache<CClipperKey, CAlphaMaskSharedPtr, CKeyTraits<CClipperKey>> CAlphaMaskCache;
+typedef CRenderingCache<CFontKey, CMyFontSharedPtr, CKeyTraits<CFontKey>> CFontCache;
+
+inline size_t CacheEntryBytes(const COverlayDataSharedPtr& overlay)
+{
+    return overlay ? 2 * size_t(overlay->mOverlayPitch) * overlay->mOverlayHeight : 0;
+}
 
 struct RenderingCaches {
     CTextDimsCache textDimsCache;
+    CTextPathCache textPathCache;
     CPolygonCache polygonCache;
     CSSATagsCache SSATagsCache;
     CEllipseCache ellipseCache;
@@ -98,15 +113,18 @@ struct RenderingCaches {
     // Be careful about the order alphaMaskCache need to be destroyed before alphaMaskPool.
     std::list<CAlphaMask> alphaMaskPool;
     CAlphaMaskCache alphaMaskCache;
+    CFontCache fontCache;
 
     RenderingCaches()
         : textDimsCache(2048)
+        , textPathCache(2048)
         , polygonCache(2048)
         , SSATagsCache(2048)
         , ellipseCache(64)
         , outlineCache(128)
         , overlayCache(128)
-        , alphaMaskCache(128) {}
+        , alphaMaskCache(128)
+        , fontCache(64) {}
 };
 
 class CMyFont : public CFont
@@ -114,7 +132,10 @@ class CMyFont : public CFont
 public:
     int m_ascent, m_descent;
 
-    CMyFont(const STSStyle& style);
+    CMyFont(LOGFONT lf);
+
+    static void GetLogFont(const STSStyle& style, LOGFONT& lf);
+    static CMyFontSharedPtr Get(const STSStyle& style, RenderingCaches& renderingCaches);
 };
 
 struct CTextDims {
