@@ -2,16 +2,15 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
+# MPC HC <adiposegithub@gmail.com>, 2026
 # Marián Hikaník, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-11-02 07:41+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-11-01 16:47:12+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Marián Hikaník, 2026\n"
 "Language-Team: Slovak (https://app.transifex.com/mpchc/teams/106126/sk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5008,6 +5007,8 @@ msgid ""
 "Pause video playback when the player is minimized, and resume it when the "
 "player is restored. Audio files keep playing."
 msgstr ""
+"Pozastaviť prehrávanie videa, keď je prehrávač minimalizovaný a pokračovať "
+"pri obnovení prehrávača. Zvukové súbory sa budú prehrávať ďalej."
 
 msgctxt "IDS_PPAGEADVANCED_CONFIRM_FILE_DELETE"
 msgid "Show confirmation prompt before deleting file"
@@ -5496,6 +5497,9 @@ msgid ""
 "Subtitle glyph cache limit in MB. The internal subtitle renderer's cache "
 "grows up to this limit on scripts that need it."
 msgstr ""
+"Limit vyrovnávacej pamäte titulkov v MB. Vyrovnávacia pamäť interného "
+"vykresľovača titulkov sa zväčšuje až do tohto limitu pri tých skriptoch, "
+"ktoré ju vyžadujú."
 
 msgctxt "IDS_AUDIO_BOOST_WARNING"
 msgid ""
