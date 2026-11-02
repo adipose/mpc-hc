@@ -7,15 +7,14 @@
 # Massimiliano F. <garfield002@gmail.com>, 2020
 # GABG, 2024
 # Donatello, 2024
-# Gianni Chedda <gianni.chedda0@gmail.com>, 2026
-# Transifex sync (Studio), 2026
+# Van Matten <gianni.chedda0@gmail.com>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-04-12 02:38:36+0000\n"
-"PO-Revision-Date: 2026-11-02 18:22+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-11-01 16:47:12+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Van Matten <gianni.chedda0@gmail.com>, 2026\n"
 "Language-Team: Italian (https://app.transifex.com/mpchc/teams/106126/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5041,6 +5040,9 @@ msgid ""
 "Pause video playback when the player is minimized, and resume it when the "
 "player is restored. Audio files keep playing."
 msgstr ""
+"Metti in pausa la riproduzione dei video quando il lettore viene minimizzato"
+" e riavviala quando il lettore viene riaperto. I file audio continuano la "
+"riproduzione."
 
 msgctxt "IDS_PPAGEADVANCED_CONFIRM_FILE_DELETE"
 msgid "Show confirmation prompt before deleting file"
@@ -5533,6 +5535,9 @@ msgid ""
 "Subtitle glyph cache limit in MB. The internal subtitle renderer's cache "
 "grows up to this limit on scripts that need it."
 msgstr ""
+"Limite della cache dei glifi dei sottotitoli in MB. La cache del renderer di"
+" sottotitoli interno cresce fino a questo limite per gli script che la "
+"richiedono."
 
 msgctxt "IDS_AUDIO_BOOST_WARNING"
 msgid ""
