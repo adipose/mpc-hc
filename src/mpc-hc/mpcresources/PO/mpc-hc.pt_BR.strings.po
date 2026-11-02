@@ -2,18 +2,17 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
 # Zyz696 Paga, 2020
 # MPC-HC Developer, 2025
+# MPC HC <adiposegithub@gmail.com>, 2026
 # Felipefpl, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-11-02 07:41+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-11-01 16:47:12+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Felipefpl, 2026\n"
 "Language-Team: Portuguese (Brazil) (https://app.transifex.com/mpchc/teams/106126/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5024,6 +5023,8 @@ msgid ""
 "Pause video playback when the player is minimized, and resume it when the "
 "player is restored. Audio files keep playing."
 msgstr ""
+"Pausa a reprodução do vídeo quando o player estiver minimizado e resume "
+"quando o player é restaurado. Arquivos de áudio continuam tocando."
 
 msgctxt "IDS_PPAGEADVANCED_CONFIRM_FILE_DELETE"
 msgid "Show confirmation prompt before deleting file"
@@ -5518,6 +5519,9 @@ msgid ""
 "Subtitle glyph cache limit in MB. The internal subtitle renderer's cache "
 "grows up to this limit on scripts that need it."
 msgstr ""
+"Limite do cache dos glifos das legendas em MBs. O cache interno do "
+"renderizador das legendas cresce até este limite em scripts que precisam "
+"dele."
 
 msgctxt "IDS_AUDIO_BOOST_WARNING"
 msgid ""
