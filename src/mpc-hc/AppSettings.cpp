@@ -174,6 +174,7 @@ CAppSettings::CAppSettings()
     , fCustomChannelMapping(false)
     , nSpeakerChannels(2)
     , pSpeakerToChannelMap()
+    , bSubtitleRoundedOpaqueBox(false)
     , fOverridePlacement(false)
     , nHorPos(50)
     , nVerPos(90)
@@ -1075,6 +1076,7 @@ void CAppSettings::SaveSettings(bool write_full_history /* = false */)
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_CLOSEDCAPTIONS, fClosedCaptions);
     CString style;
     pApp->WriteProfileString(IDS_R_SETTINGS, IDS_RS_SPSTYLE, style <<= subtitlesDefStyle);
+    pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SPROUNDEDOPAQUEBOX, bSubtitleRoundedOpaqueBox);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SPOVERRIDEPLACEMENT, fOverridePlacement);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SPHORPOS, nHorPos);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SPVERPOS, nVerPos);
@@ -1937,6 +1939,7 @@ void CAppSettings::LoadSettings()
             subtitlesDefStyle.relativeTo = STSStyle::AUTO;
         }
     }
+    bSubtitleRoundedOpaqueBox = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SPROUNDEDOPAQUEBOX, FALSE);
     fOverridePlacement = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SPOVERRIDEPLACEMENT, FALSE);
     nHorPos = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SPHORPOS, 50);
     nVerPos = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SPVERPOS, 90);
@@ -2508,11 +2511,9 @@ void CAppSettings::ReadWindowsColorSettings()
 // whenever a theme setting or the windows colour settings change, so all of it must be safe to redo
 void CAppSettings::UpdateThemeState()
 {
-    // a contrast theme brings its own colours, which the modern palette cannot follow;
-    // step aside while one is on and let the classic path draw with the system colours
-    HIGHCONTRAST hc = { sizeof(hc) };
-    bool bHighContrast = SystemParametersInfo(SPI_GETHIGHCONTRAST, sizeof(hc), &hc, 0) && (hc.dwFlags & HCF_HIGHCONTRASTON);
-    bool bThemeLoaded = bMPCTheme && !bHighContrast;
+    // a contrast theme forces the modern dark theme (see EffectiveThemeMode), whatever the saved settings say
+    bool bHighContrast = CMPCTheme::IsHighContrast();
+    bool bThemeLoaded = bMPCTheme || bHighContrast;
     if (bHighContrast) {
         bWindows10DarkThemeActive = false; //also stops the dark file dialog workaround, which runs even without the theme
     }

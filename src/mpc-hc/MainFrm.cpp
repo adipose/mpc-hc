@@ -24389,6 +24389,12 @@ void CMainFrame::UpdateControlState(UpdateControlTarget target)
 }
 
 void CMainFrame::ReloadMenus() {
+    // deleting the old menu frees the item data Windows hands back to MeasureItem and
+    // DrawItem, and a settings, theme or dpi change can arrive while a menu is up
+    if (DeferIfNested(DeferredActionType::Other, [this] { ReloadMenus(); })) {
+        return;
+    }
+
     //    CMenu  defaultMenu;
     CMenu* oldMenu;
 
@@ -24825,6 +24831,7 @@ bool CMainFrame::ApplySubtitleRenderingParameters(ISubStream* pSubStream, bool b
                 pRTS->SetAlignment(s.fOverridePlacement, s.nHorPos, s.nVerPos);
             }
             pRTS->SetUseFreeType(s.bUseFreeType);
+            pRTS->SetRoundedOpaqueBox(s.bSubtitleRoundedOpaqueBox);
             pRTS->SetOpenTypeLangHint(s.strOpenTypeLangHint);
             pRTS->Deinit();
         }
@@ -25286,12 +25293,13 @@ void CMainFrame::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 {
     __super::OnSettingChange(uFlags, lpszSection);
     if (SPI_SETHIGHCONTRAST == uFlags) {
-        ApplyThemeChange(); //the modern theme steps aside while a contrast theme is on
+        AfxGetAppSettings().ReadWindowsColorSettings(); //brings back the dark flag when contrast goes off
+        ApplyThemeChange(); //a contrast theme forces the modern dark theme
     } else if (lpszSection && 0 == _tcscmp(lpszSection, _T("ImmersiveColorSet"))) {
         CAppSettings& s = AfxGetAppSettings();
         bool wasDark = s.bWindows10DarkThemeActive;
         s.ReadWindowsColorSettings();
-        if (!AppIsThemeLoaded()) {
+        if (!AppIsThemeLoaded() || CMPCTheme::IsHighContrast()) {
             s.UpdateThemeState(); //nothing on screen follows the windows colours, but a contrast theme still clears the dark flag
         } else if (s.bWindows10DarkThemeActive != wasDark && s.eModernThemeMode == CMPCTheme::ModernThemeMode::WINDOWSDEFAULT) {
             ApplyThemeChange(); //windows switched between light and dark, which the default theme mode follows
