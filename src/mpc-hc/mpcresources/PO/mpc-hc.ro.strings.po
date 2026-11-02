@@ -2,17 +2,16 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
 # Daniel <danny3@tutanota.com>, 2022
+# MPC HC <adiposegithub@gmail.com>, 2026
 # Miloiu Andrei-Valentin <miloiuandrei@gmail.com>, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-11-02 07:41+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-11-01 16:47:12+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Miloiu Andrei-Valentin <miloiuandrei@gmail.com>, 2026\n"
 "Language-Team: Romanian (https://app.transifex.com/mpchc/teams/106126/ro/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5076,6 +5075,9 @@ msgid ""
 "Pause video playback when the player is minimized, and resume it when the "
 "player is restored. Audio files keep playing."
 msgstr ""
+"Întrerupe (Pune pe pauză) redarea video atunci când playerul este minimizat "
+"și reia-o când playerul este restabilit. Fișierele audio continuă să fie "
+"redate."
 
 msgctxt "IDS_PPAGEADVANCED_CONFIRM_FILE_DELETE"
 msgid "Show confirmation prompt before deleting file"
@@ -5572,6 +5574,9 @@ msgid ""
 "Subtitle glyph cache limit in MB. The internal subtitle renderer's cache "
 "grows up to this limit on scripts that need it."
 msgstr ""
+"Limita cache-ului pentru glifele subtitrărilor, exprimată în MB (în MO). "
+"Cache-ul motorului intern de randare a subtitrărilor crește până la această "
+"limită, în cazul scripturilor care necesită acest lucru."
 
 msgctxt "IDS_AUDIO_BOOST_WARNING"
 msgid ""
