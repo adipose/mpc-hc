@@ -4,14 +4,13 @@
 # Translators:
 # MPC HC <adiposegithub@gmail.com>, 2020
 # Marián Hikaník, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-09-12 13:45+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-11-02 13:56:05+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Marián Hikaník, 2026\n"
 "Language-Team: Slovak (https://app.transifex.com/mpchc/teams/106126/sk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -969,7 +968,7 @@ msgstr "Nepriehľadný rámček"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK_ROUNDEDBOX"
 msgid "Rounded corners"
-msgstr ""
+msgstr "Zaoblené rohy"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC5"
 msgid "Width"
