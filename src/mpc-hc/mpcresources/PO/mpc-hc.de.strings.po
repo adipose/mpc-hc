@@ -10,14 +10,13 @@
 # Nico, 2025
 # MPC HC <adiposegithub@gmail.com>, 2025
 # Maik Dießner, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-11-05 10:51+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-11-01 16:47:12+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Maik Dießner, 2026\n"
 "Language-Team: German (https://app.transifex.com/mpchc/teams/106126/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5030,6 +5029,9 @@ msgid ""
 "Pause video playback when the player is minimized, and resume it when the "
 "player is restored. Audio files keep playing."
 msgstr ""
+"Videowiedergabe anhalten, wenn der Player minimiert wird, und fortsetzen, "
+"wenn der Player wiederhergestellt wird. Audiodateien werden weiter "
+"abgespielt."
 
 msgctxt "IDS_PPAGEADVANCED_CONFIRM_FILE_DELETE"
 msgid "Show confirmation prompt before deleting file"
@@ -5521,6 +5523,9 @@ msgid ""
 "Subtitle glyph cache limit in MB. The internal subtitle renderer's cache "
 "grows up to this limit on scripts that need it."
 msgstr ""
+"Cache-Begrenzung für Untertitel-Glyphen in MB. Der Cache des internen "
+"Untertitel-Renderers wächst bei Skripten, die dies erfordern, bis zu dieser "
+"Grenze an."
 
 msgctxt "IDS_AUDIO_BOOST_WARNING"
 msgid ""
