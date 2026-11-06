@@ -951,7 +951,7 @@ msgstr "境界のスタイル"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_RADIO1"
 msgid "Outline"
-msgstr "輪郭"
+msgstr "文字の輪郭"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_RADIO2"
 msgid "Opaque box"
