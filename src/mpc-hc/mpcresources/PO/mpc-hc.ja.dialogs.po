@@ -955,7 +955,7 @@ msgstr "文字の輪郭"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_RADIO2"
 msgid "Opaque box"
-msgstr "不透明なボックス"
+msgstr "背景ボックス"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK_ROUNDEDBOX"
 msgid "Rounded corners"
