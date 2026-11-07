@@ -1232,7 +1232,7 @@ msgstr "jour(s)"
 
 msgctxt "IDD_PPAGEMISC_IDC_STATIC"
 msgid "Color controls"
-msgstr "Contrôles de couleur"
+msgstr "Contrôles de couleurs"
 
 msgctxt "IDD_PPAGEMISC_IDC_COLOR_CONTROLS"
 msgid "Open"
