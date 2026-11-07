@@ -947,7 +947,7 @@ msgstr "縦方向の倍率 (%)"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Border Style"
-msgstr "境界のスタイル"
+msgstr "外枠のスタイル"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_RADIO1"
 msgid "Outline"
