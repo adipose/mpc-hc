@@ -995,7 +995,7 @@ msgstr "ビデオ フレームを基準に字幕を配置する"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Colors && Transparency"
-msgstr "色と濃さ"
+msgstr "色と不透明度"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "0%"
