@@ -1011,7 +1011,7 @@ msgstr "プライマリ"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Secondary"
-msgstr "文字 (セカンダリ)"
+msgstr "セカンダリ"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Outline"
