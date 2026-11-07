@@ -5491,7 +5491,7 @@ msgid ""
 "next/previous file in a folder."
 msgstr ""
 "Trier les fichiers par date de création plutôt que par nom de fichier lors "
-"du passage au prochain/précédent fichier dans un répertoire."
+"du passage au prochain/précédent fichier dans un dossier."
 
 msgctxt "IDS_PPAGEADVANCED_HISTORY_MAX_AGE_DAYS"
 msgid ""
