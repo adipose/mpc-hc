@@ -5559,7 +5559,7 @@ msgid ""
 "Subtitle glyph cache limit in MB. The internal subtitle renderer's cache "
 "grows up to this limit on scripts that need it."
 msgstr ""
-"Limite du cache des glyphes de sous-titres en Mo. Le cache interne du moteur"
+"Limite du cache des glyphes de sous-titres en Mo. Le cache du moteur interne"
 " de rendu des sous-titres se rempli jusqu'à cette limite pour les scripts le"
 " nécessitant."
 
