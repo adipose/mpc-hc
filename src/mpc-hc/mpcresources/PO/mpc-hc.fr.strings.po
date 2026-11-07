@@ -3,16 +3,15 @@
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
 # MPC HC <adiposegithub@gmail.com>, 2022
-# tmtisfree <tmtisfree@free.fr>, 2026
 # Cyril Provence <ywa78408@eveav.com>, 2026
-# Transifex sync (Studio), 2026
+# tmtisfree <tmtisfree@free.fr>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-11-07 18:47+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-11-01 16:47:12+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: tmtisfree <tmtisfree@free.fr>, 2026\n"
 "Language-Team: French (https://app.transifex.com/mpchc/teams/106126/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5061,6 +5060,8 @@ msgid ""
 "Pause video playback when the player is minimized, and resume it when the "
 "player is restored. Audio files keep playing."
 msgstr ""
+"Pause la lecture vidéo quand le lecteur est minimisé et la reprend quand il "
+"est restauré. N'affecte pas le son."
 
 msgctxt "IDS_PPAGEADVANCED_CONFIRM_FILE_DELETE"
 msgid "Show confirmation prompt before deleting file"
@@ -5558,6 +5559,9 @@ msgid ""
 "Subtitle glyph cache limit in MB. The internal subtitle renderer's cache "
 "grows up to this limit on scripts that need it."
 msgstr ""
+"Limite du cache des glyphes de sous-titres en Mo. Le cache interne du moteur"
+" de rendu des sous-titres se rempli jusqu'à cette limite pour les scripts le"
+" nécessitant."
 
 msgctxt "IDS_AUDIO_BOOST_WARNING"
 msgid ""
