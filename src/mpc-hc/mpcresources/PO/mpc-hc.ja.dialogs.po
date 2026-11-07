@@ -1015,7 +1015,7 @@ msgstr "セカンダリ"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Outline"
-msgstr "輪郭または背景"
+msgstr "外枠"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Shadow"
