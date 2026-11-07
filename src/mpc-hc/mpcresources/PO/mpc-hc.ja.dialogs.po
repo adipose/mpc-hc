@@ -935,7 +935,7 @@ msgstr "文字の間隔"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC2"
 msgid "Angle (z,°)"
-msgstr "回転角度 (°)"
+msgstr "Z 軸回転角度 (°)"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC3"
 msgid "Scale (x,%)"
