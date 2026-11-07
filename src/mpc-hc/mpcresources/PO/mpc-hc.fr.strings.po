@@ -4829,7 +4829,7 @@ msgid ""
 "\t\twithout the scan dialog, then exit"
 msgstr ""
 "/dvbscan N-M\tEffectue une recherche sur le périphérique de capture numérique de N à M (kHz)\n"
-"\t\tsans la boîte de dialogue, puis quitter"
+"\t\tsans la boîte de dialogue, puis quitte"
 
 msgctxt "IDS_CMD_DVBSCANOUT"
 msgid "/dvbscanout \"file\"\tWrite the channels found by /dvbscan to \"file\" as JSON"
