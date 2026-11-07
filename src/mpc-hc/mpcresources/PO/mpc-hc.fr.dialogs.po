@@ -106,7 +106,7 @@ msgstr "ReplayGain:"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC8"
 msgid "Preamp (dB):"
-msgstr "Preamp (db):"
+msgstr "Preamp (db ):"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_CHECK7"
 msgid "Prevent clipping"
