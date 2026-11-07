@@ -5398,7 +5398,7 @@ msgstr "Supprimer les fichiers manquants"
 
 msgctxt "IDS_HISTORY_REMOVE_URLS"
 msgid "Remove all URLs"
-msgstr "Supprimer toutes les URLs"
+msgstr "Supprimer toutes les URL"
 
 msgctxt "IDS_HISTORY_REMOVE_OLDER_WEEK"
 msgid "Remove entries older than one week"
