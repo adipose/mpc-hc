@@ -1023,7 +1023,7 @@ msgstr "影"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK1"
 msgid "Link alpha channels"
-msgstr "アルファ チャンネルを連動させる"
+msgstr "すべての不透明度を連動させる"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC21"
 msgid "8-bit Character Set"
