@@ -1881,7 +1881,7 @@ msgstr ""
 msgctxt "IDD_REDIRECT_WAIT_DLG_IDC_STATIC"
 msgid "Please wait and do not open more files for the next 30 seconds."
 msgstr ""
-"Merci de patienter et ne plus ouvrir d'autres fichiers au cours des trente "
+"Merci de patienter et ne plus ouvrir d'autres fichiers au cours des 30 "
 "prochaines secondes."
 
 msgctxt "IDD_REDIRECT_WAIT_DLG_IDCANCEL"
