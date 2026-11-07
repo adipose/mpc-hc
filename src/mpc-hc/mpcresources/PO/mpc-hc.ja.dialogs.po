@@ -1039,7 +1039,7 @@ msgstr "Libass のオプション"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK2"
 msgid "Use libass for SSA/ASS"
-msgstr "SSA/ASS に libass を使用する"
+msgstr "SSA/ASS 字幕に libass を使用する"
 
 msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
 msgid "Buttons"
