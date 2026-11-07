@@ -102,7 +102,7 @@ msgstr "Amplification :"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC7"
 msgid "ReplayGain:"
-msgstr "ReplayGain:"
+msgstr "ReplayGain :"
 
 msgctxt "IDD_PPAGEAUDIOSWITCHER_IDC_STATIC8"
 msgid "Preamp (dB):"
