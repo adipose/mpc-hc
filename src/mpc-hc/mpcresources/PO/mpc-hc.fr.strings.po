@@ -5469,7 +5469,7 @@ msgctxt "IDC_COLOR_CONTROLS"
 msgid "You can also open Color controls from the Play menu"
 msgstr ""
 "Il est également possible d'ouvrir les contrôles de couleurs depuis le menu "
-"lecture"
+"Lecture"
 
 msgctxt "IDS_REDIRECT_HUNG_INSTANCE"
 msgid ""
