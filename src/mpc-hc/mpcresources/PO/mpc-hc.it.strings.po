@@ -1055,7 +1055,7 @@ msgstr "Non supporta tutte le funzionalità del lettore."
 msgctxt "IDS_PPAGE_OUTPUT_SUPPORT_FRANKY"
 msgid "Supports all player functionality, except pixelshaders."
 msgstr ""
-"Supporta tutte le functionalità del lettore. ad eccezione dei pixelshaders."
+"Supporta tutte le functionalità del lettore, ad eccezione dei pixelshaders."
 
 msgctxt "IDS_PPAGE_OUTPUT_AUD_NULL_COMP"
 msgid "Null (anything)"
