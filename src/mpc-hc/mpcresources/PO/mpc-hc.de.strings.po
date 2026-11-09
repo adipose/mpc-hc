@@ -1062,7 +1062,7 @@ msgstr "Unterstützt nicht alle Player-Funktionen"
 
 msgctxt "IDS_PPAGE_OUTPUT_SUPPORT_FRANKY"
 msgid "Supports all player functionality, except pixelshaders."
-msgstr "Unterstützt alle Player-Funktionen, mit Ausnahme von Pixel-Shadern."
+msgstr "Unterstützt alle Player-Funktionen (außer Pixel-Shader)"
 
 msgctxt "IDS_PPAGE_OUTPUT_AUD_NULL_COMP"
 msgid "Null (anything)"
