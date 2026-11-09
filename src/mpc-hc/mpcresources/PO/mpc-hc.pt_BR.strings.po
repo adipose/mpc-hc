@@ -2,18 +2,17 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
 # Zyz696 Paga, 2020
 # MPC-HC Developer, 2025
+# MPC HC <adiposegithub@gmail.com>, 2026
 # Felipefpl, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-11-09 07:58+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-11-08 20:19:56+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Felipefpl, 2026\n"
 "Language-Team: Portuguese (Brazil) (https://app.transifex.com/mpchc/teams/106126/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -763,7 +762,7 @@ msgstr "Renderizador de Vídeo do MPC"
 
 msgctxt "IDS_PPAGE_OUTPUT_FRANKY"
 msgid "FrankyRenderer"
-msgstr ""
+msgstr "FrankyRenderer"
 
 msgctxt "IDS_PPAGE_OUTPUT_VMR7"
 msgid "Video Mixing Renderer 7"
@@ -986,7 +985,7 @@ msgstr ""
 
 msgctxt "IDC_DSFRANKY"
 msgid "Advanced video renderer that uses libplacebo."
-msgstr ""
+msgstr "Renderizador de vídeo avançado que usa libplacebo."
 
 msgctxt "IDS_PPAGE_OUTPUT_SYNC"
 msgid "Sync Renderer"
@@ -1054,7 +1053,7 @@ msgstr "Não suporta toda a funcionalidade do player."
 
 msgctxt "IDS_PPAGE_OUTPUT_SUPPORT_FRANKY"
 msgid "Supports all player functionality, except pixelshaders."
-msgstr ""
+msgstr "Suporta toda a funcionalidade do player, exceto pixelshaders."
 
 msgctxt "IDS_PPAGE_OUTPUT_AUD_NULL_COMP"
 msgid "Null (anything)"
