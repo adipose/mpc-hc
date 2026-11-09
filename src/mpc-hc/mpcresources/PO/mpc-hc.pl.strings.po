@@ -9,14 +9,13 @@
 # Krzysztof, 2024
 # Mirosław Żylewicz, 2025
 # Łukasz Janik, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-07-18 21:00:08+0000\n"
-"PO-Revision-Date: 2026-11-09 00:53+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-11-08 20:19:56+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Łukasz Janik, 2026\n"
 "Language-Team: Polish (https://app.transifex.com/mpchc/teams/106126/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -766,7 +765,7 @@ msgstr "Renderer wideo MPC"
 
 msgctxt "IDS_PPAGE_OUTPUT_FRANKY"
 msgid "FrankyRenderer"
-msgstr ""
+msgstr "FrankyRenderer"
 
 msgctxt "IDS_PPAGE_OUTPUT_VMR7"
 msgid "Video Mixing Renderer 7"
@@ -988,7 +987,7 @@ msgstr ""
 
 msgctxt "IDC_DSFRANKY"
 msgid "Advanced video renderer that uses libplacebo."
-msgstr ""
+msgstr "Zaawansowany renderer wideo wykorzystujący bibliotekę libplacebo."
 
 msgctxt "IDS_PPAGE_OUTPUT_SYNC"
 msgid "Sync Renderer"
@@ -1056,7 +1055,7 @@ msgstr "Nie obsługuje wszystkich funkcji odtwarzacza."
 
 msgctxt "IDS_PPAGE_OUTPUT_SUPPORT_FRANKY"
 msgid "Supports all player functionality, except pixelshaders."
-msgstr ""
+msgstr "Obsługuje wszystkie funkcje odtwarzacza z wyjątkiem shaderów pikseli."
 
 msgctxt "IDS_PPAGE_OUTPUT_AUD_NULL_COMP"
 msgid "Null (anything)"
