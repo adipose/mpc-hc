@@ -996,7 +996,7 @@ msgstr ""
 
 msgctxt "IDC_DSFRANKY"
 msgid "Advanced video renderer that uses libplacebo."
-msgstr "Randor video avansat ce folosește libplacebo."
+msgstr "Randor (Motor de randare) video avansat ce folosește libplacebo."
 
 msgctxt "IDS_PPAGE_OUTPUT_SYNC"
 msgid "Sync Renderer"
