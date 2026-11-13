@@ -413,6 +413,8 @@
     <ClCompile Include="FavoritesRecent.cpp" />
     <ClCompile Include="VideoGeometry.cpp" />
     <ClCompile Include="ApiBridge.cpp" />
+    <ClCompile Include="SubtitleController.cpp" />
+    <ClCompile Include="ShaderController.cpp" />
     <ClCompile Include="mplayerc.cpp" />
     <ClCompile Include="Profile.cpp" />
     <ClCompile Include="Playlist.cpp" />
@@ -1007,6 +1009,8 @@
     <ClInclude Include="FavoritesRecent.h" />
     <ClInclude Include="VideoGeometry.h" />
     <ClInclude Include="ApiBridge.h" />
+    <ClInclude Include="SubtitleController.h" />
+    <ClInclude Include="ShaderController.h" />
     <ClInclude Include="PlayerGraph.h" />
     <ClInclude Include="mplayerc.h" />
     <ClInclude Include="Profile.h" />
