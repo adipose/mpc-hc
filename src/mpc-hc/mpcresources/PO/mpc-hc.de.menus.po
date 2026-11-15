@@ -685,7 +685,7 @@ msgstr "Untertitelspur &1"
 
 msgctxt "ID_SUBTITLES_SECONDARY"
 msgid "Secondary Subtitle Track"
-msgstr "Zweite Untertitelspur"
+msgstr "Untertitelspur &2"
 
 msgctxt "ID_VIDEO_STREAMS"
 msgid "Vide&o Track"
