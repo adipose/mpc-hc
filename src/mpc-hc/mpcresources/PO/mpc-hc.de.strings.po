@@ -1174,7 +1174,7 @@ msgstr ""
 
 msgctxt "IDS_AG_OPEN_FILE_LOCATION"
 msgid "Open File Location"
-msgstr "Dateispeicherort öffnen"
+msgstr "Dateispeicher&ort öffnen"
 
 msgctxt "IDS_AG_OPENDIRECTORY"
 msgid "Open Directory"
