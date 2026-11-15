@@ -677,7 +677,7 @@ msgstr "S&hader"
 
 msgctxt "ID_AUDIOS"
 msgid "&Audio Track"
-msgstr "A&udiospur"
+msgstr "&Audiospur"
 
 msgctxt "ID_SUBTITLES"
 msgid "Su&btitle Track"
