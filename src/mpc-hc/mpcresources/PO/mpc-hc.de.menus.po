@@ -689,7 +689,7 @@ msgstr "Untertitelspur &2"
 
 msgctxt "ID_VIDEO_STREAMS"
 msgid "Vide&o Track"
-msgstr "Videos&pur"
+msgstr "&Videospur"
 
 msgctxt "POPUP"
 msgid "&Volume"
