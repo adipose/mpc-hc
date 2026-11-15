@@ -808,7 +808,7 @@ msgstr "Abbrechen"
 
 msgctxt "IDD_FAVORGANIZE_CAPTION"
 msgid "Organize Favorites"
-msgstr "Favoriten &verwalten"
+msgstr "Favoriten verwalten"
 
 msgctxt "IDD_FAVORGANIZE_IDC_BUTTON1"
 msgid "Rename"
