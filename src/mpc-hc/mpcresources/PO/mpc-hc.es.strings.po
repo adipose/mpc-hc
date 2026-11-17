@@ -8,14 +8,13 @@
 # Enmanuel Jaco <enmanuelgiron2001@gmail.com>, 2022
 # Leandro Botella Penalva, 2024
 # Alex Covarrubias, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-04-12 02:38:36+0000\n"
-"PO-Revision-Date: 2026-11-17 13:21+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-11-08 20:19:56+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Alex Covarrubias, 2026\n"
 "Language-Team: Spanish (https://app.transifex.com/mpchc/teams/106126/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -773,7 +772,7 @@ msgstr "Renderizador de vídeo MPC"
 
 msgctxt "IDS_PPAGE_OUTPUT_FRANKY"
 msgid "FrankyRenderer"
-msgstr ""
+msgstr "FrankyRenderer"
 
 msgctxt "IDS_PPAGE_OUTPUT_VMR7"
 msgid "Video Mixing Renderer 7"
@@ -1002,7 +1001,7 @@ msgstr ""
 
 msgctxt "IDC_DSFRANKY"
 msgid "Advanced video renderer that uses libplacebo."
-msgstr ""
+msgstr "Un renderizador avanzado de vídeo que utiliza libplacebo."
 
 msgctxt "IDS_PPAGE_OUTPUT_SYNC"
 msgid "Sync Renderer"
@@ -1071,6 +1070,8 @@ msgstr "No soporta todas las funciones del reproductor."
 msgctxt "IDS_PPAGE_OUTPUT_SUPPORT_FRANKY"
 msgid "Supports all player functionality, except pixelshaders."
 msgstr ""
+"Soporta todas las funcionalidades del reproductor, excepto los  "
+"pixelshaders."
 
 msgctxt "IDS_PPAGE_OUTPUT_AUD_NULL_COMP"
 msgid "Null (anything)"
@@ -5079,6 +5080,8 @@ msgid ""
 "Pause video playback when the player is minimized, and resume it when the "
 "player is restored. Audio files keep playing."
 msgstr ""
+"Pausa la reproducción del vídeo cuando se minimiza el reproductor, y la "
+"reanuda cuando se restaura. Los archivos de audio siguen reproduciéndose."
 
 msgctxt "IDS_PPAGEADVANCED_CONFIRM_FILE_DELETE"
 msgid "Show confirmation prompt before deleting file"
@@ -5569,6 +5572,8 @@ msgid ""
 "Subtitle glyph cache limit in MB. The internal subtitle renderer's cache "
 "grows up to this limit on scripts that need it."
 msgstr ""
+"Límite de cache para glifos de subtítulos en MB. El caché interno de "
+"subtítulos crece hasta este límite para scripts que lo necesiten."
 
 msgctxt "IDS_AUDIO_BOOST_WARNING"
 msgid ""
