@@ -2,16 +2,15 @@
 # Copyright (C) 2002 - 2017 see Authors.txt
 # This file is distributed under the same license as the MPC-HC package.
 # Translators:
-# MPC HC <adiposegithub@gmail.com>, 2020
+# MPC HC <adiposegithub@gmail.com>, 2026
 # Hack茶ん, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-06-14 23:03:06+0000\n"
-"PO-Revision-Date: 2026-11-19 13:01+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-11-08 20:19:56+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Hack茶ん, 2026\n"
 "Language-Team: Korean (https://app.transifex.com/mpchc/teams/106126/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -754,7 +753,7 @@ msgstr "MPC 영상 렌더러"
 
 msgctxt "IDS_PPAGE_OUTPUT_FRANKY"
 msgid "FrankyRenderer"
-msgstr ""
+msgstr "프랭키 렌더러"
 
 msgctxt "IDS_PPAGE_OUTPUT_VMR7"
 msgid "Video Mixing Renderer 7"
@@ -965,7 +964,7 @@ msgstr ""
 
 msgctxt "IDC_DSFRANKY"
 msgid "Advanced video renderer that uses libplacebo."
-msgstr ""
+msgstr "libplacebo를 사용하는 고급 영상 렌더러입니다."
 
 msgctxt "IDS_PPAGE_OUTPUT_SYNC"
 msgid "Sync Renderer"
@@ -1033,7 +1032,7 @@ msgstr "재생기의 모든 기능을 지원하지 않습니다."
 
 msgctxt "IDS_PPAGE_OUTPUT_SUPPORT_FRANKY"
 msgid "Supports all player functionality, except pixelshaders."
-msgstr ""
+msgstr "픽셀 셰이더를 제외한 모든 재생기 기능을 지원합니다."
 
 msgctxt "IDS_PPAGE_OUTPUT_AUD_NULL_COMP"
 msgid "Null (anything)"
@@ -4909,7 +4908,7 @@ msgctxt "IDS_PPAGEADVANCED_PAUSE_WHEN_MINIMIZED"
 msgid ""
 "Pause video playback when the player is minimized, and resume it when the "
 "player is restored. Audio files keep playing."
-msgstr ""
+msgstr "재생기가 최소화되면 영상 재생을 일시 정지하고, 재생기가 복원되면 재생을 다시 시작합니다. 음향 파일은 계속 재생됩니다."
 
 msgctxt "IDS_PPAGEADVANCED_CONFIRM_FILE_DELETE"
 msgid "Show confirmation prompt before deleting file"
@@ -5371,7 +5370,7 @@ msgctxt "IDS_PPAGEADVANCED_SUB_GLYPH_CACHE_MB"
 msgid ""
 "Subtitle glyph cache limit in MB. The internal subtitle renderer's cache "
 "grows up to this limit on scripts that need it."
-msgstr ""
+msgstr "자막 글리프 캐시를 MB 단위로 제한합니다. 내부 자막 렌더러의 캐시는 해당 캐시가 필요한 스크립트에서 이 한까지 커집니다."
 
 msgctxt "IDS_AUDIO_BOOST_WARNING"
 msgid ""
