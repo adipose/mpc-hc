@@ -4,14 +4,13 @@
 # Translators:
 # MPC HC <adiposegithub@gmail.com>, 2020
 # Hack茶ん, 2026
-# Transifex sync (Studio), 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2026-06-02 02:11:23+0000\n"
-"PO-Revision-Date: 2026-09-30 21:28+0000\n"
-"Last-Translator: Transifex sync (Studio)\n"
+"POT-Creation-Date: 2026-11-02 13:56:05+0000\n"
+"PO-Revision-Date: 2020-01-02 07:46+0000\n"
+"Last-Translator: Hack茶ん, 2026\n"
 "Language-Team: Korean (https://app.transifex.com/mpchc/teams/106126/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -954,7 +953,7 @@ msgstr "불투명 상자"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK_ROUNDEDBOX"
 msgid "Rounded corners"
-msgstr ""
+msgstr "둥근 모서리"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC5"
 msgid "Width"
