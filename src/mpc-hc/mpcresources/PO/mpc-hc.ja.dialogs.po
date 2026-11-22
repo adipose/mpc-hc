@@ -939,7 +939,7 @@ msgstr "回転角度 (°)"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC3"
 msgid "Scale (x,%)"
-msgstr "横方向の拡大率 (%)"
+msgstr "横の倍率 (%)"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC4"
 msgid "Scale (y,%)"
