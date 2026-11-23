@@ -168,6 +168,13 @@ namespace SaneAudioRenderer
 
                 CreateAudioClient(pEnumerator, device);
 
+                if (!device.audioClient && device.id && !device.id->empty())
+                {
+                    // retry with default device
+                    device.id = nullptr;
+                    CreateAudioClient(pEnumerator, device);
+                }
+
                 if (!device.audioClient)
                     return E_FAIL;
 
@@ -190,12 +197,14 @@ namespace SaneAudioRenderer
             try
             {
                 backend = std::make_shared<AudioDeviceBackend>();
+                bool deviceChosen = false; // MPC-HC custom code: pDeviceId is freed before the fallback below
 
                 LPWSTR pDeviceId = nullptr;
                 {
                     BOOL exclusive;
                     UINT32 buffer;
                     ThrowIfFailed(pSettings->GetOutputDevice(&pDeviceId, &exclusive, &buffer));
+                    deviceChosen = pDeviceId && *pDeviceId != 0;
                     if (pDeviceId) {
                         std::unique_ptr<WCHAR, CoTaskMemFreeDeleter> holder(pDeviceId);
                         backend->id = std::make_shared<std::wstring>(pDeviceId);
@@ -209,7 +218,7 @@ namespace SaneAudioRenderer
                 CreateAudioClient(pEnumerator, *backend);
 
                 if (!backend->audioClient) {
-                    if (pDeviceId && *pDeviceId!=0) {
+                    if (deviceChosen) {
                         // failure with a chosen device, now try again with default audio device
                         backend->id = nullptr;
                         backend->bufferDuration = 200;
