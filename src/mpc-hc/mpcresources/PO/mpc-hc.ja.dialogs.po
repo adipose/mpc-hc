@@ -943,7 +943,7 @@ msgstr "横倍率 (%)"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC4"
 msgid "Scale (y,%)"
-msgstr "縦の倍率 (%)"
+msgstr "縦倍率 (%)"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Border Style"
