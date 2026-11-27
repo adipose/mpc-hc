@@ -121,8 +121,14 @@ void ParseSrtLine(std::string& srtLine, const STSStyle& style) {
                         } else if (attribute_name == "color") {
                             MatchColorSrt(attribute_value);
 
+                            // Expand shorthand #RGB to RRGGBB, as HTML does
+                            if (attribute_value.size() == 3) {
+                                const std::string rgb = attribute_value;
+                                attribute_value = { rgb[0], rgb[0], rgb[1], rgb[1], rgb[2], rgb[2] };
+                            }
+
                             // If color is invalid, use WHITE
-                            if ((strtoul(attribute_value.c_str(), NULL, 16) == 0) && (attribute_value != "000000"))
+                            if (attribute_value.size() != 6 || attribute_value.find_first_not_of("0123456789abcdefABCDEF") != std::string::npos)
                                 attribute_value.assign("FFFFFF");
 
                             // HTML is RGB and we need BGR for libass
@@ -515,8 +521,6 @@ LibassContext::LibassContext(CSimpleTextSubtitle* sts)
     , m_ass(nullptr)
     , m_renderer(nullptr)
     , m_track(nullptr)
-    , rtCurrent(0)
-    , curTimeInitialized(false)
 {
 }
 
@@ -870,24 +874,42 @@ CRect LibassContext::GetSPDRect(SubPicDesc& spd) {
     return spdRect;
 }
 
-POSITION LibassContext::GetStartPosition(REFERENCE_TIME rt, double fps) {
-    if (m_assloaded) {
-        rtCurrent = rt;
-        curTimeInitialized = true;
-        return (POSITION)1;
+void LibassContext::EnsureTimeline() {
+    if (m_timeline.NeedsRebuild(m_track->n_events, m_timelineGeneration)) {
+        m_timeline.Build(m_track.get(), m_timelineGeneration);
     }
-    return (POSITION)0;
+}
+
+// libass shows an event while Start <= now < Start + Duration in ms, and
+// Render passes now = rt / 10000, so a segment boundary in ms times 10000 is
+// the exact reference time at which the picture changes.
+POSITION LibassContext::GetStartPosition(REFERENCE_TIME rt, double fps) {
+    if (!m_assloaded || !m_track) {
+        return nullptr;
+    }
+    EnsureTimeline();
+    size_t i = m_timeline.FindAt(rt / 10000);
+    return i == LibassTimeline::npos ? nullptr : (POSITION)(INT_PTR)(i + 1);
 }
 
 POSITION LibassContext::GetNext(POSITION pos) {
-    return (POSITION)0;
+    size_t next = (size_t)(INT_PTR)pos;  // the index after pos's segment
+    return next < m_timeline.Count() ? (POSITION)(INT_PTR)(next + 1) : nullptr;
 }
 
-REFERENCE_TIME LibassContext::GetCurrent(POSITION pos) {
-    if (m_assloaded && curTimeInitialized) {
-        return rtCurrent;
-    }
-    return 0;
+REFERENCE_TIME LibassContext::GetStart(POSITION pos) {
+    size_t i = (size_t)(INT_PTR)pos - 1;
+    return i < m_timeline.Count() ? m_timeline.At(i).start * 10000 : 0;
+}
+
+REFERENCE_TIME LibassContext::GetStop(POSITION pos) {
+    size_t i = (size_t)(INT_PTR)pos - 1;
+    return i < m_timeline.Count() ? m_timeline.At(i).stop * 10000 : 0;
+}
+
+bool LibassContext::IsAnimated(POSITION pos) {
+    size_t i = (size_t)(INT_PTR)pos - 1;
+    return i < m_timeline.Count() && m_timeline.At(i).animated;
 }
 
 STDMETHODIMP LibassContext::Render(REFERENCE_TIME rt, SubPicDesc& spd, RECT& bbox, CSize& size, CRect& frameRect) {
@@ -923,7 +945,9 @@ STDMETHODIMP LibassContext::Render(REFERENCE_TIME rt, SubPicDesc& spd, RECT& bbo
 
         CRect rcDirty;
         if (!RenderFrame(rt / 10000, spd, rcDirty)) {
-            return E_FAIL;
+            // nothing to draw at this time: an empty picture, which the queue
+            // keeps for the rest of the segment like the internal renderer's
+            return S_FALSE;
         }
 
         bbox = rcDirty;
@@ -1169,6 +1193,8 @@ void LibassContext::SetFrameSize(int w, int h) {
 
 void LibassContext::Unload() {
     m_assloaded = false;
+    m_timeline.Clear();
+    m_timelineGeneration++;
     if (m_track) m_track.reset();
     if (m_renderer) m_renderer.reset();
     if (m_ass) {
@@ -1176,7 +1202,26 @@ void LibassContext::Unload() {
     }
 }
 
-void LibassContext::LoadASSSample(char *data, int dataSize, REFERENCE_TIME tStart, REFERENCE_TIME tStop) {
+bool LibassContext::ProcessChunk(const char* data, int size, REFERENCE_TIME tStart, REFERENCE_TIME tStop) {
+    if (!m_assloaded || !m_track) {
+        return false;
+    }
+    // ass_process_chunk drops a chunk whose ReadOrder it has seen, so the
+    // count moves only when an event was really added
+    int before = m_track->n_events;
+    ass_process_chunk(m_track.get(), const_cast<char*>(data), size, tStart / 10000, (tStop - tStart) / 10000);
+    return m_track->n_events != before;
+}
+
+void LibassContext::FlushEvents() {
+    if (m_assloaded && m_track) {
+        ass_flush_events(m_track.get());
+        m_timelineGeneration++;  // a refill can reach the old count again
+    }
+}
+
+bool LibassContext::LoadASSSample(char *data, int dataSize, REFERENCE_TIME tStart, REFERENCE_TIME tStop) {
+    bool added = false;
     if (m_renderUsingLibass) {
         if (m_STS->m_subtitleType == Subtitle::SRT) { //received SRT sample, try to use libass to handle
             STSStyle& defStyle = m_STS->m_SubRendererSettings.defaultStyle;
@@ -1213,14 +1258,20 @@ void LibassContext::LoadASSSample(char *data, int dataSize, REFERENCE_TIME tStar
                 // ASS in MKV: ReadOrder, Layer, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                 char outBuffer[1024]{};
                 _snprintf_s(outBuffer, _TRUNCATE, "%lld,0,Default,Main,0,0,0,,%s", m_iSubLineCount, str.c_str());
-                ass_process_chunk(m_track.get(), outBuffer, static_cast<int>(strnlen_s(outBuffer, sizeof(outBuffer))), tStart / 10000, (tStop - tStart) / 10000);
+                added = ProcessChunk(outBuffer, static_cast<int>(strnlen_s(outBuffer, sizeof(outBuffer))), tStart, tStop);
             }
         }
     }
+    return added;
 }
 
 void LibassContext::LoadTrackData(ASS_Track* track, char* data, int size) {
-    m_trackData = data;
+    // data is a counted buffer, embedded tracks pass the format block which has no terminator
+    if (data && size > 0) {
+        m_trackData.assign(data, size);
+    } else {
+        m_trackData.clear();
+    }
     ass_process_codec_private(m_track.get(), data, size);
 }
 

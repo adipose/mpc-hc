@@ -82,9 +82,25 @@ CWebServer::CWebServer(CMainFrame* pMainFrame, int nPort)
 CWebServer::~CWebServer()
 {
     if (m_hThread != nullptr) {
+        m_bStopping = true;
         PostThreadMessage(m_ThreadId, WM_QUIT, (WPARAM)0, (LPARAM)0);
-        if (WaitForSingleObject(m_hThread, 10000) == WAIT_TIMEOUT) {
-            TerminateThread(m_hThread, 0xDEAD);
+        // the request handlers send to windows of the UI thread (the volume slider's
+        // TBM_GETPOS, WM_GETTEXT), so deliver sent messages while waiting. Posted ones
+        // stay queued, so nothing new starts underneath the caller (OnClose)
+        const ULONGLONG deadline = GetTickCount64() + 10000;
+        for (;;) {
+            const ULONGLONG now = GetTickCount64();
+            const DWORD wait = now < deadline ? DWORD(deadline - now) : 0;
+            const DWORD ret = MsgWaitForMultipleObjects(1, &m_hThread, FALSE, wait, QS_SENDMESSAGE);
+            if (ret == WAIT_OBJECT_0 + 1) {
+                MSG msg;
+                PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE | PM_QS_SENDMESSAGE);
+                continue;
+            }
+            if (ret != WAIT_OBJECT_0) {
+                TerminateThread(m_hThread, 0xDEAD);
+            }
+            break;
         }
         EXECUTE_ASSERT(CloseHandle(m_hThread));
     }
@@ -173,11 +189,16 @@ void CWebServer::Init()
     m_mimes[".jpeg"] = "image/jpeg";
     m_mimes[".jpg"] = "image/jpeg";
     m_mimes[".js"] = "text/javascript";
-    m_mimes[".json"] = "text/plain";
+    m_mimes[".json"] = "application/json";
+    m_mimes[".mjs"] = "text/javascript";
     m_mimes[".png"] = "image/png";
     m_mimes[".svg"] = "image/svg+xml";
     m_mimes[".txt"] = "text/plain";
     m_mimes[".ico"] = "image/x-icon";
+    m_mimes[".webp"] = "image/webp";
+    m_mimes[".woff"] = "font/woff";
+    m_mimes[".woff2"] = "font/woff2";
+    m_mimes[".xml"] = "application/xml";
 }
 
 DWORD WINAPI CWebServer::StaticThreadProc(LPVOID lpParam)
@@ -397,6 +418,10 @@ void CWebServer::OnRequest(CWebClientSocket* pClient, CStringA& hdr, CStringA& b
         CString redir;
         if (pClient->m_get.Lookup("redir", redir)
                 || pClient->m_post.Lookup("redir", redir)) {
+            // it comes from the request and goes into a header line, so it
+            // must not be able to end that line and add headers of its own
+            redir.Remove(_T('\r'));
+            redir.Remove(_T('\n'));
             if (redir.IsEmpty()) {
                 redir = '/';
             }
@@ -501,7 +526,8 @@ void CWebServer::OnRequest(CWebClientSocket* pClient, CStringA& hdr, CStringA& b
     // gzip
     if (s.fWebServerUseCompression && !body.IsEmpty()
             && hdr.Find("Content-Encoding:") < 0
-            && ext != ".png" && ext != ".jpg" && ext != ".jpeg" && ext != ".gif" && ext != ".ico")
+            && ext != ".png" && ext != ".jpg" && ext != ".jpeg" && ext != ".gif" && ext != ".ico"
+            && ext != ".webp" && ext != ".woff" && ext != ".woff2")
         do {
             CStringA accept_encoding;
             pClient->m_hdrlines.Lookup("accept-encoding", accept_encoding);
@@ -561,10 +587,13 @@ void CWebServer::OnRequest(CWebClientSocket* pClient, CStringA& hdr, CStringA& b
 
 static DWORD WINAPI KillCGI(LPVOID lParam)
 {
+    // the handle is this thread's own duplicate, so CallCGI closing its copy
+    // cannot pull it out from under the wait
     HANDLE hProcess = (HANDLE)lParam;
     if (WaitForSingleObject(hProcess, 30000) == WAIT_TIMEOUT) {
         TerminateProcess(hProcess, 0);
     }
+    CloseHandle(hProcess);
     return 0;
 }
 
@@ -584,8 +613,8 @@ bool CWebServer::CallCGI(CWebClientSocket* pClient, CStringA& hdr, CStringA& bod
     }
 
     HANDLE hProcess = GetCurrentProcess();
-    HANDLE hChildStdinRd, hChildStdinWr, hChildStdinWrDup = nullptr;
-    HANDLE hChildStdoutRd, hChildStdoutWr, hChildStdoutRdDup = nullptr;
+    HANDLE hChildStdinRd = nullptr, hChildStdinWr = nullptr, hChildStdinWrDup = nullptr;
+    HANDLE hChildStdoutRd = nullptr, hChildStdoutWr = nullptr, hChildStdoutRdDup = nullptr;
 
     SECURITY_ATTRIBUTES saAttr;
     ZeroMemory(&saAttr, sizeof(saAttr));
@@ -687,8 +716,17 @@ bool CWebServer::CallCGI(CWebClientSocket* pClient, CStringA& hdr, CStringA& bod
                     nullptr, cmdln, nullptr, nullptr, TRUE, 0,
                     envstr.GetLength() ? (LPVOID)(LPCSTR)envstr : nullptr,
                     dir, &siStartInfo, &piProcInfo)) {
-            DWORD ThreadId;
-            VERIFY(CreateThread(nullptr, 0, KillCGI, (LPVOID)piProcInfo.hProcess, 0, &ThreadId));
+            HANDLE hKillProcess = nullptr;
+            if (DuplicateHandle(hProcess, piProcInfo.hProcess, hProcess, &hKillProcess, 0, FALSE, DUPLICATE_SAME_ACCESS)) {
+                DWORD ThreadId;
+                HANDLE hKillThread = CreateThread(nullptr, 0, KillCGI, (LPVOID)hKillProcess, 0, &ThreadId);
+                if (hKillThread) {
+                    CloseHandle(hKillThread);
+                } else {
+                    ASSERT(FALSE);
+                    CloseHandle(hKillProcess);
+                }
+            }
 
             static const int BUFFSIZE = 1024;
             DWORD dwRead, dwWritten = 0;
@@ -701,7 +739,9 @@ bool CWebServer::CallCGI(CWebClientSocket* pClient, CStringA& hdr, CStringA& bod
             }
 
             CloseHandle(hChildStdinWrDup);
+            hChildStdinWrDup = nullptr;
             CloseHandle(hChildStdoutWr);
+            hChildStdoutWr = nullptr;
 
             body.Empty();
 
@@ -717,14 +757,18 @@ bool CWebServer::CallCGI(CWebClientSocket* pClient, CStringA& hdr, CStringA& bod
                 body = body.Mid(hdrend + 4);
             }
 
-            CloseHandle(hChildStdinRd);
-            CloseHandle(hChildStdoutRdDup);
-
             CloseHandle(piProcInfo.hProcess);
             CloseHandle(piProcInfo.hThread);
         } else {
             body = "CGI Error";
         }
+
+    // whatever is still open, also when a pipe or the process could not be created
+    for (HANDLE h : { hChildStdinRd, hChildStdinWrDup, hChildStdoutWr, hChildStdoutRdDup }) {
+        if (h) {
+            CloseHandle(h);
+        }
+    }
 
     delete [] cmdln;
 

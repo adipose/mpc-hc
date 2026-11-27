@@ -40,31 +40,41 @@
 #include "PlayerSubresyncBar.h"
 #include "PlayerPreView.h"
 #include "PlayerToolBar.h"
-#include "SubtitleDlDlg.h"
+#include "Snapshot.h"
+#include "CaptureController.h"
+#include "DiscController.h"
+#include "FavoritesRecent.h"
+#include "VideoGeometry.h"
+#include "ApiBridge.h"
+#include "SubtitleController.h"
+#include "ShaderController.h"
+#include "CommandLine.h"
 #include "TimerWrappers.h"
 #include "OSD.h"
 #include "CMPCThemeMenu.h"
 #include "../SubPic/MemSubPic.h"
 #include <initguid.h>
 #include <qnetwork.h>
+#include "PlayerGraph.h" // after initguid.h and qnetwork.h, so the qnetwork IIDs are defined here
 #include "../DSUtil/FontInstaller.h"
 #include "AppSettings.h"
-#include "../filters/transform/VSFilter/IDirectVobSub.h"
 #include "MediaTransControls.h"
 #include "FavoriteOrganizeDlg.h"
 #include "AllocatorCommon.h"
 #include <deque>
 #include <functional>
+#include <optional>
 #include <vector>
+
+#define PREV_CHAP_THRESHOLD 2 // used by the file and the DVD chapter skip
 
 class CDebugShadersDlg;
 class CColorControlsDlg;
 class CHistoryDlg;
+class UpdateCheckerDlg;
 class CFullscreenWnd;
 struct DisplayMode;
 enum MpcCaptionState;
-class CMediaTypesDlg;
-class RarEntrySelectorDialog;
 
 interface IDSMChapterBag;
 interface IGraphBuilder2;
@@ -81,7 +91,6 @@ interface ISubPicAllocatorPresenter2;
 interface ISubPicAllocatorPresenter;
 interface ISubStream;
 interface ISyncClock;
-DECLARE_INTERFACE_IID(IAMLine21Decoder_2, "6E8D4A21-310C-11d0-B79A-00AA003767A7");
 
 enum class MLS {
     CLOSED,
@@ -106,14 +115,14 @@ public:
     //  OpenMediaData() {}
     virtual ~OpenMediaData() {} // one virtual funct is needed to enable rtti
     CString title;
-    CAtlList<CString> subs;
+    std::list<CString> subs;
 };
 
 class OpenFileData : public OpenMediaData
 {
 public:
     OpenFileData() : rtStart(0), bAddToRecent(true), rarEntryIndex(-1) {}
-    CAtlList<CString> fns;
+    std::list<CString> fns;
     REFERENCE_TIME rtStart;
     ABRepeat abRepeat;
     bool bAddToRecent;
@@ -140,49 +149,10 @@ public:
     int vinput, vchannel, ainput;
 };
 
-class TunerScanData
-{
-public:
-    ULONG FrequencyStart;
-    ULONG FrequencyStop;
-    ULONG Bandwidth;
-    ULONG SymbolRate;
-    LONG  Offset;
-    HWND  Hwnd;
-};
-
 struct SeekToCommand {
     REFERENCE_TIME rtPos;
     ULONGLONG seekTime;
     bool bShowOSD;
-};
-
-struct SubtitleInput {
-    CComQIPtr<ISubStream> pSubStream;
-    CComPtr<IBaseFilter> pSourceFilter;
-
-    SubtitleInput() {};
-    SubtitleInput(CComQIPtr<ISubStream> pSubStream) : pSubStream(pSubStream) {};
-    SubtitleInput(CComQIPtr<ISubStream> pSubStream, CComPtr<IBaseFilter> pSourceFilter)
-        : pSubStream(pSubStream), pSourceFilter(pSourceFilter) {};
-};
-
-struct FileFavorite {
-    CString Name;
-    REFERENCE_TIME Start;
-    REFERENCE_TIME MarkA;
-    REFERENCE_TIME MarkB;
-    BOOL RelativeDrive;
-
-    FileFavorite() {
-        Start = MarkA = MarkB = 0;
-        RelativeDrive = FALSE;
-    }
-
-    static bool TryParse(const CString& fav, FileFavorite& ff);
-    static bool TryParse(const CString& fav, FileFavorite& ff, CAtlList<CString>& parts);
-
-    CString ToString() const;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -250,87 +220,17 @@ private:
     friend class CPPageFileInfoSheet;
     friend class CPPageLogo;
     friend class CMouse;
-    friend class CPlayerSeekBar; // for accessing m_controls.ControlChecked(), m_pMainFrame->m_CachedFilterState, m_pMainFrame->m_pGB_preview
+    friend class CPlayerSeekBar; // for accessing m_controls.ControlChecked(), m_pMainFrame->m_CachedFilterState, m_pMainFrame->m_previewGraph
     friend class CChildView; // for accessing m_controls.DelayShowNotLoaded()
     friend class CFullscreenWnd; // for accessing m_controls.DelayShowNotLoaded()
     friend class CMouseWndWithArtView; // for accessing m_controls.DelayShowNotLoaded()
-    friend class SubtitlesProvider;
 
-    // TODO: wrap these graph objects into a class to make it look cleaner
-
-    CComPtr<IGraphBuilder2> m_pGB;
-    CComQIPtr<IMediaControl> m_pMC;
-    CComQIPtr<IMediaEventEx> m_pME;
-    CComQIPtr<IVideoWindow> m_pVW;
-    CComQIPtr<IBasicVideo> m_pBV;
-    CComQIPtr<IBasicAudio> m_pBA;
-    CComQIPtr<IMediaSeeking> m_pMS;
-    CComQIPtr<IVideoFrameStep> m_pFS;
-    CComQIPtr<IFileSourceFilter> m_pFSF;
-    CComQIPtr<IKeyFrameInfo> m_pKFI;
-    CComQIPtr<IQualProp, &IID_IQualProp> m_pQP;
-    CComQIPtr<IBufferInfo> m_pBI;
-    CComQIPtr<IAMOpenProgress> m_pAMOP;
-    CComQIPtr<IAMMediaContent, &IID_IAMMediaContent> m_pAMMC[2];
-    CComQIPtr<IAMNetworkStatus, &IID_IAMNetworkStatus> m_pAMNS;
-    CComQIPtr<IAMStreamSelect> m_pAudioSwitcherSS;
-    CComQIPtr<IAMStreamSelect> m_pSplitterSS;
-    CComQIPtr<IAMStreamSelect> m_pSplitterDubSS;
-    CComQIPtr<IAMStreamSelect> m_pOtherSS[2];
+    CPlayerGraph m_graph;
     // SmarkSeek
-    CComPtr<IGraphBuilder2>         m_pGB_preview;
-    CComQIPtr<IMediaControl>        m_pMC_preview;
-    //CComQIPtr<IMediaEventEx>        m_pME_preview;
-    CComQIPtr<IMediaSeeking>        m_pMS_preview;
-    CComQIPtr<IVideoWindow>         m_pVW_preview;
-    CComQIPtr<IBasicVideo>          m_pBV_preview;
-    //CComQIPtr<IVideoFrameStep>      m_pFS_preview;
-    CComQIPtr<IDvdControl2>         m_pDVDC_preview;
-    CComQIPtr<IDvdInfo2>            m_pDVDI_preview; // VtX: usually not necessary but may sometimes be necessary.
-    CComPtr<IMFVideoDisplayControl> m_pMFVDC_preview;
-    CComPtr<IVMRWindowlessControl9> m_pVMR9C_preview;
-    CComPtr<IMFVideoProcessor>      m_pMFVP_preview;
-    CComPtr<ISubPicAllocatorPresenter2> m_pCAP2_preview;
+    CPlayerGraph m_previewGraph;
     int defaultVideoAngle;
-    //
-    CComPtr<IVMRMixerControl9> m_pVMRMC;
-    CComPtr<IMFVideoDisplayControl> m_pMFVDC;
-    CComPtr<IMFVideoProcessor> m_pMFVP;
-    CComPtr<IVMRMixerBitmap9>    m_pVMB;
-    CComPtr<IMFVideoMixerBitmap>    m_pMFVMB;
-    CComPtr<IVMRWindowlessControl9> m_pVMRWC;
-
-    CComPtr<ISubPicAllocatorPresenter> m_pCAP;
-    CComPtr<ISubPicAllocatorPresenter2> m_pCAP2;
-    CComPtr<ISubPicAllocatorPresenter3> m_pCAP3;
-
-    CComPtr<IMadVRSettings> m_pMVRS;
-    CComPtr<IMadVRSubclassReplacement> m_pMVRSR;
-    CComPtr<IMPCVRSubclassReplacement> m_pMPCVRSR;
-    CComPtr<IMadVRCommand> m_pMVRC;
-    CComPtr<IMadVRInfo> m_pMVRI;
-    CComPtr<IMadVRFrameGrabber> m_pMVRFG;
-    CComPtr<IMadVRTextOsd> m_pMVTO;
-
-    CComPtr<ID3DFullscreenControl> m_pD3DFSC;
-
-    CComQIPtr<IDvdControl2> m_pDVDC;
-    CComQIPtr<IDvdInfo2> m_pDVDI;
-    CComPtr<IAMLine21Decoder_2> m_pLN21;
-
-    CComPtr<ICaptureGraphBuilder2> m_pCGB;
-    CStringW m_VidDispName, m_AudDispName;
-    CComPtr<IBaseFilter> m_pVidCap, m_pAudCap;
-    CComPtr<IAMVideoCompression> m_pAMVCCap, m_pAMVCPrev;
-    CComPtr<IAMStreamConfig> m_pAMVSCCap, m_pAMVSCPrev, m_pAMASC;
-    CComPtr<IAMCrossbar> m_pAMXBar;
-    CComPtr<IAMTVTuner> m_pAMTuner;
-    CComPtr<IAMDroppedFrames> m_pAMDF;
 
     CComPtr<IUnknown> m_pProv;
-
-    CComQIPtr<IDirectVobSub> m_pDVS;
-    CComQIPtr<IDirectVobSub2> m_pDVS2;
 
     bool m_bUsingDXVA;
     LPCTSTR m_HWAccelType;
@@ -350,26 +250,6 @@ private:
 	// temp fonts loader
 	CFontInstaller m_FontInstaller;
 
-    // subtitles
-
-    CCritSec m_csSubLock;
-    CCritSec m_csSubtitleManagementLock;
-
-    CList<SubtitleInput> m_pSubStreams;
-    std::list<ISubStream*> m_ExternalSubstreams;
-    POSITION m_posFirstExtSub;
-    SubtitleInput m_pCurrentSubInput;
-    SubtitleInput m_pSecondarySubInput; // secondary subtitle track, limited to externally loaded text subtitles
-
-    // last subtitle segment copied to the clipboard by auto-copy, and the time
-    // before which there is nothing new to copy
-    int m_nLastCopiedSubSegment;
-    REFERENCE_TIME m_rtNextAutoCopySubtitle;
-    void ResetAutoCopySubtitle() {
-        m_nLastCopiedSubSegment = -1;
-        m_rtNextAutoCopySubtitle = 0;
-    }
-
     // StatusBar message text parts
     CString currentAudioLang;
     CString currentSubLang;
@@ -377,17 +257,7 @@ private:
     CString m_statusbarAudioFormat;
     CString m_statusbarVideoSize;
 
-    SubtitleInput* GetSubtitleInput(int& i, bool bIsOffset = false);
-    // Secondary subtitle track helpers. The same eligibility predicate drives the
-    // menu builder and the command handler, so the handler can never select an
-    // entry the menu did not offer.
-    bool IsEligibleSecondarySubtitle(const SubtitleInput& subInput) const;
-    SubtitleInput* GetSecondarySubtitleInput(int idx);
     int UpdateSelectedAudioStreamInfo(int index, AM_MEDIA_TYPE* pmt, LCID lcid);
-    bool IsValidSubtitleStream(int i);
-    int GetSelectedSubtitleTrackIndex();
-
-    friend class CTextPassThruFilter;
 
     // windowing
 
@@ -418,13 +288,8 @@ private:
     void SetupOpenCDSubMenu();
     void SetupFiltersSubMenu();
     void SetupAudioSubMenu();
-    void SetupSubtitlesSubMenu();
-    void SetupSecondarySubtitleSubMenu();
     void SetupVideoStreamsSubMenu();
     void SetupJumpToSubMenus(CMenu* parentMenu = nullptr, int iInsertPos = -1);
-    void SetupFavoritesSubMenu();
-    bool SetupShadersSubMenu();
-    void SetupRecentFilesSubMenu();
 
     DWORD SetupNavStreamSelectSubMenu(CMenu& subMenu, UINT id, DWORD dwSelGroup);
     void OnNavStreamSelectSubMenu(UINT id, DWORD dwSelGroup);
@@ -442,25 +307,18 @@ private:
     CMPCThemeMenu m_favoritesMenu;
     CMPCThemeMenu m_shadersMenu;
     CMPCThemeMenu m_recentFilesMenu;
-    int recentFilesMenuFromMRUSequence;
 
     UINT m_nJumpToSubMenusCount;
 
-    CInterfaceArray<IUnknown, &IID_IUnknown> m_pparray;
-    CInterfaceArray<IAMStreamSelect> m_ssarray;
+    std::vector<CComPtr<IUnknown>> m_pparray;
+    std::vector<CComPtr<IAMStreamSelect>> m_ssarray;
 
     // chapters (file mode)
     CComPtr<IDSMChapterBag> m_pCB;
     void SetupChapters();
     void SetupCueChapters(CString fn);
 
-    // chapters (DVD mode)
-    void SetupDVDChapters();
-
     bool SeekToFileChapter(int iChapter, bool bRelative = false);
-    bool SeekToDVDChapter(int iChapter, bool bRelative = false);
-
-    void AddTextPassThruFilter();
 
     int m_nLoops;
     bool m_bKeepLoopCountOnStop = false; // set before a skip that closes the file, so OnPlayStop keeps m_nLoops
@@ -471,8 +329,6 @@ private:
 
     bool m_fCustomGraph;
     bool m_fShockwaveGraph;
-
-    CComPtr<ISubClock> m_pSubClock;
 
     bool m_fFrameSteppingActive;
     int m_nStepForwardCount;
@@ -489,19 +345,6 @@ private:
 
     bool m_bRememberFilePos;
 
-    ULONGLONG m_dwLastRun;
-    int m_nLastAppendSelectionIndex; // playlist index where the current batch of redirected opens started
-
-    // A command line redirected from another instance, waiting to be acted on. OnCopyData only
-    // queues it, so that handler returns immediately instead of probing the filesystem while
-    // the sending instances wait on it.
-    struct PendingCommandLine {
-        CAtlList<CString> cmdln;
-        ULONGLONG tArrived = 0;
-    };
-    std::deque<PendingCommandLine> m_pendingCommandLines;
-    bool m_bProcessingCommandLine = false;
-
     bool m_bBuffering;
 
     bool m_fLiveWM;
@@ -515,9 +358,6 @@ private:
     CString m_tempstatus_msg, m_closingmsg;
     bool m_bKeepTempStatusBarVisibleOnMediaLoad = false;
 
-    int m_lastApiVolume = -1;
-    int m_lastApiMute = -1;
-    int m_hostIntApiVersion = 0; // >0 once the connected host says MPCINT_HELLO (integer channel)
     int m_lastProcessedVolume = -1;
     int m_lastProcessedMute = -1;
 
@@ -527,28 +367,54 @@ private:
 
     void ShowOptions(int idPage = 0);
 
-    HRESULT GetDisplayedImage(std::vector<BYTE>& dib, CString& errmsg);
-    HRESULT GetCurrentFrame(std::vector<BYTE>& dib, CString& errmsg);
-    HRESULT GetOriginalFrame(std::vector<BYTE>& dib, CString& errmsg);
-    HRESULT RenderCurrentSubtitles(BYTE* pData);
-    bool GetDIB(BYTE** ppData, long& size, bool fSilent = false);
-    BYTE* ConvertDIBTo24bppRGB(BYTE* pData, long size, int& outWidth, int& outHeight, int& outPitch);
-    void SaveDIB(LPCTSTR fn, BYTE* pData, long size);
-#if MPC_SMTC_VIDEO_THUMBNAIL
-    bool CaptureVideoThumbnail(std::vector<BYTE>& thumbnail);
-#endif
-    CString MakeSnapshotFileName(BOOL thumbnails);
-    BOOL IsRendererCompatibleWithSaveImage();
-    void SaveImage(LPCTSTR fn, bool displayed, bool includeSubtitles);
-    // False when no sheet was written, including the failures that report
-    // nothing at all. A headless /thumbnails run exits non-zero on it.
-    bool SaveThumbnails(LPCTSTR fn);
+    CSnapshot m_snapshot;
+    friend class CSnapshot; // for the load state, the bars, m_OSD and the frame stepping helpers
+
+public:
+    CCaptureController m_capture;
+private:
+    friend class CCaptureController; // for the load state, the bars, m_OSD, the video windows, the graph thread and the filters menu
+
+public:
+    CDiscController m_disc;
+private:
+    friend class CDiscController; // for the load state, the bars, m_OSD, the chapter bag, the seek preview graph and the modal parent
+
+public:
+    CFavoritesRecent m_favorites;
+private:
+    friend class CFavoritesRecent; // for the load state, the bars, m_OSD, A-B repeat, the open path and the dynamic menus
+
+public:
+    CVideoGeometry m_geometry;
+private:
+    friend class CVideoGeometry; // for the load state, m_OSD, the video and preview windows, the window sizing helpers and the preview graph
+
+public:
+    CApiBridge m_api;
+private:
+    friend class CApiBridge; // for the load state, the bars, m_OSD, the media control and seek helpers
+
+public:
+    CSubtitleController m_subs;
+private:
+    friend class CSubtitleController; // for the load state, the bars, m_OSD, the dynamic menus, the stream selection helpers, the status message and the modal parent
+    friend class CSubtitleDlDlg; // for the status message, the options sheet and m_fAudioOnly
+    friend struct SubtitlesInfo; // for the graph and the playlist bar
+
+public:
+    CShaderController m_shaders;
+private:
+    friend class CShaderController; // for the load state, m_OSD, the shaders menu, the status message, the options sheet and the video repaint
+
+public:
+    CCommandLine m_cmdline;
+private:
+    friend class CCommandLine; // for the bars, the open path, the reload state, the media control helpers and the deferred actions
 
     //
 
     friend class CWebClientSocket;
-    friend class CWebServer;
-    CAutoPtr<CWebServer> m_pWebServer;
     int m_iPlaybackMode;
     ULONG m_lCurrentChapter;
     ULONG m_lChapterStartTime;
@@ -590,10 +456,59 @@ private:
     };
     std::vector<DeferredAction> m_deferredActions;
     bool m_bDeferredOnClose = false;
+    // the options sheet while ShowOptions has it up. Its modal pump is not a holder,
+    // since an open from in there is fine, but an exit would delete the frame under
+    // ShowOptions, so OnClose defers that one and cancels the sheet
+    CWnd* m_pOptionsSheet = nullptr;
+    // set from the INI warning through the last sheet ShowOptions loops over. Both
+    // pump messages, and a hotkey, remote or modeless dialog reaching ShowOptions
+    // from there stacked a second sheet over the first, which crashed in comctl32
+    bool m_bInShowOptions = false;
     bool DeferIfNested(DeferredActionType type, std::function<void()> action);
+
+    // Work the web server's thread needs done here, because it reads lists this
+    // thread rebuilds whenever a file opens or the playlist changes: the subtitle
+    // streams (m_pSubStreams, written without m_csSubLock in LoadSubtitle and
+    // OnGetSubtitles) and the playlist (never locked). The web thread sends
+    // WM_MPC_UI_REQUEST with one of these and waits a bounded time for OnUIRequest
+    // to run build. A send that times out is still delivered later, so the
+    // request lives on the heap with a reference from each side, and whichever
+    // side lets go last frees it. See CWebClientSocket::BuildOnUIThread.
+    struct UIRequest {
+        std::function<void(CMainFrame*, CStringA&)> build;
+        CStringA body;
+        LONG refs = 2;
+        void Release() {
+            if (InterlockedDecrement(&refs) == 0) {
+                delete this;
+            }
+        }
+    };
+
+    // a tracked popup or the menu bar is showing menus that a media change rebuilds
+    // (the stream, filter and recent submenus). Windows owns those popup windows
+    // while they are up, and emptying one frees the per item data it hands back to
+    // DrawItem. So while one is tracked an open or close is recorded like any other
+    // nested request, the menu is ended, and the rebuild runs from the top level
+    // pump with nothing on screen. See DeferIfNested.
+    class CTrackedMenuScope {
+        CMainFrame& m_frame;
+        // declared after m_frame, and destroyed only once the destructor body has
+        // run, so the tracked depth is already back down when this one posts
+        // WM_MPC_RUN_DEFERRED. Keep the order
+        CDeferredActionScope m_defer;
+    public:
+        explicit CTrackedMenuScope(CMainFrame& frame);
+        ~CTrackedMenuScope();
+    };
+    int m_nTrackedMenuDepth = 0;
+    // the menu bar's modal loop spans OnEnterMenuLoop and OnExitMenuLoop, so its
+    // scope cannot live on the stack like the tracked popups' ones do
+    std::optional<CTrackedMenuScope> m_menuBarMenuScope;
+
     // bodies of OpenMedia and CloseMedia; the public wrappers record the request
     // while a holder is on the stack, these always run
-    void OpenMediaInternal(CAutoPtr<OpenMediaData> pOMD);
+    void OpenMediaInternal(std::unique_ptr<OpenMediaData> pOMD);
     void CloseMediaInternal(bool bNextIsQueued = false, bool bPendingFileDelete = false);
 
     bool m_bSettingUpMenus;
@@ -606,13 +521,13 @@ private:
     void OnVideoSizeChanged(const bool bWasAudioOnly = false);
 
     CDropTarget m_dropTarget;
-    void OnDropFiles(CAtlList<CStringW>& slFiles, DROPEFFECT dropEffect) override;
+    // client coordinates of the last OnDropAccept call; OnDropFiles gets no point
+    CPoint m_lastDropPoint;
+    bool IsPlaylistDropWhileDisabled(CPoint ptClient) const;
+    void OnDropFiles(std::list<CStringW>& slFiles, DROPEFFECT dropEffect) override;
     DROPEFFECT OnDropAccept(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point) override;
 
 public:
-    void StartWebServer(int nPort);
-    void StopWebServer();
-
     int GetPlaybackMode() const {
         return m_iPlaybackMode;
     }
@@ -628,6 +543,10 @@ public:
     }
     double GetPlayingRate() const {
         return m_dSpeedRate;
+    }
+
+    CPlayerGraph& Graph() {
+        return m_graph;
     }
 
 public:
@@ -666,56 +585,47 @@ protected:
     bool m_bFirstPlay;
     bool m_bOpeningInAutochangedMonitorMode;
     bool m_bPausedForAutochangeMonitorMode;
+    bool m_bPausedByMinimize;
+    bool m_bThemeChangePending;
     bool restoringWindowRect;
 
     bool m_fAudioOnly;
-    bool m_fValidDVDOpen;
-    CString m_LastOpenBDPath;
-    CAutoPtr<OpenMediaData> m_lastOMD;
+    std::unique_ptr<OpenMediaData> m_lastOMD;
 
-    DVD_DOMAIN  m_iDVDDomain;
-    DWORD       m_iDVDTitle;
-    bool        m_bDVDStillOn;
     int         m_loadedAudioTrackIndex = -1;
-    int         m_loadedSubtitleTrackIndex = -1;
     int         m_audioTrackCount = 0;
 
     double m_dSpeedRate;
-    double m_ZoomX, m_ZoomY, m_PosX, m_PosY;
-    int m_AngleX, m_AngleY, m_AngleZ;
-    int m_iDefRotation;
 
     void ForceCloseProcess();
     void ThrowAndForceClose();
 
     // Operations
-    bool OpenMediaPrivate(CAutoPtr<OpenMediaData> pOMD);
+    bool OpenMediaPrivate(std::unique_ptr<OpenMediaData> pOMD);
     void CloseMediaPrivate();
-    void DoTunerScan(TunerScanData* pTSD);
 
     CWnd* GetModalParent();
 
-    CCritSec lockModalDialog;
-    CMediaTypesDlg* mediaTypesErrorDlg;
-    RarEntrySelectorDialog* rarEntrySelectorDlg;
+    CCritSec lockModalDialog; // guards the two members below, never held across a modal loop
+    CDialog* openingModalDlg;
+    DWORD openingModalDlgThread;
+    INT_PTR DoOpeningModalDialog(CDialog& dlg);
+    void CloseOpeningModalDialog();
     void ShowMediaTypesDialog();
 
     void OpenCreateGraphObject(OpenMediaData* pOMD);
     void OpenFile(OpenFileData* pOFD);
-    void OpenDVD(OpenDVDData* pODD);
-    void OpenCapture(OpenDeviceData* pODD);
-    HRESULT OpenBDAGraph();
     void OpenCustomizeGraph();
     CSize OpenSetupGetVideoSize();
     void OpenSetupVideo();
     void OpenSetupAudio();
     void OpenSetupInfoBar(bool bClear = true);
     bool UpdateChapterInInfoBar(bool bRecalcLayout = true);
+    void UpdateDVDInfoBar();
     void OpenSetupStatsBar();
     void CheckSelectedAudioStream();
     void CheckSelectedVideoStream();
     void OpenSetupStatusBar();
-    void OpenSetupCaptureBar();
     void OpenSetupWindowTitle(bool reset = false);
 
 public:
@@ -740,44 +650,13 @@ protected:
     volatile bool m_fOpeningAborted;
     bool m_bWasSnapped;
 
-protected:
-    friend class CSubtitleDlDlg;
-    CSubtitleDlDlg m_wndSubtitlesDownloadDialog;
-    CFavoriteOrganizeDlg m_wndFavoriteOrganizeDialog;
-    friend class CPPageSubMisc;
-
-    friend class SubtitlesProviders;
-    std::unique_ptr<SubtitlesProviders> m_pSubtitlesProviders;
-    friend struct SubtitlesInfo;
-    friend class SubtitlesTask;
-    friend class SubtitlesThread;
-
 public:
     void OpenCurPlaylistItem(REFERENCE_TIME rtStart = 0, bool reopen = false, ABRepeat abRepeat = ABRepeat());
-    void OpenMedia(CAutoPtr<OpenMediaData> pOMD);
-    void PlayFavoriteFile(const CString& fav);
-    void PlayFavoriteDVD(CString fav);
-    void OpenRecentFileEntry(RecentFileEntry& r);
-    FileFavorite ParseFavoriteFile(const CString& fav, CAtlList<CString>& args, REFERENCE_TIME* prtStart = nullptr);
+    void OpenMedia(std::unique_ptr<OpenMediaData> pOMD);
     bool ResetDevice();
     bool DisplayChange();
     bool CloseMediaBeforeOpen();
     void CloseMedia(bool bNextIsQueued = false, bool bPendingFileDelete = false);
-    void StartTunerScan(CAutoPtr<TunerScanData> pTSD);
-    void StopTunerScan();
-    HRESULT SetChannel(int nChannel);
-
-    // Headless tuner scan, driven by /dvbscan rather than CTunerScanDlg.
-    // DoTunerScan reports through window messages, so this listens for them
-    // instead of the dialog and writes the result out. The scan engine itself
-    // is unchanged and unaware of which listener it is talking to.
-    bool m_bHeadlessDVBScan = false;
-    std::vector<CBDAChannel> m_headlessDVBScanChannels;
-    void StartHeadlessDVBScan();
-    void FinishHeadlessDVBScan();
-
-    void AddCurDevToPlaylist();
-
     bool m_bTrayIcon;
     void ShowTrayIcon(bool bShow);
     void SetTrayTip(const CString& str);
@@ -815,51 +694,11 @@ public:
     void SetPlayingRate(double rate);
 
     int SetupAudioStreams();
-    int SetupSubtitleStreams();
-
-    bool LoadSubtitle(CString fn, SubtitleInput* pSubInput = nullptr, bool bAutoLoad = false);
-    bool LoadSubtitle(CYoutubeDLInstance::YDLSubInfo& sub);
-    bool SetSubtitle(int i, bool bIsOffset = false, bool bDisplayMessage = false);
-    void SetSubtitle(const SubtitleInput& subInput, bool skip_lcid = false);
-    void SetSecondarySubtitle(const SubtitleInput& subInput);
-    CComPtr<ISubPicProvider> GetSubtitleSubPicProvider();
-    void UpdateSubtitleColorInfo();
-    void ToggleSubtitleOnOff(bool bDisplayMessage = false);
-    void ReplaceSubtitle(const ISubStream* pSubStreamOld, ISubStream* pSubStreamNew);
-    void InvalidateSubtitle(DWORD_PTR nSubtitleId = DWORD_PTR_MAX, REFERENCE_TIME rtInvalidate = -1);
-    void ReloadSubtitle();
-    bool ApplySubtitleRenderingParameters(ISubStream* pSubStream, bool bSecondary);
-    void UpdateSubtitleRenderingParameters();
-    HRESULT InsertTextPassThruFilter(IBaseFilter* pBF, IPin* pPin, IPin* pPinto);
 
     void SetAudioTrackIdx(int index);
-    void SetSubtitleTrackIdx(int index);
     int GetCurrentAudioTrackIdx(CString *pstrName = nullptr);
-    int GetCurrentSubtitleTrackIdx(CString *pstrName = nullptr);
-
-    void AddFavorite(bool fDisplayMessage = false, bool fShowDialog = true);
 
     CString GetFileName();
-    CString GetCaptureTitle();
-
-    // shaders
-    void SetShaders(bool bSetPreResize = true, bool bSetPostResize = true);
-	
-	bool m_bToggleShader;
-	bool m_bToggleShaderScreenSpace;
-	std::list<ShaderC> m_ShaderCache;
-	ShaderC* GetShader(CString path, bool bD3D11);
-	bool SaveShaderFile(ShaderC* shader);
-	bool DeleteShaderFile(LPCWSTR label);
-	void TidyShaderCache();
-
-    // capturing
-    bool m_fCapturing;
-    HRESULT BuildCapture(IPin* pPin, IBaseFilter* pBF[3], const GUID& majortype, AM_MEDIA_TYPE* pmt); // pBF: 0 buff, 1 enc, 2 mux, pmt is for 1 enc
-    bool BuildToCapturePreviewPin(IBaseFilter* pVidCap, IPin** pVidCapPin, IPin** pVidPrevPin,
-                                  IBaseFilter* pAudCap, IPin** pAudCapPin, IPin** pAudPrevPin);
-    bool BuildGraphVideoAudio(int fVPreview, bool fVCapture, int fAPreview, bool fACapture);
-    bool DoCapture(), StartCapture(), StopCapture();
 
     void DoAfterPlaybackEvent();
     bool SearchInDir(bool bDirForward, bool bLoop = false);
@@ -874,53 +713,11 @@ public:
     void EnableDocking(DWORD dwDockStyle);
 
     // DVB capture
-    void UpdateCurrentChannelInfo(bool bShowOSD = true, bool bShowInfoBar = false);
     LRESULT OnCurrentChannelInfoUpdated(WPARAM wParam, LPARAM lParam);
 
     bool CheckABRepeat(REFERENCE_TIME& aPos, REFERENCE_TIME& bPos);
     void PerformABRepeat();
     void DisableABRepeat();
-
-    struct DVBState {
-        struct EITData {
-            HRESULT hr        = E_FAIL;
-            EventDescriptor NowNext;
-            bool bShowOSD     = true;
-            bool bShowInfoBar = false;
-        };
-
-        CString         sChannelName;                // Current channel name
-        CBDAChannel*    pChannel          = nullptr; // Pointer to current channel object
-        EventDescriptor NowNext;                     // Current channel EIT
-        bool            bActive           = false;   // True when channel is active
-        bool            bSetChannelActive = false;   // True when channel change is in progress
-        bool            bInfoActive       = false;   // True when EIT data update is in progress
-        bool            bAbortInfo        = true;    // True when aborting current EIT update
-        std::future<DVBState::EITData> infoData;
-
-        void Reset() {
-            sChannelName.Empty();
-            pChannel          = nullptr;
-            NowNext           = EventDescriptor();
-            bActive           = false;
-            bSetChannelActive = false;
-            bInfoActive       = false;
-            bAbortInfo        = true;
-        }
-
-        void Join() {
-            if (infoData.valid()) {
-                bAbortInfo = true;
-                infoData.wait();
-            }
-        }
-
-        ~DVBState() {
-            bAbortInfo = true;
-        }
-    };
-
-    std::unique_ptr<DVBState> m_pDVBState = nullptr;
 
     // Implementation
 public:
@@ -951,11 +748,8 @@ protected:  // control bar embedded members
     CPlayerNavigationBar m_wndNavigationBar;
     CEditListEditor m_wndEditListEditor;
 
-    std::unique_ptr<CDebugShadersDlg> m_pDebugShaders;
     std::unique_ptr<CColorControlsDlg> m_pColorControls;
-    std::unique_ptr<CHistoryDlg> m_pHistoryDlg;
-
-    LPCTSTR GetRecentFile() const;
+    std::unique_ptr<UpdateCheckerDlg> m_pUpdateCheckerDlg;
 
     friend class CPPagePlayback; // TODO
     friend class CPPageAudioSwitcher; // TODO
@@ -970,6 +764,7 @@ public:
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnDestroy();
     afx_msg LRESULT OnLAVPropPageCallback(WPARAM wParam, LPARAM lParam);
+    afx_msg LRESULT OnInfoBarShown(WPARAM wParam, LPARAM lParam);
     bool m_bLAVPropPageOpen = false;
 
     afx_msg LRESULT OnTaskBarRestart(WPARAM, LPARAM);
@@ -1021,6 +816,7 @@ public:
     afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
     afx_msg void OnUnInitMenuPopup(CMenu* pPopupMenu, UINT nFlags);
     afx_msg void OnEnterMenuLoop(BOOL bIsTrackPopupMenu);
+    afx_msg void OnExitMenuLoop(BOOL bIsTrackPopupMenu);
 
     afx_msg BOOL OnQueryEndSession();
     afx_msg void OnEndSession(BOOL bEnding);
@@ -1036,6 +832,9 @@ public:
     afx_msg LRESULT OnFilePostOpenmedia(WPARAM wParam, LPARAM lparam);
     afx_msg LRESULT OnOpenMediaFailed(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnRunDeferredActions(WPARAM wParam, LPARAM lParam);
+    afx_msg LRESULT OnUpdateCheckDone(WPARAM wParam, LPARAM lParam);
+    afx_msg LRESULT OnUIRequest(WPARAM wParam, LPARAM lParam);
+    afx_msg LRESULT OnHelpPromptAddr(WPARAM wParam, LPARAM lParam);
 
     // Only reached in headless scan mode: with the dialog running these go to
     // it instead, because DoTunerScan sends to the HWND it was handed.
@@ -1048,17 +847,9 @@ public:
     void ToolbarContextMenu(int iItem, int nIndex, CRect buttonRect);
 
     afx_msg void OnUpdateAudiosButton(CCmdUI* pCmdUI);
-    afx_msg void OnUpdateSubtitlesButton(CCmdUI* pCmdUI);
 
     afx_msg void OnStreamAudio(UINT nID);
-    afx_msg void OnStreamSub(UINT nID);
-    afx_msg void OnStreamSubOnOff();
-    afx_msg void OnSubtitlesAutoCopy();
     afx_msg void OnAudioShiftOnOff();
-    afx_msg void OnDvdAngle(UINT nID);
-    afx_msg void OnDvdAudio(UINT nID);
-    afx_msg void OnDvdSub(UINT nID);
-    afx_msg void OnDvdSubOnOff();
 
     afx_msg LRESULT OnLoadSubtitles(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnGetSubtitles(WPARAM, LPARAM lParam);
@@ -1066,35 +857,18 @@ public:
     // menu item handlers
 
     INT_PTR DoFileDialogWithLastFolder(CFileDialog& fd, CStringW& lastPath);
-    void OpenDVDOrBD(CStringW path);
 
     afx_msg void OnFileOpenQuick();
     afx_msg void OnFileOpenmedia();
     afx_msg void OnUpdateFileOpen(CCmdUI* pCmdUI);
     afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
     afx_msg LRESULT OnCommandLineReceived(WPARAM wParam, LPARAM lParam);
-    void ProcessCommandLine(CAtlList<CString>& cmdln, ULONGLONG tArrived);
-    afx_msg void OnFileOpendvd();
     afx_msg void OnFileOpendevice();
     afx_msg void OnFileOpenOpticalDisk(UINT nID);
     afx_msg void OnFileReopen();
     afx_msg void OnFileRecycle();
     afx_msg void OnFileSaveAs();
     afx_msg void OnUpdateFileSaveAs(CCmdUI* pCmdUI);
-    afx_msg void OnFileSaveImage();
-    afx_msg void OnFileSaveImageAuto();
-    afx_msg void OnUpdateFileSaveImage(CCmdUI* pCmdUI);
-    afx_msg void OnCmdLineSaveThumbnails();
-    afx_msg void OnFileSaveThumbnails();
-    afx_msg void OnUpdateFileSaveThumbnails(CCmdUI* pCmdUI);
-    afx_msg void OnFileSubtitlesLoad();
-    afx_msg void OnUpdateFileSubtitlesLoad(CCmdUI* pCmdUI);
-    afx_msg void OnFileSubtitlesSave() { SubtitlesSave(); }
-    afx_msg void OnUpdateFileSubtitlesSave(CCmdUI* pCmdUI);
-    //afx_msg void OnFileSubtitlesUpload();
-    //afx_msg void OnUpdateFileSubtitlesUpload(CCmdUI* pCmdUI);
-    afx_msg void OnFileSubtitlesDownload();
-    afx_msg void OnUpdateFileSubtitlesDownload(CCmdUI* pCmdUI);
     afx_msg void OnFileProperties();
     afx_msg void OnUpdateFileProperties(CCmdUI* pCmdUI);
     afx_msg void OnFileOpenLocation();
@@ -1110,8 +884,6 @@ public:
     afx_msg void OnUpdateViewNavigation(CCmdUI* pCmdUI);
     afx_msg void OnViewControlBar(UINT nID);
     afx_msg void OnUpdateViewControlBar(CCmdUI* pCmdUI);
-    afx_msg void OnViewSubresync();
-    afx_msg void OnUpdateViewSubresync(CCmdUI* pCmdUI);
     void UpdatePlaylistButton();
     afx_msg void OnViewPlaylist();
     afx_msg void OnPlaylistToggleShuffle();
@@ -1125,10 +897,6 @@ public:
     afx_msg void OnUpdateEDLNewClip(CCmdUI* pCmdUI);
     afx_msg void OnEDLSave();
     afx_msg void OnUpdateEDLSave(CCmdUI* pCmdUI);
-    afx_msg void OnViewCapture();
-    afx_msg void OnUpdateViewCapture(CCmdUI* pCmdUI);
-    afx_msg void OnViewDebugShaders();
-    afx_msg void OnUpdateViewDebugShaders(CCmdUI* pCmdUI);
     afx_msg void OnViewColorControls();
     afx_msg void OnUpdateViewColorControls(CCmdUI* pCmdUI);
     afx_msg void OnViewMinimal();
@@ -1142,26 +910,6 @@ public:
     afx_msg void OnViewFullscreen();
     afx_msg void OnViewFullscreenSecondary();
     afx_msg void OnUpdateViewFullscreen(CCmdUI* pCmdUI);
-    afx_msg void OnViewZoom(UINT nID);
-    afx_msg void OnUpdateViewZoom(CCmdUI* pCmdUI);
-    afx_msg void OnViewZoomAutoFit();
-    afx_msg void OnViewZoomAutoFitLarger();
-    afx_msg void OnViewModifySize(UINT nID);
-    afx_msg void OnViewDefaultVideoFrame(UINT nID);
-    afx_msg void OnUpdateViewDefaultVideoFrame(CCmdUI* pCmdUI);
-    afx_msg void OnViewSwitchVideoFrame();
-    afx_msg void OnUpdateViewSwitchVideoFrame(CCmdUI* pCmdUI);
-    afx_msg void OnViewCompMonDeskARDiff();
-    afx_msg void OnUpdateViewCompMonDeskARDiff(CCmdUI* pCmdUI);
-    afx_msg void OnViewPanNScan(UINT nID);
-    afx_msg void OnUpdateViewPanNScan(CCmdUI* pCmdUI);
-    afx_msg void OnViewPanNScanPresets(UINT nID);
-    afx_msg void OnUpdateViewPanNScanPresets(CCmdUI* pCmdUI);
-    afx_msg void OnViewRotate(UINT nID);
-    afx_msg void OnUpdateViewRotate(CCmdUI* pCmdUI);
-    afx_msg void OnViewAspectRatio(UINT nID);
-    afx_msg void OnUpdateViewAspectRatio(CCmdUI* pCmdUI);
-    afx_msg void OnViewAspectRatioNext();
     afx_msg void OnViewOntop(UINT nID);
     afx_msg void OnUpdateViewOntop(CCmdUI* pCmdUI);
     afx_msg void OnViewOptions();
@@ -1237,26 +985,15 @@ public:
     afx_msg void OnViewEnableFrameTimeCorrection();
     afx_msg void OnViewVSyncOffsetIncrease();
     afx_msg void OnViewVSyncOffsetDecrease();
-	afx_msg void OnUpdateShaderToggle1(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateShaderToggle2(CCmdUI* pCmdUI);
-	afx_msg void OnShaderToggle1();
-	afx_msg void OnShaderToggle2();
     afx_msg void OnUpdateViewOSDDisplayTime(CCmdUI* pCmdUI);
     afx_msg void OnViewOSDDisplayTime();
     afx_msg void OnUpdateViewOSDShowFileName(CCmdUI* pCmdUI);
     afx_msg void OnViewOSDShowFileName();
     afx_msg void OnD3DFullscreenToggle();
-    afx_msg void OnGotoSubtitle(UINT nID);
-    afx_msg void OnSubresyncShiftSub(UINT nID);
-    afx_msg void OnSubtitleDelay(UINT nID);
-    afx_msg void OnSubtitlePos(UINT nID);
-    afx_msg void OnSubtitleFontSize(UINT nID);
 
     afx_msg void OnPlayPlay();
     afx_msg void OnPlayPause();
     afx_msg void OnPlayPlaypause();
-    afx_msg void OnApiPlay();
-    afx_msg void OnApiPause();
     afx_msg void OnPlayStop();
             void OnPlayStop(bool is_closing);
     afx_msg void OnUpdatePlayPauseStop(CCmdUI* pCmdUI);
@@ -1275,16 +1012,7 @@ public:
     afx_msg void OnPlayFiltersCopyToClipboard();
     afx_msg void OnPlayFilters(UINT nID);
     afx_msg void OnUpdatePlayFilters(CCmdUI* pCmdUI);
-    afx_msg void OnPlayShadersSelect();
-    afx_msg void OnPlayShadersPresetNext();
-    afx_msg void OnPlayShadersPresetPrev();
-    afx_msg void OnPlayShadersPresets(UINT nID);
     afx_msg void OnPlayAudio(UINT nID);
-    afx_msg void OnSubtitlesDefaultStyle();
-    afx_msg void OnSubtitlesOverrideStyles();
-    afx_msg void OnPlaySubtitles(UINT nID);
-    afx_msg void OnPlaySecondarySubtitle(UINT nID);
-    afx_msg void OnSecondarySubtitleLoad();
     afx_msg void OnPlayVideoStreams(UINT nID);
     afx_msg void OnPlayFiltersStreams(UINT nID);
     afx_msg void OnPlayVolume(UINT nID);
@@ -1310,30 +1038,9 @@ public:
     afx_msg void OnUpdateNavigateSkipFile(CCmdUI* pCmdUI);
     afx_msg void OnNavigateGoto();
     afx_msg void OnUpdateNavigateGoto(CCmdUI* pCmdUI);
-    afx_msg void OnNavigateMenu(UINT nID);
-    afx_msg void OnUpdateNavigateMenu(CCmdUI* pCmdUI);
     afx_msg void OnNavigateJumpTo(UINT nID);
     afx_msg void OnNavigateMenuItem(UINT nID);
     afx_msg void OnUpdateNavigateMenuItem(CCmdUI* pCmdUI);
-    afx_msg void OnTunerScan();
-    afx_msg void OnUpdateTunerScan(CCmdUI* pCmdUI);
-
-    afx_msg void OnFavoritesAdd();
-    afx_msg void OnUpdateFavoritesAdd(CCmdUI* pCmdUI);
-    afx_msg void OnFavoritesQuickAddFavorite();
-    afx_msg void OnFavoritesOrganize();
-    afx_msg void OnUpdateFavoritesOrganize(CCmdUI* pCmdUI);
-    afx_msg void OnFavoritesFile(UINT nID);
-    afx_msg void OnUpdateFavoritesFile(CCmdUI* pCmdUI);
-    afx_msg void OnFavoritesDVD(UINT nID);
-    afx_msg void OnUpdateFavoritesDVD(CCmdUI* pCmdUI);
-    afx_msg void OnFavoritesDevice(UINT nID);
-    afx_msg void OnUpdateFavoritesDevice(CCmdUI* pCmdUI);
-    afx_msg void OnRecentFileClear();
-    afx_msg void OnUpdateRecentFileClear(CCmdUI* pCmdUI);
-    afx_msg void OnRecentFile(UINT nID);
-    afx_msg void OnUpdateRecentFile(CCmdUI* pCmdUI);
-    afx_msg void OnShowHistory();
 
     afx_msg void OnHelpHomepage();
     afx_msg void OnHelpCheckForUpdate();
@@ -1347,8 +1054,6 @@ public:
     void FilterSettings(CComPtr<IUnknown> pUnk, CWnd* parent);
 
     LRESULT OnMPCVRSwitchFullscreen(WPARAM wParam, LPARAM lParam);
-
-    CMPC_Lcd m_Lcd;
 
     CMouseWndWithArtView*  m_pVideoWnd;            // Current Video (main display screen or 2nd)
     CWnd*                  m_pOSDWnd;
@@ -1365,17 +1070,11 @@ public:
 
     CFullscreenWnd* m_pDedicatedFSVideoWnd;
     COSD        m_OSD;
-    int         m_nCurSubtitle;
-    long        m_lSubtitleShift;
-    REFERENCE_TIME m_rtCurSubPos;
-    bool        m_bScanDlgOpened;
-    bool        m_bStopTunerScan;
     bool        m_bLockedZoomVideoWindow;
     int         m_nLockedZoomVideoWindow;
 
     void        SetLoadState(MLS eState);
     MLS         GetLoadState() const;
-    void        QueueCommandLine(const CAtlList<CString>& cmdln);
     bool        IsStateLoaded();
     bool        IsStateLoadedOrLoading();
     bool        IsStateClosed();
@@ -1387,42 +1086,18 @@ public:
     void        SetupVMR9ColorControl();
     void        SetColorControl(DWORD flags, int& brightness, int& contrast, int& hue, int& saturation);
     void        SetClosedCaptions(bool enable);
-    LPCTSTR     GetDVDAudioFormatName(const DVD_AudioAttributes& ATR) const;
     void        SetAudioDelay(REFERENCE_TIME rtShift);
-    void        SetSubtitleDelay(int delay_ms, bool relative = false);
     //void      AutoSelectTracks();
     void        SetTimersPlay();
     void        KillTimerDelayedSeek();
     void        KillTimersStop();
     void        AdjustStreamPosPoller(bool restart);
-    void        ResetSubtitlePosAndSize(bool repaint = false);
 
-    // MPC API functions
-    void        ProcessAPICommand(HWND hSender, COPYDATASTRUCT* pCDS);
-    void        SendAPICommand(MPCAPI_COMMAND nCommand, LPCWSTR fmt, ...);
-    bool        SendAPIStringTo(HWND hTarget, MPCAPI_COMMAND nCommand, const CStringW& payload);
-    void        PostApiInt(HWND hTarget, WORD command, int value);
-    void        SendApiNotify(MPCAPI_COMMAND cmd, int value); // integer channel if host supports it, else WM_COPYDATA
     afx_msg LRESULT OnApiIntMessage(WPARAM wParam, LPARAM lParam);
-    void        SendNowPlayingToApi(bool sendtrackinfo = true);
-    void        SendSubtitleTracksToApi();
-    void        SendAudioTracksToApi();
-    void        SendPlaylistToApi();
     afx_msg void OnFileOpendirectory();
 
-    void        SendCurrentPositionToApi(bool fNotifySeek = false);
-    void        SendCurrentVolumeToApi(bool force = false);
-    void        SendCurrentMuteToApi(bool force = false);
-    void        ShowOSDCustomMessageApi(const MPC_OSDDATA* osdData);
     void        JumpOfNSeconds(int seconds);
 
-    CString GetVidPos() const;
-
-    CComPtr<ITaskbarList3> m_pTaskbarList;
-    HRESULT CreateThumbnailToolbar();
-    HRESULT UpdateThumbarButton();
-    HRESULT UpdateThumbarButton(MPC_PLAYSTATE iPlayState);
-    HRESULT UpdateThumbnailClip();
     BOOL Create(LPCTSTR lpszClassName,
                 LPCTSTR lpszWindowName,
                 DWORD dwStyle = WS_OVERLAPPEDWINDOW,
@@ -1454,8 +1129,7 @@ protected:
     void ClearArtFromViews();
 
     void UpdateUILanguage();
-
-    bool PerformFlipRotate();
+    void ApplyThemeChange();
 
     bool m_bAltDownClean;
     bool m_bShowingFloatingMenubar;
@@ -1483,8 +1157,6 @@ protected:
 
     bool m_bExtOnTop; // 'true' if the "on top" flag was set by an external tool
 
-    CString m_sydlLastProcessURL;
-
     bool IsImageFile(CStringW fn);
     bool IsPlayableFormatExt(CStringW ext);
     bool IsAudioFileExt(CStringW ext);
@@ -1498,9 +1170,6 @@ protected:
 
     // Handles MF_DEFAULT and escapes '&'
     static BOOL AppendMenuEx(CMenu& menu, UINT nFlags, UINT nIDNewItem, CString& text);
-
-    void SubtitlesSave(const TCHAR* directory = nullptr, bool silent = false);
-    REFERENCE_TIME CopyCurrentSubtitleToClipboard(REFERENCE_TIME rtNow);
 
     void OnSizingFixWndToVideo(UINT nSide, LPRECT lpRect, bool bCtrl = false);
     void OnSizingSnapToScreen(UINT nSide, LPRECT lpRect, bool bCtrl = false);
@@ -1541,20 +1210,8 @@ public:
     // TODO: refactor it outside of MainFrm
     GUID GetTimeFormat();
 
-    CHdmvClipInfo::HdmvPlaylist m_MPLSPlaylist;
-    bool m_bIsBDPlay;
-    bool OpenBD(CString Path);
-    bool m_bHasBDMeta;
-    CAtlList<CHdmvClipInfo::BDMVMeta> m_BDMeta;
-    CHdmvClipInfo::BDMVMeta GetBDMVMeta();
-
     bool GetDecoderType(CString& type) const;
-
-    static bool IsOnYDLWhitelist(const CString url);
-
-    bool CanSendToYoutubeDL(const CString url);
-    bool ProcessYoutubeDLURL(CString url, bool append, bool replace = false);
-    bool DownloadWithYoutubeDL(CString url, CString filename);
+    CString GetAudioInfo() const;
 
     /**
      * @brief Get title of file
@@ -1562,40 +1219,14 @@ public:
      * @return 
     */
     CString getBestTitle(bool fTitleBarTextTitle = true);
-    MediaTransControls m_media_trans_control;
 
-    void MediaTransportControlSetMedia();
-    void MediaTransportControlUpdateState(OAFilterState state);
-    void MediaTransportControlUpdateTimeline(bool force = false);
-    void MediaTransportControlUpdateAutoRepeat();
-#if MPC_SMTC_VIDEO_THUMBNAIL
-    void MediaTransportControlUpdateThumbnail();
-#endif
     afx_msg LRESULT OnSmtcSeek(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnSmtcAutoRepeat(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnSmtcShuffle(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnSmtcRate(WPARAM wParam, LPARAM lParam);
-    ULONGLONG m_lastSMTCTimelineUpdate = 0;
-#if MPC_SMTC_VIDEO_THUMBNAIL
-    ULONGLONG m_nextSMTCThumbnailUpdate = 0;
-    ULONGLONG m_lastSMTCThumbnailTick = 0;
-#endif
 
-    enum themableDialogTypes {
-        None,
-        windowsFileDialog,
-    };
-    void enableFileDialogHook(CMPCThemeUtil* helper);
-    void enableDialogHook(CMPCThemeUtil* helper, themableDialogTypes type);
-private:
-    themableDialogTypes watchingDialog, foundDialog;
-    CMPCThemeUtil* dialogHookHelper;
-
-public:
     afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection);
     afx_msg void OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt);
 private:
     void SetupExternalChapters();
-    void ApplyPanNScanPresetString();
-    void ValidatePanNScanParameters();
 };

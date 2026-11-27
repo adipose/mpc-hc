@@ -156,13 +156,13 @@ void CPlayerNavigationDialog::SetChannelInfoAvailable(bool bAvailable)
 
 void CPlayerNavigationDialog::OnTunerScan()
 {
-    m_pMainFrame->OnTunerScan();
+    m_pMainFrame->m_capture.OnTunerScan();
     UpdateElementList();
 }
 
 void CPlayerNavigationDialog::OnShowChannelInfo()
 {
-    m_pMainFrame->UpdateCurrentChannelInfo(true, true);
+    m_pMainFrame->m_capture.UpdateCurrentChannelInfo(true, true);
 }
 
 void CPlayerNavigationDialog::OnUpdateShowChannelInfoButton(CCmdUI* pCmdUI)
@@ -257,7 +257,7 @@ void CPlayerNavigationDialog::OnContextMenu(CWnd* pWnd, CPoint point)
     }
     m.AppendMenu(MF_STRING | (channelCount > 0 ? MF_ENABLED : (MF_DISABLED | MF_GRAYED)), M_REMOVE_ALL, ResStr(IDS_NAVIGATION_REMOVE_ALL));
 
-    if (AppNeedsThemedControls()) {
+    if (AppIsThemeLoaded()) {
         m.fulfillThemeReqs();
     }
     //this dialog is the menu owner, which bypasses CPlayerBar::OnEnterMenuLoop,
@@ -326,7 +326,7 @@ void CPlayerNavigationDialog::OnContextMenu(CWnd* pWnd, CPoint point)
                     m_channelList.SetCurSel(newCurSel);
                     if (curSel == nItem) {
                         // Set closest channel on list after removing current channel
-                        m_pMainFrame->SetChannel(s.nDVBLastChannel);
+                        m_pMainFrame->m_capture.SetChannel(s.nDVBLastChannel);
                     }
                 } else { // The last channel was removed
                     s.nDVBLastChannel = INT_ERROR;

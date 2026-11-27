@@ -228,8 +228,8 @@ void CPlayerSeekBar::SyncThumbToVideo(REFERENCE_TIME rtPos, REFERENCE_TIME rtPos
             bSetTaskbar = true;
             InvalidateRect(newThumbRect | m_lastThumbRect);
         }
-        if (bSetTaskbar && AfxGetAppSettings().bUseEnhancedTaskBar && m_pMainFrame->m_pTaskbarList) {
-            VERIFY(S_OK == m_pMainFrame->m_pTaskbarList->SetProgressValue(m_pMainFrame->m_hWnd, std::max(m_rtPos, 1ll), m_rtStop));
+        if (bSetTaskbar && AfxGetAppSettings().bUseEnhancedTaskBar && m_pMainFrame->m_api.m_pTaskbarList) {
+            VERIFY(S_OK == m_pMainFrame->m_api.m_pTaskbarList->SetProgressValue(m_pMainFrame->m_hWnd, std::max(m_rtPos, 1ll), m_rtStop));
         }
     }
 }
@@ -1215,7 +1215,7 @@ void CPlayerSeekBar::OnMButtonDown(UINT nFlags, CPoint point) {
             }
             m_pMainFrame->m_bUseSeekPreview = false;
         } else {
-            m_pMainFrame->m_bUseSeekPreview = (m_pMainFrame->m_pGB_preview != nullptr);
+            m_pMainFrame->m_bUseSeekPreview = (m_pMainFrame->m_previewGraph.m_pGB != nullptr);
         }
     }
 }

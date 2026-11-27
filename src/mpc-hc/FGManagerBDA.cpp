@@ -1160,7 +1160,7 @@ HRESULT CFGManagerBDA::CreateMicrosoftDemux(CComPtr<IBaseFilter>& pMpeg2Demux)
                 CComPtr<IPin> pPinTo;
                 pPin->ConnectedTo(&pPinTo);
                 CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
-                if (pMainFrame && SUCCEEDED(hr = pMainFrame->InsertTextPassThruFilter(pMpeg2Demux, pPin, pPinTo))) {
+                if (pMainFrame && SUCCEEDED(hr = pMainFrame->m_subs.InsertTextPassThruFilter(pMpeg2Demux, pPin, pPinTo))) {
                     Stream.SetPin(pPin);
                     LOG(_T("Filter connected to Demux for media type %d."), nType);
                 } else {
@@ -1320,7 +1320,7 @@ HRESULT CFGManagerBDA::SwitchStream(BDA_STREAM_TYPE nOldType, BDA_STREAM_TYPE nN
                     hr = pDemux->SetOutputPinMediaType(const_cast<LPWSTR>(L"eac3"), const_cast<AM_MEDIA_TYPE*>(&mt_Eac3));
                     break;
                 case BDA_ADTS:
-                    hr = pDemux->SetOutputPinMediaType(const_cast<LPWSTR>(L"adts"), const_cast<AM_MEDIA_TYPE*>(&mt_latm));
+                    hr = pDemux->SetOutputPinMediaType(const_cast<LPWSTR>(L"adts"), const_cast<AM_MEDIA_TYPE*>(&mt_adts));
                     break;
                 case BDA_LATM:
                     hr = pDemux->SetOutputPinMediaType(const_cast<LPWSTR>(L"latm"), const_cast<AM_MEDIA_TYPE*>(&mt_latm));

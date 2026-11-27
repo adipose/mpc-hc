@@ -32,7 +32,7 @@
 #include "ImageGrayer.h"
 #include "CMPCTheme.h"
 #include "stb/stb_image.h"
-#include "stb/stb_image_resize2.h"
+#include "stb/deprecated/stb_image_resize2.h"
 
 // CPlayerToolBar
 /*
@@ -343,6 +343,52 @@ void CPlayerToolBar::LoadToolbarImage(bool tbArtChanged /* = false */)
     }
 }
 
+//the images carry the palette, the volume control's size follows the theme, and the tooltip is the one made for it
+//the toolbar only tells its tooltip about buttons inserted after the tooltip was attached, so the
+//ones already in place get registered here; the toolbar keeps their rectangles current from then on
+void CPlayerToolBar::RegisterThemedToolTipTools()
+{
+    CToolBarCtrl& tb = GetToolBarCtrl();
+    for (int i = 0; i < tb.GetButtonCount(); i++) {
+        TBBUTTON button;
+        if (!tb.GetButton(i, &button) || (button.fsStyle & BTNS_SEP)) {
+            continue;
+        }
+        CRect r;
+        tb.GetItemRect(i, r);
+        TOOLINFO ti = { sizeof(TOOLINFO) };
+        ti.hwnd = m_hWnd;
+        ti.uId = button.idCommand;
+        if (themedToolTip.SendMessage(TTM_GETTOOLINFO, 0, (LPARAM)&ti)) {
+            continue; //already known to the tooltip
+        }
+        ti.uFlags = TTF_SUBCLASS;
+        ti.rect = r;
+        ti.lpszText = LPSTR_TEXTCALLBACK;
+        themedToolTip.SendMessage(TTM_ADDTOOL, 0, (LPARAM)&ti);
+    }
+}
+
+LRESULT CPlayerToolBar::OnMPCThemeChanged(WPARAM wParam, LPARAM lParam)
+{
+    CToolBarCtrl& tb = GetToolBarCtrl();
+    if (AppIsThemeLoaded()) {
+        EnableToolTips(FALSE);
+        if (nullptr == themedToolTip.m_hWnd) {
+            themedToolTip.Create(this, TTS_ALWAYSTIP);
+        }
+        tb.SetToolTips(&themedToolTip);
+        RegisterThemedToolTipTools();
+    } else {
+        tb.SetToolTips(nullptr);
+        themedToolTip.DestroyWindow();
+        tb.EnableToolTips();
+    }
+    LoadToolbarImage(true);
+    ArrangeControls();
+    return 0;
+}
+
 TBBUTTON CPlayerToolBar::GetStandardButton(int cmdid) {
     auto& svgInfo = supportedSvgButtons[cmdid];
     TBBUTTON button = { 0 };
@@ -402,6 +448,7 @@ BOOL CPlayerToolBar::Create(CWnd* pParentWnd)
     if (AppIsThemeLoaded()) {
         themedToolTip.Create(this, TTS_ALWAYSTIP);
         tb.SetToolTips(&themedToolTip);
+        RegisterThemedToolTipTools();
     } else {
         tb.EnableToolTips();
     }
@@ -409,11 +456,21 @@ BOOL CPlayerToolBar::Create(CWnd* pParentWnd)
     return TRUE;
 }
 
+int CPlayerToolBar::FirstMovableButtonIndex(const std::vector<int>& buttons, int layoutRevision) {
+    if (layoutRevision >= 1) {
+        return 1;
+    }
+    // Revision 0 saved play/pause/stop, after the left separator if the layout had one
+    return (!buttons.empty() && buttons.front() == ID_LEFTSEPARATOR) ? 4 : 3;
+}
+
 bool CPlayerToolBar::IsValidButtonLayout(const std::vector<int>& buttons, int layoutRevision) {
-    // Revision 0: [leftsep, <3 skipped>, ...movable..., dummysep, volume] — min 5 entries
-    // Revision 1+: [leftsep, ...movable..., dummysep, volume]             — min 3 entries
+    // Revision 0: [leftsep, play, pause, stop, ...movable..., dummysep, volume] — min 6 entries
+    //             (older still, without the left separator)                    — min 5 entries
+    // Revision 1+: [leftsep, ...movable..., dummysep, volume]                   — min 3 entries
     //              (the movable part may be empty, the user can remove every button)
-    if (layoutRevision == 0 && buttons.size() < 5) return false;
+    int start = FirstMovableButtonIndex(buttons, layoutRevision);
+    if (layoutRevision == 0 && (int)buttons.size() < start + 2) return false;
     if (layoutRevision >= 1) {
         if (buttons.size() < 3) return false;
         if (buttons.front() != ID_LEFTSEPARATOR) return false;
@@ -421,14 +478,13 @@ bool CPlayerToolBar::IsValidButtonLayout(const std::vector<int>& buttons, int la
         if (buttons.back() != ID_VOLUME_MUTE) return false;
     }
 
-    // For revision 0, play/pause/stop are always prepended and must not appear in the saved sequence.
+    // For revision 0, play/pause/stop are always prepended and must not appear in the movable part.
     // Seed the duplicate-check set with them so they count as already-seen.
     std::set<int> seen;
     if (layoutRevision == 0) {
         seen = {ID_PLAY_PLAY, ID_PLAY_PAUSE, ID_PLAY_STOP};
     }
 
-    int start = (layoutRevision == 0) ? 3 : 1;
     int end   = (int)buttons.size() - 2;
 
     for (int i = start; i < end; i++) {
@@ -466,8 +522,8 @@ void CPlayerToolBar::PlaceButtons(bool loadSavedLayout) {
         addButton(ID_PLAY_PLAY);
         addButton(ID_PLAY_PAUSE);
         addButton(ID_PLAY_STOP);
-        // Load remaining buttons (skip first 3, stop before last 2 which are dummy separator and volume)
-        for (int i = 3; i < (int)buttons.size() - 2; i++) {
+        // Load remaining buttons (skip the saved play/pause/stop, stop before last 2 which are dummy separator and volume)
+        for (int i = FirstMovableButtonIndex(buttons, 0); i < (int)buttons.size() - 2; i++) {
             auto& btn = supportedSvgButtons[buttons[i]];
             if (!btn.positionLocked) {
                 addButton(buttons[i]);
@@ -726,6 +782,7 @@ BEGIN_MESSAGE_MAP(CPlayerToolBar, CToolBar)
     ON_WM_RBUTTONDOWN()
     ON_WM_SETCURSOR()
     ON_NOTIFY_EX(TTN_NEEDTEXT, 0, OnToolTipNotify)
+    ON_MPCTHEMECHANGED()
     ON_WM_LBUTTONUP()
     ON_WM_RBUTTONUP()
     ON_NOTIFY_REFLECT(TBN_QUERYDELETE, &CPlayerToolBar::OnTbnQueryDelete)

@@ -61,14 +61,14 @@
 
 class CNullAudioRenderer;
 
-CFGManager::CFGManager(LPCWSTR pClassName, LPCWSTR pInputFileURL, HWND hWnd, bool IsPreview)
+CFGManager::CFGManager(LPCWSTR pClassName, LPCWSTR pInputFileURL, HWND hWnd, bool IsPreview, bool IsCapture)
     : CUnknown(pClassName, nullptr)
     , m_dwRegister(0)
 	, m_hWnd(hWnd)
 	, m_bIsPreview(IsPreview)
     , m_bPreviewSupportsRotation(false)
     , m_ignoreVideo(false)
-    , m_bIsCapture(false)
+    , m_bIsCapture(IsCapture)
     , m_source()
     , m_transform()
     , m_override()
@@ -789,6 +789,9 @@ HRESULT CFGManager::Connect(IPin* pPinOut, IPin* pPinIn, bool bContinueRender)
                 continue;
             }
 
+#if !WIN64
+            if (pBF != (IBaseFilter*)0x3) // invalid pointer value, weird x86 bug
+#endif
             pBFs.AddTail(pBF);
         }
         EndEnumFilters;
@@ -1025,7 +1028,7 @@ HRESULT CFGManager::Connect(IPin* pPinOut, IPin* pPinIn, bool bContinueRender)
                 if (!m_bIsCapture) {
                     // Check if selected video renderer fails to load
                     CLSID filter = pFGF->GetCLSID();
-                    if (filter == CLSID_MPCVRAllocatorPresenter || filter == CLSID_madVRAllocatorPresenter || filter == CLSID_DXRAllocatorPresenter) {
+                    if (filter == CLSID_MPCVRAllocatorPresenter || filter == CLSID_madVRAllocatorPresenter || filter == CLSID_DXRAllocatorPresenter || filter == CLSID_FrankyRenderer) {
                         if (IDYES == AfxMessageBox(_T("The selected video renderer has failed to load.\n\nThe player will now fallback to using a basic video renderer, which has reduced performance and quality. Subtitles may also fail to load.\n\nDo you want to change settings to use the default video renderer (EVR-CP/VMR9)? (player restart required)"), MB_ICONEXCLAMATION | MB_YESNO, 0)) {
                             CAppSettings& s2 = AfxGetAppSettings();
                             s2.iDSVideoRendererType = IsCLSIDRegistered(CLSID_EnhancedVideoRenderer) ? VIDRNDT_DS_EVR_CUSTOM : VIDRNDT_DS_VMR9RENDERLESS;
@@ -1588,6 +1591,12 @@ STDMETHODIMP CFGManager::NukeDownstream(IUnknown* pUnk)
             NukeDownstream(pPin);
         }
         EndEnumPins;
+
+        // The interfaces collected while connecting were handed out by
+        // filters downstream and are stale once they are gone. Holding
+        // them kept the old presenter alive and let FindInterface()
+        // hand it out again.
+        m_pUnks.RemoveAll();
     } else if (CComQIPtr<IPin> pPin = pUnk) {
         CComPtr<IPin> pPinTo;
         if (S_OK == IsPinDirection(pPin, PINDIR_OUTPUT)
@@ -1681,7 +1690,7 @@ STDMETHODIMP_(size_t) CFGManager::GetCount()
     return m_deadends.GetCount();
 }
 
-STDMETHODIMP CFGManager::GetDeadEnd(int iIndex, CAtlList<CStringW>& path, CAtlList<CMediaType>& mts)
+STDMETHODIMP CFGManager::GetDeadEnd(int iIndex, std::list<CStringW>& path, std::list<CMediaType>& mts)
 {
     CAutoLock cAutoLock(this);
 
@@ -1689,8 +1698,8 @@ STDMETHODIMP CFGManager::GetDeadEnd(int iIndex, CAtlList<CStringW>& path, CAtlLi
         return E_FAIL;
     }
 
-    path.RemoveAll();
-    mts.RemoveAll();
+    path.clear();
+    mts.clear();
 
     POSITION pos = m_deadends[iIndex]->GetHeadPosition();
     while (pos) {
@@ -1698,10 +1707,13 @@ STDMETHODIMP CFGManager::GetDeadEnd(int iIndex, CAtlList<CStringW>& path, CAtlLi
 
         CStringW str;
         str.Format(L"%s::%s", p.filter.GetString(), p.pin.GetString());
-        path.AddTail(str);
+        path.push_back(str);
     }
 
-    mts.AddTailList(&m_deadends[iIndex]->mts);
+    const auto& deadEndMts = m_deadends[iIndex]->mts;
+    for (POSITION posMt = deadEndMts.GetHeadPosition(); posMt;) {
+        mts.push_back(deadEndMts.GetNext(posMt));
+    }
 
     return S_OK;
 }
@@ -2819,8 +2831,8 @@ void CFGManagerCustom::InsertSubtitleFilters(bool IsPreview)
 //  CFGManagerCustom
 //
 
-CFGManagerCustom::CFGManagerCustom(LPCWSTR pClassName, LPCWSTR pInputFileURL, HWND hWnd, bool IsPreview)
-    : CFGManager(pClassName, pInputFileURL, hWnd, IsPreview)
+CFGManagerCustom::CFGManagerCustom(LPCWSTR pClassName, LPCWSTR pInputFileURL, HWND hWnd, bool IsPreview, bool IsCapture)
+    : CFGManager(pClassName, pInputFileURL, hWnd, IsPreview, IsCapture)
 {
     const CAppSettings& s = AfxGetAppSettings();
 
@@ -2929,8 +2941,8 @@ STDMETHODIMP CFGManagerCustom::AddFilter(IBaseFilter* pBF, LPCWSTR pName)
 //  CFGManagerPlayer
 //
 
-CFGManagerPlayer::CFGManagerPlayer(LPCWSTR pClassName, LPCWSTR pInputFileURL, HWND hWnd, bool IsPreview)
-    : CFGManagerCustom(pClassName, pInputFileURL, hWnd, IsPreview)
+CFGManagerPlayer::CFGManagerPlayer(LPCWSTR pClassName, LPCWSTR pInputFileURL, HWND hWnd, bool IsPreview, bool IsCapture)
+    : CFGManagerCustom(pClassName, pInputFileURL, hWnd, IsPreview, IsCapture)
     , m_hWnd(hWnd)
 {
     TRACE(_T("CFGManagerPlayer::CFGManagerPlayer on thread: %lu\n"), GetCurrentThreadId());
@@ -2981,9 +2993,22 @@ CFGManagerPlayer::CFGManagerPlayer(LPCWSTR pClassName, LPCWSTR pInputFileURL, HW
             case VIDRNDT_DS_SYNC:
                 m_transform.AddTail(DEBUG_NEW CFGFilterVideoRenderer(m_hWnd, CLSID_SyncAllocatorPresenter, StrRes(IDS_PPAGE_OUTPUT_SYNC), renderer_merit));
                 break;
+            case VIDRNDT_DS_FRANKY:
+                if (!m_bIsCapture) {
+                    m_transform.AddTail(DEBUG_NEW CFGFilterVideoRenderer(m_hWnd, CLSID_FrankyRenderer, StrRes(IDS_PPAGE_OUTPUT_FRANKY), renderer_merit));
+                } else if (IsCLSIDRegistered(CLSID_EnhancedVideoRenderer)) {
+                    m_transform.AddTail(DEBUG_NEW CFGFilterVideoRenderer(m_hWnd, CLSID_EVRAllocatorPresenter, StrRes(IDS_PPAGE_OUTPUT_EVR_CUSTOM), renderer_merit));
+                } else {
+                    m_transform.AddTail(DEBUG_NEW CFGFilterVideoRenderer(m_hWnd, CLSID_VMR9AllocatorPresenter, StrRes(IDS_PPAGE_OUTPUT_VMR9RENDERLESS), renderer_merit));
+                }
+                break;
             case VIDRNDT_DS_MPCVR:
                 if (!m_bIsCapture) {
                     m_transform.AddTail(DEBUG_NEW CFGFilterVideoRenderer(m_hWnd, CLSID_MPCVRAllocatorPresenter, StrRes(IDS_PPAGE_OUTPUT_MPCVR), renderer_merit));
+                } else if (IsCLSIDRegistered(CLSID_EnhancedVideoRenderer)) {
+                    m_transform.AddTail(DEBUG_NEW CFGFilterVideoRenderer(m_hWnd, CLSID_EVRAllocatorPresenter, StrRes(IDS_PPAGE_OUTPUT_EVR_CUSTOM), renderer_merit));
+                } else {
+                    m_transform.AddTail(DEBUG_NEW CFGFilterVideoRenderer(m_hWnd, CLSID_VMR9AllocatorPresenter, StrRes(IDS_PPAGE_OUTPUT_VMR9RENDERLESS), renderer_merit));
                 }
                 break;
             case VIDRNDT_DS_NULL_COMP:
@@ -2998,7 +3023,7 @@ CFGManagerPlayer::CFGManagerPlayer(LPCWSTR pClassName, LPCWSTR pInputFileURL, HW
                 break;
         }
         // add fallback
-        if (s.iDSVideoRendererType == VIDRNDT_DS_MPCVR || s.iDSVideoRendererType == VIDRNDT_DS_MADVR) {
+        if (s.iDSVideoRendererType == VIDRNDT_DS_MPCVR || s.iDSVideoRendererType == VIDRNDT_DS_MADVR || s.iDSVideoRendererType == VIDRNDT_DS_FRANKY) {
             if (IsCLSIDRegistered(CLSID_EnhancedVideoRenderer)) {
                 m_transform.AddTail(DEBUG_NEW CFGFilterVideoRenderer(m_hWnd, CLSID_EnhancedVideoRenderer, StrRes(IDS_PPAGE_OUTPUT_EVR), renderer_merit - 1));
             } else {
@@ -3006,7 +3031,7 @@ CFGManagerPlayer::CFGManagerPlayer(LPCWSTR pClassName, LPCWSTR pInputFileURL, HW
             }
         }
     } else {
-        bool preview_evrcp = (s.iDSVideoRendererType == VIDRNDT_DS_EVR_CUSTOM) || (s.iDSVideoRendererType == VIDRNDT_DS_SYNC) || (s.iDSVideoRendererType == VIDRNDT_DS_MADVR) || (s.iDSVideoRendererType == VIDRNDT_DS_MPCVR);
+        bool preview_evrcp = (s.iDSVideoRendererType == VIDRNDT_DS_MPCVR) || (s.iDSVideoRendererType == VIDRNDT_DS_EVR_CUSTOM) || (s.iDSVideoRendererType == VIDRNDT_DS_SYNC) || (s.iDSVideoRendererType == VIDRNDT_DS_MADVR) || (s.iDSVideoRendererType == VIDRNDT_DS_FRANKY);
         if (preview_evrcp && CAppSettings::IsVideoRendererAvailable(VIDRNDT_DS_EVR_CUSTOM)) {
             m_transform.AddTail(DEBUG_NEW CFGFilterVideoRenderer(m_hWnd, CLSID_EVRAllocatorPresenter, L"EVRCP - Preview Window", MERIT64_ABOVE_DSHOW + 2, true));
             m_bPreviewSupportsRotation = true;
@@ -3237,7 +3262,7 @@ STDMETHODIMP CFGManagerDVD::AddSourceFilter(LPCWSTR lpcwstrFileName, LPCWSTR lpc
 //
 
 CFGManagerCapture::CFGManagerCapture(HWND hWnd)
-    : CFGManagerPlayer(_T("CFGManagerCapture"), L"", hWnd)
+    : CFGManagerPlayer(_T("CFGManagerCapture"), L"", hWnd, false, true)
 {
     const CAppSettings& s = AfxGetAppSettings();
 
@@ -3247,8 +3272,6 @@ CFGManagerCapture::CFGManagerCapture(HWND hWnd)
         pFGF->AddType(MEDIATYPE_Video, MEDIASUBTYPE_NULL);
         m_transform.AddTail(pFGF);
     }
-
-    m_bIsCapture = True;
 }
 
 //

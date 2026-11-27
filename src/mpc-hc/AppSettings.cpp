@@ -138,6 +138,7 @@ CAppSettings::CAppSettings()
     , idAudioLang(0)
     , idSubtitlesLang(0)
     , fClosedCaptions(false)
+    , nSubPicQueueSize(0)
     , iDSVideoRendererType(VIDRNDT_DS_VMR7)
     , fD3DFullscreen(false)
     , fLaunchfullscreen(false)
@@ -174,6 +175,7 @@ CAppSettings::CAppSettings()
     , fCustomChannelMapping(false)
     , nSpeakerChannels(2)
     , pSpeakerToChannelMap()
+    , bSubtitleRoundedOpaqueBox(false)
     , fOverridePlacement(false)
     , nHorPos(50)
     , nVerPos(90)
@@ -196,6 +198,7 @@ CAppSettings::CAppSettings()
     , bWindows10AccentColorsEnabled(false)
     , iModernSeekbarHeight(DEF_MODERN_SEEKBAR_HEIGHT)
     , eModernThemeMode(CMPCTheme::ModernThemeMode::WINDOWSDEFAULT)
+    , iModernThemeStyle(static_cast<int>(CMPCTheme::ModernThemeStyle::WINDOWSDEFAULT))
     , iFullscreenDelay(MIN_FULLSCREEN_DELAY)
     , iVerticalAlignVideo(verticalAlignVideoType::ALIGN_MIDDLE)
     , nJumpDistS(DEFAULT_JUMPDISTANCE_1)
@@ -298,18 +301,21 @@ CAppSettings::CAppSettings()
     , iRedirectOpenToAppendThreshold(1000)
     , bFullscreenSeparateControls(true)
     , bAlwaysUseShortMenu(false)
+    , bWin11NativeMenus(false)
     , iStillVideoDuration(10)
     , iMouseLeftUpDelay(0)
     , bUseFreeType(false)
     , bUseMediainfoLoadFileDuration(false)
     , bCaptureDeinterlace(false)
     , bPauseWhileDraggingSeekbar(true)
+    , bPauseWhenMinimized(false)
     , bConfirmFileDelete(true)
     , bShowVolumePercentage(true)
     , bHistoryInAppData(false)
     , LastGPUCheck(0)
     , gpuid1(L"")
     , gpuid2(L"")
+    , gpudriver1(L"")
 {
     // Internal source filter
 #if INTERNAL_SOURCEFILTER_AC3
@@ -601,6 +607,7 @@ static constexpr wmcmd_base default_wmcmds[] = {
     { ID_FILE_CLOSE_AND_RESTORE,          'C', FCONTROL,          IDS_AG_CLOSE },
     { ID_FILE_PROPERTIES,              VK_F10, FSHIFT,            IDS_AG_PROPERTIES },
     { ID_FILE_OPEN_LOCATION,           VK_F10, FCONTROL | FSHIFT, IDS_AG_OPEN_FILE_LOCATION },
+    { ID_RECENT_FILES_SHOW_HISTORY,        0, 0,                 IDS_PPAGEADVANCED_GRP_HISTORY },
     { ID_FILE_EXIT,                       'X', FALT,              IDS_AG_EXIT },
     { ID_PLAY_PLAYPAUSE,             VK_SPACE, 0,                 IDS_AG_PLAYPAUSE,   APPCOMMAND_MEDIA_PLAY_PAUSE, wmcmd::LUP },
     { ID_PLAY_PLAY,                         0, 0,                 IDS_AG_PLAY,        APPCOMMAND_MEDIA_PLAY },
@@ -813,6 +820,21 @@ CAppSettings::~CAppSettings()
     }
 }
 
+bool CAppSettings::HasD3DCompiler47() const
+{
+    if (::PathFileExistsW(PathUtils::GetProgramPath(false) + L"\\D3DCompiler_47.dll")) {
+        return true;
+    }
+    wchar_t syspath[MAX_PATH];
+    UINT len = GetSystemDirectoryW(syspath, MAX_PATH);
+    if (len > 0 && len < MAX_PATH) {
+        if (::PathFileExistsW(CString(syspath) + L"\\D3DCompiler_47.dll")) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool CAppSettings::IsD3DFullscreen() const
 {
     if (iDSVideoRendererType == VIDRNDT_DS_EVR_CUSTOM || iDSVideoRendererType == VIDRNDT_DS_SYNC) {
@@ -868,6 +890,7 @@ bool CAppSettings::IsSubtitleRendererSupported(SubtitleRenderer eSubtitleRendere
                 case VIDRNDT_DS_SYNC:
                 case VIDRNDT_DS_MADVR:
                 case VIDRNDT_DS_MPCVR:
+                case VIDRNDT_DS_FRANKY:
                     return true;
             }
             break;
@@ -882,6 +905,7 @@ bool CAppSettings::IsSubtitleRendererSupported(SubtitleRenderer eSubtitleRendere
                 case VIDRNDT_DS_SYNC:
                 case VIDRNDT_DS_MADVR:
                 case VIDRNDT_DS_MPCVR:
+                case VIDRNDT_DS_FRANKY:
                     return true;
             }
             break;
@@ -892,6 +916,23 @@ bool CAppSettings::IsSubtitleRendererSupported(SubtitleRenderer eSubtitleRendere
             ASSERT(FALSE);
     }
 
+    return false;
+}
+
+bool CAppSettings::RequiresDecoderCopyback(SubtitleRenderer subtitleRenderer) const
+{
+    if (subtitleRenderer == SubtitleRenderer::VS_FILTER) {
+        return true;
+    }
+    POSITION pos = m_filters.GetHeadPosition();
+    while (pos) {
+        const FilterOverride fo = m_filters.GetNext(pos);
+        if (!fo.fDisabled && fo.dwMerit > MERIT_DO_NOT_USE &&
+            (fo.clsid == CLSID_VSFilter || fo.clsid == CLSID_VSFilter2 || fo.clsid == CLSID_FFDShowRawVideo ||
+             fo.clsid == CLSID_AviSynthFilter || fo.clsid == CLSID_VapourSynthFilter)) {
+            return true;
+        }
+    }
     return false;
 }
 
@@ -908,6 +949,8 @@ bool CAppSettings::IsVideoRendererAvailable(int iVideoRendererType)
             return IsCLSIDRegistered(CLSID_madVR);
         case VIDRNDT_DS_MPCVR:
             return IsCLSIDRegistered(CLSID_MPCVR) || DSObjects::CMPCVRAllocatorPresenter::HasInternalMPCVRFilter();
+        case VIDRNDT_DS_FRANKY:
+            return IsCLSIDRegistered(CLSID_FrankyRenderer);
 #ifdef _WIN64
         case VIDRNDT_DS_OVERLAYMIXER:
             return false;
@@ -1057,6 +1100,7 @@ void CAppSettings::SaveSettings(bool write_full_history /* = false */)
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_CLOSEDCAPTIONS, fClosedCaptions);
     CString style;
     pApp->WriteProfileString(IDS_R_SETTINGS, IDS_RS_SPSTYLE, style <<= subtitlesDefStyle);
+    pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SPROUNDEDOPAQUEBOX, bSubtitleRoundedOpaqueBox);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SPOVERRIDEPLACEMENT, fOverridePlacement);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SPHORPOS, nHorPos);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SPVERPOS, nVerPos);
@@ -1078,6 +1122,7 @@ void CAppSettings::SaveSettings(bool write_full_history /* = false */)
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_MPCTHEME, bMPCTheme);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_MODERNSEEKBARHEIGHT, iModernSeekbarHeight);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_MODERNTHEMEMODE, static_cast<int>(eModernThemeMode));
+    pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_MODERNTHEMESTYLE, iModernThemeStyle);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_FULLSCREEN_DELAY, iFullscreenDelay);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_VERTICALALIGNVIDEO, static_cast<int>(iVerticalAlignVideo));
 
@@ -1413,10 +1458,12 @@ void CAppSettings::SaveSettings(bool write_full_history /* = false */)
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_REDIRECT_OPEN_TO_APPEND_THRESHOLD, iRedirectOpenToAppendThreshold);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_FULLSCREEN_SEPARATE_CONTROLS, bFullscreenSeparateControls);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_ALWAYS_USE_SHORT_MENU, bAlwaysUseShortMenu);
+    pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_WIN11_NATIVE_MENUS, bWin11NativeMenus);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_STILL_VIDEO_DURATION, iStillVideoDuration);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_MOUSE_LEFTUP_DELAY, iMouseLeftUpDelay);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_CAPTURE_DEINTERLACE, bCaptureDeinterlace);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_PAUSE_WHILE_DRAGGING_SEEKBAR, bPauseWhileDraggingSeekbar);
+    pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_PAUSE_WHEN_MINIMIZED, bPauseWhenMinimized);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_CONFIRM_FILE_DELETE, bConfirmFileDelete);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SHOW_VOLUME_PERCENTAGE, bShowVolumePercentage);
     pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_HISTORY_IN_APPDATA, bHistoryInAppData);
@@ -1425,6 +1472,7 @@ void CAppSettings::SaveSettings(bool write_full_history /* = false */)
     pApp->WriteProfileInt(IDS_R_SETTINGS, L"LastGPUCheck", LastGPUCheck);
     pApp->WriteProfileString(IDS_R_SETTINGS, L"GPUID1", gpuid1);
     pApp->WriteProfileString(IDS_R_SETTINGS, L"GPUID2", gpuid2);
+    pApp->WriteProfileString(IDS_R_SETTINGS, L"GPUDriver1", gpudriver1);
 
     if (fKeepHistory && write_full_history) {
         MRU.SaveMediaHistory();
@@ -1902,6 +1950,7 @@ void CAppSettings::LoadSettings()
     bUseMediainfoLoadFileDuration = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_USE_MEDIAINFO_LOAD_FILE_DURATION, FALSE);
     bCaptureDeinterlace = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_CAPTURE_DEINTERLACE, FALSE);
     bPauseWhileDraggingSeekbar = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_PAUSE_WHILE_DRAGGING_SEEKBAR, TRUE);
+    bPauseWhenMinimized = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_PAUSE_WHEN_MINIMIZED, FALSE);
     bConfirmFileDelete = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_CONFIRM_FILE_DELETE, TRUE);
     bShowVolumePercentage = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SHOW_VOLUME_PERCENTAGE, TRUE);
     bHistoryInAppData = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_HISTORY_IN_APPDATA, FALSE);
@@ -1915,10 +1964,11 @@ void CAppSettings::LoadSettings()
             subtitlesDefStyle.relativeTo = STSStyle::AUTO;
         }
     }
+    bSubtitleRoundedOpaqueBox = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SPROUNDEDOPAQUEBOX, FALSE);
     fOverridePlacement = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SPOVERRIDEPLACEMENT, FALSE);
     nHorPos = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SPHORPOS, 50);
     nVerPos = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SPVERPOS, 90);
-    nSecondarySubVerPos = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SECONDARYSUBVERPOS, 0);
+    nSecondarySubVerPos = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SECONDARYSUBVERPOS, 8);
     if (nSecondarySubVerPos < 0 || nSecondarySubVerPos > 100) {
         nSecondarySubVerPos = 8;
     }
@@ -1941,31 +1991,17 @@ void CAppSettings::LoadSettings()
     bAutoUploadSubtitles = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_AUTOUPLOADSUBTITLES, FALSE);
     bPreferHearingImpairedSubtitles = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_PREFERHEARINGIMPAIREDSUBTITLES, FALSE);
     bMPCTheme = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_MPCTHEME, TRUE);
-    if (IsWindows10OrGreater()) {
-        CRegKey key;
-        if (ERROR_SUCCESS == key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"), KEY_READ)) {
-            DWORD useTheme = (DWORD)-1;
-            if (ERROR_SUCCESS == key.QueryDWORDValue(_T("AppsUseLightTheme"), useTheme)) {
-                if (0 == useTheme) {
-                    bWindows10DarkThemeActive = true;
-                }
-            }
-        }
-        if (ERROR_SUCCESS == key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\DWM"), KEY_READ)) {
-            DWORD useColorPrevalence = (DWORD)-1;
-            if (ERROR_SUCCESS == key.QueryDWORDValue(_T("ColorPrevalence"), useColorPrevalence)) {
-                if (1 == useColorPrevalence) {
-                    bWindows10AccentColorsEnabled = true;
-                }
-            }
-        }
-    }
+    ReadWindowsColorSettings();
     iModernSeekbarHeight = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_MODERNSEEKBARHEIGHT, DEF_MODERN_SEEKBAR_HEIGHT);
     if (iModernSeekbarHeight < MIN_MODERN_SEEKBAR_HEIGHT || iModernSeekbarHeight > MAX_MODERN_SEEKBAR_HEIGHT) {
         iModernSeekbarHeight = DEF_MODERN_SEEKBAR_HEIGHT;
     }
 
     eModernThemeMode = static_cast<CMPCTheme::ModernThemeMode>(pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_MODERNTHEMEMODE, static_cast<int>(CMPCTheme::ModernThemeMode::WINDOWSDEFAULT)));
+    iModernThemeStyle = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_MODERNTHEMESTYLE, static_cast<int>(CMPCTheme::ModernThemeStyle::WINDOWSDEFAULT));
+    if (iModernThemeStyle < static_cast<int>(CMPCTheme::ModernThemeStyle::WINDOWSDEFAULT) || iModernThemeStyle > static_cast<int>(CMPCTheme::ModernThemeStyle::WINDOWS11)) {
+        iModernThemeStyle = static_cast<int>(CMPCTheme::ModernThemeStyle::WINDOWSDEFAULT);
+    }
 
     iFullscreenDelay = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_FULLSCREEN_DELAY, MIN_FULLSCREEN_DELAY);
     if (iFullscreenDelay < MIN_FULLSCREEN_DELAY || iFullscreenDelay > MAX_FULLSCREEN_DELAY) {
@@ -2395,15 +2431,25 @@ void CAppSettings::LoadSettings()
     iRedirectOpenToAppendThreshold = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_REDIRECT_OPEN_TO_APPEND_THRESHOLD, 1000);
     bFullscreenSeparateControls = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_FULLSCREEN_SEPARATE_CONTROLS, TRUE);
     bAlwaysUseShortMenu = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_ALWAYS_USE_SHORT_MENU, FALSE);
+    bWin11NativeMenus = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_WIN11_NATIVE_MENUS, FALSE);
     iStillVideoDuration = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_STILL_VIDEO_DURATION, 10);
     iMouseLeftUpDelay = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_MOUSE_LEFTUP_DELAY, 0);
 
     LastGPUCheck = pApp->GetProfileInt(IDS_R_SETTINGS, L"LastGPUCheck", 0);
     gpuid1 = pApp->GetProfileString(IDS_R_SETTINGS, L"GPUID1", L"");
     gpuid2 = pApp->GetProfileString(IDS_R_SETTINGS, L"GPUID2", L"");
+    gpudriver1 = pApp->GetProfileString(IDS_R_SETTINGS, L"GPUDriver1", L"");
 
     int hoursSinceEpoch = std::chrono::duration_cast<std::chrono::hours>(std::chrono::system_clock::now().time_since_epoch()).count();
-    if (!LastGPUCheck || LastGPUCheck == 0xDEAD) {
+    bool check_gpu = !LastGPUCheck || LastGPUCheck == 0xDEAD;
+#if 0
+    // check again after 90 days
+    if (!check_gpu && (LastGPUCheck != 1) && (hoursSinceEpoch > LastGPUCheck) && (hoursSinceEpoch - LastGPUCheck > 90 * 24)) {
+        check_gpu = true;
+    }
+#endif
+
+    if (check_gpu) {
         if (!LastGPUCheck && pApp->IsUsingRegistry()) {
             pApp->WriteProfileInt(IDS_R_SETTINGS, L"LastGPUCheck", 0xDEAD);
             // if driver crashes during check, then on next run we know based on this temporary value
@@ -2414,6 +2460,7 @@ void CAppSettings::LoadSettings()
         CString previous_gpuid1 = gpuid1;
         gpuid1 = gpuinfo.GetCount() >= 1 ? gpuinfo.GetGPUID1() : CString();
         gpuid2 = gpuinfo.GetCount() >= 2 ? gpuinfo.GetGPUID2() : CString();
+        gpudriver1 = gpuinfo.GetCount() >= 1 ? gpuinfo.gpu1.GetDriverVersionString() : CString();
 
         LastGPUCheck = hoursSinceEpoch;
         if (pApp->IsUsingRegistry()) {
@@ -2432,12 +2479,15 @@ void CAppSettings::LoadSettings()
                     }
                 }
             }
+            if (!HasD3DCompiler47()) {
+                iDSVideoRendererType = IsVideoRendererAvailable(VIDRNDT_DS_EVR_CUSTOM) ? VIDRNDT_DS_EVR_CUSTOM : VIDRNDT_DS_VMR9RENDERLESS;
+            }
         }
 
         bool gpu_changed = previous_gpuid1 != gpuid1;
-        // adjust settings if detection changed
-        if (gpu_changed && gpuinfo.UseMPCVR() && DSObjects::CMPCVRAllocatorPresenter::HasInternalMPCVRFilter()) {
-            if (iDSVideoRendererType != VIDRNDT_DS_MPCVR && iDSVideoRendererType != VIDRNDT_DS_MADVR && iDSVideoRendererType != VIDRNDT_DS_SYNC) {
+        if (iDSVideoRendererType != VIDRNDT_DS_MPCVR && iDSVideoRendererType != VIDRNDT_DS_MADVR && iDSVideoRendererType != VIDRNDT_DS_SYNC && iDSVideoRendererType != VIDRNDT_DS_FRANKY) {
+            // adjust settings if detection changed
+            if (gpu_changed && gpuinfo.UseMPCVR() && DSObjects::CMPCVRAllocatorPresenter::HasInternalMPCVRFilter() && HasD3DCompiler47()) {
                 iDSVideoRendererType = VIDRNDT_DS_MPCVR;
                 bool softwaredec = (pApp->GetProfileInt(IDS_R_INTERNAL_LAVVIDEO_HWACCEL, _T("HWAccel"), -1) == HWAccel_None);
                 if (gpuinfo.SupportD3D11VA()) {
@@ -2456,19 +2506,62 @@ void CAppSettings::LoadSettings()
                 }
             }
         }
+
+        if (gpuinfo.AMD_DXVA2_Blacklist()) {
+            pApp->WriteProfileInt(IDS_R_INTERNAL_LAVVIDEO_HWACCEL, _T("HWAccel"), HWAccel_None);
+        }
     }
 
-    if (bMPCTheme) {
-        CMPCTheme::InitializeColors();
-    }
-    // GUI theme can be used now
-    static_cast<CMPlayerCApp*>(AfxGetApp())->m_bThemeLoaded = bMPCTheme;
+    UpdateThemeState();
 
-    if (fLaunchfullscreen && slFiles.GetCount() > 0) {
+    if (fLaunchfullscreen && slFiles.size() > 0) {
         nCLSwitches |= CLSW_FULLSCREEN;
     }
 
     bInitialized = true;
+}
+
+void CAppSettings::ReadWindowsColorSettings()
+{
+    bWindows10DarkThemeActive = false;
+    bWindows10AccentColorsEnabled = false;
+    if (IsWindows10OrGreater()) {
+        CRegKey key;
+        if (ERROR_SUCCESS == key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"), KEY_READ)) {
+            DWORD useTheme = (DWORD)-1;
+            if (ERROR_SUCCESS == key.QueryDWORDValue(_T("AppsUseLightTheme"), useTheme)) {
+                if (0 == useTheme) {
+                    bWindows10DarkThemeActive = true;
+                }
+            }
+        }
+        if (ERROR_SUCCESS == key.Open(HKEY_CURRENT_USER, _T("Software\\Microsoft\\Windows\\DWM"), KEY_READ)) {
+            DWORD useColorPrevalence = (DWORD)-1;
+            if (ERROR_SUCCESS == key.QueryDWORDValue(_T("ColorPrevalence"), useColorPrevalence)) {
+                if (1 == useColorPrevalence) {
+                    bWindows10AccentColorsEnabled = true;
+                }
+            }
+        }
+    }
+}
+
+// works out whether the modern theme is drawn and with which palette; runs at startup and again
+// whenever a theme setting or the windows colour settings change, so all of it must be safe to redo
+void CAppSettings::UpdateThemeState()
+{
+    // a contrast theme forces the modern dark theme (see EffectiveThemeMode), whatever the saved settings say
+    bool bHighContrast = CMPCTheme::IsHighContrast();
+    bool bThemeLoaded = bMPCTheme || bHighContrast;
+    if (bHighContrast) {
+        bWindows10DarkThemeActive = false; //also stops the dark file dialog workaround, which runs even without the theme
+    }
+    if (bThemeLoaded) {
+        CMPCTheme::InitializeColors();
+    }
+    // GUI theme can be used now
+    static_cast<CMPlayerCApp*>(AfxGetApp())->m_bThemeLoaded = bThemeLoaded;
+    static_cast<CMPlayerCApp*>(AfxGetApp())->m_bNativeMenus = bThemeLoaded && bWin11NativeMenus && IsWindowsVersionOrGreaterBuild(10, 0, 22000);
 }
 
 bool CAppSettings::GetAllowMultiInst() const
@@ -2502,6 +2595,7 @@ void CAppSettings::UpdateRenderersData(bool fSave)
         pApp->WriteProfileInt(IDS_R_SETTINGS, _T("VMRColorManagementIntent"), ars.iVMR9ColorManagementIntent);
 
         pApp->WriteProfileInt(IDS_R_SETTINGS, _T("EVROutputRange"), ars.iEVROutputRange);
+        pApp->WriteProfileInt(IDS_R_SETTINGS, _T("ConvertHLGToSDR"), ars.bHLGToSDR);
         pApp->WriteProfileInt(IDS_R_SETTINGS, _T("EVRHighColorRes"), ars.bEVRHighColorResolution);
         pApp->WriteProfileInt(IDS_R_SETTINGS, _T("EVRForceInputHighColorRes"), ars.bEVRForceInputHighColorResolution);
         pApp->WriteProfileInt(IDS_R_SETTINGS, _T("EVREnableFrameTimeCorrection"), ars.bEVREnableFrameTimeCorrection);
@@ -2526,13 +2620,14 @@ void CAppSettings::UpdateRenderersData(bool fSave)
 
         pApp->WriteProfileInt(IDS_R_SETTINGS, _T("ResetDevice"), r.fResetDevice);
 
-        pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SPCSIZE, r.subPicQueueSettings.nSize);
+        pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SPCSIZE, nSubPicQueueSize);
         pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SPCMAXRESX, r.subPicQueueSettings.nMaxResX);
         pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SPCMAXRESY, r.subPicQueueSettings.nMaxResY);
         pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_DISABLE_SUBTITLE_ANIMATION, r.subPicQueueSettings.bDisableSubtitleAnimation);
         pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_RENDER_AT_WHEN_ANIM_DISABLED, r.subPicQueueSettings.nRenderAtWhenAnimationIsDisabled);
         pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SUBTITLE_ANIMATION_RATE, r.subPicQueueSettings.nAnimationRate);
         pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_ALLOW_DROPPING_SUBPIC, r.subPicQueueSettings.bAllowDroppingSubpic);
+        pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_SUB_GLYPH_CACHE_MB, r.iSubGlyphCacheMB);
 
         pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_RS_EVR_BUFFERS, r.iEvrBuffers);
 
@@ -2561,6 +2656,7 @@ void CAppSettings::UpdateRenderersData(bool fSave)
         ars.iVMR9ColorManagementIntent = pApp->GetProfileInt(IDS_R_SETTINGS, _T("VMRColorManagementIntent"), DefaultSettings.iVMR9ColorManagementIntent);
 
         ars.iEVROutputRange = !!pApp->GetProfileInt(IDS_R_SETTINGS, _T("EVROutputRange"), DefaultSettings.iEVROutputRange);
+        ars.bHLGToSDR = !!pApp->GetProfileInt(IDS_R_SETTINGS, _T("ConvertHLGToSDR"), DefaultSettings.bHLGToSDR);
 
         ars.bVMRFlushGPUBeforeVSync = !!pApp->GetProfileInt(IDS_R_SETTINGS, _T("VMRFlushGPUBeforeVSync"), DefaultSettings.bVMRFlushGPUBeforeVSync);
         ars.bVMRFlushGPUAfterPresent = !!pApp->GetProfileInt(IDS_R_SETTINGS, _T("VMRFlushGPUAfterPresent"), DefaultSettings.bVMRFlushGPUAfterPresent);
@@ -2605,7 +2701,8 @@ void CAppSettings::UpdateRenderersData(bool fSave)
 
         r.fResetDevice = !!pApp->GetProfileInt(IDS_R_SETTINGS, _T("ResetDevice"), FALSE);
 
-        r.subPicQueueSettings.nSize = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SPCSIZE, 0);
+        nSubPicQueueSize = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SPCSIZE, 0);
+        r.subPicQueueSettings.nSize = nSubPicQueueSize;
         r.subPicQueueSettings.nMaxResX = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SPCMAXRESX, 2560);
         r.subPicQueueSettings.nMaxResY = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SPCMAXRESY, 1440);
         if (r.subPicQueueSettings.nMaxResX < 600 || r.subPicQueueSettings.nMaxResY < 480) {
@@ -2616,6 +2713,7 @@ void CAppSettings::UpdateRenderersData(bool fSave)
         r.subPicQueueSettings.nRenderAtWhenAnimationIsDisabled = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_RENDER_AT_WHEN_ANIM_DISABLED, 50);
         r.subPicQueueSettings.nAnimationRate = pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SUBTITLE_ANIMATION_RATE, 100);
         r.subPicQueueSettings.bAllowDroppingSubpic = !!pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_ALLOW_DROPPING_SUBPIC, TRUE);
+        r.iSubGlyphCacheMB = std::clamp((int)pApp->GetProfileInt(IDS_R_SETTINGS, IDS_RS_SUB_GLYPH_CACHE_MB, 64), 16, 1024);
 
         r.subPicVerticalShift = 0;
         r.fontScaleOverride = 1.0;
@@ -2631,8 +2729,9 @@ __int64 CAppSettings::ConvertTimeToMSec(const CString& time) const
     __int64 mSec = 0;
     __int64 mult = 1;
 
+    // short values such as "90" or "5:00" are plain seconds and minutes:seconds
     int pos = time.GetLength() - 1;
-    if (pos < 3) {
+    if (pos < 0) {
         return 0;
     }
 
@@ -2706,14 +2805,14 @@ CString CAppSettings::ParseFileName(CString const& param)
     return param;
 }
 
-void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
+void CAppSettings::ParseCommandLine(std::list<CString>& cmdln)
 {
     UINT64 existingAfterPlaybackCL = nCLSwitches & CLSW_AFTERPLAYBACK_MASK;
     nCLSwitches = 0;
-    slFiles.RemoveAll();
-    slDubs.RemoveAll();
-    slSubs.RemoveAll();
-    slFilters.RemoveAll();
+    slFiles.clear();
+    slDubs.clear();
+    slSubs.clear();
+    slFilters.clear();
     rtStart = 0;
     rtShift = 0;
     lDVDTitle = 0;
@@ -2731,9 +2830,9 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
     cmdlnDVBScan.strOutputPath.Empty();
     cmdlnDVBScan.bSaveChannels = false;
 
-    POSITION pos = cmdln.GetHeadPosition();
-    while (pos) {
-        const CString& param = cmdln.GetNext(pos);
+    auto pos = cmdln.begin();
+    while (pos != cmdln.end()) {
+        CString& param = *pos++;
         if (param.IsEmpty()) {
             continue;
         }
@@ -2754,23 +2853,23 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
                 nCLSwitches |= CLSW_EMBEDDING;
             } else if (sw == _T("help") || sw == _T("h") || sw == _T("?")) {
                 nCLSwitches |= CLSW_HELP;
-            } else if (sw == _T("dub") && pos) {
-                slDubs.AddTail(ParseFileName(cmdln.GetNext(pos)));
-            } else if (sw == _T("dubdelay") && pos) {
-                CString strFile = ParseFileName(cmdln.GetNext(pos));
+            } else if (sw == _T("dub") && pos != cmdln.end()) {
+                slDubs.push_back(ParseFileName(*pos++));
+            } else if (sw == _T("dubdelay") && pos != cmdln.end()) {
+                CString strFile = ParseFileName(*pos++);
                 int nPos = strFile.Find(_T("DELAY"));
                 if (nPos != -1) {
                     rtShift = 10000i64 * _tstol(strFile.Mid(nPos + 6));
                 }
-                slDubs.AddTail(strFile);
-            } else if (sw == _T("sub") && pos) {
-                slSubs.AddTail(ParseFileName(cmdln.GetNext(pos)));
-            } else if (sw == _T("filter") && pos) {
-                slFilters.AddTail(cmdln.GetNext(pos));
+                slDubs.push_back(strFile);
+            } else if (sw == _T("sub") && pos != cmdln.end()) {
+                slSubs.push_back(ParseFileName(*pos++));
+            } else if (sw == _T("filter") && pos != cmdln.end()) {
+                slFilters.push_back(*pos++);
             } else if (sw == _T("dvd")) {
                 nCLSwitches |= CLSW_DVD;
-            } else if (sw == _T("dvdpos") && pos) {
-                ExtractDVDStartPos(cmdln.GetNext(pos));
+            } else if (sw == _T("dvdpos") && pos != cmdln.end()) {
+                ExtractDVDStartPos(*pos++);
             } else if (sw == _T("cd")) {
                 nCLSwitches |= CLSW_CD;
             } else if (sw == _T("device")) {
@@ -2779,8 +2878,8 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
                 nCLSwitches |= CLSW_ADD;
             } else if (sw == _T("randomize")) {
                 nCLSwitches |= CLSW_RANDOMIZE;
-            } else if (sw == _T("volume") && pos) {
-                int setVolumeVal = _ttoi(cmdln.GetNext(pos));
+            } else if (sw == _T("volume") && pos != cmdln.end()) {
+                int setVolumeVal = _ttoi(*pos++);
                 if (setVolumeVal >= 0 && setVolumeVal <= 100) {
                     nCmdVolume = setVolumeVal;
                     nCLSwitches |= CLSW_VOLUME;
@@ -2803,11 +2902,11 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
                 nCLSwitches |= CLSW_UNREGEXT;    /* keep for compatibility with old versions */
             } else if (sw == _T("iconsassoc")) {
                 nCLSwitches |= CLSW_ICONSASSOC;
-            } else if (sw == _T("start") && pos) {
-                rtStart = 10000i64 * _tcstol(cmdln.GetNext(pos), nullptr, 10);
+            } else if (sw == _T("start") && pos != cmdln.end()) {
+                rtStart = 10000i64 * _tcstol(*pos++, nullptr, 10);
                 nCLSwitches |= CLSW_STARTVALID;
-            } else if (sw == _T("startpos") && pos) {
-                rtStart = 10000i64 * ConvertTimeToMSec(cmdln.GetNext(pos));
+            } else if (sw == _T("startpos") && pos != cmdln.end()) {
+                rtStart = 10000i64 * ConvertTimeToMSec(*pos++);
                 nCLSwitches |= CLSW_STARTVALID;
             } else if (sw == _T("nofocus")) {
                 nCLSwitches |= CLSW_NOFOCUS;
@@ -2825,32 +2924,36 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
                 nCLSwitches |= CLSW_LOCK;
             } else if (sw == _T("d3dfs")) {
                 nCLSwitches |= CLSW_D3DFULLSCREEN;
-            } else if (sw == _T("adminoption") && pos) {
+            } else if (sw == _T("adminoption") && pos != cmdln.end()) {
                 nCLSwitches |= CLSW_ADMINOPTION;
-                iAdminOption = _ttoi(cmdln.GetNext(pos));
-            } else if (sw == _T("slave") && pos) {
-                HWND slavewnd = (HWND)IntToPtr(_ttoi(cmdln.GetNext(pos)));
+                iAdminOption = _ttoi(*pos++);
+            } else if (sw == _T("slave") && pos != cmdln.end()) {
+                HWND slavewnd = (HWND)IntToPtr(_ttoi(*pos++));
                 if (slavewnd != nullptr && ::IsWindow(slavewnd)) {
                     nCLSwitches |= CLSW_SLAVE;
                     hMasterWnd = slavewnd;
                 } else {
                     ASSERT(false);
                 }
-            } else if (sw == _T("fixedsize") && pos) {
-                CAtlList<CString> sl;
-                // Optional arguments for the main window's position
-                Explode(cmdln.GetNext(pos), sl, ',', 4);
-                if (sl.GetCount() == 4) {
-                    fixedWindowPosition.SetPoint(_ttol(sl.GetAt(sl.FindIndex(2))), _ttol(sl.GetAt(sl.FindIndex(3))) );
+            } else if (sw == _T("fixedsize") && pos != cmdln.end()) {
+                std::vector<CString> sl;
+                {
+                    // Optional arguments for the main window's position
+                    std::list<CString> parts;
+                    Explode(*pos++, parts, ',', 4);
+                    sl.assign(parts.begin(), parts.end());
                 }
-                if (sl.GetCount() >= 2) {
-                    sizeFixedWindow.SetSize(_ttol(sl.GetAt(sl.FindIndex(0))), _ttol(sl.GetAt(sl.FindIndex(1))) );
+                if (sl.size() == 4) {
+                    fixedWindowPosition.SetPoint(_ttol(sl[2]), _ttol(sl[3]) );
+                }
+                if (sl.size() >= 2) {
+                    sizeFixedWindow.SetSize(_ttol(sl[0]), _ttol(sl[1]) );
                     if (sizeFixedWindow.cx > 0 && sizeFixedWindow.cy > 0) {
                         nCLSwitches |= CLSW_FIXEDSIZE;
                     }
                 }
-            } else if (sw == _T("viewpreset") && pos) {
-                int viewPreset = _ttoi(cmdln.GetNext(pos));
+            } else if (sw == _T("viewpreset") && pos != cmdln.end()) {
+                int viewPreset = _ttoi(*pos++);
                 switch (viewPreset) {
                     case 1:
                         nCLSwitches |= CLSW_PRESET1;
@@ -2868,22 +2971,22 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
                         nCLSwitches |= CLSW_UNRECOGNIZEDSWITCH;
                         break;
                 }
-            } else if (sw == _T("monitor") && pos) {
-                iMonitor = _tcstol(cmdln.GetNext(pos), nullptr, 10);
+            } else if (sw == _T("monitor") && pos != cmdln.end()) {
+                iMonitor = _tcstol(*pos++, nullptr, 10);
                 nCLSwitches |= CLSW_MONITOR;
-            } else if (sw == _T("pns") && pos) {
-                strPnSPreset = cmdln.GetNext(pos);
-            } else if (sw == _T("webport") && pos) {
-                int tmpport = _tcstol(cmdln.GetNext(pos), nullptr, 10);
+            } else if (sw == _T("pns") && pos != cmdln.end()) {
+                strPnSPreset = *pos++;
+            } else if (sw == _T("webport") && pos != cmdln.end()) {
+                int tmpport = _tcstol(*pos++, nullptr, 10);
                 if (tmpport >= 0 && tmpport <= 65535) {
                     nCmdlnWebServerPort = tmpport;
                 }
-            } else if (sw == _T("dvbscan") && pos) {
+            } else if (sw == _T("dvbscan") && pos != cmdln.end()) {
                 // /dvbscan <start>-<stop>, in kHz. Run a tuner scan without the
                 // scan dialog, write the result and quit. The range is required
                 // because there is no sensible default: the persisted one
                 // belongs to whoever last used the dialog.
-                CString strRange = cmdln.GetNext(pos);
+                CString strRange = *pos++;
                 int nDash = strRange.Find(_T('-'));
                 if (nDash > 0) {
                     ULONG ulStart = _tcstoul(strRange.Left(nDash), nullptr, 10);
@@ -2894,12 +2997,12 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
                         nCLSwitches |= CLSW_DVBSCAN;
                     }
                 }
-            } else if (sw == _T("dvbscanout") && pos) {
-                cmdlnDVBScan.strOutputPath = cmdln.GetNext(pos);
-            } else if (sw == _T("dvbbandwidth") && pos) {
-                cmdlnDVBScan.ulBandwidth = _tcstoul(cmdln.GetNext(pos), nullptr, 10);
-            } else if (sw == _T("dvbsymbolrate") && pos) {
-                cmdlnDVBScan.ulSymbolRate = _tcstoul(cmdln.GetNext(pos), nullptr, 10);
+            } else if (sw == _T("dvbscanout") && pos != cmdln.end()) {
+                cmdlnDVBScan.strOutputPath = *pos++;
+            } else if (sw == _T("dvbbandwidth") && pos != cmdln.end()) {
+                cmdlnDVBScan.ulBandwidth = _tcstoul(*pos++, nullptr, 10);
+            } else if (sw == _T("dvbsymbolrate") && pos != cmdln.end()) {
+                cmdlnDVBScan.ulSymbolRate = _tcstoul(*pos++, nullptr, 10);
             } else if (sw == _T("dvbscansave")) {
                 // Only means anything together with /dvbscan; see
                 // CMainFrame::FinishHeadlessDVBScan for what gets stored.
@@ -2913,10 +3016,10 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
                     MPCExceptionHandler::Enable();
                 }
 #endif
-            } else if (sw == _T("audiorenderer") && pos) {
-                SetAudioRenderer(_ttoi(cmdln.GetNext(pos)));
-            } else if (sw == _T("shaderpreset") && pos) {
-                m_Shaders.SetCurrentPreset(cmdln.GetNext(pos));
+            } else if (sw == _T("audiorenderer") && pos != cmdln.end()) {
+                SetAudioRenderer(_ttoi(*pos++));
+            } else if (sw == _T("shaderpreset") && pos != cmdln.end()) {
+                m_Shaders.SetCurrentPreset(*pos++);
             } else if (sw == _T("reset")) {
                 nCLSwitches |= CLSW_RESET;
             } else if (sw == _T("mute")) {
@@ -2925,18 +3028,18 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
                 nCLSwitches |= CLSW_MONITOROFF;
             } else if (sw == _T("playnext")) {
                 nCLSwitches |= CLSW_PLAYNEXT;
-            } else if (sw == _T("hwgpu") && pos) {
-                iLAVGPUDevice = _tcstol(cmdln.GetNext(pos), nullptr, 10);
+            } else if (sw == _T("hwgpu") && pos != cmdln.end()) {
+                iLAVGPUDevice = _tcstol(*pos++, nullptr, 10);
             } else if (sw == _T("configlavsplitter")) {
                 nCLSwitches |= CLSW_CONFIGLAVSPLITTER;
             } else if (sw == _T("configlavaudio")) {
                 nCLSwitches |= CLSW_CONFIGLAVAUDIO;
             } else if (sw == _T("configlavvideo")) {
                 nCLSwitches |= CLSW_CONFIGLAVVIDEO;
-            } else if (sw == L"ab_start" && pos) {
-                abRepeat.positionA = 10000i64 * ConvertTimeToMSec(cmdln.GetNext(pos));
-            } else if (sw == L"ab_end" && pos) {
-                abRepeat.positionB = 10000i64 * ConvertTimeToMSec(cmdln.GetNext(pos));
+            } else if (sw == L"ab_start" && pos != cmdln.end()) {
+                abRepeat.positionA = 10000i64 * ConvertTimeToMSec(*pos++);
+            } else if (sw == L"ab_end" && pos != cmdln.end()) {
+                abRepeat.positionB = 10000i64 * ConvertTimeToMSec(*pos++);
             } else if (sw == L"thumbnails") {
                 nCLSwitches |= CLSW_THUMBNAILS | CLSW_NEW;
             } else {
@@ -2944,10 +3047,10 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
             }
         } else {
             if (param == _T("-")) { // Special case: standard input
-                slFiles.AddTail(_T("pipe://stdin"));
+                slFiles.push_back(_T("pipe://stdin"));
             } else {
-                const_cast<CString&>(param) = ParseFileName(param);
-                slFiles.AddTail(param);
+                param = ParseFileName(param);
+                slFiles.push_back(param);
             }
         }
     }
@@ -2966,9 +3069,9 @@ void CAppSettings::ParseCommandLine(CAtlList<CString>& cmdln)
     }
 }
 
-void CAppSettings::GetFav(favtype ft, CAtlList<CString>& sl) const
+void CAppSettings::GetFav(favtype ft, std::list<CString>& sl) const
 {
-    sl.RemoveAll();
+    sl.clear();
 
     CString root;
 
@@ -2993,11 +3096,11 @@ void CAppSettings::GetFav(favtype ft, CAtlList<CString>& sl) const
         if (s.IsEmpty()) {
             break;
         }
-        sl.AddTail(s);
+        sl.push_back(s);
     }
 }
 
-void CAppSettings::SetFav(favtype ft, CAtlList<CString>& sl)
+void CAppSettings::SetFav(favtype ft, std::list<CString>& sl)
 {
     CString root;
 
@@ -3018,22 +3121,21 @@ void CAppSettings::SetFav(favtype ft, CAtlList<CString>& sl)
     AfxGetApp()->WriteProfileString(root, nullptr, nullptr);
 
     int i = 0;
-    POSITION pos = sl.GetHeadPosition();
-    while (pos) {
+    for (const CString& fav : sl) {
         CString s;
         s.Format(_T("Name%d"), i++);
-        AfxGetApp()->WriteProfileString(root, s, sl.GetNext(pos));
+        AfxGetApp()->WriteProfileString(root, s, fav);
     }
 }
 
 void CAppSettings::AddFav(favtype ft, CString s)
 {
-    CAtlList<CString> sl;
+    std::list<CString> sl;
     GetFav(ft, sl);
-    if (sl.Find(s)) {
+    if (std::find(sl.begin(), sl.end(), s) != sl.end()) {
         return;
     }
-    sl.AddTail(s);
+    sl.push_back(s);
     SetFav(ft, sl);
 }
 
@@ -3218,7 +3320,7 @@ CStringW getRFEHash(RecentFileEntry &r) {
     if (r.DVDPosition.llDVDGuid) {
         return getRFEHash(r.DVDPosition.llDVDGuid);
     } else {
-        fn = r.fns.GetHead();
+        fn = r.fns.front();
         return getRFEHash(fn);
     }
 }
@@ -3362,9 +3464,9 @@ int CAppSettings::CRecentFileListWithMoreInfo::GetCurrentSubtitleTrack() {
 void CAppSettings::CRecentFileListWithMoreInfo::AddSubToCurrent(CStringW subpath) {
     size_t idx;
     if (GetCurrentIndex(idx)) {
-        bool found = rfe_array[idx].subs.Find(subpath);
+        bool found = std::find(rfe_array[idx].subs.begin(), rfe_array[idx].subs.end(), subpath) != rfe_array[idx].subs.end();
         if (!found) {
-            rfe_array[idx].subs.AddHead(subpath);
+            rfe_array[idx].subs.push_front(subpath);
             WriteMediaHistoryEntry(rfe_array[idx]);
         }
     }
@@ -3393,17 +3495,16 @@ void CAppSettings::CRecentFileListWithMoreInfo::WriteCurrentEntry() {
 }
 
 void CAppSettings::CRecentFileListWithMoreInfo::Add(RecentFileEntry r, bool current_open) {
-    if (r.fns.GetCount() < 1) {
+    if (r.fns.size() < 1) {
         return;
     }
-    if (CString(r.fns.GetHead()).MakeLower().Find(_T("@device:")) >= 0) {
+    if (CString(r.fns.front()).MakeLower().Find(_T("@device:")) >= 0) {
         return;
     }
 
     const auto& s = AfxGetAppSettings();
-    POSITION fnPos = r.fns.GetHeadPosition();
-    while (fnPos) {
-        if (s.IsExcludedFromHistory(r.fns.GetNext(fnPos))) {
+    for (const CString& fn : r.fns) {
+        if (s.IsExcludedFromHistory(fn)) {
             if (current_open) {
                 // Nothing is current anymore, so playback of this file updates no entry.
                 current_rfe_hash.Empty();
@@ -3470,7 +3571,7 @@ void CAppSettings::CRecentFileListWithMoreInfo::ReadLegacyMediaHistory(std::map<
         t.Format(_T("Cue%zu"), i);
         CStringW cue = pApp->GetProfileStringW(legacySection, t);
         RecentFileEntry r;
-        r.fns.AddTail(fn);
+        r.fns.push_back(fn);
         r.title = title;
         r.cue = cue;
         int k = 2;
@@ -3478,14 +3579,14 @@ void CAppSettings::CRecentFileListWithMoreInfo::ReadLegacyMediaHistory(std::map<
             t.Format(_T("File%zu,%d"), i, k);
             CStringW ft = pApp->GetProfileStringW(legacySection, t);
             if (ft.IsEmpty()) break;
-            r.fns.AddTail(ft);
+            r.fns.push_back(ft);
         }
         k = 1;
         for (;; k++) {
             t.Format(_T("Sub%zu,%d"), i, k);
             CStringW st = pApp->GetProfileStringW(legacySection, t);
             if (st.IsEmpty()) break;
-            r.subs.AddTail(st);
+            r.subs.push_back(st);
         }
         if (fn.Right(9) ==  L"\\VIDEO_TS") { //try to find the dvd position from index
             CStringW strDVDPos;
@@ -3499,7 +3600,7 @@ void CAppSettings::CRecentFileListWithMoreInfo::ReadLegacyMediaHistory(std::map<
             }
             rfe_array.Add(r);
         } else {
-            filenameToIndex[r.fns.GetHead()] = rfe_array.Add(r);
+            filenameToIndex[r.fns.front()] = rfe_array.Add(r);
         }
     }
     rfe_array.FreeExtra();
@@ -3549,7 +3650,7 @@ bool CAppSettings::CRecentFileListWithMoreInfo::LoadMediaHistoryEntryFN(CStringW
     CStringW hash = getRFEHash(fn);
     if (!LoadMediaHistoryEntry(hash, r)) {
         r.hash = hash;
-        r.fns.AddHead(fn); //otherwise add a new entry
+        r.fns.push_front(fn); //otherwise add a new entry
         return false;
     }
     return true;
@@ -3559,7 +3660,7 @@ bool CAppSettings::CRecentFileListWithMoreInfo::LoadMediaHistoryEntryDVD(ULONGLO
     CStringW hash = getRFEHash(llDVDGuid);
     if (!LoadMediaHistoryEntry(hash, r)) {
         r.hash = hash;
-        r.fns.AddHead(fn); //otherwise add a new entry
+        r.fns.push_front(fn); //otherwise add a new entry
         r.DVDPosition.llDVDGuid = llDVDGuid;
         return false;
     }
@@ -3581,7 +3682,7 @@ bool CAppSettings::CRecentFileListWithMoreInfo::LoadMediaHistoryEntry(CStringW h
     CStringW dvdPosition = pApp->GetProfileStringW(subSection, L"DVDPosition", L"");
 
     r.hash = hash;
-    r.fns.AddHead(fn);
+    r.fns.push_front(fn);
     r.title = pApp->GetProfileStringW(subSection, L"Title", L"");
     r.cue   = pApp->GetProfileStringW(subSection, L"Cue", L"");
     r.filePosition = filePosition * 10000LL;
@@ -3601,7 +3702,7 @@ bool CAppSettings::CRecentFileListWithMoreInfo::LoadMediaHistoryEntry(CStringW h
         if (ft.IsEmpty()) {
             break;
         }
-        r.fns.AddTail(ft);
+        r.fns.push_back(ft);
     }
     k = 1;
     for (;; k++) {
@@ -3610,7 +3711,7 @@ bool CAppSettings::CRecentFileListWithMoreInfo::LoadMediaHistoryEntry(CStringW h
         if (st.IsEmpty()) {
             break;
         }
-        r.subs.AddTail(st);
+        r.subs.push_back(st);
     }
 
     r.AudioTrackIndex = pApp->GetProfileIntW(subSection, L"AudioTrackIndex", -1);
@@ -3688,7 +3789,7 @@ void CAppSettings::CRecentFileListWithMoreInfo::WriteMediaHistoryAudioIndex(Rece
     auto pApp = AfxGetMyApp();
 
     if (r.hash.IsEmpty()) {
-        r.hash = getRFEHash(r.fns.GetHead());
+        r.hash = getRFEHash(r.fns.front());
     }
 
     CStringW subSection, t;
@@ -3705,7 +3806,7 @@ void CAppSettings::CRecentFileListWithMoreInfo::WriteMediaHistorySubtitleIndex(R
     auto pApp = AfxGetMyApp();
 
     if (r.hash.IsEmpty()) {
-        r.hash = getRFEHash(r.fns.GetHead());
+        r.hash = getRFEHash(r.fns.front());
     }
 
     CStringW subSection, t;
@@ -3722,7 +3823,7 @@ void CAppSettings::CRecentFileListWithMoreInfo::WriteMediaHistoryEntry(RecentFil
     auto pApp = AfxGetMyApp();
 
     if (r.hash.IsEmpty()) {
-        r.hash = getRFEHash(r.fns.GetHead());
+        r.hash = getRFEHash(r.fns.front());
     }
 
     CStringW subSection, t;
@@ -3730,16 +3831,14 @@ void CAppSettings::CRecentFileListWithMoreInfo::WriteMediaHistoryEntry(RecentFil
 
     CString storedFilename = pApp->GetProfileStringW(subSection, L"Filename", L"");
     bool isNewEntry = storedFilename.IsEmpty();
-    if (isNewEntry || storedFilename != r.fns.GetHead()) {
-        pApp->WriteProfileStringW(subSection, L"Filename", r.fns.GetHead());
+    if (isNewEntry || storedFilename != r.fns.front()) {
+        pApp->WriteProfileStringW(subSection, L"Filename", r.fns.front());
     }
 
-    if (r.fns.GetCount() > 1) {
+    if (r.fns.size() > 1) {
         int k = 2;
-        POSITION p(r.fns.GetHeadPosition());
-        r.fns.GetNext(p);
-        while (p != nullptr) {
-            CString fn = r.fns.GetNext(p);
+        for (auto p = std::next(r.fns.begin()); p != r.fns.end(); ++p) {
+            CString fn = *p;
             t.Format(L"Filename%03d", k);
             pApp->WriteProfileStringW(subSection, t, fn);
             k++;
@@ -3753,11 +3852,10 @@ void CAppSettings::CRecentFileListWithMoreInfo::WriteMediaHistoryEntry(RecentFil
         t = L"Cue";
         pApp->WriteProfileStringW(subSection, t, r.cue);
     }
-    if (r.subs.GetCount() > 0) {
+    if (r.subs.size() > 0) {
         int k = 1;
-        POSITION p(r.subs.GetHeadPosition());
-        while (p != nullptr) {
-            CString fn = r.subs.GetNext(p);
+        for (const CString& sub : r.subs) {
+            CString fn = sub;
             t.Format(L"Sub%03d", k);
             pApp->WriteProfileStringW(subSection, t, fn);
             k++;
@@ -4096,8 +4194,10 @@ void CAppSettings::MigrateSettings()
                     break;
             }
         [[fallthrough]];
-        default:
-            pApp->WriteProfileInt(IDS_R_SETTINGS, IDS_R_VERSION, 8);
+        case 9:
+            if (pApp->GetProfileInt(IDS_R_SETTINGS, L"LastGPUCheck", 0) > 1) {
+                VERIFY(pApp->WriteProfileInt(IDS_R_SETTINGS, L"LastGPUCheck", 0));
+            }
     }
 }
 
@@ -4133,12 +4233,9 @@ CRenderersData* GetRenderersData() {
 
 CRenderersSettings& GetRenderersSettings() {
     auto& s = AfxGetAppSettings();
-    if (s.m_RenderersSettings.subPicQueueSettings.nSize > 0) {
-        // queue does not work properly with libass
-        if (s.bRenderSSAUsingLibass || s.bRenderSRTUsingLibass) {
-            s.m_RenderersSettings.subPicQueueSettings.nSize = 0;
-        }
-    }
+    // queue does not work properly with libass
+    bool libass = s.bRenderSSAUsingLibass || s.bRenderSRTUsingLibass;
+    s.m_RenderersSettings.subPicQueueSettings.nSize = libass ? 0 : s.nSubPicQueueSize;
     return s.m_RenderersSettings;
 }
 

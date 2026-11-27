@@ -65,6 +65,7 @@ CPPageTheme::CPPageTheme()
 {
     EventRouter::EventSelection fires;
     fires.insert(MpcEvent::CHANGING_UI_LANGUAGE);
+    fires.insert(MpcEvent::CHANGING_THEME);
     GetEventd().Connect(m_eventc, fires);
 }
 
@@ -270,9 +271,15 @@ BOOL CPPageTheme::OnApply()
 
     CAppSettings& s = AfxGetAppSettings();
 
+    bool themeChanged = s.bMPCTheme != !!m_bUseModernTheme
+                        || s.iModernSeekbarHeight != m_iModernSeekbarHeight
+                        || s.eModernThemeMode != static_cast<CMPCTheme::ModernThemeMode>(m_iThemeMode);
     s.bMPCTheme = !!m_bUseModernTheme;
     s.iModernSeekbarHeight = m_iModernSeekbarHeight;
     s.eModernThemeMode = static_cast<CMPCTheme::ModernThemeMode>(m_iThemeMode);
+    if (themeChanged) {
+        m_eventc.FireEvent(MpcEvent::CHANGING_THEME);
+    }
 
     int iLangSel = m_langsComboBox.GetCurSel();
     if (iLangSel != CB_ERR) {
@@ -318,6 +325,9 @@ BOOL CPPageTheme::OnApply()
         pFrame->m_wndPreView.SetRelativeSize(m_iSeekPreviewSize);
     }
 
+    // Stored before the status bar is laid out again below, so it makes room for the audio channel icon right away
+    s.bShowAudioFormatInStatusbar = m_bShowAudioFormatInStatusbar;
+
     // There is no main frame when the option dialog is displayed stand-alone
     if (CMainFrame* pMainFrame = AfxGetMainFrame()) {
         pMainFrame->UpdateControlState(CMainFrame::UPDATE_SEEKBAR_CHAPTERS);
@@ -327,7 +337,6 @@ BOOL CPPageTheme::OnApply()
     s.fShowOSD = m_fShowOSD;
     s.fShowCurrentTimeInOSD = m_fShowCurrentTimeInOSD;
     s.bShowVideoInfoInStatusbar = m_bShowVideoInfoInStatusbar;
-    s.bShowAudioFormatInStatusbar = m_bShowAudioFormatInStatusbar;
     s.bShowLangInStatusbar = m_bShowLangInStatusbar;
     s.bShowFPSInStatusbar = m_bShowFPSInStatusbar;
     s.bShowABMarksInStatusbar = m_bShowABMarksInStatusbar;
@@ -339,9 +348,9 @@ BOOL CPPageTheme::OnApply()
         s.bUseEnhancedTaskBar = m_bUseEnhancedTaskBar;
         if (pFrame) {
             if (m_bUseEnhancedTaskBar) {
-                pFrame->CreateThumbnailToolbar();
+                pFrame->m_api.CreateThumbnailToolbar();
             } else {
-                pFrame->UpdateThumbarButton();
+                pFrame->m_api.UpdateThumbarButton();
             }
         }
     }

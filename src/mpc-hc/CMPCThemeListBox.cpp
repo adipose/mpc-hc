@@ -17,6 +17,7 @@ CMPCThemeListBox::~CMPCThemeListBox()
 }
 
 BEGIN_MESSAGE_MAP(CMPCThemeListBox, CListBox)
+    ON_MPCTHEMECHANGED()
     ON_WM_NCPAINT()
     ON_WM_MOUSEWHEEL()
     ON_WM_MOUSEMOVE()
@@ -92,15 +93,20 @@ void CMPCThemeListBox::PreSubclassWindow()
 {
     CListBox::PreSubclassWindow();
     if (AppNeedsThemedControls()) {
-        if (CMPCThemeUtil::canUseWin10DarkTheme()) {
-            SetWindowTheme(GetSafeHwnd(), L"DarkMode_Explorer", NULL);
-        } else {
-            SetWindowTheme(GetSafeHwnd(), L"", NULL);
-        }
+        SetWindowTheme(GetSafeHwnd(), CMPCThemeUtil::explorerThemeName(), NULL);
         if (nullptr == themedToolTip.m_hWnd) {
             themedToolTip.Create(this, TTS_ALWAYSTIP);
         }
     }
+}
+
+LRESULT CMPCThemeListBox::OnMPCThemeChanged(WPARAM wParam, LPARAM lParam)
+{
+    CMPCThemeUtil::applyExplorerTheme(GetSafeHwnd());
+    if (AppNeedsThemedControls() && nullptr == themedToolTip.m_hWnd) {
+        themedToolTip.Create(this, TTS_ALWAYSTIP);
+    }
+    return 0;
 }
 
 

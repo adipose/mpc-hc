@@ -246,7 +246,12 @@ void CPPageShaders::DoDataExchange(CDataExchange* pDX)
 
 void CPPageShaders::CheckRenderer()
 {
-    if (AfxGetAppSettings().iDSVideoRendererType == VIDRNDT_DS_MPCVR) {
+    const int renderer = AfxGetAppSettings().iDSVideoRendererType;
+    if (renderer == VIDRNDT_DS_MPCVR) {
+        mpcvrNote.SetWindowTextW(m_mpcvrNoteText);
+        mpcvrNote.ShowWindow(TRUE);
+    } else if (renderer == VIDRNDT_DS_FRANKY) {
+        mpcvrNote.SetWindowTextW(L"FrankyRenderer does not support external pixel shaders.");
         mpcvrNote.ShowWindow(TRUE);
     } else {
         mpcvrNote.ShowWindow(FALSE);
@@ -257,6 +262,10 @@ void CPPageShaders::CheckRenderer()
 BOOL CPPageShaders::OnInitDialog()
 {
     __super::OnInitDialog();
+    if (m_mpcvrNoteText.IsEmpty()) {
+        mpcvrNote.GetWindowTextW(m_mpcvrNoteText);
+    }
+
     const auto& s = AfxGetAppSettings();
 
     m_Shaders.SetList(ShaderList::GetDefaultShaders());
@@ -308,7 +317,7 @@ BOOL CPPageShaders::OnApply()
     preset.SetLists(m_PreResize.GetList(), m_PostResize.GetList());
     bool bUnnamed = true;
     s.m_Shaders.SetPresets(m_Presets);
-    if (m_PresetsBox.GetCurSel() != CB_ERR) {
+    if (FindTypedPreset() != CB_ERR) {
         CString text;
         m_PresetsBox.GetWindowText(text);
         auto it = m_Presets.find(text);
@@ -334,9 +343,19 @@ BOOL CPPageShaders::OnApply()
     return CPPageBase::OnApply();
 }
 
+// The preset named by the edit text, which is what the box shows. The list's own selection can
+// disagree with it: closing the dropped list without a pick puts the selection back on the old
+// item while the edit keeps the item typed towards, and no CBN_EDITCHANGE is sent.
+int CPPageShaders::FindTypedPreset() const
+{
+    CString text;
+    m_PresetsBox.GetWindowText(text);
+    return text.IsEmpty() ? CB_ERR : m_PresetsBox.FindStringExact(-1, text);
+}
+
 void CPPageShaders::OnLoadShaderPreset()
 {
-    int sel = m_PresetsBox.GetCurSel();
+    int sel = FindTypedPreset();
     if (sel != CB_ERR) {
         CString name;
         m_PresetsBox.GetLBText(sel, name);
@@ -366,7 +385,7 @@ void CPPageShaders::OnSaveShaderPreset()
         ShaderPreset preset;
         preset.SetLists(m_PreResize.GetList(), m_PostResize.GetList());
         m_Presets[name] = preset;
-        if (m_PresetsBox.GetCurSel() == CB_ERR) {
+        if (FindTypedPreset() == CB_ERR) {
             VERIFY(m_PresetsBox.SetCurSel(m_PresetsBox.AddString(name)) != CB_ERR);
         }
     } else {
@@ -377,7 +396,7 @@ void CPPageShaders::OnSaveShaderPreset()
 
 void CPPageShaders::OnDeleteShaderPreset()
 {
-    int sel = m_PresetsBox.GetCurSel();
+    int sel = FindTypedPreset();
     if (sel != CB_ERR) {
         CString name;
         m_PresetsBox.GetLBText(sel, name);
@@ -477,11 +496,10 @@ void CPPageShaders::OnAddShaderFile()
 
     if (dlg.DoModal() == IDOK) {
         auto list = m_Shaders.GetList();
-        CAtlList<CString> paths;
+        std::list<CString> paths;
         FileDialogUtils::GetSelectedPaths(dlg, paths);
-        POSITION dlgPos = paths.GetHeadPosition();
-        while (dlgPos) {
-            Shader shader(paths.GetNext(dlgPos));
+        for (const CString& path : paths) {
+            Shader shader(path);
             if (std::find(list.begin(), list.end(), shader) == std::end(list)) {
                 m_Shaders.AddShader(shader);
             }
@@ -510,7 +528,7 @@ void CPPageShaders::OnUpdateAddToPostResize(CCmdUI* pCmdUI)
 
 void CPPageShaders::OnUpdateLoadShaderPreset(CCmdUI* pCmdUI)
 {
-    pCmdUI->Enable(m_PresetsBox.GetCurSel() != CB_ERR);
+    pCmdUI->Enable(FindTypedPreset() != CB_ERR);
 }
 
 void CPPageShaders::OnUpdateSaveShaderPreset(CCmdUI* pCmdUI)
@@ -522,7 +540,7 @@ void CPPageShaders::OnUpdateSaveShaderPreset(CCmdUI* pCmdUI)
 
 void CPPageShaders::OnUpdateDeleteShaderPreset(CCmdUI* pCmdUI)
 {
-    pCmdUI->Enable(m_PresetsBox.GetCurSel() != CB_ERR);
+    pCmdUI->Enable(FindTypedPreset() != CB_ERR);
 }
 
 void CPPageShaders::OnUpdateUpPreResize(CCmdUI* pCmdUI)

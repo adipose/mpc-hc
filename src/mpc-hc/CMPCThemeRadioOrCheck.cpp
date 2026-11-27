@@ -52,10 +52,14 @@ END_MESSAGE_MAP()
 
 void CMPCThemeRadioOrCheck::OnPaint()
 {
-    if (AppNeedsThemedControls()) {
+    if (AppNeedsThemedControls() || isFileDialogChild) { //the dark file dialog workaround runs even without the theme
         DWORD buttonStyle = GetWindowLongPtr(GetSafeHwnd(), GWL_STYLE);
 
-        CPaintDC dc(this);
+        //painted off screen in one pass: erasing first and then drawing made the box flash on every hover change
+        CPaintDC paintDC(this);
+        CMemDC memDC(paintDC, this);
+        CDC& dc = memDC.GetDC();
+        drawBackground(&dc);
         CRect   rectItem;
         GetClientRect(rectItem);
 
@@ -106,11 +110,11 @@ void CMPCThemeRadioOrCheck::OnPaint()
             rectCheck.bottom = rectCheck.top + cbHeight;
 
             if (buttonType == checkType) {
-                CMPCThemeUtil::drawCheckBox(GetParent(), checkState, isHover, true, rectCheck, &dc);
+                CMPCThemeUtil::drawCheckBox(GetParent(), checkState, isHover, true, rectCheck, &dc, false, 0, isDisabled);
             } else if (buttonType == threeStateType) {
-                CMPCThemeUtil::drawCheckBox(GetParent(), checkState, isHover, true, rectCheck, &dc);
+                CMPCThemeUtil::drawCheckBox(GetParent(), checkState, isHover, true, rectCheck, &dc, false, 0, isDisabled);
             } else if (buttonType == radioType) {
-                CMPCThemeUtil::drawCheckBox(GetParent(), checkState, isHover, true, rectCheck, &dc, true);
+                CMPCThemeUtil::drawCheckBox(GetParent(), checkState, isHover, true, rectCheck, &dc, true, 0, isDisabled);
             }
 
             if (!sTitle.IsEmpty()) {
@@ -173,10 +177,10 @@ void CMPCThemeRadioOrCheck::OnPaint()
 
                 int nMode = dc.SetBkMode(TRANSPARENT); //keep the text from filling over the focus rect
                 if (isDisabled) {
-                    dc.SetTextColor(CMPCTheme::ButtonDisabledFGColor);
+                    dc.SetTextColor(isFileDialogChild ? CMPCTheme::W10DarkThemeTitlebarInactiveFGColor : CMPCTheme::ButtonDisabledFGColor);
                     dc.DrawTextW(sTitle, -1, &rectItem, uFormat); // DT_NOPREFIX not needed
                 } else {
-                    dc.SetTextColor(CMPCTheme::TextFGColor);
+                    dc.SetTextColor(isFileDialogChild ? CMPCTheme::W10DarkThemeFileDialogInjectedTextColor : CMPCTheme::TextFGColor);
                     dc.DrawTextW(sTitle, -1, &rectItem, uFormat); // DT_NOPREFIX not needed
                 }
                 dc.SetBkMode(nMode);
@@ -249,7 +253,7 @@ void CMPCThemeRadioOrCheck::OnLButtonDown(UINT nFlags, CPoint point)
 void CMPCThemeRadioOrCheck::OnEnable(BOOL bEnable)
 {
     //SetRedraw(TRUE) sets WS_VISIBLE, so the redraw dance must be skipped for hidden controls
-    if (AppNeedsThemedControls() && (GetStyle() & WS_VISIBLE)) {
+    if ((AppNeedsThemedControls() || isFileDialogChild) && (GetStyle() & WS_VISIBLE)) {
         SetRedraw(FALSE);
         __super::OnEnable(bEnable);
         SetRedraw(TRUE);
@@ -265,7 +269,11 @@ BOOL CMPCThemeRadioOrCheck::OnEraseBkgnd(CDC* pDC)
     if (!AppNeedsThemedControls() && !isFileDialogChild) { //must match the OnPaint condition; this class is also used as a dialog member in classic mode
         return __super::OnEraseBkgnd(pDC);
     }
+    return TRUE; //OnPaint draws the background itself
+}
 
+void CMPCThemeRadioOrCheck::drawBackground(CDC* pDC)
+{
     CRect r;
     GetClientRect(r);
     if (isFileDialogChild) {
@@ -274,7 +282,6 @@ BOOL CMPCThemeRadioOrCheck::OnEraseBkgnd(CDC* pDC)
     } else {
         CMPCThemeUtil::drawParentDialogBGClr(this, pDC, r);
     }
-    return TRUE;
 }
 
 

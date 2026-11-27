@@ -241,10 +241,13 @@ private:
         AUTO_DOWNLOAD_SCORE_SERIES,
         OPEN_REC_PANEL_WHEN_OPENING_DEVICE,
         ALWAYS_USE_SHORT_MENU,
+        WIN11_NATIVE_MENUS,
+        MODERN_THEME_STYLE,
         USE_FREETYPE,
         USE_MEDIAINFO_LOAD_FILE_DURATION,
         CAPTURE_DEINTERLACE,
         PAUSE_WHILE_DRAGGING_SEEKBAR,
+        PAUSE_WHEN_MINIMIZED,
         CONFIRM_FILE_DELETE,
         LIBASS_FOR_SRT,
         SHOW_VOLUME_PERCENTAGE,
@@ -253,6 +256,7 @@ private:
         HISTORY_IN_APPDATA,
         HISTORY_EXCLUDE_FILTER,
         HISTORY_MAX_AGE_DAYS,
+        SUB_GLYPH_CACHE_MB,
     };
 
     static constexpr DWORD_PTR HEADER_ITEM_DATA = (DWORD_PTR)-1;
@@ -294,6 +298,7 @@ private:
 
 protected:
     CMPCThemePlayerListCtrl m_list;
+    EventClient m_eventc;
 
     virtual void DoDataExchange(CDataExchange* pDX) override;
     virtual BOOL OnInitDialog() override;

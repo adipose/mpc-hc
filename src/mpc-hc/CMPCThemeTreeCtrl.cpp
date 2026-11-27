@@ -30,11 +30,7 @@ BOOL CMPCThemeTreeCtrl::PreCreateWindow(CREATESTRUCT& cs)
 void CMPCThemeTreeCtrl::fulfillThemeReqs()
 {
     if (AppNeedsThemedControls()) {
-        if (CMPCThemeUtil::canUseWin10DarkTheme()) {
-            SetWindowTheme(GetSafeHwnd(), L"DarkMode_Explorer", NULL);
-        } else {
-            SetWindowTheme(GetSafeHwnd(), L"", NULL);
-        }
+        CMPCThemeUtil::applyExplorerTheme(GetSafeHwnd());
         SetExtendedStyle(TVS_EX_DOUBLEBUFFER, TVS_EX_DOUBLEBUFFER); //necessary to prevent significant flicker
 
         SetLineColor(CMPCTheme::TreeCtrlLineColor);
@@ -49,10 +45,20 @@ void CMPCThemeTreeCtrl::fulfillThemeReqs()
         //the duplicate line above is necessary due to a non-default bg.
         //treat as a separate line of code to be clear that this one is "optional" while the other is not
         SetExtendedStyle(TVS_EX_DOUBLEBUFFER, TVS_EX_DOUBLEBUFFER); //optional
+        //undo the themed setup, for a tree that outlives a theme change
+        CMPCThemeUtil::applyExplorerTheme(GetSafeHwnd());
+        SetLineColor(CLR_DEFAULT);
     }
 }
 
+LRESULT CMPCThemeTreeCtrl::OnMPCThemeChanged(WPARAM wParam, LPARAM lParam)
+{
+    fulfillThemeReqs();
+    return 0;
+}
+
 BEGIN_MESSAGE_MAP(CMPCThemeTreeCtrl, CTreeCtrl)
+    ON_MPCTHEMECHANGED()
     ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, &CMPCThemeTreeCtrl::OnNMCustomdraw)
     ON_WM_ERASEBKGND()
     ON_WM_DRAWITEM()
@@ -133,7 +139,7 @@ void CMPCThemeTreeCtrl::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
                 isHot = 0 != (pNMCD->uItemState & CDIS_HOT);
 
                 //regular theme is a bit ugly but better than Explorer theme. we clear the focus states to control the highlight ourselves
-                if (!CMPCThemeUtil::canUseWin10DarkTheme()) {
+                if (!CMPCThemeUtil::canUseExplorerTheme()) {
                     pNMCD->uItemState &= ~(CDIS_FOCUS | CDIS_HOT | CDIS_SELECTED);
                 }
 

@@ -3267,7 +3267,7 @@ void CSimpleTextSubtitle::CreateSegments()
 void CSimpleTextSubtitle::FlushEventsLibass()
 {
     if (m_LibassContext.IsLibassActive()) {
-        ass_flush_events(m_LibassContext.m_track.get());
+        m_LibassContext.FlushEvents();
     }
 }
 
@@ -3388,11 +3388,13 @@ bool CSimpleTextSubtitle::Open(CTextFile* f, int CharSet, CString name) {
     for (int i: functs) {
         if (!OpenFuncts[i].open(f, *this, CharSet)) {
             if (!IsEmpty()) {
-                CString lastLine;
-                size_t n = CountLines(f, pos, f->GetPosition(), lastLine);
-                CString msg;
-                msg.Format(_T("Unable to parse the subtitle file. Syntax error at line %Iu:\n\"%s\""), n + 1, lastLine.GetString());
-                AfxMessageBox(msg, MB_OK | MB_ICONERROR);
+                if (f->GetFilePath().Find(L".txt") == -1) { // hide error for .txt files
+                    CString lastLine;
+                    size_t n = CountLines(f, pos, f->GetPosition(), lastLine);
+                    CString msg;
+                    msg.Format(_T("Unable to parse the subtitle file. Syntax error at line %Iu:\n\"%s\""), n + 1, lastLine.GetString());
+                    AfxMessageBox(msg, MB_OK | MB_ICONERROR);
+                }
                 Empty();
                 break;
             }

@@ -28,6 +28,7 @@
 #include "IMPCVideoDecFilter.h"
 #include "Utils.h"
 #include "Variables.h"
+#include "HLGInput.h"
 
 #if (0)     // Set to 1 to activate EVR traces
 #define TRACE_EVR   TRACE
@@ -301,6 +302,10 @@ STDMETHODIMP CEVRAllocatorPresenter::CreateRenderer(IUnknown** ppRenderer)
 
 STDMETHODIMP_(bool) CEVRAllocatorPresenter::Paint(bool bAll)
 {
+    // Once shut down the EVR may already be gone, so nothing of it can be drawn
+    if (m_nRenderState == Shutdown) {
+        return false;
+    }
     return __super::Paint(bAll);
 }
 
@@ -622,6 +627,9 @@ STDMETHODIMP CEVRAllocatorPresenter::ProcessMessage(MFVP_MESSAGE_TYPE eMessage, 
                 3) The presenter sets the media type on the mixer's output stream.
                 4) The EVR sets the media type on the substreams.
             */
+            // Read the input pin here, where the EVR already holds its filter lock. The render
+            // thread must not: it would wait for that lock while the loop below waits for it.
+            m_bHLGInputPin = !m_bIsPreview && InputPinIsHLGNow();
             m_bPendingRenegotiate = true;
             while (m_bPendingRenegotiate) {
                 Sleep(1);
@@ -688,6 +696,23 @@ HRESULT CEVRAllocatorPresenter::IsMediaTypeSupported(IMFMediaType* pMixerType)
     return hr;
 }
 
+bool CEVRAllocatorPresenter::InputPinIsHLGNow()
+{
+    CComPtr<IPin> pPin;
+    CMediaType    mt;
+    if (SUCCEEDED(m_pOuterEVR->FindPin(L"EVR Input0", &pPin)) && SUCCEEDED(pPin->ConnectionMediaType(&mt))) {
+        if (mt.formattype == FORMAT_VideoInfo2 || mt.formattype == FORMAT_MPEG2_VIDEO) {
+            VIDEOINFOHEADER2& vih2 = *(VIDEOINFOHEADER2*)mt.pbFormat;
+            if (vih2.dwControlFlags & AMCONTROL_COLORINFO_PRESENT) {
+                DXVA2_ExtendedFormat exfmt;
+                exfmt.value = vih2.dwControlFlags;
+                return exfmt.VideoTransferFunction == TRANSFER_FUNCTION_HLG;
+            }
+        }
+    }
+    return false;
+}
+
 HRESULT CEVRAllocatorPresenter::CreateOptimalOutputType(IMFMediaType* pMixerProposedType, IMFMediaType* pMixerInputType, IMFMediaType** ppType)
 {
     HRESULT hr;
@@ -724,6 +749,10 @@ HRESULT CEVRAllocatorPresenter::CreateOptimalOutputType(IMFMediaType* pMixerProp
     }
 
     pOptimalMediaType->SetUINT32(MF_MT_PAN_SCAN_ENABLED, 0);
+
+    // HLG input: the rendering engine converts it to SDR, from the very first frame
+    // (the decoder often signals HLG only in a format change after the first frames).
+    m_bHLGInput = !m_bIsPreview && (MixerTypeIsHLG(pMixerInputType) || m_bHLGInputPin);
 
     const CRenderersSettings& r = GetRenderersSettings();
 
@@ -2438,7 +2467,7 @@ void CEVRAllocatorPresenter::RenderThread()
                                 }
                             }
                         } else if (m_nRenderState == Paused) {
-                            if (bForcePaint) {
+                            if (bForcePaint && !m_bEvtFlush) {
                                 bStepForward = true;
                                 // Ensure that the renderer is properly updated after seeking when paused
                                 SubPicSetTime();
@@ -2454,7 +2483,7 @@ void CEVRAllocatorPresenter::RenderThread()
                         if (bStepForward) {
                             m_MaxSampleDuration = std::max(SampleDuration, m_MaxSampleDuration);
                             checkPendingMediaFinished();
-                        } else {
+                        } else if (!m_bEvtFlush) {
                             AddToScheduledList(pMFSample, true);
                             pMFSample = nullptr; // The sample should not be used after being queued
                         }

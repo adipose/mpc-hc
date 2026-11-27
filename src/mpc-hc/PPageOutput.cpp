@@ -193,6 +193,9 @@ BOOL CPPageOutput::OnInitDialog()
             case VIDRNDT_DS_MPCVR:
                 resName = IDS_PPAGE_OUTPUT_MPCVR;
                 break;
+            case VIDRNDT_DS_FRANKY:
+                resName = IDS_PPAGE_OUTPUT_FRANKY;
+                break;
             default:
                 ASSERT(FALSE);
                 return;
@@ -212,6 +215,7 @@ BOOL CPPageOutput::OnInitDialog()
     m_iDSVRTC.SetRedraw(FALSE); // Do not draw the control while we are filling it with items
     addRenderer(VIDRNDT_DS_MPCVR);
     addRenderer(VIDRNDT_DS_MADVR);
+    addRenderer(VIDRNDT_DS_FRANKY);
     addRenderer(VIDRNDT_DS_EVR_CUSTOM);
     addRenderer(VIDRNDT_DS_EVR);
     addRenderer(VIDRNDT_DS_SYNC);
@@ -305,10 +309,18 @@ BOOL CPPageOutput::OnApply()
 
     CAppSettings& s = AfxGetAppSettings();
 
-    if (!s.IsVideoRendererAvailable(m_iDSVideoRendererType)) {
+    bool vrender_missing = !s.IsVideoRendererAvailable(m_iDSVideoRendererType);
+    bool missing_dx = !vrender_missing && m_iDSVideoRendererType == VIDRNDT_DS_MPCVR && !s.HasD3DCompiler47();
+    if (vrender_missing || missing_dx) {
         ((CPropertySheet*)GetParent())->SetActivePage(this);
-        AfxMessageBox(IDS_PPAGE_OUTPUT_UNAVAILABLEMSG, MB_ICONEXCLAMATION | MB_OK, 0);
-
+        if (vrender_missing) {
+            AfxMessageBox(IDS_PPAGE_OUTPUT_UNAVAILABLEMSG, MB_ICONEXCLAMATION | MB_OK, 0);
+        } else if (missing_dx) {
+            AfxMessageBox(L"Your system is missing the DirectX file \"D3DCompiler_47.dll\".\n\nMPC Video Renderer requires that file.\n\nPlease update your Windows or install the DirectX end-user runtime.", MB_OK, 0);
+        }
+        if (s.iDSVideoRendererType == m_iDSVideoRendererType) {
+            s.iDSVideoRendererType = s.IsVideoRendererAvailable(VIDRNDT_DS_EVR_CUSTOM) ? VIDRNDT_DS_EVR_CUSTOM : VIDRNDT_DS_VMR9RENDERLESS;
+        }
         // revert to the renderer in the settings
         m_iDSVideoRendererTypeCtrl.SetCurSel(0);
         for (int i = 0; i < m_iDSVideoRendererTypeCtrl.GetCount(); ++i) {
@@ -326,22 +338,11 @@ BOOL CPPageOutput::OnApply()
         // video renderer changed, optimize HW decoding settings
         CMPlayerCApp* pApp = AfxGetMyApp();
         int curhwa = pApp->GetProfileInt(IDS_R_INTERNAL_LAVVIDEO_HWACCEL, _T("HWAccel"), -1);
-        bool needcopyback = false; // external filters that require copyback
-        if (s.GetSubtitleRenderer() == CAppSettings::SubtitleRenderer::VS_FILTER) {
-            needcopyback = true;
+        auto subtitleRenderer = s.GetSubtitleRenderer();
+        if (m_SubtitleRendererCtrl.IsWindowEnabled() && m_SubtitleRendererCtrl.GetCurSel() != CB_ERR) {
+            subtitleRenderer = static_cast<CAppSettings::SubtitleRenderer>(m_SubtitleRendererCtrl.GetItemData(m_SubtitleRendererCtrl.GetCurSel()));
         }
-        if (s.m_filters.GetCount() > 0) {
-            POSITION pos = s.m_filters.GetHeadPosition();
-            while (pos) {
-               FilterOverride fo = s.m_filters.GetNext(pos);
-               if (!fo.fDisabled && fo.dwMerit > MERIT_DO_NOT_USE) {
-                   if (fo.clsid == CLSID_VSFilter || fo.clsid == CLSID_VSFilter2 || fo.clsid == CLSID_FFDShowRawVideo || fo.clsid ==  CLSID_AviSynthFilter || fo.clsid ==  CLSID_VapourSynthFilter) {
-                       needcopyback = true;
-                       break;
-                   }
-               }
-            }
-        }
+        const bool needcopyback = s.RequiresDecoderCopyback(subtitleRenderer);
 
         if (m_iDSVideoRendererType == VIDRNDT_DS_MPCVR) {
             GPUDetect gpuinfo = GPUDetect();
@@ -364,6 +365,22 @@ BOOL CPPageOutput::OnApply()
                         pApp->WriteProfileInt(IDS_R_INTERNAL_LAVVIDEO_HWACCEL, _T("HWAccel"), HWAccel_DXVA2Native);
                     }
                 }
+            }
+        } else if (m_iDSVideoRendererType == VIDRNDT_DS_FRANKY) {
+            GPUDetect gpuinfo = GPUDetect();
+            if (curhwa > HWAccel_None && gpuinfo.SupportD3D11VA()) {
+                pApp->WriteProfileInt(IDS_R_INTERNAL_LAVVIDEO_HWACCEL, _T("HWAccel"), HWAccel_D3D11);
+                if (needcopyback) {
+                    if (pApp->GetProfileInt(IDS_R_INTERNAL_LAVVIDEO_HWACCEL, _T("HWAccelDeviceD3D11"), -1) == -1) {
+                        pApp->WriteProfileInt(IDS_R_INTERNAL_LAVVIDEO_HWACCEL, _T("HWAccelDeviceD3D11"), 0);
+                    }
+                } else if (pApp->GetProfileInt(IDS_R_INTERNAL_LAVVIDEO_HWACCEL, _T("HWAccelDeviceD3D11"), -1) != -1) {
+                    if (AfxMessageBox(L"Change hardware decoding setting to \"D3D11 Native\"?\n\nThat gives better performance and is optimal choice for the selected video renderer.", MB_YESNO, 0) == IDYES) {
+                        pApp->WriteProfileInt(IDS_R_INTERNAL_LAVVIDEO_HWACCEL, _T("HWAccelDeviceD3D11"), -1);
+                    }
+                }
+            } else if (curhwa == HWAccel_DXVA2Native || curhwa == HWAccel_D3D11) {
+                pApp->WriteProfileInt(IDS_R_INTERNAL_LAVVIDEO_HWACCEL, _T("HWAccel"), HWAccel_DXVA2CopyBack);
             }
         } else if (m_iDSVideoRendererType == VIDRNDT_DS_MADVR) {
             if (curhwa == HWAccel_D3D11) {
@@ -422,7 +439,7 @@ BOOL CPPageOutput::OnApply()
 }
 
 void CPPageOutput::OnUpdateVideoRendererSettings(CCmdUI* pCmdUI) {
-    pCmdUI->Enable(m_iDSVideoRendererType == VIDRNDT_DS_MPCVR || m_iDSVideoRendererType == VIDRNDT_DS_MADVR
+    pCmdUI->Enable(m_iDSVideoRendererType == VIDRNDT_DS_MPCVR || m_iDSVideoRendererType == VIDRNDT_DS_MADVR || m_iDSVideoRendererType == VIDRNDT_DS_FRANKY
                    || m_iDSVideoRendererType == VIDRNDT_DS_EVR_CUSTOM || m_iDSVideoRendererType == VIDRNDT_DS_VMR9RENDERLESS
                    || m_iDSVideoRendererType == VIDRNDT_DS_SYNC);
 }
@@ -446,6 +463,8 @@ void CPPageOutput::OpenVideoRendererSettings() {
         clsid = CLSID_MPCVR;
     } else if (m_iDSVideoRendererType == VIDRNDT_DS_MADVR) {
         clsid = CLSID_madVR;
+    } else if (m_iDSVideoRendererType == VIDRNDT_DS_FRANKY) {
+        clsid = CLSID_FrankyRenderer;
     } else {
         return;
     }
@@ -519,6 +538,7 @@ UINT CPPageOutput::GetRendererTooltipID() const
         case VIDRNDT_DS_MADVR:          return IDC_DSMADVR;
         case VIDRNDT_DS_DXR:            return IDC_DSDXR;
         case VIDRNDT_DS_MPCVR:          return IDC_DSMPCVR;
+        case VIDRNDT_DS_FRANKY:         return IDC_DSFRANKY;
         default:                        return 0;
     }
 }
@@ -527,7 +547,7 @@ void CPPageOutput::UpdateStatusIcon()
 {
     // Feature-support indicator below the renderer dropdown:
     // green tick     - supports all player functionality including HDR (MPCVR/madVR)
-    // yellow warning - supports all player functionality except HDR (EVR CP/Sync)
+    // yellow warning - feature restrictions; see the renderer-specific note
     // red cross      - old renderer with limited functionality
     // The tooltip carries the detailed capability description of the renderer.
     HICON icon;
@@ -542,6 +562,10 @@ void CPPageOutput::UpdateStatusIcon()
         case VIDRNDT_DS_SYNC:
             icon = m_warn;
             noteID = IDS_PPAGE_OUTPUT_SUPPORT_NO_HDR;
+            break;
+        case VIDRNDT_DS_FRANKY:
+            icon = m_tick;
+            noteID = IDS_PPAGE_OUTPUT_SUPPORT_FRANKY;
             break;
         case VIDRNDT_DS_NULL_COMP:
         case VIDRNDT_DS_NULL_UNCOMP:
@@ -590,6 +614,9 @@ void CPPageOutput::UpdateSubtitleRendererList()
         if (!CAppSettings::IsSubtitleRendererSupported(nID, m_iDSVideoRendererType)) {
             return;
         }
+        if (!CAppSettings::IsSubtitleRendererRegistered(nID)) {
+            return;
+        }
 
         CString sName;
         switch (nID) {
@@ -610,9 +637,11 @@ void CPPageOutput::UpdateSubtitleRendererList()
                 break;
         }
 
+        /*
         if (!CAppSettings::IsSubtitleRendererRegistered(nID)) {
             sName.AppendFormat(_T("   %s"), ResStr(IDS_PPAGE_OUTPUT_UNAVAILABLE).GetString());
         }
+        */
 
         m_SubtitleRendererCtrl.SetItemData(m_SubtitleRendererCtrl.AddString(sName), static_cast<int>(nID));
     };

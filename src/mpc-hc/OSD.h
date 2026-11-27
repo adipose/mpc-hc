@@ -93,6 +93,7 @@ class COSD : public CWnd
     CBrush    m_debugBrushBack;
 
     CRect    m_rectWnd;
+    CRect    m_rectBitmap;
 
     CRect    m_rectFlyBar;
     CRect    m_rectCloseButton;
@@ -154,6 +155,7 @@ public:
     ~COSD();
 
     HRESULT Create(CWnd* pWnd);
+    void SetThemeColors();
 
     void Start(CWnd* pWnd, CComPtr<IVMRMixerBitmap9> pVMB, CComPtr<IMFVideoMixerBitmap> pMFVMB, bool bShowSeekBar);
     void Start(CWnd* pWnd, IMadVRTextOsd* pMVTO);
@@ -210,6 +212,7 @@ public:
 
 private:
     void UpdateBitmap();
+    void CalcWndRects();
     void CalcSeekbar();
     void CalcFlybar();
     void UpdateSeekBarPos(CPoint point);

@@ -102,6 +102,7 @@ public:
 
         // Other settings
         bool    bCacheShaders;
+        bool    bHLGToSDR;      // EVR-CP/Sync: show HLG (HDR) video with SDR colours
         CString sShaderCachePath;
 
         void    SetDefault();
@@ -118,6 +119,7 @@ public:
 
     int         subPicVerticalShift;
     double      fontScaleOverride;
+    int         iSubGlyphCacheMB = 64;
 
     CString     D3D9RenderDevice;
     void        UpdateData(bool fSave);

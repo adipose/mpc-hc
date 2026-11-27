@@ -61,6 +61,7 @@
     <ClCompile Include="MacrovisionKicker.cpp" />
     <ClCompile Include="madVRAllocatorPresenter.cpp" />
     <ClCompile Include="MPCVRAllocatorPresenter.cpp" />
+    <ClCompile Include="FrankyAllocatorPresenter.cpp" />
     <ClCompile Include="OuterEVR.cpp" />
     <ClCompile Include="OuterVMR.cpp" />
     <ClCompile Include="PixelShaderCache.cpp" />
@@ -80,6 +81,8 @@
     <ClInclude Include="Dither.h" />
     <ClInclude Include="DX9AllocatorPresenter.h" />
     <ClInclude Include="DX9RenderingEngine.h" />
+    <ClInclude Include="HLGInput.h" />
+    <ClInclude Include="HLGToSDR.h" />
     <ClInclude Include="DXRAllocatorPresenter.h" />
     <ClInclude Include="EVRAllocatorPresenter.h" />
     <ClInclude Include="FocusThread.h" />
@@ -88,6 +91,7 @@
     <ClInclude Include="MacrovisionKicker.h" />
     <ClInclude Include="madVRAllocatorPresenter.h" />
     <ClInclude Include="MPCVRAllocatorPresenter.h" />
+    <ClInclude Include="FrankyAllocatorPresenter.h" />
     <ClInclude Include="OuterEVR.h" />
     <ClInclude Include="OuterVMR.h" />
     <ClInclude Include="PixelShaderCache.h" />

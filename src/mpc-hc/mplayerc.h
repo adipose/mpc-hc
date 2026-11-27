@@ -66,7 +66,7 @@
 extern HICON LoadIcon(CString fn, bool bSmallIcon, DpiHelper* pDpiHelper = nullptr);
 extern bool LoadType(CString fn, CString& type);
 extern bool LoadResource(UINT resid, CStringA& str, LPCTSTR restype);
-extern CString GetContentType(CString fn, CAtlList<CString>* redir = nullptr);
+extern CString GetContentType(CString fn, std::list<CString>* redir = nullptr);
 extern WORD AssignedToCmd(UINT keyValue);
 extern std::map<CStringW, CStringW> GetAudioDeviceList();
 extern void SetAudioRenderer(int AudioDevNo);
@@ -108,7 +108,10 @@ enum {
     WM_MPC_OPENCURPLAYLIST,
     WM_MPC_CMDLINE, // deliberately outside the range purged while closing: a command line must not be dropped
     WM_MPC_RUN_DEFERRED, // run an open/close/OnClose recorded while a CMainFrame::CDeferredActionScope holder was on the stack
+    WM_MPC_UPDATE_CHECK_DONE, // posted by the update check thread with a heap UpdateCheckResult the frame takes ownership of
+    WM_MPC_UI_REQUEST, // sent (never posted) by the web server's thread with a CMainFrame::UIRequest to run here
     WM_LAV_PROPPAGE_CALLBACK,
+    WM_INFOBAR_SHOWN, // posted by a CPlayerInfoBar when it is shown, with the bar in lParam
     WM_MPCVR_SWITCH_FULLSCREEN = WM_APP + 4096,
 };
 
@@ -138,7 +141,7 @@ class CMPlayerCApp : public CWinAppEx
 
     enum class RedirectResult { Redirected, OpenNormally, ExitSilently };
 
-    CAtlList<CString> m_cmdln;
+    std::list<CString> m_cmdln;
     // Latched from the switches once they are parsed, rather than read from
     // them on demand: the switch itself is consumed by the code paths that act
     // on it, and the run stays headless after that, right through the exit.
@@ -258,7 +261,10 @@ public:
     // (/dvbscan, /thumbnails), which have no other way to tell their caller
     // that the job did not get done.
     int m_nExitCode = 0;
+    // set by Reset in Options: ExitInstance starts a new instance with /reset
+    bool m_bRelaunchWithReset = false;
     bool m_bThemeLoaded;
+    bool m_bNativeMenus;
     CRenderersData m_Renderers;
     CString     m_strVersion;
     CString     m_AudioRendererDisplayName_CL;
@@ -307,6 +313,7 @@ bool WriteRegistryString(HKEY hKeyRoot, LPCWSTR subKey, LPCWSTR valueName, const
 
 #define AppIsThemeLoaded() (static_cast<CMPlayerCApp*>(AfxGetApp())->m_bThemeLoaded)
 #define AppNeedsThemedControls() (AppIsThemeLoaded() && CMPCTheme::drawThemedControls)
+#define AppNeedsThemedMenus() (AppIsThemeLoaded() && !static_cast<CMPlayerCApp*>(AfxGetApp())->m_bNativeMenus)
 
 #define AfxGetMainFrame()   static_cast<CMainFrame*>(AfxGetMainWnd())
 #define AfxFindMainFrame()  dynamic_cast<CMainFrame*>(AfxGetMainWnd())

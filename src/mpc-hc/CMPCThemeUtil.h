@@ -45,14 +45,13 @@ public:
         ,ProminentControlIDWidget
     };
 
-    HWND themableDialogHandle = nullptr;
-    void enableFileDialogHook();
-    void subClassFileDialogRecurse(CWnd* wnd, HWND hWnd, FileDialogWidgetSearch searchType);
-    void subClassFileDialog(CWnd* wnd);
+    void subClassFileDialogRecurse(HWND hWnd, FileDialogWidgetSearch searchType);
+    void subClassFileDialog(IFileDialog* pfd);
     void subClassFileDialogWidgets(HWND widget, HWND parent, wchar_t* childWindowClass);
     void redrawAllThemedWidgets();
 protected:
     int dialogProminentControlStringID = 0;
+    bool fileDialogSubclassed = false;
 
     static CBrush contentBrush, windowBrush, controlAreaBrush, W10DarkThemeFileDialogInjectedBGBrush;
     static NONCLIENTMETRICS nonClientMetrics;
@@ -75,6 +74,7 @@ public:
     static bool getFontByFaceForDpi(CFont& font, const wchar_t* fontName, int size, UINT dpi, LONG weight = FW_REGULAR);
     static bool getFixedFont(CFont& font, CDC* pDC, CWnd* wnd);
     static bool getFontByType(CFont& font, CWnd* wnd, int type, bool underline = false, bool bold = false);
+    static bool getFontByTypeForDpi(CFont& font, int type, UINT dpi, bool underline = false, bool bold = false);
     enum fontType {
         CaptionFont,
         SmallCaptionFont,
@@ -103,17 +103,25 @@ public:
     static void MapDialogRectMessageFont(CDialog* wnd, CRect& r);
     static const std::vector<CMPCTheme::pathPoint> getIconPathByDPI(CMPCThemeTitleBarControlButton* button);
     static const std::vector<CMPCTheme::pathPoint> getIconPathByDPI(CWnd* wnd, WPARAM buttonType);
-    static void drawCheckBoxInternal(UINT checkState, bool isHover, bool useSystemSize, CRect rectCheck, CDC* pDC, bool isRadio, CPngImage* image, int size);
-    static void drawCheckBox(CWnd* window, UINT checkState, bool isHover, bool useSystemSize, CRect rectCheck, CDC* pDC, bool isRadio = false, UINT resourceID = 0);
+    static void drawCheckBoxInternal(UINT checkState, bool isHover, bool useSystemSize, CRect rectCheck, CDC* pDC, bool isRadio, HBITMAP image, int size, bool isDisabled = false);
+    static void drawCheckBox(CWnd* window, UINT checkState, bool isHover, bool useSystemSize, CRect rectCheck, CDC* pDC, bool isRadio = false, UINT resourceID = 0, bool isDisabled = false);
     static void drawGripper(CWnd* window, CWnd* dpiRefWnd, CRect rectGripper, CDC* pDC, bool rot90);
     static void drawToolbarHideButton(CDC* pDC, CWnd* window, CRect iconRect, std::vector<CMPCTheme::pathPoint> icon, double dpiScaling, bool antiAlias, bool hover);
     static bool canUseWin10DarkTheme();
+    static bool canUseExplorerTheme();
+    static LPCWSTR explorerThemeName();
+    static void applyExplorerTheme(HWND hWnd);
     static bool IsBasicMode(); // Returns true if DWM composition is disabled (classic/basic mode)
     static UINT defaultLogo();
     static HBRUSH getParentDialogBGClr(CWnd* wnd, CDC* pDC);
     static void drawParentDialogBGClr(CWnd* wnd, CDC* pDC, CRect r, bool fill = true);
     static void fulfillThemeReqs(CProgressCtrl* ctl);
     static void enableWindows10DarkFrame(CWnd* window);
+    static void refreshWindows10DarkFrame(HWND hWnd);
+    static const UINT WM_MPCTHEMECHANGED;
+    static void resetThemeCaches();
+    static void broadcastThemeChange();
+    static void applyNativeMenuMode();
     static void AdjustDynamicWidgetPair(CWnd* window, int left, int right, bool allowShrinkRight = false);
     static void AdjustDynamicWidgetGroup(CWnd* window, std::initializer_list<std::pair<int, int>> pairs, bool allowShrinkRight = false);
     static void UpdateAnalogCaptureDeviceSlider(CScrollBar* pScrollBar);
@@ -137,5 +145,8 @@ public:
         RadioHoverSet = 3
     };
 };
+
+//for the message map of a window that sets itself up again after a theme change
+#define ON_MPCTHEMECHANGED() ON_REGISTERED_MESSAGE(CMPCThemeUtil::WM_MPCTHEMECHANGED, OnMPCThemeChanged)
 
 

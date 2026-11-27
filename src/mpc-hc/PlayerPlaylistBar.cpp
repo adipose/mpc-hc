@@ -48,7 +48,8 @@ END_MESSAGE_MAP()
 
 void CPlaylistListFrame::OnNcPaint()
 {
-    if (AppNeedsThemedControls()) {
+    bool win11Style = AppIsThemeLoaded() && CMPCTheme::isWindows11Style;
+    if (AppNeedsThemedControls() || win11Style) {
         CWindowDC dc(this);
         CRect wr;
         GetWindowRect(&wr);
@@ -58,8 +59,10 @@ void CPlaylistListFrame::OnNcPaint()
         clip.DeflateRect(clientOffset.x, clientOffset.x);
         dc.ExcludeClipRect(clip);
         dc.FillSolidRect(wr, CMPCTheme::ContentBGColor);
-        CBrush brush(CMPCTheme::WindowBorderColorLight);
-        dc.FrameRect(wr, &brush);
+        if (!win11Style) { //windows 11 panes don't frame their lists
+            CBrush brush(CMPCTheme::WindowBorderColorLight);
+            dc.FrameRect(wr, &brush);
+        }
     } else {
         __super::OnNcPaint();
     }
@@ -100,6 +103,7 @@ CPlayerPlaylistBar::CPlayerPlaylistBar(CMainFrame* pMainFrame)
     , m_pl(AfxGetAppSettings().bShufflePlaylistItems)
     , createdWindow(false)
     , inlineEditXpos(0)
+    , inlineEditItem(-1)
     , m_tcLastSave(0)
     , m_SaveDelayed(false)
     , m_insertingPos(nullptr)
@@ -135,6 +139,7 @@ BOOL CPlayerPlaylistBar::Create(CWnd* pParentWnd, UINT defDockBarID)
         CRect(0, 0, 100, 100), &m_listFrame, IDC_PLAYLIST);
 
     m_list.SetExtendedStyle(m_list.GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+    SetListBkColor();
 
     // The column titles don't have to be translated since they aren't displayed anyway
     m_list.InsertColumn(COL_NAME, _T("Name"), LVCFMT_LEFT);
@@ -228,7 +233,7 @@ void CPlayerPlaylistBar::LoadDuration(POSITION pos) {
 
         MediaInfoDLL::MediaInfo mi;
         if (mi.IsReady()) {
-            auto fn = pli.m_fns.GetHead();
+            auto fn = pli.m_fns.front();
             if (!PathUtils::IsURL(fn)) {
                 auto fnString = fn.GetBuffer();
                 size_t fp = mi.Open(fnString);
@@ -259,7 +264,7 @@ void CPlayerPlaylistBar::AddItem(CString fn, bool insertAtCurrent /*= false*/)
     }
 
     CPlaylistItem pli;
-    pli.m_fns.AddTail(fn);
+    pli.m_fns.push_back(fn);
     pli.AutoLoadFiles();
 
     POSITION pos;
@@ -271,35 +276,31 @@ void CPlayerPlaylistBar::AddItem(CString fn, bool insertAtCurrent /*= false*/)
     LoadDuration(pos);
 }
 
-void CPlayerPlaylistBar::AddItem(CString fn, CAtlList<CString>* subs)
+void CPlayerPlaylistBar::AddItem(CString fn, std::list<CString>* subs)
 {
-    CAtlList<CString> sl;
-    sl.AddTail(fn);
+    std::list<CString> sl;
+    sl.push_back(fn);
     AddItem(sl, subs);
 }
 
-void CPlayerPlaylistBar::AddItem(CAtlList<CString>& fns, CAtlList<CString>* subs, CString label, CString ydl_src, CString ydl_ua, CString cue, CAtlList<CYoutubeDLInstance::YDLSubInfo>* ydl_subs)
+void CPlayerPlaylistBar::AddItem(std::list<CString>& fns, std::list<CString>* subs, CString label, CString ydl_src, CString ydl_ua, CString cue, std::list<CYoutubeDLInstance::YDLSubInfo>* ydl_subs)
 {
     CPlaylistItem pli;
 
-    POSITION pos = fns.GetHeadPosition();
-    while (pos) {
-        CString fn = fns.GetNext(pos);
+    for (CString fn : fns) {
         if (!fn.Trim().IsEmpty()) {
-            pli.m_fns.AddTail(fn);
+            pli.m_fns.push_back(fn);
         }
     }
 
-    if (pli.m_fns.IsEmpty()) {
+    if (pli.m_fns.empty()) {
         return;
     }
 
     if (subs) {
-        POSITION posSub = subs->GetHeadPosition();
-        while (posSub) {
-            CString fn = subs->GetNext(posSub);
+        for (CString fn : *subs) {
             if (!fn.Trim().IsEmpty()) {
-                pli.m_subs.AddTail(fn);
+                pli.m_subs.push_back(fn);
             }
         }
     }
@@ -322,7 +323,7 @@ void CPlayerPlaylistBar::AddItem(CAtlList<CString>& fns, CAtlList<CString>* subs
     }
 
     if (ydl_subs) {
-        pli.m_ydl_subs.AddTailList(ydl_subs);
+        pli.m_ydl_subs.insert(pli.m_ydl_subs.end(), ydl_subs->begin(), ydl_subs->end());
     }
 
     POSITION ipos = m_pl.AddTail(pli);
@@ -332,7 +333,7 @@ void CPlayerPlaylistBar::AddItem(CAtlList<CString>& fns, CAtlList<CString>* subs
     }
 }
 
-void CPlayerPlaylistBar::ReplaceCurrentItem(CAtlList<CString>& fns, CAtlList<CString>* subs, CString label, CString ydl_src, CString ydl_ua, CString cue, CAtlList<CYoutubeDLInstance::YDLSubInfo>* ydl_subs)
+void CPlayerPlaylistBar::ReplaceCurrentItem(std::list<CString>& fns, std::list<CString>* subs, CString label, CString ydl_src, CString ydl_ua, CString cue, std::list<CYoutubeDLInstance::YDLSubInfo>* ydl_subs)
 {
     CAutoLock pledit(&m_plEditLock);
 
@@ -340,11 +341,10 @@ void CPlayerPlaylistBar::ReplaceCurrentItem(CAtlList<CString>& fns, CAtlList<CSt
     if (pli == nullptr) {
         AddItem(fns, subs, label, ydl_src, ydl_ua, cue);
     } else {
-        pli->m_fns.RemoveAll();
-        pli->m_fns.AddTailList(&fns);
-        pli->m_subs.RemoveAll();
+        pli->m_fns = fns;
+        pli->m_subs.clear();
         if (subs) {
-            pli->m_subs.AddTailList(subs);
+            pli->m_subs = *subs;
         }
         pli->m_label = label;
         pli->m_ydlSourceURL = ydl_src;
@@ -352,9 +352,9 @@ void CPlayerPlaylistBar::ReplaceCurrentItem(CAtlList<CString>& fns, CAtlList<CSt
         pli->m_bYoutubeDL = !ydl_src.IsEmpty();
         pli->m_cue = !cue.IsEmpty();
         pli->m_cue_filename = cue;
-        pli->m_ydl_subs.RemoveAll();
+        pli->m_ydl_subs.clear();
         if (ydl_subs) {
-            pli->m_ydl_subs.AddTailList(ydl_subs);
+            pli->m_ydl_subs = *ydl_subs;
         }
 
         Refresh();
@@ -366,27 +366,25 @@ void CPlayerPlaylistBar::AddSubtitleToCurrent(CString fn)
 {
     CPlaylistItem* pli = GetCur();
     if (pli != nullptr) {
-        if (!pli->m_subs.Find(fn)) {
-            pli->m_subs.AddHead(fn);
+        if (std::find(pli->m_subs.begin(), pli->m_subs.end(), fn) == pli->m_subs.end()) {
+            pli->m_subs.push_front(fn);
         }
     }
 }
 
-void CPlayerPlaylistBar::ParsePlayList(CString fn, CAtlList<CString>* subs, int redir_count)
+void CPlayerPlaylistBar::ParsePlayList(CString fn, std::list<CString>* subs, int redir_count)
 {
     TRACE(fn + _T("\n"));
-    CAtlList<CString> sl;
-    sl.AddTail(fn);
+    std::list<CString> sl;
+    sl.push_back(fn);
     ParsePlayList(sl, subs, redir_count);
 }
 
-void CPlayerPlaylistBar::ResolveLinkFiles(CAtlList<CString>& fns)
+void CPlayerPlaylistBar::ResolveLinkFiles(std::list<CString>& fns)
 {
     // resolve .lnk files
 
-    POSITION pos = fns.GetHeadPosition();
-    while (pos) {
-        CString& fn = fns.GetNext(pos);
+    for (CString& fn : fns) {
 
         if (PathUtils::IsLinkFile(fn)) {
             CString fnResolved = PathUtils::ResolveLinkFile(fn);
@@ -403,9 +401,7 @@ bool CPlayerPlaylistBar::AddItemNoDuplicate(CString fn, bool insertAtCurrent /*=
     CString fnLower = CString(fn).MakeLower();
     while (pos) {
         const CPlaylistItem& pli = m_pl.GetNext(pos);
-        POSITION subpos = pli.m_fns.GetHeadPosition();
-        while (subpos) {
-            CString cur = pli.m_fns.GetNext(subpos);
+        for (CString cur : pli.m_fns) {
             if (cur.MakeLower() == fnLower) {
                 // duplicate
                 return false;
@@ -472,9 +468,9 @@ bool CPlayerPlaylistBar::IsExternalPlayListActive(CStringW& playlistPath) {
     }
 }
 
-void CPlayerPlaylistBar::ParsePlayList(CAtlList<CString>& fns, CAtlList<CString>* subs, int redir_count, CString label, CString ydl_src, CString ydl_ua, CString cue, CAtlList<CYoutubeDLInstance::YDLSubInfo>* ydl_subs)
+void CPlayerPlaylistBar::ParsePlayList(std::list<CString>& fns, std::list<CString>* subs, int redir_count, CString label, CString ydl_src, CString ydl_ua, CString cue, std::list<CYoutubeDLInstance::YDLSubInfo>* ydl_subs)
 {
-    if (fns.IsEmpty()) {
+    if (fns.empty()) {
         return;
     }
     if (redir_count >= 5) {
@@ -487,8 +483,8 @@ void CPlayerPlaylistBar::ParsePlayList(CAtlList<CString>& fns, CAtlList<CString>
 
         // single entry can be a directory or file mask -> search for files
         // multiple filenames means video file plus audio dub
-        if (fns.GetCount() == 1) {
-            CString fname = fns.GetHead();
+        if (fns.size() == 1) {
+            CString fname = fns.front();
             if (!PathUtils::IsURL(fname)) {
                 if (ContainsWildcard(fname)) {
                     AddFromFilemask(fname, true);
@@ -501,28 +497,27 @@ void CPlayerPlaylistBar::ParsePlayList(CAtlList<CString>& fns, CAtlList<CString>
         }
     }
 
-    CAtlList<CString> redir;
-    CString ct = GetContentType(fns.GetHead(), &redir);
-    if (!redir.IsEmpty()) {
-        POSITION pos = redir.GetHeadPosition();
-        while (pos) {
-            ParsePlayList(redir.GetNext(pos), subs, redir_count + 1);
+    std::list<CString> redir;
+    CString ct = GetContentType(fns.front(), &redir);
+    if (!redir.empty()) {
+        for (const CString& fn : redir) {
+            ParsePlayList(fn, subs, redir_count + 1);
         }
         return;
     }
 
     if (ct == _T("application/x-mpc-playlist")) {
-        auto fn = fns.GetHead();
+        auto fn = fns.front();
         if (ParseMPCPlayList(fn)) {
             ExternalPlayListLoaded(fn);
         }
 
         return;
     } else if (ct == _T("application/x-cue-sheet")) {
-        ParseCUESheet(fns.GetHead());
+        ParseCUESheet(fns.front());
         return;
     } else if (ydl_src.IsEmpty() && (ct == _T("audio/x-mpegurl") || ct == _T("audio/mpegurl"))) {
-        auto fn = fns.GetHead();
+        auto fn = fns.front();
         if (!PathUtils::IsURL(fn) || fn.Find(L"/hls/") == -1 && fn.Find(L".m3u8") == -1) {
             bool lav_fallback = false;
             if (ParseM3UPlayList(fn, &lav_fallback)) {
@@ -538,13 +533,13 @@ void CPlayerPlaylistBar::ParsePlayList(CAtlList<CString>& fns, CAtlList<CString>
 #if INTERNAL_SOURCEFILTER_MPEG
         const CAppSettings& s = AfxGetAppSettings();
         if (ct == _T("application/x-bdmv-playlist") && (s.SrcFilters[SRC_MPEG] || s.SrcFilters[SRC_MPEGTS])) {
-            ParseBDMVPlayList(fns.GetHead());
+            ParseBDMVPlayList(fns.front());
             return;
         }
 #endif
     }
     if (ydl_src.IsEmpty() && ct == _T("ytdl")) {
-        ydl_src = fns.GetHead();
+        ydl_src = fns.front();
     }
 
     AddItem(fns, subs, label, ydl_src, ydl_ua, cue, ydl_subs);
@@ -576,6 +571,15 @@ static CString CombinePath(CLongPath p, CString fn)
     return (LPCTSTR)p;
 }
 
+// for comparing local playlist paths, which CombinePath leaves as base + entry
+static CString NormalizePlaylistPath(CString fn)
+{
+    fn.Replace(_T('/'), _T('\\'));
+    CLongPath p(fn);
+    p.Canonicalize();
+    return (LPCTSTR)p;
+}
+
 bool CPlayerPlaylistBar::ParseBDMVPlayList(CString fn)
 {
     CHdmvClipInfo ClipInfo;
@@ -587,9 +591,9 @@ bool CPlayerPlaylistBar::ParseBDMVPlayList(CString fn)
     Path.RemoveFileSpec();
 
 
-    if (SUCCEEDED(ClipInfo.FindMainMovie(Path + L"\\", strPlaylistFile, MainPlaylist, m_pMainFrame->m_MPLSPlaylist))) {
-        CAtlList<CString> strFiles;
-        strFiles.AddHead(strPlaylistFile);
+    if (SUCCEEDED(ClipInfo.FindMainMovie(Path + L"\\", strPlaylistFile, MainPlaylist, m_pMainFrame->m_disc.m_MPLSPlaylist))) {
+        std::list<CString> strFiles;
+        strFiles.push_front(strPlaylistFile);
         Append(strFiles, MainPlaylist.size() > 1, nullptr);
     }
 
@@ -690,7 +694,7 @@ bool CPlayerPlaylistBar::ParseCUESheet(CString cuefn) {
                     pli.m_cue = true;
                     pli.m_cue_index = cue_index;
                     pli.m_cue_filename = cuefn;
-                    pli.m_fns.AddTail(file_entry);
+                    pli.m_fns.push_back(file_entry);
                     pl.AddTail(pli);
                     cue_index++;
                 }
@@ -788,12 +792,15 @@ bool CPlayerPlaylistBar::ParseCUESheet(CString cuefn) {
     return success;
 }
 
-bool CPlayerPlaylistBar::ParseM3UPlayList(CString fn, bool* lav_fallback) {
+bool CPlayerPlaylistBar::ParseM3UPlayList(CString fn, bool* lav_fallback, std::vector<CString> parents) {
     CString str;
     CPlaylistItem pli;
     std::vector<int> idx;
 
     bool isurl = PathUtils::IsURL(fn);
+    if (!isurl) {
+        parents.push_back(NormalizePlaylistPath(fn));
+    }
 
     CWebTextFile f(CTextFile::UTF8);
     f.SetFallbackEncoding(CTextFile::ANSI);
@@ -874,7 +881,7 @@ bool CPlayerPlaylistBar::ParseM3UPlayList(CString fn, bool* lav_fallback) {
                 auto it = filelist.begin();
                 while (it != filelist.end()) {
                     pli = CPlaylistItem();
-                    pli.m_fns.AddTail(*it);
+                    pli.m_fns.push_back(*it);
                     m_pl.AddTail(pli);
                     success = true;
                     it++;
@@ -882,13 +889,22 @@ bool CPlayerPlaylistBar::ParseM3UPlayList(CString fn, bool* lav_fallback) {
             }
         } else {
             // check for nested playlist
-            CString ext = GetFileExt(str);
+            CString ext = GetFileExt(str).MakeLower();
             if (ext == L".m3u" || ext == L".m3u8") {
-                bool dummy = false;
-                if (!PathUtils::IsURL(str) && ParseM3UPlayList(str, &dummy)) {
-                    success = true;
-                    extinf_title = L"";
-                    continue;
+                if (!PathUtils::IsURL(str)) {
+                    // skip a playlist which lists itself, directly or through another one,
+                    // rather than recurse until the stack overflows
+                    CString nested = NormalizePlaylistPath(str);
+                    if (std::any_of(parents.begin(), parents.end(), [&nested](const CString& parent) { return parent.CompareNoCase(nested) == 0; })) {
+                        extinf_title = L"";
+                        continue;
+                    }
+                    bool dummy = false;
+                    if (ParseM3UPlayList(str, &dummy, parents)) {
+                        success = true;
+                        extinf_title = L"";
+                        continue;
+                    }
                 }
             } else if (ext == L".pls") {
                 int count = m_pl.GetCount();
@@ -901,8 +917,8 @@ bool CPlayerPlaylistBar::ParseM3UPlayList(CString fn, bool* lav_fallback) {
             }
 
             pli = CPlaylistItem();
-            pli.m_fns.AddTail(str);
-            if (PathUtils::IsURL(str) && CMainFrame::IsOnYDLWhitelist(str)) {
+            pli.m_fns.push_back(str);
+            if (PathUtils::IsURL(str) && CCommandLine::IsOnYDLWhitelist(str)) {
                 pli.m_ydlSourceURL = str;
                 pli.m_bYoutubeDL = true;
             }
@@ -945,16 +961,18 @@ bool CPlayerPlaylistBar::ParseMPCPlayList(CString fn)
             CString value = sl.RemoveHead();
 
             if (key == _T("type")) {
+                if (std::find(idx.begin(), idx.end(), i) == idx.end()) {
+                    idx.push_back(i); // only once, a repeated "type" line must not add the item twice
+                }
                 pli[i].m_type = (CPlaylistItem::type_t)_ttol(value);
-                idx.push_back(i);
             } else if (key == _T("label")) {
                 pli[i].m_label = value;
             } else if (key == _T("filename")) {
                 if (!PathUtils::IsURL(value)) value = CombinePath(base, value);
-                pli[i].m_fns.AddTail(value);
+                pli[i].m_fns.push_back(value);
             } else if (key == _T("subtitle")) {
                 if (!PathUtils::IsURL(value)) value = CombinePath(base, value);
-                pli[i].m_subs.AddTail(value);
+                pli[i].m_subs.push_back(value);
             } else if (key == _T("ydlSourceURL")) {
                 pli[i].m_ydlSourceURL = value;
                 pli[i].m_bYoutubeDL = true;
@@ -964,15 +982,15 @@ bool CPlayerPlaylistBar::ParseMPCPlayList(CString fn)
                     pli[i].m_duration = dur;
                 }
             } else if (key == _T("video")) {
-                while (pli[i].m_fns.GetCount() < 2) {
-                    pli[i].m_fns.AddTail(_T(""));
+                while (pli[i].m_fns.size() < 2) {
+                    pli[i].m_fns.push_back(_T(""));
                 }
-                pli[i].m_fns.GetHead() = value;
+                pli[i].m_fns.front() = value;
             } else if (key == _T("audio")) {
-                while (pli[i].m_fns.GetCount() < 2) {
-                    pli[i].m_fns.AddTail(_T(""));
+                while (pli[i].m_fns.size() < 2) {
+                    pli[i].m_fns.push_back(_T(""));
                 }
-                pli[i].m_fns.GetTail() = value;
+                pli[i].m_fns.back() = value;
             } else if (key == _T("vinput")) {
                 pli[i].m_vinput = _ttol(value);
             } else if (key == _T("vchannel")) {
@@ -982,11 +1000,14 @@ bool CPlayerPlaylistBar::ParseMPCPlayList(CString fn)
             } else if (key == _T("country")) {
                 pli[i].m_country = _ttol(value);
             } else if (key == _T("cue_filename")) {
+                // saved relative to the playlist like filename and subtitle, see SaveMPCPlayList
+                if (!PathUtils::IsURL(value)) value = CombinePath(base, value);
                 pli[i].m_cue = true;
                 pli[i].m_cue_filename = value;
             } else if (key == _T("cue_index")) {
                 pli[i].m_cue_index = _ttoi(value);
             } else if (key == _T("cover")) {
+                if (!PathUtils::IsURL(value)) value = CombinePath(base, value);
                 pli[i].m_cover = value;
             } else if (key == _T("ydl_sub") || key == _T("ydl_auto_sub")) {
                 CAtlList<CString> li;
@@ -997,16 +1018,20 @@ bool CPlayerPlaylistBar::ParseMPCPlayList(CString fn)
                 s.lang = li.RemoveHead();
                 s.ext = li.RemoveHead();
                 s.url = li.RemoveHead();
-                if (!s.lang.IsEmpty() && !s.url.IsEmpty()) pli[i].m_ydl_subs.AddTail(s);
+                if (!s.lang.IsEmpty() && !s.url.IsEmpty()) pli[i].m_ydl_subs.push_back(s);
             }
         }
     }
 
     std::sort(idx.begin(), idx.end());
+    bool added = false;
     for (int i : idx) {
-        if (pli[i].m_fns.GetCount() > 0) m_pl.AddTail(pli[i]);
+        if (pli[i].m_fns.size() > 0) {
+            m_pl.AddTail(pli[i]);
+            added = true;
+        }
     }
-    return !pli.IsEmpty();
+    return added;
 }
 
 bool CPlayerPlaylistBar::PlaylistCanStripPath(CString path)
@@ -1023,18 +1048,14 @@ bool CPlayerPlaylistBar::PlaylistCanStripPath(CString path)
         if (pli.m_type != CPlaylistItem::file) {
             return false;
         } else {
-            POSITION pos2 = pli.m_fns.GetHeadPosition();
-            while (pos2) {
-                CString fn = pli.m_fns.GetNext(pos2);
+            for (const CString& fn : pli.m_fns) {
                 CString filebase = fn.Left(baselen);
                 if (base != filebase) {
                     return false;
                 }
             }
 
-            pos2 = pli.m_subs.GetHeadPosition();
-            while (pos2) {
-                CString fn = pli.m_subs.GetNext(pos2);
+            for (const CString& fn : pli.m_subs) {
                 CString filebase = fn.Left(baselen);
                 if (base != filebase) {
                     return false;
@@ -1077,7 +1098,7 @@ bool CPlayerPlaylistBar::SaveMPCPlayList(CString fn, CTextFile::enc e)
 
     f.WriteString(_T("MPCPLAYLIST\n"));
 
-    POSITION pos = m_pl.GetHeadPosition(), pos2;
+    POSITION pos = m_pl.GetHeadPosition();
     for (int i = 1; pos; i++) {
         CPlaylistItem& pli = m_pl.GetNext(pos);
 
@@ -1093,18 +1114,14 @@ bool CPlayerPlaylistBar::SaveMPCPlayList(CString fn, CTextFile::enc e)
         }
 
         if (pli.m_type == CPlaylistItem::file) {
-            pos2 = pli.m_fns.GetHeadPosition();
-            while (pos2) {
-                CString fn2 = pli.m_fns.GetNext(pos2);
+            for (CString fn2 : pli.m_fns) {
                 if (bRemovePath && (pl_path_str == fn2.Left(pl_path_len))) {
                     fn2 = fn2.Mid(pl_path_len);
                 }
                 f.WriteString(idx + _T(",filename,") + fn2 + _T("\n"));
             }
 
-            pos2 = pli.m_subs.GetHeadPosition();
-            while (pos2) {
-                CString fn2 = pli.m_subs.GetNext(pos2);
+            for (CString fn2 : pli.m_subs) {
                 if (bRemovePath && (pl_path_str == fn2.Left(pl_path_len))) {
                     fn2 = fn2.Mid(pl_path_len);
                 }
@@ -1131,10 +1148,8 @@ bool CPlayerPlaylistBar::SaveMPCPlayList(CString fn, CTextFile::enc e)
                 }
                 f.WriteString(idx + _T(",cover,") + cover + _T("\n"));
             }
-            if (pli.m_ydl_subs.GetCount() > 0) {
-                POSITION pos3 = pli.m_ydl_subs.GetHeadPosition();
-                while (pos3) {
-                    CYoutubeDLInstance::YDLSubInfo subinfo = pli.m_ydl_subs.GetNext(pos3);
+            if (pli.m_ydl_subs.size() > 0) {
+                for (const CYoutubeDLInstance::YDLSubInfo& subinfo : pli.m_ydl_subs) {
                     if (!subinfo.data.IsEmpty()) continue;
                     CString t;
                     CString t2 = subinfo.isAutomaticCaptions ? _T("ydl_auto_sub") : _T("ydl_sub");
@@ -1147,9 +1162,9 @@ bool CPlayerPlaylistBar::SaveMPCPlayList(CString fn, CTextFile::enc e)
                 dur.Format(_T("%lld"), pli.m_duration / 10000LL);
                 f.WriteString(idx + _T(",duration,") + dur + _T("\n"));
             }
-        } else if (pli.m_type == CPlaylistItem::device && pli.m_fns.GetCount() == 2) {
-            f.WriteString(idx + _T(",video,") + pli.m_fns.GetHead() + _T("\n"));
-            f.WriteString(idx + _T(",audio,") + pli.m_fns.GetTail() + _T("\n"));
+        } else if (pli.m_type == CPlaylistItem::device && pli.m_fns.size() == 2) {
+            f.WriteString(idx + _T(",video,") + pli.m_fns.front() + _T("\n"));
+            f.WriteString(idx + _T(",audio,") + pli.m_fns.back() + _T("\n"));
             str.Format(_T("%d,vinput,%d"), i, pli.m_vinput);
             f.WriteString(str + _T("\n"));
             str.Format(_T("%d,vchannel,%d"), i, pli.m_vchannel);
@@ -1199,30 +1214,29 @@ bool CPlayerPlaylistBar::Empty()
     return bWasPlaying;
 }
 
-void CPlayerPlaylistBar::Open(CAtlList<CString>& fns, bool fMulti, CAtlList<CString>* subs, CString label, CString ydl_src, CString ydl_ua, CString cue)
+void CPlayerPlaylistBar::Open(std::list<CString>& fns, bool fMulti, std::list<CString>* subs, CString label, CString ydl_src, CString ydl_ua, CString cue)
 {
     Empty();
     Append(fns, fMulti, subs, label, ydl_src, ydl_ua, cue);
 
-    CString ext = CLongPath(fns.GetHead()).GetExtension().MakeLower();
+    CString ext = CLongPath(fns.front()).GetExtension().MakeLower();
     if (!fMulti && (ext == _T(".mpcpl"))) {
-        m_playListPath = fns.GetHead();
+        m_playListPath = fns.front();
     }
     else {
         m_playListPath.Empty();
     }
 }
 
-void CPlayerPlaylistBar::Append(CAtlList<CString>& fns, bool fMulti, CAtlList<CString>* subs, CString label, CString ydl_src, CString ydl_ua, CString cue, CAtlList<CYoutubeDLInstance::YDLSubInfo>* ydl_subs)
+void CPlayerPlaylistBar::Append(std::list<CString>& fns, bool fMulti, std::list<CString>* subs, CString label, CString ydl_src, CString ydl_ua, CString cue, std::list<CYoutubeDLInstance::YDLSubInfo>* ydl_subs)
 {
     POSITION posFirstAdded = m_pl.GetTailPosition();
     int activateListItemIndex = (int)m_pl.GetCount();
 
     if (fMulti) {
-        ASSERT(subs == nullptr || subs->IsEmpty());
-        POSITION pos = fns.GetHeadPosition();
-        while (pos) {
-            ParsePlayList(fns.GetNext(pos), nullptr);
+        ASSERT(subs == nullptr || subs->empty());
+        for (const CString& fn : fns) {
+            ParsePlayList(fn, nullptr);
         }
     } else {
         ParsePlayList(fns, subs, 0, label, ydl_src, ydl_ua, cue, ydl_subs);
@@ -1237,7 +1251,14 @@ void CPlayerPlaylistBar::Append(CAtlList<CString>& fns, bool fMulti, CAtlList<CS
     } else { // if the playlist was originally empty
         CAppSettings& s = AfxGetAppSettings();
         posFirstAdded = m_pl.GetHeadPosition();
-        if (s.fKeepHistory && s.bRememberExternalPlaylistPos && fns.GetCount() == 1 && fns.GetHead() == s.externalPlayListPath) {
+        // AddItem skips the duration of a lone entry; load it now that it is not alone
+        if (m_pl.GetCount() > 1) {
+            const CPlaylistItem& pli = m_pl.GetHead();
+            if (pli.m_duration == 0 && !pli.m_fns.empty()) {
+                LoadDuration(posFirstAdded);
+            }
+        }
+        if (s.fKeepHistory && s.bRememberExternalPlaylistPos && fns.size() == 1 && fns.front() == s.externalPlayListPath) {
             UINT idx = s.GetSavedPlayListPosition(s.externalPlayListPath);
             if (idx != 0) {
                 posFirstAdded = FindPos(idx);
@@ -1294,8 +1315,8 @@ void CPlayerPlaylistBar::OpenDVD(CString fn)
         }
     }
 
-    CAtlList<CString> fns;
-    fns.AddHead(fnifo);
+    std::list<CString> fns;
+    fns.push_front(fnifo);
     Append(fns, false);    
 }
 
@@ -1303,8 +1324,8 @@ void CPlayerPlaylistBar::Append(CStringW vdn, CStringW adn, int vinput, int vcha
 {
     CPlaylistItem pli;
     pli.m_type = CPlaylistItem::device;
-    pli.m_fns.AddTail(CString(vdn));
-    pli.m_fns.AddTail(CString(adn));
+    pli.m_fns.push_back(CString(vdn));
+    pli.m_fns.push_back(CString(adn));
     pli.m_vinput = vinput;
     pli.m_vchannel = vchannel;
     pli.m_ainput = ainput;
@@ -1423,6 +1444,18 @@ POSITION CPlayerPlaylistBar::FindPos(int i)
     return m_indexToPos[i];
 }
 
+POSITION CPlayerPlaylistBar::FindPosById(UINT id)
+{
+    POSITION pos = m_pl.GetHeadPosition();
+    while (pos) {
+        POSITION cur = pos;
+        if (m_pl.GetNext(pos).m_id == id) {
+            return cur;
+        }
+    }
+    return nullptr;
+}
+
 void CPlayerPlaylistBar::RebuildPosMap()
 {
     m_posToIndex.clear();
@@ -1473,7 +1506,11 @@ int CPlayerPlaylistBar::GetSelIdx() const
 
 void CPlayerPlaylistBar::SetSelIdx(int i)
 {
-    m_pl.SetPos(FindPos(i));
+    POSITION org = m_pl.GetPos();
+    POSITION pos = FindPos(i);
+    m_pl.SetPos(pos);
+    InvalidatePlayingItem(org, pos);
+    EnsureVisible(pos);
 }
 
 bool CPlayerPlaylistBar::IsAtEnd()
@@ -1499,7 +1536,7 @@ bool CPlayerPlaylistBar::GetCur(CPlaylistItem& pli, bool check_fns)
         POSITION p = m_pl.GetPos();
         if (p) {
             pli = m_pl.GetAt(p);
-            return !check_fns || !pli.m_fns.IsEmpty();
+            return !check_fns || !pli.m_fns.empty();
         }
     }
     return false;
@@ -1524,8 +1561,8 @@ CString CPlayerPlaylistBar::GetCurFileName(bool use_ydl_source)
 
     if (pli && pli->m_bYoutubeDL && use_ydl_source) {
         fn = pli->m_ydlSourceURL;
-    } else if (pli && !pli->m_fns.IsEmpty()) {
-        fn = pli->m_fns.GetHead();
+    } else if (pli && !pli->m_fns.empty()) {
+        fn = pli->m_fns.front();
     }
     return fn;
 }
@@ -1537,8 +1574,8 @@ CString CPlayerPlaylistBar::GetCurFileNameTitle()
 
     if (pli && pli->m_bYoutubeDL) {
         fn = pli->m_label;
-    } else if (pli && !pli->m_fns.IsEmpty()) {
-        fn = pli->m_fns.GetHead();
+    } else if (pli && !pli->m_fns.empty()) {
+        fn = pli->m_fns.front();
     }
     return fn;
 }
@@ -1673,10 +1710,13 @@ void CPlayerPlaylistBar::SortByPathFrom(int startIndex)
 
 void CPlayerPlaylistBar::Randomize()
 {
-    POSITION selPos = FindPos(m_list.GetSelectionMark());
-    m_pl.Randomize();
-    SetupList();
-    SyncSelectionToPos(selPos ? selPos : m_pl.GetPos());
+    {
+        CAutoLock pledit(&m_plEditLock);
+        POSITION selPos = FindPos(m_list.GetSelectionMark());
+        m_pl.Randomize();
+        SetupList();
+        SyncSelectionToPos(selPos ? selPos : m_pl.GetPos());
+    }
     SavePlaylist();
 }
 
@@ -1701,9 +1741,9 @@ OpenMediaData* CPlayerPlaylistBar::GetCurOMD(REFERENCE_TIME rtStart, ABRepeat ab
 
     if (pli->m_type == CPlaylistItem::device) {
         if (OpenDeviceData* p = DEBUG_NEW OpenDeviceData()) {
-            POSITION pos = pli->m_fns.GetHeadPosition();
-            for (int i = 0; i < _countof(p->DisplayName) && pos; i++) {
-                p->DisplayName[i] = pli->m_fns.GetNext(pos);
+            auto it = pli->m_fns.begin();
+            for (int i = 0; i < _countof(p->DisplayName) && it != pli->m_fns.end(); i++) {
+                p->DisplayName[i] = *it++;
             }
             p->vinput = pli->m_vinput;
             p->vchannel = pli->m_vchannel;
@@ -1712,17 +1752,17 @@ OpenMediaData* CPlayerPlaylistBar::GetCurOMD(REFERENCE_TIME rtStart, ABRepeat ab
         }
     } else {
         pli->AutoLoadFiles();
-        CString fn = CString(pli->m_fns.GetHead()).MakeLower();
+        CString fn = CString(pli->m_fns.front()).MakeLower();
 
         if (fn.Find(_T("video_ts.ifo")) >= 0) {
             if (OpenDVDData* p = DEBUG_NEW OpenDVDData()) {
-                p->path = pli->m_fns.GetHead();
-                p->subs.AddTailList(&pli->m_subs);
+                p->path = pli->m_fns.front();
+                p->subs = pli->m_subs;
                 omd = p;
             }
         } else if (OpenFileData* p = DEBUG_NEW OpenFileData()) {
-            p->fns.AddTailList(&pli->m_fns);
-            p->subs.AddTailList(&pli->m_subs);
+            p->fns = pli->m_fns;
+            p->subs = pli->m_subs;
             p->rtStart = rtStart;
             p->bAddToRecent = true;
             p->abRepeat = abRepeat;
@@ -1754,7 +1794,7 @@ bool CPlayerPlaylistBar::SelectFileInPlaylist(LPCTSTR filename)
                 return true;
             }
         } else {
-            if (pli.m_fns.GetHead().CompareNoCase(filename) == 0) {
+            if (pli.m_fns.front().CompareNoCase(filename) == 0) {
                 m_pl.SetPos(pos);
                 EnsureVisible(pos);
                 return true;
@@ -1765,15 +1805,25 @@ bool CPlayerPlaylistBar::SelectFileInPlaylist(LPCTSTR filename)
     return false;
 }
 
+//the confirmation prompt and CloseMedia both pump messages, and the graph thread takes the playlist
+//edit lock while opening a file, so this is split into short locked phases instead of holding the
+//lock throughout. holding it across either of them would stop the graph thread opening the next file
 bool CPlayerPlaylistBar::DeleteFileInPlaylist(POSITION pos, bool recycle)
 {
-    CAutoLock pledit(&m_plEditLock);
-
     auto& s = AfxGetAppSettings();
-    CString filename = m_pl.GetAt(pos).m_fns.GetHead();
+    CString filename;
+    UINT itemId;
+    bool noconfirm;
+
+    {
+        CAutoLock pledit(&m_plEditLock);
+        CPlaylistItem& pli = m_pl.GetAt(pos);
+        filename = pli.m_fns.front();
+        itemId = pli.m_id;
+        noconfirm = !s.bConfirmFileDelete;
+    }
+
     bool candeletefile = false;
-    bool folderPlayNext = false;
-    bool noconfirm = !s.bConfirmFileDelete;
     if (!PathUtils::IsURL(filename)) {
         if (!noconfirm && IsWindows10OrGreater()) {
             // show prompt, because Windows might not ask for confirmation
@@ -1788,37 +1838,58 @@ bool CPlayerPlaylistBar::DeleteFileInPlaylist(POSITION pos, bool recycle)
         } else {
             candeletefile = true;
         }
-        folderPlayNext = (m_pl.GetCount() == 1 && (s.nCLSwitches & CLSW_PLAYNEXT || s.eAfterPlayback == CAppSettings::AfterPlayback::PLAY_NEXT));
-    }
-    
-    bool isplaying = false;
-    if (pos == m_pl.GetPos()) {
-        isplaying = true;
     }
 
-    // Get position of next file
-    POSITION nextpos = pos;
-    if (isplaying) {
-        m_pl.GetNext(nextpos);
-        if (nextpos == nullptr && m_pl.GetCount() > 1) {
-            nextpos = m_pl.GetHeadPosition();
+    bool folderPlayNext = false;
+    bool isplaying = false;
+    POSITION nextpos = nullptr;
+    int listPos = -1;
+
+    {
+        CAutoLock pledit(&m_plEditLock);
+
+        //the playlist may have changed while the prompt was up, so find the item again by its id.
+        //when it is gone the file the user confirmed is no longer the item they clicked
+        pos = FindPosById(itemId);
+        if (!pos) {
+            return false;
+        }
+
+        if (!PathUtils::IsURL(filename)) {
+            folderPlayNext = (m_pl.GetCount() == 1 && (s.nCLSwitches & CLSW_PLAYNEXT || s.eAfterPlayback == CAppSettings::AfterPlayback::PLAY_NEXT));
+        }
+
+        if (pos == m_pl.GetPos()) {
+            isplaying = true;
+        }
+
+        // Get position of next file
+        nextpos = pos;
+        if (isplaying) {
+            m_pl.GetNext(nextpos);
+            if (nextpos == nullptr && m_pl.GetCount() > 1) {
+                nextpos = m_pl.GetHeadPosition();
+            }
+        }
+
+        // remove selected from playlist
+        listPos = FindItem(pos);
+        if (listPos >= 0) {
+            m_pl.RemoveAt(pos);
+            RebuildPosMap();
+            m_list.SetItemCountEx((int)m_pl.GetCount(), LVSICF_NOINVALIDATEALL);
+            m_list.Invalidate();
+        } else {
+            ASSERT(false);
+        }
+
+        if (isplaying && !folderPlayNext && nextpos) {
+            m_pl.SetPos(nextpos);
         }
     }
 
-    // remove selected from playlist
-    int listPos = FindItem(pos);
     if (listPos >= 0) {
-        m_pl.RemoveAt(pos);
-        RebuildPosMap();
-        m_list.SetItemCountEx((int)m_pl.GetCount(), LVSICF_NOINVALIDATEALL);
-        m_list.Invalidate();
         SavePlaylist();
-    } else {
-        ASSERT(false);
-    }
-
-    if (isplaying && !folderPlayNext && nextpos) {
-        m_pl.SetPos(nextpos);
     }
 
     if (isplaying) {
@@ -1917,7 +1988,22 @@ void CPlayerPlaylistBar::SavePlaylist(bool can_delay /* = false*/)
     }
 }
 
+void CPlayerPlaylistBar::SetListBkColor()
+{
+    if (AppIsThemeLoaded() && CMPCTheme::isWindows11Style) {
+        m_list.SetBkColor(CMPCTheme::ContentBGColor); //the area below the items, which light mode leaves to the native list
+    }
+}
+
+//comes after the list has picked its own background, so this can still override it
+LRESULT CPlayerPlaylistBar::OnMPCThemeChanged(WPARAM wParam, LPARAM lParam)
+{
+    SetListBkColor();
+    return 0;
+}
+
 BEGIN_MESSAGE_MAP(CPlayerPlaylistBar, CMPCThemePlayerBar)
+    ON_MPCTHEMECHANGED()
     ON_WM_DESTROY()
     ON_WM_SIZE()
     ON_NOTIFY(LVN_KEYDOWN, IDC_PLAYLIST, OnLvnKeyDown)
@@ -2006,6 +2092,9 @@ void CPlayerPlaylistBar::ResizeListColumn()
             width -= m_pMainFrame->m_dpi.GetSystemMetricsDPI(SM_CXVSCROLL);
         }
         m_list.SetColumnWidth(COL_NAME, std::max(0, width - m_nTimeColWidth));
+        // when too narrow for both, the name column stays at the list's minimum, so shrink the
+        // time column to what is left, else the columns overflow into a horizontal scrollbar
+        m_list.SetColumnWidth(COL_TIME, std::max(0, std::min(m_nTimeColWidth, width - m_list.GetColumnWidth(COL_NAME))));
         m_list.SetRedraw(TRUE);
 
         Invalidate();
@@ -2202,18 +2291,40 @@ void CPlayerPlaylistBar::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruc
 
     COLORREF bgColor, contentBGColor;
 
-    if (AppNeedsThemedControls()) {
+    //the windows 11 style draws the playlist from the palette in light mode as well
+    bool win11Style = AppIsThemeLoaded() && CMPCTheme::isWindows11Style;
+    bool themedList = AppNeedsThemedControls() || win11Style;
+    if (themedList) {
         contentBGColor = CMPCTheme::ContentBGColor;
     } else {
         contentBGColor = GetSysColor(COLOR_WINDOW);
     }
+
+    //the windows 11 style moves the sequence number right to make room for the selection indicator
+    int numOffset = win11Style ? m_pMainFrame->m_dpi.ScaleX(4) : 0;
+    numWidth.cx += numOffset; //move the filename and inline edit with it, keeping the same gap after the number
 
     CRect fileRect = rcItem, seqRect = rcItem;
     fileRect.left += numWidth.cx;
     inlineEditXpos = numWidth.cx - 2; //magic number 2 for accounting for border/padding of inline edit.  works at all dpi except 168, where it's off by 1px (shrug)
     seqRect.right = fileRect.left;
 
-    if (itemSelected) {
+    if (win11Style) {
+        //fluent list selection: a neutral fill across the whole row, with an accent indicator at the left edge
+        bgColor = itemSelected ? CMPCTheme::PlaylistSelectedColor : contentBGColor;
+        FillRect(pDC->m_hDC, rcItem, CBrush(bgColor));
+        if (itemSelected) {
+            int pillWidth = m_pMainFrame->m_dpi.ScaleX(3);
+            int pillHeight = rcItem.Height() / 2;
+            CRect pill(CPoint(rcItem.left + m_pMainFrame->m_dpi.ScaleX(2), rcItem.top + (rcItem.Height() - pillHeight) / 2), CSize(pillWidth, pillHeight));
+            CBrush pillBrush(CMPCTheme::PlaylistIndicatorColor);
+            CBrush* oldBrush = pDC->SelectObject(&pillBrush);
+            CPen* oldPen = (CPen*)pDC->SelectStockObject(NULL_PEN);
+            pDC->RoundRect(pill, CPoint(pillWidth, pillWidth));
+            pDC->SelectObject(oldPen);
+            pDC->SelectObject(oldBrush);
+        }
+    } else if (itemSelected) {
         if (AppNeedsThemedControls()) {
             bgColor = CMPCTheme::ContentSelectedColor;
         } else {
@@ -2229,7 +2340,7 @@ void CPlayerPlaylistBar::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruc
 
     COLORREF textColor, sequenceColor;
 
-    if (AppNeedsThemedControls()) {
+    if (themedList) {
         if (pli.m_fInvalid) {
             textColor = CMPCTheme::ContentTextDisabledFGColorFade2;
             sequenceColor = textColor;
@@ -2260,7 +2371,7 @@ void CPlayerPlaylistBar::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruc
             pDC->TextOut(timept.x, timept.y, time);
         }
     }
-    pli.inlineEditMaxWidth = timept.x - inlineEditXpos;
+    pli.inlineEditMaxWidth = std::max(0, (int)timept.x - dpi6 - inlineEditXpos); //leave the same gap before the time as the truncated filename
 
     file = pli.GetLabel(0);
     CSize filesize = pDC->GetTextExtent(file);
@@ -2269,9 +2380,7 @@ void CPlayerPlaylistBar::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruc
         filesize = pDC->GetTextExtent(file);
     }
 
-    CWnd* pFocused = GetFocus();
-    bool inlineEditActive = pFocused && pFocused != &m_list && m_list.IsChild(pFocused);
-    if (!inlineEditActive || !itemSelected) { //if inline edit is active, and this is the selected item, don't draw filename (visually distracting while editing)
+    if (nItem != inlineEditItem) { //don't draw the filename of the item being edited (visually distracting while editing)
         pDC->SetTextColor(textColor);
         pDC->SetBkColor(bgColor);
         pDC->TextOut(rcItem.left + dpi3 + numWidth.cx, (rcItem.top + rcItem.bottom - filesize.cy) / 2, file);
@@ -2282,8 +2391,8 @@ void CPlayerPlaylistBar::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruc
     } else {
         pDC->SetTextColor(sequenceColor);
     }
-    pDC->SetBkColor(contentBGColor);
-    pDC->TextOut(rcItem.left + dpi3, (rcItem.top + rcItem.bottom - filesize.cy) / 2, num);
+    pDC->SetBkColor(win11Style ? bgColor : contentBGColor);
+    pDC->TextOut(rcItem.left + dpi3 + numOffset, (rcItem.top + rcItem.bottom - filesize.cy) / 2, num);
 
 
     pDC->RestoreDC(oldDC);
@@ -2300,15 +2409,15 @@ DROPEFFECT CPlayerPlaylistBar::OnDropAccept(COleDataObject*, DWORD, CPoint)
     return DROPEFFECT_COPY;
 }
 
-void CPlayerPlaylistBar::OnDropFiles(CAtlList<CString>& slFiles, DROPEFFECT)
+void CPlayerPlaylistBar::OnDropFiles(std::list<CString>& slFiles, DROPEFFECT)
 {
     SetForegroundWindow();
     m_list.SetFocus();
 
-    if ((slFiles.GetCount() == 1) && m_pMainFrame->CanSendToYoutubeDL(slFiles.GetHead())) {
-        if (m_pMainFrame->ProcessYoutubeDLURL(slFiles.GetHead(), true)) {
+    if ((slFiles.size() == 1) && m_pMainFrame->m_cmdline.CanSendToYoutubeDL(slFiles.front())) {
+        if (m_pMainFrame->m_cmdline.ProcessYoutubeDLURL(slFiles.front(), true)) {
             return;
-        } else if (m_pMainFrame->IsOnYDLWhitelist(slFiles.GetHead())) {
+        } else if (m_pMainFrame->m_cmdline.IsOnYDLWhitelist(slFiles.front())) {
             // don't bother trying to open this website URL directly
             return;
         }
@@ -2496,9 +2605,8 @@ BOOL CPlayerPlaylistBar::OnToolTipNotify(UINT id, NMHDR* pNMHDR, LRESULT* pResul
     strTipText.Empty();
 
     if (col == COL_NAME) {
-        POSITION pos = pli.m_fns.GetHeadPosition();
-        while (pos) {
-            strTipText += _T("\n") + pli.m_fns.GetNext(pos);
+        for (const CString& fn : pli.m_fns) {
+            strTipText += _T("\n") + fn;
         }
         strTipText.Trim();
 
@@ -2528,42 +2636,11 @@ BOOL CPlayerPlaylistBar::OnToolTipNotify(UINT id, NMHDR* pNMHDR, LRESULT* pResul
 
 void CPlayerPlaylistBar::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
-    CAutoLock pledit(&m_plEditLock);
-
     LVHITTESTINFO lvhti;
-
-    bool bOnItem;
-    if (point.x == -1 && point.y == -1) {
-        lvhti.iItem = m_list.GetSelectionMark();
-
-        if (lvhti.iItem == -1 && m_pl.GetCount() == 1) {
-            lvhti.iItem = 0;
-        }
-
-        CRect r;
-        if (!!m_list.GetItemRect(lvhti.iItem, r, LVIR_BOUNDS)) {
-            point.SetPoint(r.left, r.bottom);
-        } else {
-            point.SetPoint(0, 0);
-        }
-        m_list.ClientToScreen(&point);
-        bOnItem = lvhti.iItem != -1;
-    } else {
-        lvhti.pt = point;
-        m_list.ScreenToClient(&lvhti.pt);
-        m_list.SubItemHitTest(&lvhti);
-        bOnItem = lvhti.iItem >= 0 && !!(lvhti.flags & LVHT_ONITEM);
-        if (!bOnItem && m_pl.GetCount() == 1) {
-            bOnItem = true;
-            lvhti.iItem = 0;
-        }
-    }
-
-    POSITION pos = FindPos(lvhti.iItem);
-    bool bIsLocalFile = bOnItem ? PathUtils::Exists(m_pl.GetAt(pos).m_fns.GetHead()) : false;
+    POSITION pos = nullptr;
+    UINT selId = 0;
 
     CMPCThemeMenu m;
-    m.CreatePopupMenu();
 
     enum {
         M_OPEN = 1,
@@ -2593,61 +2670,101 @@ void CPlayerPlaylistBar::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
     CAppSettings& s = AfxGetAppSettings();
 
-    UINT styleOnItem       = MF_STRING | (!bOnItem ? (MF_DISABLED | MF_GRAYED) : MF_ENABLED);
-    UINT styleOnItemLocal  = MF_STRING | ((!bOnItem || !bIsLocalFile) ? (MF_DISABLED | MF_GRAYED) : MF_ENABLED);
-    UINT styleListNotEmpty = MF_STRING | (!m_pl.GetCount() ? (MF_DISABLED | MF_GRAYED) : MF_ENABLED);
+    {
+        CAutoLock pledit(&m_plEditLock);
 
-    m.AppendMenu(styleOnItem, M_OPEN, ResStr(IDS_PLAYLIST_OPEN));
-    if (m_pMainFrame->GetPlaybackMode() == PM_ANALOG_CAPTURE) {
-        m.AppendMenu(MF_STRING | MF_ENABLED, M_ADD, ResStr(IDS_PLAYLIST_ADD));
-    }
-    m.AppendMenu(styleOnItem, M_REMOVE, ResStr(IDS_PLAYLIST_REMOVE));
-    m.AppendMenu(MF_SEPARATOR);
-    m.AppendMenu(styleListNotEmpty, M_CLEAR, ResStr(IDS_PLAYLIST_CLEAR));
-    m.AppendMenu(MF_SEPARATOR);
-    m.AppendMenu(styleOnItem, M_CLIPBOARD, ResStr(IDS_PLAYLIST_COPYTOCLIPBOARD));
-    m.AppendMenu(styleOnItemLocal, M_SHOWFOLDER, ResStr(IDS_PLAYLIST_SHOWFOLDER));
-    m.AppendMenu(styleOnItemLocal, M_RECYCLE, ResStr(IDS_FILE_RECYCLE));
-    m.AppendMenu(styleOnItemLocal, M_ADDFOLDER, ResStr(IDS_PLAYLIST_ADDFOLDER));
-    m.AppendMenu(MF_SEPARATOR);
-    if (!m_playListPath.IsEmpty()) {
-        m.AppendMenu(styleListNotEmpty, M_SAVE, ResStr(IDS_PLAYLIST_SAVE));
-    }
-    m.AppendMenu(styleListNotEmpty, M_SAVEAS, ResStr(IDS_PLAYLIST_SAVEAS));
-    m.AppendMenu(MF_SEPARATOR);
-    {
-        CMPCThemeMenu sortMenu;
-        sortMenu.CreatePopupMenu();
-        UINT styleListNotEmptyPopup = MF_POPUP | (!m_pl.GetCount() ? (MF_DISABLED | MF_GRAYED) : MF_ENABLED);
-        sortMenu.AppendMenu(styleListNotEmpty, M_SORTBYNAME, ResStr(IDS_PLAYLIST_SORTBYLABEL));
-        sortMenu.AppendMenu(styleListNotEmpty, M_SORTBYPATH, ResStr(IDS_PLAYLIST_SORTBYPATH));
-        sortMenu.AppendMenu(styleListNotEmpty, M_SORTBYDATENEWEST, ResStr(IDS_PLAYLIST_SORTBYDATE_NEWEST));
-        sortMenu.AppendMenu(styleListNotEmpty, M_SORTBYDATEOLDEST, ResStr(IDS_PLAYLIST_SORTBYDATE_OLDEST));
-        sortMenu.AppendMenu(styleListNotEmpty, M_RANDOMIZE, ResStr(IDS_PLAYLIST_RANDOMIZE));
-        sortMenu.AppendMenu(MF_SEPARATOR);
-        sortMenu.AppendMenu(styleListNotEmpty, M_SORTBYID, ResStr(IDS_PLAYLIST_RESTORE));
-        m.AppendMenu(styleListNotEmptyPopup, (UINT_PTR)sortMenu.GetSafeHmenu(), ResStr(IDS_PLAYLIST_SORT));
-        sortMenu.Detach();
-    }
-    m.AppendMenu(MF_SEPARATOR);
-    m.AppendMenu(MF_STRING | MF_ENABLED | (s.bShufflePlaylistItems ? MF_CHECKED : MF_UNCHECKED), M_SHUFFLE, ResStr(IDS_PLAYLIST_SHUFFLE));
-    m.AppendMenu(MF_SEPARATOR);
-    m.AppendMenu(MF_STRING | MF_ENABLED | (s.bHidePlaylistFullScreen ? MF_CHECKED : MF_UNCHECKED), M_HIDEFULLSCREEN, ResStr(IDS_PLAYLIST_HIDEFS));
-    m.AppendMenu(MF_SEPARATOR);
-    {
-        const UINT dockBarID = GetParent()->GetDlgCtrlID();
-        CMPCThemeMenu positionMenu;
-        positionMenu.CreatePopupMenu();
-        positionMenu.AppendMenu(MF_STRING | MF_ENABLED | (dockBarID == AFX_IDW_DOCKBAR_LEFT ? MF_CHECKED : MF_UNCHECKED), M_POSITION_LEFT, ResStr(IDS_PLAYLIST_POSITION_LEFT));
-        positionMenu.AppendMenu(MF_STRING | MF_ENABLED | (dockBarID == AFX_IDW_DOCKBAR_TOP ? MF_CHECKED : MF_UNCHECKED), M_POSITION_TOP, ResStr(IDS_PLAYLIST_POSITION_TOP));
-        positionMenu.AppendMenu(MF_STRING | MF_ENABLED | (dockBarID == AFX_IDW_DOCKBAR_RIGHT ? MF_CHECKED : MF_UNCHECKED), M_POSITION_RIGHT, ResStr(IDS_PLAYLIST_POSITION_RIGHT));
-        positionMenu.AppendMenu(MF_STRING | MF_ENABLED | (dockBarID == AFX_IDW_DOCKBAR_BOTTOM ? MF_CHECKED : MF_UNCHECKED), M_POSITION_BOTTOM, ResStr(IDS_PLAYLIST_POSITION_BOTTOM));
-        positionMenu.AppendMenu(MF_STRING | MF_ENABLED | (dockBarID == AFX_IDW_DOCKBAR_FLOAT ? MF_CHECKED : MF_UNCHECKED), M_POSITION_FLOAT, ResStr(IDS_PLAYLIST_POSITION_FLOAT));
-        m.AppendMenu(MF_STRING | MF_POPUP | MF_ENABLED, (UINT_PTR)positionMenu.GetSafeHmenu(), ResStr(IDS_PLAYLIST_POSITION));
-        positionMenu.Detach();
-    }
-    if (AppIsThemeLoaded()) {
-        m.fulfillThemeReqs();
+        bool bOnItem;
+        if (point.x == -1 && point.y == -1) {
+            lvhti.iItem = m_list.GetSelectionMark();
+
+            if (lvhti.iItem == -1 && m_pl.GetCount() == 1) {
+                lvhti.iItem = 0;
+            }
+
+            CRect r;
+            if (!!m_list.GetItemRect(lvhti.iItem, r, LVIR_BOUNDS)) {
+                point.SetPoint(r.left, r.bottom);
+            } else {
+                point.SetPoint(0, 0);
+            }
+            m_list.ClientToScreen(&point);
+            bOnItem = lvhti.iItem != -1;
+        } else {
+            lvhti.pt = point;
+            m_list.ScreenToClient(&lvhti.pt);
+            m_list.SubItemHitTest(&lvhti);
+            bOnItem = lvhti.iItem >= 0 && !!(lvhti.flags & LVHT_ONITEM);
+            if (!bOnItem && m_pl.GetCount() == 1) {
+                bOnItem = true;
+                lvhti.iItem = 0;
+            }
+        }
+
+        pos = FindPos(lvhti.iItem);
+        bool bIsLocalFile = bOnItem ? PathUtils::Exists(m_pl.GetAt(pos).m_fns.front()) : false;
+        selId = (bOnItem && pos) ? m_pl.GetAt(pos).m_id : 0;
+
+        m.CreatePopupMenu();
+
+        UINT styleOnItem       = MF_STRING | (!bOnItem ? (MF_DISABLED | MF_GRAYED) : MF_ENABLED);
+        UINT styleOnItemLocal  = MF_STRING | ((!bOnItem || !bIsLocalFile) ? (MF_DISABLED | MF_GRAYED) : MF_ENABLED);
+        UINT styleListNotEmpty = MF_STRING | (!m_pl.GetCount() ? (MF_DISABLED | MF_GRAYED) : MF_ENABLED);
+
+        m.AppendMenu(styleOnItem, M_OPEN, ResStr(IDS_PLAYLIST_OPEN));
+        if (m_pMainFrame->GetPlaybackMode() == PM_ANALOG_CAPTURE) {
+            m.AppendMenu(MF_STRING | MF_ENABLED, M_ADD, ResStr(IDS_PLAYLIST_ADD));
+        }
+        m.AppendMenu(styleOnItem, M_REMOVE, ResStr(IDS_PLAYLIST_REMOVE));
+        m.AppendMenu(MF_SEPARATOR);
+        m.AppendMenu(styleListNotEmpty, M_CLEAR, ResStr(IDS_PLAYLIST_CLEAR));
+        m.AppendMenu(MF_SEPARATOR);
+        m.AppendMenu(styleOnItem, M_CLIPBOARD, ResStr(IDS_PLAYLIST_COPYTOCLIPBOARD));
+        m.AppendMenu(styleOnItemLocal, M_SHOWFOLDER, ResStr(IDS_PLAYLIST_SHOWFOLDER));
+        m.AppendMenu(styleOnItemLocal, M_RECYCLE, ResStr(IDS_FILE_RECYCLE));
+        m.AppendMenu(styleOnItemLocal, M_ADDFOLDER, ResStr(IDS_PLAYLIST_ADDFOLDER));
+        m.AppendMenu(MF_SEPARATOR);
+        if (!m_playListPath.IsEmpty()) {
+            m.AppendMenu(styleListNotEmpty, M_SAVE, ResStr(IDS_PLAYLIST_SAVE));
+        }
+        m.AppendMenu(styleListNotEmpty, M_SAVEAS, ResStr(IDS_PLAYLIST_SAVEAS));
+        m.AppendMenu(MF_SEPARATOR);
+        //the submenus are plain menus: m themes them when they are appended and owns what that allocates. a local
+        //CMPCThemeMenu would free its item data here while m still shows the items, which crashed once the freed
+        //addresses were reused
+        {
+            CMenu sortMenu;
+            sortMenu.CreatePopupMenu();
+            UINT styleListNotEmptyPopup = MF_POPUP | (!m_pl.GetCount() ? (MF_DISABLED | MF_GRAYED) : MF_ENABLED);
+            sortMenu.AppendMenu(styleListNotEmpty, M_SORTBYNAME, ResStr(IDS_PLAYLIST_SORTBYLABEL));
+            sortMenu.AppendMenu(styleListNotEmpty, M_SORTBYPATH, ResStr(IDS_PLAYLIST_SORTBYPATH));
+            sortMenu.AppendMenu(styleListNotEmpty, M_SORTBYDATENEWEST, ResStr(IDS_PLAYLIST_SORTBYDATE_NEWEST));
+            sortMenu.AppendMenu(styleListNotEmpty, M_SORTBYDATEOLDEST, ResStr(IDS_PLAYLIST_SORTBYDATE_OLDEST));
+            sortMenu.AppendMenu(styleListNotEmpty, M_RANDOMIZE, ResStr(IDS_PLAYLIST_RANDOMIZE));
+            sortMenu.AppendMenu(MF_SEPARATOR);
+            sortMenu.AppendMenu(styleListNotEmpty, M_SORTBYID, ResStr(IDS_PLAYLIST_RESTORE));
+            m.AppendMenu(styleListNotEmptyPopup, (UINT_PTR)sortMenu.GetSafeHmenu(), ResStr(IDS_PLAYLIST_SORT));
+            sortMenu.Detach();
+        }
+        m.AppendMenu(MF_SEPARATOR);
+        m.AppendMenu(MF_STRING | MF_ENABLED | (s.bShufflePlaylistItems ? MF_CHECKED : MF_UNCHECKED), M_SHUFFLE, ResStr(IDS_PLAYLIST_SHUFFLE));
+        m.AppendMenu(MF_SEPARATOR);
+        m.AppendMenu(MF_STRING | MF_ENABLED | (s.bHidePlaylistFullScreen ? MF_CHECKED : MF_UNCHECKED), M_HIDEFULLSCREEN, ResStr(IDS_PLAYLIST_HIDEFS));
+        m.AppendMenu(MF_SEPARATOR);
+        {
+            const UINT dockBarID = GetParent()->GetDlgCtrlID();
+            CMenu positionMenu;
+            positionMenu.CreatePopupMenu();
+            positionMenu.AppendMenu(MF_STRING | MF_ENABLED | (dockBarID == AFX_IDW_DOCKBAR_LEFT ? MF_CHECKED : MF_UNCHECKED), M_POSITION_LEFT, ResStr(IDS_PLAYLIST_POSITION_LEFT));
+            positionMenu.AppendMenu(MF_STRING | MF_ENABLED | (dockBarID == AFX_IDW_DOCKBAR_TOP ? MF_CHECKED : MF_UNCHECKED), M_POSITION_TOP, ResStr(IDS_PLAYLIST_POSITION_TOP));
+            positionMenu.AppendMenu(MF_STRING | MF_ENABLED | (dockBarID == AFX_IDW_DOCKBAR_RIGHT ? MF_CHECKED : MF_UNCHECKED), M_POSITION_RIGHT, ResStr(IDS_PLAYLIST_POSITION_RIGHT));
+            positionMenu.AppendMenu(MF_STRING | MF_ENABLED | (dockBarID == AFX_IDW_DOCKBAR_BOTTOM ? MF_CHECKED : MF_UNCHECKED), M_POSITION_BOTTOM, ResStr(IDS_PLAYLIST_POSITION_BOTTOM));
+            positionMenu.AppendMenu(MF_STRING | MF_ENABLED | (dockBarID == AFX_IDW_DOCKBAR_FLOAT ? MF_CHECKED : MF_UNCHECKED), M_POSITION_FLOAT, ResStr(IDS_PLAYLIST_POSITION_FLOAT));
+            m.AppendMenu(MF_STRING | MF_POPUP | MF_ENABLED, (UINT_PTR)positionMenu.GetSafeHmenu(), ResStr(IDS_PLAYLIST_POSITION));
+            positionMenu.Detach();
+        }
+        if (AppIsThemeLoaded()) {
+            m.fulfillThemeReqs();
+        }
     }
 
     SetHasActivePopup(true);
@@ -2656,15 +2773,37 @@ void CPlayerPlaylistBar::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
     int nID = (int)m.TrackPopupMenu(TPM_LEFTBUTTON | TPM_RETURNCMD, point.x, point.y, m_pMainFrame);
     SetHasActivePopup(false);
     m_list.SetFocus();
+
+    if (nID == 0) {
+        return;
+    }
+
+    //the lock is not held while the menu is up, so the playlist may have changed meanwhile.
+    //find the clicked item again by its id and drop the command when it is gone.
+    {
+        CAutoLock pledit(&m_plEditLock);
+        pos = selId ? FindPosById(selId) : nullptr;
+        lvhti.iItem = pos ? FindItem(pos) : -1;
+    }
+    if (!pos && (nID == M_OPEN || nID == M_REMOVE || nID == M_RECYCLE || nID == M_CLIPBOARD || nID == M_SHOWFOLDER || nID == M_ADDFOLDER)) {
+        return;
+    }
+
     switch (nID) {
         case M_OPEN:
-            m_pl.SetPos(pos);
+            {
+                CAutoLock pledit(&m_plEditLock);
+                m_pl.SetPos(pos);
+            }
             m_list.Invalidate();
             m_pMainFrame->PostMessage(WM_MPC_OPENCURPLAYLIST, 0, 0);
             break;
         case M_ADD:
-            m_pMainFrame->AddCurDevToPlaylist();
-            m_pl.SetPos(m_pl.GetTailPosition());
+            m_pMainFrame->m_capture.AddCurDevToPlaylist();
+            {
+                CAutoLock pledit(&m_plEditLock);
+                m_pl.SetPos(m_pl.GetTailPosition());
+            }
             break;
         case M_REMOVE:
             RemoveItemAt(lvhti.iItem);
@@ -2679,35 +2818,47 @@ void CPlayerPlaylistBar::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             SavePlaylist();
             break;
         case M_SORTBYID: {
-            POSITION selPos = FindPos(m_list.GetSelectionMark());
-            m_pl.SortById();
-            SetupList();
-            SyncSelectionToPos(selPos ? selPos : m_pl.GetPos());
+            {
+                CAutoLock pledit(&m_plEditLock);
+                POSITION selPos = FindPos(m_list.GetSelectionMark());
+                m_pl.SortById();
+                SetupList();
+                SyncSelectionToPos(selPos ? selPos : m_pl.GetPos());
+            }
             SavePlaylist();
             break;
         }
         case M_SORTBYNAME: {
-            POSITION selPos = FindPos(m_list.GetSelectionMark());
-            m_pl.SortByName();
-            SetupList();
-            SyncSelectionToPos(selPos ? selPos : m_pl.GetPos());
+            {
+                CAutoLock pledit(&m_plEditLock);
+                POSITION selPos = FindPos(m_list.GetSelectionMark());
+                m_pl.SortByName();
+                SetupList();
+                SyncSelectionToPos(selPos ? selPos : m_pl.GetPos());
+            }
             SavePlaylist();
             break;
         }
         case M_SORTBYPATH: {
-            POSITION selPos = FindPos(m_list.GetSelectionMark());
-            m_pl.SortByPath();
-            SetupList();
-            SyncSelectionToPos(selPos ? selPos : m_pl.GetPos());
+            {
+                CAutoLock pledit(&m_plEditLock);
+                POSITION selPos = FindPos(m_list.GetSelectionMark());
+                m_pl.SortByPath();
+                SetupList();
+                SyncSelectionToPos(selPos ? selPos : m_pl.GetPos());
+            }
             SavePlaylist();
             break;
         }
         case M_SORTBYDATENEWEST:
         case M_SORTBYDATEOLDEST: {
-            POSITION selPos = FindPos(m_list.GetSelectionMark());
-            m_pl.SortByDate(nID == M_SORTBYDATEOLDEST);
-            SetupList();
-            SyncSelectionToPos(selPos ? selPos : m_pl.GetPos());
+            {
+                CAutoLock pledit(&m_plEditLock);
+                POSITION selPos = FindPos(m_list.GetSelectionMark());
+                m_pl.SortByDate(nID == M_SORTBYDATEOLDEST);
+                SetupList();
+                SyncSelectionToPos(selPos ? selPos : m_pl.GetPos());
+            }
             SavePlaylist();
             break;
         }
@@ -2716,11 +2867,12 @@ void CPlayerPlaylistBar::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
             break;
         case M_CLIPBOARD: {
                 CString str;
-
-                CPlaylistItem& pli = m_pl.GetAt(pos);
-                POSITION pos2 = pli.m_fns.GetHeadPosition();
-                while (pos2) {
-                    str += _T("\r\n") + pli.m_fns.GetNext(pos2);
+                {
+                    CAutoLock pledit(&m_plEditLock);
+                    CPlaylistItem& pli = m_pl.GetAt(pos);
+                    for (const CString& fn : pli.m_fns) {
+                        str += _T("\r\n") + fn;
+                    }
                 }
                 str.Trim();
 
@@ -2728,12 +2880,23 @@ void CPlayerPlaylistBar::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
                 VERIFY(clipboard.SetText(str));
             }
             break;
-        case M_SHOWFOLDER:
-            ExploreToFile(m_pl.GetAt(pos).m_fns.GetHead());
+        case M_SHOWFOLDER: {
+            CString fn;
+            {
+                CAutoLock pledit(&m_plEditLock);
+                fn = m_pl.GetAt(pos).m_fns.front();
+            }
+            ExploreToFile(fn);
             break;
+        }
         case M_ADDFOLDER: {
             // add all media files in current playlist item folder that are not yet in the playlist
-            const CString dirName = PathUtils::DirName(m_pl.GetAt(pos).m_fns.GetHead());
+            CString fn;
+            {
+                CAutoLock pledit(&m_plEditLock);
+                fn = m_pl.GetAt(pos).m_fns.front();
+            }
+            const CString dirName = PathUtils::DirName(fn);
             if (PathUtils::IsDir(dirName)) {
                 m_insertingPos = pos;
                 if (AddItemsInFolder(dirName, true)) {
@@ -2805,17 +2968,17 @@ void CPlayerPlaylistBar::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
                 f.WriteString(_T("<ASX version = \"3.0\">\n"));
             }
 
-            pos = m_pl.GetHeadPosition();
+            POSITION savePos = m_pl.GetHeadPosition();
             CString str;
             int i;
-            for (i = 0; pos; i++) {
-                CPlaylistItem& pli = m_pl.GetNext(pos);
+            for (i = 0; savePos; i++) {
+                CPlaylistItem& pli = m_pl.GetNext(savePos);
 
                 if (pli.m_type != CPlaylistItem::file) {
                     continue;
                 }
 
-                CString fn = pli.m_fns.GetHead();
+                CString fn = pli.m_fns.front();
 
                 /*
                 if (idx != 4 && PlaylistCanStripPath(path))
@@ -2853,7 +3016,10 @@ void CPlayerPlaylistBar::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
         break;
         case M_SHUFFLE:
             s.bShufflePlaylistItems = !s.bShufflePlaylistItems;
-            m_pl.SetShuffle(s.bShufflePlaylistItems);
+            {
+                CAutoLock pledit(&m_plEditLock);
+                m_pl.SetShuffle(s.bShufflePlaylistItems);
+            }
             break;
         case M_HIDEFULLSCREEN:
             s.bHidePlaylistFullScreen = !s.bHidePlaylistFullScreen;
@@ -2948,6 +3114,7 @@ void CPlayerPlaylistBar::OnLvnBeginlabeleditList(NMHDR* pNMHDR, LRESULT* pResult
         POSITION pos = FindPos(pDispInfo->item.iItem);
         int maxW = pos ? m_pl.GetAt(pos).inlineEditMaxWidth : -1;
         m_edit.setOverridePos(inlineEditXpos, maxW);
+        inlineEditItem = pDispInfo->item.iItem;
     }
     *pResult = 0; // allow
 }
@@ -2955,6 +3122,7 @@ void CPlayerPlaylistBar::OnLvnBeginlabeleditList(NMHDR* pNMHDR, LRESULT* pResult
 void CPlayerPlaylistBar::OnLvnEndlabeleditList(NMHDR* pNMHDR, LRESULT* pResult)
 {
     NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
+    inlineEditItem = -1;
     // pszText is nullptr when the edit was cancelled (ESC)
     if (pDispInfo->item.pszText != nullptr) {
         POSITION pos = FindPos(pDispInfo->item.iItem);
@@ -2976,6 +3144,7 @@ void CPlayerPlaylistBar::OnLvnFinditem(NMHDR* pNMHDR, LRESULT* pResult)
     if (pFindItem) {
         int startidx = pFindItem->iStart;
         CString findstr = pFindItem->lvfi.psz;
+        findstr.MakeLower();
         int len = findstr.GetLength();
         int idx = -1;
         POSITION pos = m_pl.GetHeadPosition();

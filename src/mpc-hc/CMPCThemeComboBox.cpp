@@ -8,6 +8,7 @@
 IMPLEMENT_DYNAMIC(CMPCThemeComboBox, CComboBox)
 
 BEGIN_MESSAGE_MAP(CMPCThemeComboBox, CComboBox)
+    ON_MPCTHEMECHANGED()
     ON_WM_PAINT()
     ON_WM_SETFOCUS()
     ON_WM_MOUSEMOVE()
@@ -60,10 +61,10 @@ CMPCThemeComboBox::~CMPCThemeComboBox()
 void CMPCThemeComboBox::themeControls()
 {
     if (AppNeedsThemedControls()) {
-        if (CMPCThemeUtil::canUseWin10DarkTheme() && !hasThemedControls) {
+        if (CMPCThemeUtil::canUseExplorerTheme() && !hasThemedControls) {
             COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
             if (GetComboBoxInfo(&info)) {
-                SetWindowTheme(info.hwndList, L"DarkMode_Explorer", NULL);
+                SetWindowTheme(info.hwndList, CMPCThemeUtil::explorerThemeName(), NULL);
                 DWORD dropdownType = GetStyle() & 3;
                 if (CBS_DROPDOWN == dropdownType || CBS_SIMPLE == dropdownType) {
                     cbEdit.SubclassWindow(info.hwndItem);
@@ -78,6 +79,20 @@ void CMPCThemeComboBox::themeControls()
 void CMPCThemeComboBox::PreSubclassWindow()
 {
     themeControls();
+}
+
+LRESULT CMPCThemeComboBox::OnMPCThemeChanged(WPARAM wParam, LPARAM lParam)
+{
+    if (hasThemedControls) {
+        COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
+        if (GetComboBoxInfo(&info)) {
+            bool explorerTheme = AppNeedsThemedControls() && CMPCThemeUtil::canUseExplorerTheme();
+            SetWindowTheme(info.hwndList, explorerTheme ? CMPCThemeUtil::explorerThemeName() : nullptr, NULL);
+        }
+    } else {
+        themeControls();
+    }
+    return 0;
 }
 
 
@@ -139,6 +154,8 @@ void CMPCThemeComboBox::OnPaint()
 
         CBrush fb;
         bool isFocused, drawDotted = false;
+        //the windows 11 inner stroke is about the fill colour, so a frame drawn with it alone disappears
+        const COLORREF frameColor = CMPCTheme::isWindows11Style ? CMPCTheme::ButtonBorderOuterColor : CMPCTheme::ButtonBorderInnerColor;
 
         if (pCBEdit) {
             CRect editRect;
@@ -149,14 +166,14 @@ void CMPCThemeComboBox::OnPaint()
             if (isFocused) {
                 fb.CreateSolidBrush(CMPCTheme::ButtonBorderInnerFocusedColor);
             } else {
-                fb.CreateSolidBrush(CMPCTheme::ButtonBorderInnerColor);
+                fb.CreateSolidBrush(frameColor);
             }
         } else {
             isFocused = (GetFocus() == this);
             if (isFocused) {
                 drawDotted = true;
             }
-            fb.CreateSolidBrush(CMPCTheme::ButtonBorderInnerColor);
+            fb.CreateSolidBrush(frameColor);
         }
 
         COLORREF bkColor, fgColor = CMPCTheme::TextFGColor, arrowColor = CMPCTheme::ComboboxArrowColor;
@@ -182,7 +199,7 @@ void CMPCThemeComboBox::OnPaint()
             CMPCThemeUtil::drawParentDialogBGClr(this, &dc, rBG, true);
             rBG.left = rBG.right;
             rBG.right += 1;
-            dc.FillSolidRect(rBG, CMPCTheme::ButtonBorderInnerColor);
+            dc.FillSolidRect(rBG, frameColor);
         } else {
             dc.FillSolidRect(rBG, bkColor);
             rText = r;
@@ -230,7 +247,7 @@ void CMPCThemeComboBox::checkHover(UINT nFlags, CPoint point, bool invalidate)
     } else {
         isHover = false;
     }
-    if (isHover != oldHover && invalidate) {
+    if (isHover != oldHover && invalidate && !GetDroppedState()) { //a repaint while the list is open would draw the item under the mouse instead of the selected one
         Invalidate();
     }
 

@@ -869,7 +869,7 @@ void CPPageAccelTbl::DoDataExchange(CDataExchange* pDX)
     DDX_Check(pDX, IDC_CHECK2, m_fGlobalMedia);
 }
 
-BEGIN_MESSAGE_MAP(CPPageAccelTbl, CPPageBase)
+BEGIN_MESSAGE_MAP(CPPageAccelTbl, CMPCThemePPageBase)
     ON_NOTIFY(LVN_BEGINLABELEDIT, IDC_LIST1, OnBeginListLabelEdit)
     ON_NOTIFY(LVN_DOLABELEDIT, IDC_LIST1, OnDoListLabelEdit)
     ON_NOTIFY(LVN_ENDLABELEDIT, IDC_LIST1, OnEndListLabelEdit)
@@ -1126,7 +1126,7 @@ void CPPageAccelTbl::GetCustomGridColors(int nItem, COLORREF& horzGridColor, COL
 }
 
 void CPPageAccelTbl::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult) {
-    //this custom draw is used in classic and light modes; dark draws via CMPCThemePlayerListCtrl
+    //this custom draw is used in classic and windows 10 light modes; themed controls draw via CMPCThemePlayerListCtrl
     *pResult = CDRF_DODEFAULT;
     if (!AppNeedsThemedControls()) {
         NMLVCUSTOMDRAW* pLVCD = reinterpret_cast<NMLVCUSTOMDRAW*>(pNMHDR);
@@ -1294,6 +1294,11 @@ void CPPageAccelTbl::OnEndListLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
     *pResult = FALSE;
 
     if (!m_list.m_fInPlaceDirty) {
+        return;
+    }
+
+    // null text means the edit was cancelled with Esc
+    if (!pItem->pszText) {
         return;
     }
 

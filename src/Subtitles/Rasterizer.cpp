@@ -74,20 +74,25 @@ Rasterizer::Rasterizer()
     , mEdgeNext(0)
     , mpScanBuffer(nullptr)
 {
-    int cpuinfo[4];
-    __cpuid(cpuinfo, 1);
-    //bool sse2    = cpuinfo[3] & (1 << 26);
-    //bool sse42   = cpuinfo[2] & (1 << 20);
-    bool avxflag = cpuinfo[2] & (1 << 28);
-    bool osxsave = cpuinfo[2] & (1 << 27);
-    bool xsave   = cpuinfo[2] & (1 << 26);
-    if (avxflag && osxsave && xsave) {
-        __cpuidex(cpuinfo, 7, 0);
-        if (cpuinfo[1] & (1 << 5)) {
-            unsigned long long xcrFeatureMask = _xgetbv(_XCR_XFEATURE_ENABLED_MASK);
-            m_bUseAVX2 = (xcrFeatureMask & 0x6) == 0x6;
+    // Every CWord has a rasterizer and cpuid is slow under a hypervisor, so detect once
+    static const bool bUseAVX2 = [] {
+        int cpuinfo[4];
+        __cpuid(cpuinfo, 1);
+        //bool sse2    = cpuinfo[3] & (1 << 26);
+        //bool sse42   = cpuinfo[2] & (1 << 20);
+        bool avxflag = cpuinfo[2] & (1 << 28);
+        bool osxsave = cpuinfo[2] & (1 << 27);
+        bool xsave   = cpuinfo[2] & (1 << 26);
+        if (avxflag && osxsave && xsave) {
+            __cpuidex(cpuinfo, 7, 0);
+            if (cpuinfo[1] & (1 << 5)) {
+                unsigned long long xcrFeatureMask = _xgetbv(_XCR_XFEATURE_ENABLED_MASK);
+                return (xcrFeatureMask & 0x6) == 0x6;
+            }
         }
-    }
+        return false;
+    }();
+    m_bUseAVX2 = bUseAVX2;
 }
 
 Rasterizer::~Rasterizer()
@@ -342,7 +347,14 @@ void Rasterizer::_EvaluateLine(int x0, int y0, int x1, int y1)
 
     y1 = (y1 - 5) >> 3;
 
-    ASSERT(y1 < m_pOutlineData->mHeight);
+    const int h = m_pOutlineData->mHeight;
+
+    // the outline is sized to cover every edge, but a sizing mismatch must
+    // not write outside the scanline buffer or the overlay
+    ASSERT(iy >= 0 && y1 < h);
+    iy = std::clamp(iy, 0, h);
+    y = (iy << 3) + 4;
+    y1 = std::clamp(y1, -1, h - 1);
 
     if (iy <= y1) {
         __int64 invslope = (__int64(x1 - x0) << 16) / dy;
@@ -358,7 +370,7 @@ void Rasterizer::_EvaluateLine(int x0, int y0, int x1, int y1)
         xacc += (invslope * (y - y0)) >> 3;
 
         while (iy <= y1) {
-            int ix = (int)((xacc + 32768) >> 16);
+            int ix = std::clamp((int)((xacc + 32768) >> 16), 0, m_pOutlineData->mWidth);
 
             mpEdgeBuffer[mEdgeNext].next = mpScanBuffer[iy];
             mpEdgeBuffer[mEdgeNext].posandflag = (ix << 1) | flag;
@@ -511,6 +523,9 @@ bool Rasterizer::ScanConvert()
                 continue;
             } else {
                 bezier_idx = 0;
+                if (pt == PT_BSPLINEPATCHTO && i >= 3 && (mPathPoints - (i - 3) >= 4)) {
+                    AnalyzeBezierMinMax(i - 3, true, minx, maxx, miny, maxy);
+                }
             }
 
             if (ix < minx) {
@@ -1929,6 +1944,11 @@ CRect Rasterizer::Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int x
 
     bbox.SetRect(x, y, x + w, y + h);
     bbox &= CRect(0, 0, spd.w, spd.h);
+
+    // A single colour with zero alpha leaves dst unchanged in every blend path
+    if (switchpts[1] == DWORD_MAX && (switchpts[0] >> 24) == 0) {
+        return bbox;
+    }
 
     BYTE* srcBody = m_pOverlayData->mpOverlayBufferBody + m_pOverlayData->mOverlayPitch * yo + xo;
     BYTE* srcBorder = m_pOverlayData->mpOverlayBufferBorder + m_pOverlayData->mOverlayPitch * yo + xo;

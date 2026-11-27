@@ -88,6 +88,12 @@ bool CYoutubeDLInstance::Run(CString url)
 
     YDL_LOG(L"%s", url);
 
+    // a quote is not a valid URL character
+    if (url.Find(_T('"')) >= 0) {
+        YDL_LOG(L"Rejected URL containing a quote");
+        return false;
+    }
+
     bool ytdlp = true;
     CString args = _T("\"") + GetYDLExePath(&ytdlp) + _T("\" -J --no-warnings");
     if (!s.sYDLSubsPreference.IsEmpty()) {
@@ -97,13 +103,14 @@ bool CYoutubeDLInstance::Run(CString url)
     if (url.Find(_T("list=")) > 0) {
         args.Append(_T(" --ignore-errors --no-playlist"));
     }
-    args.Append(_T(" \"") + url + _T("\""));
     if (ytdlp) {
         WCHAR lpszTempPath[MAX_PATH] = { 0 };
         if (GetTempPathW(MAX_PATH, lpszTempPath)) {
-            args.AppendFormat(_T(" -P temp:\"%s\""), lpszTempPath);
+            args.Append(_T(" -P ") + PathUtils::QuoteArg(CString(_T("temp:")) + lpszTempPath));
         }
     }
+    // the URL goes last, after "--", so no part of it can be read as an option
+    args.Append(_T(" -- ") + PathUtils::QuoteArg(url));
 
     ZeroMemory(&proc_info, sizeof(PROCESS_INFORMATION));
     ZeroMemory(&startup_info, sizeof(STARTUPINFO));
@@ -472,7 +479,9 @@ bool GetYDLStreamDetails(const Value& format, YDLStreamDetails& details, bool re
     bool canuse = true;
     details = { _T(""), _T(""), 0, 0, _T(""), _T(""), _T(""), false, false, 0, 0, 0, _T(""), _T(""), _T(""), 0, 0, 0, _T("") };
 
-    details.url = format[_T("url")].GetString();
+    if (format.HasMember(_T("url")) && format[_T("url")].IsString()) {
+        details.url = format[_T("url")].GetString();
+    }
     if (details.url.IsEmpty()) {
         #if YDL_TRACE
         YDL_LOG(_T("empty url\n"));
@@ -517,7 +526,7 @@ bool GetYDLStreamDetails(const Value& format, YDLStreamDetails& details, bool re
     if (format.HasMember(_T("language_preference")) && format[_T("language_preference")].IsInt()) {
         details.lang_pref = format[_T("language_preference")].GetInt();
     }
-    if (format.HasMember(_T("http_headers")) && format[_T("http_headers")].HasMember(_T("User-Agent"))) {
+    if (format.HasMember(_T("http_headers")) && format[_T("http_headers")].IsObject() && format[_T("http_headers")].HasMember(_T("User-Agent")) && format[_T("http_headers")][_T("User-Agent")].IsString()) {
         details.useragent = CString(format[_T("http_headers")][_T("User-Agent")].GetString());
     }
 
@@ -583,6 +592,17 @@ bool GetYDLStreamDetails(const Value& format, YDLStreamDetails& details, bool re
     }
     #endif
 
+    // guess missing width value
+    if (canuse && details.has_video && details.width == 0 && details.height >= 0) {
+        if (details.format_id.Find(L"portrait") >= 0) {
+            // swap if vertical video
+            details.width = details.height;
+            details.height = details.width * 16 / 9;
+        } else {
+            details.width = details.height * 16 / 9;
+        }
+    }
+
     return canuse;
 }
 
@@ -606,6 +626,15 @@ bool IsBetterYDLStream(YDLStreamDetails& first, YDLStreamDetails& second, int ma
             if (second.video_score > first.video_score) {
                 return true;
             }
+        }
+
+        // prefer landscape over portrait
+        if (first.height > first.width) {
+            if (second.height <= second.width) {
+                return true;
+            }
+        } else if (second.height > second.width) {
+            return false;
         }
 
         // Video resolution
@@ -787,14 +816,13 @@ bool filterAudio(const Value& formats, YDLStreamDetails& ydl_sd)
     return found;
 }
 
-bool CYoutubeDLInstance::GetHttpStreams(CAtlList<YDLStreamURL>& streams, YDLPlaylistInfo& info, CString& useragent)
+bool CYoutubeDLInstance::GetHttpStreams(std::list<YDLStreamURL>& streams, YDLPlaylistInfo& info, CString& useragent)
 {
     CString url;
     CString extractor;
     YDLStreamDetails ydl_sd;
-    YDLStreamURL stream;
 
-    if (pJSON->d.IsObject() && pJSON->d.HasMember(_T("extractor"))) {
+    if (pJSON->d.IsObject() && pJSON->d.HasMember(_T("extractor")) && pJSON->d[_T("extractor")].IsString()) {
         extractor = pJSON->d[_T("extractor")].GetString();
     } else {
         return false;
@@ -803,6 +831,8 @@ bool CYoutubeDLInstance::GetHttpStreams(CAtlList<YDLStreamURL>& streams, YDLPlay
     auto& s = AfxGetAppSettings();
 
     if (!bIsPlaylist) {
+        YDLStreamURL stream;
+
         if (pJSON->d.HasMember(_T("title")) && !pJSON->d[_T("title")].IsNull()) {
             stream.title = pJSON->d[_T("title")].GetString();
         }
@@ -812,7 +842,7 @@ bool CYoutubeDLInstance::GetHttpStreams(CAtlList<YDLStreamURL>& streams, YDLPlay
                 stream.video_url = pJSON->d[_T("url")].GetString();
                 stream.audio_url = _T("");
                 if (!stream.video_url.IsEmpty()) {
-                    streams.AddTail(stream);
+                    streams.push_back(stream);
                     return true;
                 }
             }
@@ -854,12 +884,12 @@ bool CYoutubeDLInstance::GetHttpStreams(CAtlList<YDLStreamURL>& streams, YDLPlay
                     }
                 }
             }
-            streams.AddTail(stream);
+            streams.push_back(stream);
             useragent = ydl_sd.useragent;
         } else if (filterAudio(pJSON->d[_T("formats")], ydl_sd)) {
             stream.audio_url = ydl_sd.url;
             stream.video_url = _T("");
-            streams.AddTail(stream);
+            streams.push_back(stream);
             useragent = ydl_sd.useragent;
         }
     } else {
@@ -875,13 +905,14 @@ bool CYoutubeDLInstance::GetHttpStreams(CAtlList<YDLStreamURL>& streams, YDLPlay
             for (rapidjson::SizeType i = 0; i < entries.Size(); i++) {
                 YDL_LOG(_T("Playlist entry %d"), i);
                 const Value& entry = entries[i];
+                YDLStreamURL stream;
 
                 if (!entry.HasMember(_T("formats")) || entry[_T("formats")].IsNull()) {
                     if (entry.HasMember(_T("url")) && !entry[_T("url")].IsNull()) {
                         stream.video_url = entry[_T("url")].GetString();
                         stream.audio_url = _T("");
                         if (!stream.video_url.IsEmpty()) {
-                            streams.AddTail(stream);
+                            streams.push_back(stream);
                         }
                     }
                     continue;
@@ -918,14 +949,14 @@ bool CYoutubeDLInstance::GetHttpStreams(CAtlList<YDLStreamURL>& streams, YDLPlay
                             stream.audio_url = ydl_sd.url;
                         }
                     }
-                    streams.AddTail(stream);
+                    streams.push_back(stream);
                     if (i == 0) {
                         useragent = ydl_sd.useragent;
                     }
                 } else if (filterAudio(entry[_T("formats")], ydl_sd)) {
                     stream.audio_url = ydl_sd.url;
                     stream.video_url = _T("");
-                    streams.AddTail(stream);
+                    streams.push_back(stream);
                     if (i == 0) {
                         useragent = ydl_sd.useragent;
                     }
@@ -933,7 +964,7 @@ bool CYoutubeDLInstance::GetHttpStreams(CAtlList<YDLStreamURL>& streams, YDLPlay
             }
         }
     }
-    return !streams.IsEmpty();
+    return !streams.empty();
 }
 
 bool CYoutubeDLInstance::loadJSON()
@@ -953,9 +984,9 @@ bool CYoutubeDLInstance::loadJSON()
     return true;
 }
 
-void CYoutubeDLInstance::loadSub(const Value& obj, CAtlList<YDLSubInfo>& subs, bool isAutomaticCaptions /*= false*/) {
+void CYoutubeDLInstance::loadSub(const Value& obj, std::list<YDLSubInfo>& subs, bool isAutomaticCaptions /*= false*/) {
     auto& s = AfxGetAppSettings();
-    CAtlList<CString> preferlist;
+    std::list<CString> preferlist;
     if (!s.sYDLSubsPreference.IsEmpty()) {
         if (s.sYDLSubsPreference.Find(_T(',')) != -1) {
             ExplodeMin(s.sYDLSubsPreference, preferlist, ',');
@@ -964,11 +995,11 @@ void CYoutubeDLInstance::loadSub(const Value& obj, CAtlList<YDLSubInfo>& subs, b
         }
     }
     if (!isAutomaticCaptions) {
-        subs.RemoveAll();
+        subs.clear();
     }
     for (Value::ConstMemberIterator iter = obj.MemberBegin(); iter != obj.MemberEnd(); ++iter) {
         CString lang(iter->name.GetString());
-        if (!preferlist.IsEmpty() && !isPrefer(preferlist, lang)) {
+        if (!preferlist.empty() && !isPrefer(preferlist, lang)) {
             continue;
         }
         if (iter->value.IsArray()) {
@@ -989,7 +1020,7 @@ void CYoutubeDLInstance::loadSub(const Value& obj, CAtlList<YDLSubInfo>& subs, b
                 }
                 if (!sub.url.IsEmpty() || !sub.data.IsEmpty()) {
                     if (sub.ext.IsEmpty() || sub.ext == _T("vtt") || sub.ext == _T("ass") || sub.ext == _T("srt")) {
-                        subs.AddTail(sub);
+                        subs.push_back(sub);
                     }
                 }
             }
@@ -997,10 +1028,8 @@ void CYoutubeDLInstance::loadSub(const Value& obj, CAtlList<YDLSubInfo>& subs, b
     }
 }
 
-bool CYoutubeDLInstance::isPrefer(CAtlList<CString>& list, CString& lang) {
-    POSITION pos = list.GetHeadPosition();
-    while (pos) {
-        CString la = list.GetNext(pos);
+bool CYoutubeDLInstance::isPrefer(std::list<CString>& list, CString& lang) {
+    for (const CString& la : list) {
         if (lang.Left(la.GetLength()) == la) return true;
     }
     return false;

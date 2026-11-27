@@ -14,11 +14,15 @@
 #include "Translations.h"
 #include "ImageGrayer.h"
 #include "CMPCThemePropPageButton.h"
+#include "CMPCThemeMenu.h"
+#include "CMPCThemePropPageFrame.h"
 #include <dwmapi.h>
 #undef SubclassWindow
 
 using DLGTEMPLATEEX = _DialogSplitHelper::DLGTEMPLATEEX;
 using DLGITEMTEMPLATEEX = _DialogSplitHelper::DLGITEMTEMPLATEEX;
+
+const UINT CMPCThemeUtil::WM_MPCTHEMECHANGED = RegisterWindowMessage(_T("MPC-HC Theme Changed"));
 
 CBrush CMPCThemeUtil::contentBrush;
 CBrush CMPCThemeUtil::windowBrush;
@@ -281,33 +285,42 @@ void CMPCThemeUtil::subClassFileDialogWidgets(HWND widget, HWND parent, wchar_t*
     }
 }
 
-void CMPCThemeUtil::subClassFileDialog(CWnd* wnd) {
-    if (AfxGetAppSettings().bWindows10DarkThemeActive) {
-        initHelperObjects();
+//called from the dialog's own OnFolderChange, the first callback at which the injected controls exist;
+//the dialog is not visible yet, so this does not depend on the player being the active window.
+//hard coded behavior for windows 10 dark theme file dialogs, irrespective of theme loaded by user (fixing windows bugs)
+void CMPCThemeUtil::subClassFileDialog(IFileDialog* pfd) {
+    if (fileDialogSubclassed || !pfd || !AfxGetAppSettings().bWindows10DarkThemeActive) { //OnFolderChange fires again on every navigation
+        return;
+    }
+    HWND dialogHandle = nullptr;
+    CComQIPtr<IOleWindow> pOleWindow(pfd);
+    if (!pOleWindow || FAILED(pOleWindow->GetWindow(&dialogHandle)) || !dialogHandle) {
+        return;
+    }
+    initHelperObjects();
 
-        HWND duiview = ::FindWindowExW(themableDialogHandle, NULL, L"DUIViewWndClassName", NULL);
-        HWND duihwnd = ::FindWindowExW(duiview, NULL, L"DirectUIHWND", NULL);
+    HWND duiview = ::FindWindowExW(dialogHandle, NULL, L"DUIViewWndClassName", NULL);
+    HWND duihwnd = ::FindWindowExW(duiview, NULL, L"DirectUIHWND", NULL);
 
-        if (duihwnd) { //we found the FileDialog
-            if (dialogProminentControlStringID) { //if this is set, we assume there is a single prominent control (note, it's in the filedialog main window)
-                subClassFileDialogRecurse(wnd, themableDialogHandle, ProminentControlIDWidget);
-            } else {
-                subClassFileDialogRecurse(wnd, duihwnd, RecurseSinkWidgets);
-            }
-            themableDialogHandle = nullptr;
-            ::RedrawWindow(duiview, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN);
+    if (duihwnd) { //we found the FileDialog
+        if (dialogProminentControlStringID) { //if this is set, we assume there is a single prominent control (note, it's in the filedialog main window)
+            subClassFileDialogRecurse(dialogHandle, ProminentControlIDWidget);
+        } else {
+            subClassFileDialogRecurse(duihwnd, RecurseSinkWidgets);
         }
+        fileDialogSubclassed = true;
+        ::RedrawWindow(duiview, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN);
     }
 }
 
-void CMPCThemeUtil::subClassFileDialogRecurse(CWnd* wnd, HWND hWnd, FileDialogWidgetSearch searchType) {
+void CMPCThemeUtil::subClassFileDialogRecurse(HWND hWnd, FileDialogWidgetSearch searchType) {
     HWND pChild = ::GetWindow(hWnd, GW_CHILD);
     while (pChild) {
         WCHAR childWindowClass[MAX_PATH];
         ::GetClassName(pChild, childWindowClass, _countof(childWindowClass));
         if (searchType == RecurseSinkWidgets) {
             if (0 == _wcsicmp(childWindowClass, L"FloatNotifySink")) { //children are the injected controls
-                subClassFileDialogRecurse(wnd, pChild, ThemeAllChildren); //recurse and theme all children of sink
+                subClassFileDialogRecurse(pChild, ThemeAllChildren); //recurse and theme all children of sink
             }
         } else if (searchType == ThemeAllChildren) {
             subClassFileDialogWidgets(pChild, hWnd, childWindowClass);
@@ -357,73 +370,70 @@ static inline const WORD& DlgTemplateItemCount(const DLGTEMPLATE* pTemplate)
 
 bool CMPCThemeUtil::ModifyTemplates(CPropertySheet* sheet, CRuntimeClass* pageClass, DWORD id, DWORD addStyle, DWORD removeStyle)
 {
-    if (AppIsThemeLoaded()) {
-        PROPSHEETHEADER m_psh = sheet->m_psh;
-        for (int i = 0; i < sheet->GetPageCount(); i++) {
-            CPropertyPage* pPage = sheet->GetPage(i);
-            if (nullptr == AfxDynamicDownCast(pageClass, pPage)) {
-                continue;
+    //the patch lands in the loaded resource, so it outlives the theme it was made for;
+    //with the theme off, take it back out again
+    if (!AppNeedsThemedControls()) {
+        std::swap(addStyle, removeStyle);
+    }
+    PROPSHEETHEADER m_psh = sheet->m_psh;
+    for (int i = 0; i < sheet->GetPageCount(); i++) {
+        CPropertyPage* pPage = sheet->GetPage(i);
+        if (nullptr == AfxDynamicDownCast(pageClass, pPage)) {
+            continue;
+        }
+        PROPSHEETPAGE* tpsp = &pPage->m_psp;
+
+        const DLGTEMPLATE* pTemplate;
+        if (tpsp->dwFlags & PSP_DLGINDIRECT) {
+            pTemplate = tpsp->pResource;
+        } else {
+            HRSRC hResource = ::FindResource(tpsp->hInstance, tpsp->pszTemplate, RT_DIALOG);
+            if (hResource == NULL) {
+                return false;
             }
-            PROPSHEETPAGE* tpsp = &pPage->m_psp;
-
-            const DLGTEMPLATE* pTemplate;
-            if (tpsp->dwFlags & PSP_DLGINDIRECT) {
-                pTemplate = tpsp->pResource;
-            } else {
-                HRSRC hResource = ::FindResource(tpsp->hInstance, tpsp->pszTemplate, RT_DIALOG);
-                if (hResource == NULL) {
-                    return false;
-                }
-                HGLOBAL hTemplate = LoadResource(tpsp->hInstance, hResource);
-                if (hTemplate == NULL) {
-                    return false;
-                }
-                pTemplate = (LPCDLGTEMPLATE)LockResource(hTemplate);
-                if (pTemplate == NULL) {
-                    return false;
-                }
+            HGLOBAL hTemplate = LoadResource(tpsp->hInstance, hResource);
+            if (hTemplate == NULL) {
+                return false;
             }
+            pTemplate = (LPCDLGTEMPLATE)LockResource(hTemplate);
+            if (pTemplate == NULL) {
+                return false;
+            }
+        }
 
-            if (afxOccManager != NULL) {
-                DLGITEMTEMPLATE* pItem = _AfxFindFirstDlgItem(pTemplate);
-                DLGITEMTEMPLATE* pNextItem;
-                BOOL bDialogEx = IsDialogEx(pTemplate);
+        if (afxOccManager != NULL) {
+            DLGITEMTEMPLATE* pItem = _AfxFindFirstDlgItem(pTemplate);
+            DLGITEMTEMPLATE* pNextItem;
+            BOOL bDialogEx = IsDialogEx(pTemplate);
 
-                int iItem, iItems = DlgTemplateItemCount(pTemplate);
+            int iItem, iItems = DlgTemplateItemCount(pTemplate);
 
-                for (iItem = 0; iItem < iItems; iItem++) {
-                    pNextItem = _AfxFindNextDlgItem(pItem, bDialogEx);
-                    DWORD dwOldProtect, tp;
-                    if (bDialogEx) {
-                        auto* pItemEx = (DLGITEMTEMPLATEEX*)pItem;
-                        if (pItemEx->id == id) {
-                            if (VirtualProtect(&pItemEx->style, sizeof(pItemEx->style), PAGE_READWRITE, &dwOldProtect)) {
-                                pItemEx->style |= addStyle;
-                                pItemEx->style &= ~removeStyle;
-                                VirtualProtect(&pItemEx->style, sizeof(pItemEx->style), dwOldProtect, &tp);
-                            }
-                        }
-                    } else {
-                        if (pItem->id == id) {
-                            if (VirtualProtect(&pItem->style, sizeof(pItem->style), PAGE_READWRITE, &dwOldProtect)) {
-                                pItem->style |= addStyle;
-                                pItem->style &= ~removeStyle;
-                                VirtualProtect(&pItem->style, sizeof(pItem->style), dwOldProtect, &tp);
-                            }
+            for (iItem = 0; iItem < iItems; iItem++) {
+                pNextItem = _AfxFindNextDlgItem(pItem, bDialogEx);
+                DWORD dwOldProtect, tp;
+                if (bDialogEx) {
+                    auto* pItemEx = (DLGITEMTEMPLATEEX*)pItem;
+                    if (pItemEx->id == id) {
+                        if (VirtualProtect(&pItemEx->style, sizeof(pItemEx->style), PAGE_READWRITE, &dwOldProtect)) {
+                            pItemEx->style |= addStyle;
+                            pItemEx->style &= ~removeStyle;
+                            VirtualProtect(&pItemEx->style, sizeof(pItemEx->style), dwOldProtect, &tp);
                         }
                     }
-                    pItem = pNextItem;
+                } else {
+                    if (pItem->id == id) {
+                        if (VirtualProtect(&pItem->style, sizeof(pItem->style), PAGE_READWRITE, &dwOldProtect)) {
+                            pItem->style |= addStyle;
+                            pItem->style &= ~removeStyle;
+                            VirtualProtect(&pItem->style, sizeof(pItem->style), dwOldProtect, &tp);
+                        }
+                    }
                 }
+                pItem = pNextItem;
             }
         }
     }
     return true;
-}
-
-void CMPCThemeUtil::enableFileDialogHook()
-{
-    CMainFrame* pMainFrame = AfxGetMainFrame();
-    pMainFrame->enableFileDialogHook(this);
 }
 
 HBRUSH CMPCThemeUtil::getCtlColorFileDialog(HDC hDC, UINT nCtlColor)
@@ -529,16 +539,23 @@ bool CMPCThemeUtil::getFixedFont(CFont& font, CDC* pDC, CWnd* wnd)
 
 bool CMPCThemeUtil::getFontByType(CFont& font, CWnd* wnd, int type, bool underline, bool bold)
 {
-    /* adipose: works poorly for dialogs as they cannot be scaled to fit zoomed fonts, only use for menus and status bars*/
-    GetMetrics();
-
     if (!wnd) {
         wnd = AfxGetMainWnd();
     }
 
-    //metrics will have the right fonts for the main window, but current window may be on another screen
-    DpiHelper dpiWindow, dpiMain;
+    DpiHelper dpiWindow;
     dpiWindow.Override(wnd->GetSafeHwnd());
+
+    return getFontByTypeForDpi(font, type, dpiWindow.DPIY(), underline, bold);
+}
+
+bool CMPCThemeUtil::getFontByTypeForDpi(CFont& font, int type, UINT dpi, bool underline, bool bold)
+{
+    /* adipose: works poorly for dialogs as they cannot be scaled to fit zoomed fonts, only use for menus and status bars*/
+    GetMetrics();
+
+    //metrics will have the right fonts for the main window, but current window may be on another screen
+    DpiHelper dpiMain;
     dpiMain.Override(AfxGetMainWnd()->GetSafeHwnd());
 
     LOGFONT* lf;
@@ -570,7 +587,7 @@ bool CMPCThemeUtil::getFontByType(CFont& font, CWnd* wnd, int type, bool underli
         lf = &nonClientMetrics.lfMessageFont;
     }
 
-    int newHeight = MulDiv(lf->lfHeight, dpiWindow.DPIY(), dpiMain.DPIY());
+    int newHeight = MulDiv(lf->lfHeight, dpi, dpiMain.DPIY());
     if (underline || bold || newHeight != lf->lfHeight) {
         LOGFONT tlf;
         memset(&tlf, 0, sizeof(LOGFONT));
@@ -988,15 +1005,91 @@ inline void FastFrameRect(CDC* pDC, const CRect& rect, COLORREF color) {
     pDC->FillSolidRect(rect.right - 1, rect.top, 1, rect.Height(), color);
 }
 
-void CMPCThemeUtil::drawCheckBoxInternal(UINT checkState, bool isHover, bool useSystemSize, CRect rectCheck, CDC* pDC, bool isRadio, CPngImage* image, int size) {
-    COLORREF borderClr, bgClr;
+//windows 11 style: a fluent check box or radio, drawn instead of the windows 10 images, which exist because windows 10
+//had no clean way to draw dark ones. it keeps the image's size for this dpi, so the gap to the label is unchanged
+static void drawFluentCheckOrRadio(UINT checkState, bool isHover, CRect rect, CDC* pDC, bool isRadio, int size, bool isDisabled) {
+    const int side = (std::min)({ size > 0 ? size : INT_MAX, rect.Width(), rect.Height() });
+    CRect box(CPoint(rect.left, rect.top + (rect.Height() - side) / 2), CSize(side, side));
+
+    //the top left pixel lies outside both the rounded box and the circle, so it holds the background. repaint the square
+    //with it first, or antialiased edges drawn over the previous frame would darken with every repaint
+    COLORREF bg = pDC->GetPixel(box.left, box.top);
+    if (bg != CLR_INVALID) {
+        pDC->FillSolidRect(box, bg);
+    }
+
+    const bool on = checkState != BST_UNCHECKED;
+    auto gdip = [](COLORREF c) { return Gdiplus::Color(GetRValue(c), GetGValue(c), GetBValue(c)); };
+    Gdiplus::Graphics gfx(pDC->m_hDC);
+    gfx.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias8x8);
+    gfx.SetPixelOffsetMode(Gdiplus::PixelOffsetModeHalf); //pixel edges on whole coordinates, or the stroke straddles two rows and the bottom one is cut
+
+    const Gdiplus::REAL x = (Gdiplus::REAL)box.left, y = (Gdiplus::REAL)box.top, d = (Gdiplus::REAL)side;
+    const Gdiplus::REAL half = 0.5f, inner = d - 1.0f; //1px stroke centred on the pixel grid
+    COLORREF fillClr, borderClr, glyphClr;
+    if (isDisabled) {
+        fillClr = on ? CMPCTheme::CheckboxDisabledCheckedColor : CMPCTheme::WindowBGColor;
+        borderClr = on ? CMPCTheme::CheckboxDisabledCheckedColor : CMPCTheme::CheckboxDisabledBorderColor;
+        glyphClr = CMPCTheme::CheckboxDisabledGlyphColor;
+    } else {
+        fillClr = on ? CMPCTheme::CheckboxCheckedColor : isHover ? CMPCTheme::CheckboxBGHoverColor : CMPCTheme::CheckboxBGColor;
+        borderClr = on ? CMPCTheme::CheckboxCheckedColor : isHover ? CMPCTheme::CheckboxBorderHoverColor : CMPCTheme::CheckboxBorderColor;
+        glyphClr = CMPCTheme::CheckboxGlyphColor;
+    }
+    Gdiplus::SolidBrush fill(gdip(fillClr));
+    Gdiplus::Pen border(gdip(borderClr), 1.0f);
+    Gdiplus::Pen glyph(gdip(glyphClr), (std::max)(1.3f, d * 0.11f));
+    glyph.SetLineCap(Gdiplus::LineCapRound, Gdiplus::LineCapRound, Gdiplus::DashCapRound);
+    glyph.SetLineJoin(Gdiplus::LineJoinRound);
+
+    if (isRadio) {
+        gfx.FillEllipse(&fill, x + half, y + half, inner, inner);
+        gfx.DrawEllipse(&border, x + half, y + half, inner, inner);
+        if (on) {
+            Gdiplus::SolidBrush dot(gdip(glyphClr));
+            const Gdiplus::REAL dd = d * 0.42f;
+            gfx.FillEllipse(&dot, x + (d - dd) / 2, y + (d - dd) / 2, dd, dd);
+        }
+    } else {
+        const Gdiplus::REAL e = 2 * (std::max)(2.0f, d * 0.2f); //corner diameter; fluent rounds a 20px box by 4px
+        const Gdiplus::REAL l = x + half, t = y + half;
+        Gdiplus::GraphicsPath path;
+        path.AddArc(l, t, e, e, 180, 90);
+        path.AddArc(l + inner - e, t, e, e, 270, 90);
+        path.AddArc(l + inner - e, t + inner - e, e, e, 0, 90);
+        path.AddArc(l, t + inner - e, e, e, 90, 90);
+        path.CloseFigure();
+        gfx.FillPath(&fill, &path);
+        gfx.DrawPath(&border, &path);
+        if (checkState == BST_CHECKED) {
+            Gdiplus::PointF pts[] = { { x + d * 0.25f, y + d * 0.52f }, { x + d * 0.43f, y + d * 0.70f }, { x + d * 0.76f, y + d * 0.33f } };
+            gfx.DrawLines(&glyph, pts, 3);
+        } else if (checkState == BST_INDETERMINATE) {
+            gfx.DrawLine(&glyph, x + d * 0.3f, y + d * 0.5f, x + d * 0.7f, y + d * 0.5f);
+        }
+    }
+}
+
+void CMPCThemeUtil::drawCheckBoxInternal(UINT checkState, bool isHover, bool useSystemSize, CRect rectCheck, CDC* pDC, bool isRadio, HBITMAP image, int size, bool isDisabled) {
+    if (CMPCTheme::isWindows11Style) {
+        drawFluentCheckOrRadio(checkState, isHover, rectCheck, pDC, isRadio, size, isDisabled);
+        return;
+    }
+    COLORREF borderClr, bgClr, glyphClr;
     COLORREF oldBkClr = pDC->GetBkColor(), oldTextClr = pDC->GetTextColor();
-    if (isHover) {
+    isHover = isHover && !isDisabled; //a disabled control never renders its hover state, nor picks the hover frame below
+    if (isDisabled) {
+        borderClr = CMPCTheme::CheckboxDisabledBorderColor;
+        bgClr = CMPCTheme::CheckboxBGColor;
+        glyphClr = CMPCTheme::CheckboxDisabledGlyphColor;
+    } else if (isHover) {
         borderClr = CMPCTheme::CheckboxBorderHoverColor;
         bgClr = CMPCTheme::CheckboxBGHoverColor;
+        glyphClr = CMPCTheme::CheckColor;
     } else {
         borderClr = CMPCTheme::CheckboxBorderColor;
         bgClr = CMPCTheme::CheckboxBGColor;
+        glyphClr = CMPCTheme::CheckColor;
     }
     if (useSystemSize) {
         int index;
@@ -1022,7 +1115,7 @@ void CMPCThemeUtil::drawCheckBoxInternal(UINT checkState, bool isHover, bool use
             pDC->FillSolidRect(drawRect, bgClr);
             if (checkState == BST_INDETERMINATE) {
                 drawRect.DeflateRect(2, 2);
-                pDC->FillSolidRect(drawRect, CMPCTheme::CheckColor);
+                pDC->FillSolidRect(drawRect, glyphClr);
             }
         } else {
             CDC mDC;
@@ -1049,21 +1142,53 @@ void CMPCThemeUtil::drawCheckBoxInternal(UINT checkState, bool isHover, bool use
             checkBMP.CreateBitmap(width, height, 1, 1, CMPCTheme::CheckBits);
             dcCheckBMP.SelectObject(&checkBMP);
 
-            pDC->SetBkColor(CMPCTheme::CheckColor);
+            pDC->SetBkColor(glyphClr);
             pDC->SetTextColor(bgClr);
             pDC->BitBlt(left, top, width, height, &dcCheckBMP, 0, 0, SRCCOPY);
         } else if (BST_INDETERMINATE == checkState) {
             rectCheck.DeflateRect(2, 2);
-            pDC->FillSolidRect(rectCheck, CMPCTheme::CheckColor);
+            pDC->FillSolidRect(rectCheck, glyphClr);
         }
     }
     pDC->SetBkColor(oldBkClr);
     pDC->SetTextColor(oldTextClr);
 }
 
-void CMPCThemeUtil::drawCheckBox(CWnd* window, UINT checkState, bool isHover, bool useSystemSize, CRect rectCheck, CDC* pDC, bool isRadio /*= false*/, UINT resourceID /*= 0*/) {
+//the windows 10 check box and radio strips hold only a regular and a hover frame, so a disabled one is greyed at
+//runtime, with the same treatment a disabled toolbar icon gets
+static bool grayCheckBoxStrip(CPngImage& source, CImage& dest) {
+    BITMAP bm;
+    if (!source.GetBitmap(&bm)) {
+        return false;
+    }
+
+    CImage strip; //ImageGrayer only handles 32bpp, and the strips load at whatever depth the png has
+    if (!strip.Create(bm.bmWidth, bm.bmHeight, 32, CImage::createAlphaChannel)) {
+        return false;
+    }
+
+    CDC srcDC;
+    srcDC.CreateCompatibleDC(nullptr);
+    CBitmap* oldBM = srcDC.SelectObject(&source);
+    CDC::FromHandle(strip.GetDC())->BitBlt(0, 0, bm.bmWidth, bm.bmHeight, &srcDC, 0, 0, SRCCOPY);
+    strip.ReleaseDC();
+    srcDC.SelectObject(oldBM);
+
+    BYTE* bits = static_cast<BYTE*>(strip.GetBits());
+    for (int y = 0; y < strip.GetHeight(); y++, bits += strip.GetPitch()) {
+        RGBQUAD* p = reinterpret_cast<RGBQUAD*>(bits);
+        for (int x = 0; x < strip.GetWidth(); x++) {
+            p[x].rgbReserved = 255; //the blit leaves the alpha byte at zero, which Gray() would multiply the result away with
+        }
+    }
+
+    return ImageGrayer::Gray(strip, dest, 0.5f); //the brightness UpdateColor() uses for a disabled image
+}
+
+void CMPCThemeUtil::drawCheckBox(CWnd* window, UINT checkState, bool isHover, bool useSystemSize, CRect rectCheck, CDC* pDC, bool isRadio /*= false*/, UINT resourceID /*= 0*/, bool isDisabled /*= false*/) {
     struct ImageCache {
         CPngImage image;
+        CImage disabledImage; //built on first use; both the png and the greying are fixed, so no theme change can stale it
         int size;
     };
     static std::map<UINT, ImageCache> cache;
@@ -1080,18 +1205,45 @@ void CMPCThemeUtil::drawCheckBox(CWnd* window, UINT checkState, bool isHover, bo
         newCache.size = bm.bmHeight;
     }
 
-    drawCheckBoxInternal(checkState, isHover, useSystemSize, rectCheck, pDC, isRadio, &cache[resourceID].image, cache[resourceID].size);
+    ImageCache& entry = cache[resourceID];
+    if (isDisabled && entry.disabledImage.IsNull()) {
+        grayCheckBoxStrip(entry.image, entry.disabledImage); //on failure we fall back to the regular strip below
+    }
+    HBITMAP strip = (isDisabled && !entry.disabledImage.IsNull()) ? (HBITMAP)entry.disabledImage : (HBITMAP)entry.image;
+
+    drawCheckBoxInternal(checkState, isHover, useSystemSize, rectCheck, pDC, isRadio, strip, entry.size, isDisabled);
 }
 
+//themed controls in dark mode on an os with the dark explorer theme: such windows get DarkMode_Explorer and the dark frame
 bool CMPCThemeUtil::canUseWin10DarkTheme()
 {
-    if (AppNeedsThemedControls()) {
+    if (AppNeedsThemedControls() && CMPCTheme::EffectiveThemeMode() == CMPCTheme::ModernThemeMode::DARK) {
         //        return false; //FIXME.  return false to test behavior for OS < Win10 1809
         RTL_OSVERSIONINFOW osvi = GetRealOSVersion();
-        bool ret = (osvi.dwMajorVersion = 10 && osvi.dwMajorVersion >= 0 && osvi.dwBuildNumber >= 17763); //dark theme first available in win 10 1809
+        bool ret = (osvi.dwMajorVersion >= 10 && osvi.dwBuildNumber >= 17763); //dark theme first available in win 10 1809
         return ret;
     }
     return false;
+}
+
+//the explorer visual style for the controls the theme dresses but does not fully draw (tree, list box, combo list, edit):
+//the dark one where canUseWin10DarkTheme, the light one where the light palette draws the controls (Windows 11 style),
+//and none where the controls are drawn without a visual style
+bool CMPCThemeUtil::canUseExplorerTheme()
+{
+    return canUseWin10DarkTheme() || (AppNeedsThemedControls() && CMPCTheme::EffectiveThemeMode() == CMPCTheme::ModernThemeMode::LIGHT);
+}
+
+LPCWSTR CMPCThemeUtil::explorerThemeName()
+{
+    return canUseWin10DarkTheme() ? L"DarkMode_Explorer" : canUseExplorerTheme() ? L"Explorer" : L"";
+}
+
+//the explorer style where the theme dresses the control, otherwise the default style back
+//(nullptr restores the default, where L"" would turn visual styles off)
+void CMPCThemeUtil::applyExplorerTheme(HWND hWnd)
+{
+    SetWindowTheme(hWnd, AppNeedsThemedControls() ? explorerThemeName() : nullptr, nullptr);
 }
 
 bool CMPCThemeUtil::IsBasicMode()
@@ -1168,6 +1320,111 @@ void CMPCThemeUtil::enableWindows10DarkFrame(CWnd* window)
                 data.cbData = sizeof(accent);
                 setWindowCompositionAttribute(window->GetSafeHwnd(), &data);
             }
+        }
+    }
+}
+
+//unlike enableWindows10DarkFrame, this also turns the dark frame off, for windows that outlive a theme change
+void CMPCThemeUtil::refreshWindows10DarkFrame(HWND hWnd)
+{
+    RTL_OSVERSIONINFOW osvi = GetRealOSVersion();
+    if (osvi.dwMajorVersion < 10 || osvi.dwBuildNumber < 17763) {
+        return;
+    }
+    HMODULE hUser = GetModuleHandleA("user32.dll");
+    if (hUser) {
+        pfnSetWindowCompositionAttribute setWindowCompositionAttribute = (pfnSetWindowCompositionAttribute)GetProcAddress(hUser, "SetWindowCompositionAttribute");
+        if (setWindowCompositionAttribute) {
+            BOOL dark = canUseWin10DarkTheme();
+            WINDOWCOMPOSITIONATTRIBDATA data;
+            data.Attrib = WCA_USEDARKMODECOLORS;
+            data.pvData = &dark;
+            data.cbData = sizeof(dark);
+            setWindowCompositionAttribute(hWnd, &data);
+            //the attribute alone leaves a caption that was already dark as it is; dwm needs telling too
+            const DWORD DWMWA_USE_IMMERSIVE_DARK_MODE_19 = 19, DWMWA_USE_IMMERSIVE_DARK_MODE_20 = 20; //the value moved in windows 10 20h1
+            if (FAILED(DwmSetWindowAttribute(hWnd, DWMWA_USE_IMMERSIVE_DARK_MODE_20, &dark, sizeof(dark)))) {
+                DwmSetWindowAttribute(hWnd, DWMWA_USE_IMMERSIVE_DARK_MODE_19, &dark, sizeof(dark));
+            }
+            ::SetWindowPos(hWnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+            //the caption is only repainted in the new colours on an activation change, so fake one;
+            //straight to DefWindowProc, as mfc keeps its own track of activation
+            BOOL active = ::GetForegroundWindow() == hWnd;
+            ::DefWindowProc(hWnd, WM_NCACTIVATE, !active, 0);
+            ::DefWindowProc(hWnd, WM_NCACTIVATE, active, 0);
+        }
+    }
+}
+
+//brushes created from the palette on first use; drop them so the next use picks up the new colours
+void CMPCThemeUtil::resetThemeCaches()
+{
+    contentBrush.DeleteObject();
+    windowBrush.DeleteObject();
+    controlAreaBrush.DeleteObject();
+    W10DarkThemeFileDialogInjectedBGBrush.DeleteObject();
+    if (AppIsThemeLoaded()) {
+        initHelperObjects();
+    }
+    CMPCThemeMenu::resetBrushes();
+    CMPCThemePropPageFrame::resetBrush();
+}
+
+static BOOL CALLBACK collectWindowProc(HWND hWnd, LPARAM lParam)
+{
+    reinterpret_cast<std::vector<HWND>*>(lParam)->push_back(hWnd);
+    return TRUE;
+}
+
+//tells every window of the ui thread that the theme changed, so the ones that set themselves up once at
+//creation (visual styles, colours handed to common controls, subclassed children) can do it again.
+//children hear it before their parents, so a parent can still override what a child picked for itself
+void CMPCThemeUtil::broadcastThemeChange()
+{
+    std::vector<HWND> topLevel;
+    ::EnumThreadWindows(GetCurrentThreadId(), collectWindowProc, (LPARAM)&topLevel);
+    for (HWND hWnd : topLevel) {
+        if (!::IsWindow(hWnd)) {
+            continue;
+        }
+        std::vector<HWND> windows = { hWnd };
+        ::EnumChildWindows(hWnd, collectWindowProc, (LPARAM)&windows); //parents come before their children
+        for (auto it = windows.rbegin(); it != windows.rend(); ++it) {
+            if (::IsWindow(*it)) {
+                ::SendMessage(*it, WM_MPCTHEMECHANGED, 0, 0);
+            }
+        }
+        if (WS_CAPTION == (::GetWindowLong(hWnd, GWL_STYLE) & WS_CAPTION)) {
+            refreshWindows10DarkFrame(hWnd);
+        }
+        ::RedrawWindow(hWnd, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
+    }
+}
+
+void CMPCThemeUtil::applyNativeMenuMode()
+{
+    static bool applied = false;
+    bool nativeMenus = static_cast<CMPlayerCApp*>(AfxGetApp())->m_bNativeMenus;
+    if (!nativeMenus && !applied) {
+        return;
+    }
+    //undocumented uxtheme exports. native menus are only offered on windows 11, where these ordinals are stable
+    enum PreferredAppMode { Default, AllowDark, ForceDark, ForceLight };
+    typedef PreferredAppMode(WINAPI* pfnSetPreferredAppMode)(PreferredAppMode);
+    typedef void (WINAPI* pfnFlushMenuThemes)();
+    HMODULE hUxtheme = GetModuleHandleW(L"uxtheme.dll");
+    if (hUxtheme) {
+        pfnSetPreferredAppMode setPreferredAppMode = (pfnSetPreferredAppMode)GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135));
+        pfnFlushMenuThemes flushMenuThemes = (pfnFlushMenuThemes)GetProcAddress(hUxtheme, MAKEINTRESOURCEA(136));
+        if (setPreferredAppMode && flushMenuThemes) {
+            if (nativeMenus) {
+                //force rather than allow, so menus follow the player theme even when it differs from the os
+                setPreferredAppMode(CMPCTheme::EffectiveThemeMode() == CMPCTheme::ModernThemeMode::DARK ? ForceDark : ForceLight);
+            } else { //turned off since, so hand the menus back to the os
+                setPreferredAppMode(Default);
+            }
+            flushMenuThemes();
+            applied = nativeMenus;
         }
     }
 }

@@ -1528,7 +1528,7 @@ STDMETHODIMP CStreamSwitcherFilter::Info(long lIndex, AM_MEDIA_TYPE** ppmt, DWOR
                 if (ppmt) {
                     bool found = false;
                     CComPtr<IPin> pPinUpstream;
-                    if (SUCCEEDED(m_pInput->ConnectedTo(&pPinUpstream)) && pPinUpstream) {
+                    if (SUCCEEDED(pInputPin->ConnectedTo(&pPinUpstream)) && pPinUpstream) {
                         // find audio input pin of upstream filter
                         if (CComQIPtr<IBaseFilter> pBF = GetFilterFromPin(pPinUpstream)) {
                             BeginEnumPins(pBF, pEP, pPin) {
@@ -1546,7 +1546,7 @@ STDMETHODIMP CStreamSwitcherFilter::Info(long lIndex, AM_MEDIA_TYPE** ppmt, DWOR
                         }
                     }
                     if (!found) {
-                        *ppmt = CreateMediaType(&m_pInput->CurrentMediaType());
+                        *ppmt = CreateMediaType(&pInputPin->CurrentMediaType());
                     }
                 }
 
@@ -1598,8 +1598,6 @@ STDMETHODIMP CStreamSwitcherFilter::Enable(long lIndex, DWORD dwFlags)
         return E_NOTIMPL;
     }
 
-    PauseGraph;
-
     bool bFound = false;
     int i = 0;
     CStreamSwitcherInputPin* pNewInputPin = nullptr;
@@ -1638,6 +1636,8 @@ STDMETHODIMP CStreamSwitcherFilter::Enable(long lIndex, DWORD dwFlags)
     if (!bFound) {
         return E_INVALIDARG;
     }
+
+    PauseGraph;
 
     SelectInput(pNewInputPin);
 

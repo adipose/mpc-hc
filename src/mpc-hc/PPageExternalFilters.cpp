@@ -355,8 +355,8 @@ void CPPageExternalFilters::OnUpdateDeleteType(CCmdUI* pCmdUI)
 
 bool IsExternalVideoRenderer(CLSID clsid)
 {
-    return clsid == CLSID_MPCVR || clsid == CLSID_MadVR || clsid == CLSID_DXR || clsid == CLSID_EnhancedVideoRenderer || clsid == CLSID_VideoMixingRenderer9 || clsid == CLSID_VideoMixingRenderer || \
-        clsid == CLSID_VideoRenderer || clsid == CLSID_VideoRendererDefault || clsid == CLSID_OverlayMixer || clsid == CLSID_OverlayMixer2 || clsid == CLSID_NullRenderer;
+    return clsid == CLSID_MPCVR || clsid == CLSID_MadVR || clsid == CLSID_DXR || clsid == CLSID_EnhancedVideoRenderer || clsid == CLSID_FrankyRenderer || clsid == CLSID_VideoMixingRenderer9 || \
+        clsid == CLSID_VideoMixingRenderer || clsid == CLSID_VideoRenderer || clsid == CLSID_VideoRendererDefault || clsid == CLSID_OverlayMixer || clsid == CLSID_OverlayMixer2 || clsid == CLSID_NullRenderer;
 }
 
 bool IgnoreExternalFilter(CLSID clsid)
@@ -842,14 +842,11 @@ DROPEFFECT CPPageExternalFilters::OnDropAccept(COleDataObject*, DWORD, CPoint)
     return DROPEFFECT_COPY;
 }
 
-void CPPageExternalFilters::OnDropFiles(CAtlList<CString>& slFiles, DROPEFFECT)
+void CPPageExternalFilters::OnDropFiles(std::list<CString>& slFiles, DROPEFFECT)
 {
     SetActiveWindow();
 
-    POSITION pos = slFiles.GetHeadPosition();
-
-    while (pos) {
-        CString fn = slFiles.GetNext(pos);
+    for (const CString& fn : slFiles) {
 
         CFilterMapper2 fm2(false);
         fm2.Register(fn);

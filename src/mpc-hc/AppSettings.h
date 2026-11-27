@@ -123,6 +123,7 @@ enum {
     VIDRNDT_DS_MADVR          = 12,
     VIDRNDT_DS_SYNC           = 13,
     VIDRNDT_DS_MPCVR          = 14,
+    VIDRNDT_DS_FRANKY         = 15,
 };
 
 // Enumeration for MCE remote control (careful : add 0x010000 for all keys!)
@@ -290,7 +291,7 @@ struct AutoChangeFullscreenMode {
     unsigned                    uDelay = 0u;
 };
 
-#define ACCEL_LIST_SIZE 206
+#define ACCEL_LIST_SIZE 207
 
 struct wmcmd_base : public ACCEL {
     BYTE mouse;
@@ -430,7 +431,7 @@ public:
     CWinLircClient();
 };
 
-#define APPSETTINGS_VERSION 9
+#define APPSETTINGS_VERSION 10
 
 struct DVD_POSITION {
     ULONGLONG           llDVDGuid = 0;
@@ -456,10 +457,8 @@ public:
         lastOpened = r.lastOpened;
         filePosition = r.filePosition;
         DVDPosition = r.DVDPosition;
-        fns.RemoveAll();
-        subs.RemoveAll();
-        fns.AddHeadList(&r.fns);
-        subs.AddHeadList(&r.subs);
+        fns = r.fns;
+        subs = r.subs;
         abRepeat = r.abRepeat;
         AudioTrackIndex = r.AudioTrackIndex;
         SubtitleTrackIndex = r.SubtitleTrackIndex;
@@ -471,9 +470,9 @@ public:
     CStringW hash;
     CString title;
     CString lastOpened;
-    CAtlList<CString> fns;
+    std::list<CString> fns;
     CString cue;
-    CAtlList<CString> subs;
+    std::list<CString> subs;
     REFERENCE_TIME filePosition=0;
     DVD_POSITION DVDPosition = {};
     ABRepeat abRepeat;
@@ -564,7 +563,7 @@ class CAppSettings
 public:
     // cmdline params
     UINT64 nCLSwitches;
-    CAtlList<CString>   slFiles, slDubs, slSubs, slFilters;
+    std::list<CString>  slFiles, slDubs, slSubs, slFilters;
     static std::map<DWORD, const wmcmd_base*> CommandIDToWMCMD;
 
     // Initial position (used by command line flags)
@@ -584,7 +583,7 @@ public:
     int             iMonitor;
 
     CString         ParseFileName(CString const& param);
-    void            ParseCommandLine(CAtlList<CString>& cmdln);
+    void            ParseCommandLine(std::list<CString>& cmdln);
 
     // Added a Debug display to the screen (/debug option)
     bool            fShowDebugInfo;
@@ -754,6 +753,7 @@ public:
 
     // Output
     CRenderersSettings m_RenderersSettings;
+    int             nSubPicQueueSize; // as chosen by the user, GetRenderersSettings() derives the effective size
     int             iDSVideoRendererType;
 
     CStringW        strAudioRendererDisplayName;
@@ -841,6 +841,7 @@ public:
 
     // Default Style
     STSStyle        subtitlesDefStyle;
+    bool            bSubtitleRoundedOpaqueBox;
 
     // Misc
     bool            bPreferDefaultForcedSubtitles;
@@ -865,6 +866,7 @@ public:
     int             iModernSeekbarHeight;
 
     CMPCTheme::ModernThemeMode eModernThemeMode;
+    int             iModernThemeStyle;
 
     int             iFullscreenDelay;
 
@@ -976,6 +978,8 @@ public:
 
     int             DebugLogMask;
 
+    bool            HasD3DCompiler47() const;
+
     bool            IsD3DFullscreen() const;
     CString         SelectedAudioRenderer() const;
     bool            IsISRAutoLoadEnabled() const;
@@ -1005,6 +1009,7 @@ public:
     static bool IsSubtitleRendererRegistered(SubtitleRenderer eSubtitleRenderer);
 
     static bool IsSubtitleRendererSupported(SubtitleRenderer eSubtitleRenderer, int videoRenderer);
+    bool RequiresDecoderCopyback(SubtitleRenderer subtitleRenderer) const;
 
     CSize GetAspectRatioOverride() const {
         ASSERT(fKeepAspectRatio && "Keep Aspect Ratio option have to be enabled if override value is used.");
@@ -1040,6 +1045,7 @@ public:
     bool bUseFreeType;
     bool bUseMediainfoLoadFileDuration;
     bool bPauseWhileDraggingSeekbar;
+    bool bPauseWhenMinimized;
     CStringA strOpenTypeLangHint;
 
     CStringW lastQuickOpenPath;
@@ -1050,6 +1056,7 @@ public:
     int iRedirectOpenToAppendThreshold;
     bool bFullscreenSeparateControls;
     bool bAlwaysUseShortMenu;
+    bool bWin11NativeMenus;
     int iStillVideoDuration;
     int iMouseLeftUpDelay;
 
@@ -1063,6 +1070,7 @@ public:
     int LastGPUCheck;
     CString gpuid1;
     CString gpuid2;
+    CString gpudriver1;
 
 private:
     struct FilterKey {
@@ -1113,6 +1121,8 @@ public:
     static std::multimap<CStringW, CStringW> LoadHistoryHashes(CStringW section, CStringW dateField);
     static void     PurgeExpiredHash(CStringW section, CStringW hash);
     void            LoadSettings();
+    void            ReadWindowsColorSettings();
+    void            UpdateThemeState();
     void            SaveExternalFilters() {
         if (bInitialized) {
             SaveExternalFilters(m_filters);
@@ -1129,8 +1139,8 @@ public:
         bInitialized = false;
     };
 
-    void            GetFav(favtype ft, CAtlList<CString>& sl) const;
-    void            SetFav(favtype ft, CAtlList<CString>& sl);
+    void            GetFav(favtype ft, std::list<CString>& sl) const;
+    void            SetFav(favtype ft, std::list<CString>& sl);
     void            AddFav(favtype ft, CString s);
 
     CBDAChannel*    FindChannelByPref(int nPrefNumber);

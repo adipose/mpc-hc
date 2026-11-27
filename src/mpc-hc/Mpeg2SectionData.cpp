@@ -142,11 +142,14 @@ CStringW CMpeg2DataParser::ConvertString(BYTE* pBuffer, size_t uLength)
         int nDestSize;
 
         if (pBuffer[0] == 0x10) {
+            if (uLength < 3) { // truncated code page selector
+                return strResult;
+            }
             pBuffer++;
             uLength--;
-            if (pBuffer[0] == 0x00) {
+            if (pBuffer[0] == 0x00 && pBuffer[1] < _countof(codepages10)) {
                 cp = codepages10[pBuffer[1]];
-            } else { // if (pBuffer[0] > 0x00)
+            } else {
                 // reserved for future use, use default codepage
                 cp = codepages[0];
             }
@@ -162,7 +165,7 @@ CStringW CMpeg2DataParser::ConvertString(BYTE* pBuffer, size_t uLength)
 
         // Work around a bug in MS MultiByteToWideChar with ISO/IEC 6937 and take care of the Euro symbol special case (step 1/2)...
         CArray<size_t> euroSymbolPos;
-        if (cp == 20269) {
+        if (cp == 20269 && uLength > 0) {
             BYTE tmp;
             for (size_t i = 0; i < uLength - 1; i++) {
                 if (pBuffer[i] >= 0xC1 && pBuffer[i] <= 0xCF && pBuffer[i] != 0xC9 && pBuffer[i] != 0xCC) {
@@ -587,7 +590,11 @@ HRESULT CMpeg2DataParser::ParsePMT(CBDAChannel& Channel)
                     SkipDescriptor(gb, nType, nLength);
                     break;
                 case DT_AAC_AUDIO:
-                    pes_stream_type = AUDIO_STREAM_AAC_LATM;
+                    // The AAC descriptor signals the profile, not the transport: stream_type 0x0F is ADTS
+                    // and 0x11 is LATM, so only fall back to LATM for other types such as private PES (0x06)
+                    if (pes_stream_type != AUDIO_STREAM_AAC && pes_stream_type != AUDIO_STREAM_AAC_LATM) {
+                        pes_stream_type = AUDIO_STREAM_AAC_LATM;
+                    }
                     SkipDescriptor(gb, nType, nLength);
                     break;
                 case DT_SUBTITLING:

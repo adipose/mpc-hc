@@ -69,7 +69,11 @@ CSubtitleInputPin::CSubtitleInputPin(CBaseFilter* pFilter, CCritSec* pLock, CCri
 
 CSubtitleInputPin::~CSubtitleInputPin()
 {
-    m_bExitDecodingThread = m_bStopDecoding = true;
+    {
+        // set under the lock so the notify cannot fall between the waiter's predicate check and its block
+        std::lock_guard<std::mutex> lock(m_mutexQueue);
+        m_bExitDecodingThread = m_bStopDecoding = true;
+    }
     m_condQueueReady.notify_one();
     if (m_decodeThread.joinable()) {
         m_decodeThread.join();
@@ -104,16 +108,19 @@ HRESULT CSubtitleInputPin::CompleteConnect(IPin* pReceivePin)
         CString name;
         LCID    lcid = 0;
 
-        if (psi != nullptr) {
+        if (psi != nullptr && m_mt.cbFormat >= sizeof(SUBTITLEINFO)) {
             dwOffset = psi->dwOffset;
 
-            lcid = ISOLang::ISO6392ToLcid(psi->IsoLang);
-            if (0 == lcid) { //try 639-1 in case it comes from BCP-47 (contains mix of 639-1 and 639-2)
-                lcid = ISOLang::ISO6391ToLcid(psi->IsoLang);
-            }
-            name = ISOLang::ISO639XToLanguage(psi->IsoLang);
+            CHAR isoLang[_countof(psi->IsoLang) + 1] = {};
+            memcpy(isoLang, psi->IsoLang, sizeof(psi->IsoLang));
 
-            CString trackName(psi->TrackName);
+            lcid = ISOLang::ISO6392ToLcid(isoLang);
+            if (0 == lcid) { //try 639-1 in case it comes from BCP-47 (contains mix of 639-1 and 639-2)
+                lcid = ISOLang::ISO6391ToLcid(isoLang);
+            }
+            name = ISOLang::ISO639XToLanguage(isoLang);
+
+            CString trackName(psi->TrackName, (int)wcsnlen(psi->TrackName, _countof(psi->TrackName)));
             trackName.Trim();
             if (!trackName.IsEmpty()) {
                 if (!name.IsEmpty()) {
@@ -124,9 +131,9 @@ HRESULT CSubtitleInputPin::CompleteConnect(IPin* pReceivePin)
                 }
                 name += trackName;
             }
-            if (name.IsEmpty()) {
-                name = _T("Unknown");
-            }
+        }
+        if (psi != nullptr && name.IsEmpty()) {
+            name = _T("Unknown");
         }
 
         name.Replace(_T(""), _T(""));
@@ -160,11 +167,12 @@ HRESULT CSubtitleInputPin::CompleteConnect(IPin* pReceivePin)
                 m_lastHeader.assign(m_mt.pbFormat + dwOffset, m_mt.pbFormat + m_mt.cbFormat);
             }
 
-            if (dwOffset > 0 && m_mt.cbFormat - dwOffset > 0) {
+            if (dwOffset > 0 && m_mt.cbFormat > dwOffset) {
                 CMediaType mt = m_mt;
-                if (mt.pbFormat[dwOffset + 0] != 0xef
+                if (dwOffset >= 3 && mt.cbFormat - dwOffset >= 3
+                        && mt.pbFormat[dwOffset + 0] != 0xef
                         && mt.pbFormat[dwOffset + 1] != 0xbb
-                        && mt.pbFormat[dwOffset + 2] != 0xfb) {
+                        && mt.pbFormat[dwOffset + 2] != 0xbf) {
                     dwOffset -= 3;
                     mt.pbFormat[dwOffset + 0] = 0xef;
                     mt.pbFormat[dwOffset + 1] = 0xbb;
@@ -185,7 +193,9 @@ HRESULT CSubtitleInputPin::CompleteConnect(IPin* pReceivePin)
                 return E_FAIL;
             }
             CVobSubStream* pVSS = (CVobSubStream*)(ISubStream*)m_pSubStream;
-            pVSS->Open(name, m_mt.pbFormat + dwOffset, m_mt.cbFormat - dwOffset);
+            if (m_mt.cbFormat >= dwOffset) {
+                pVSS->Open(name, m_mt.pbFormat + dwOffset, m_mt.cbFormat - dwOffset);
+            }
         } else if (IsRLECodedSub(&m_mt)) {
             if (m_mt.subtype == MEDIASUBTYPE_DVB_SUBTITLES) {
                 m_pSubStream = DEBUG_NEW CDVBSub(m_pSubLock, name, lcid);
@@ -509,7 +519,9 @@ REFERENCE_TIME CSubtitleInputPin::DecodeSample(const std::unique_ptr<SubtitleSam
                 LPCSTR data = (LPCSTR)pSample->data.data();
                 int dataSize = (int)pSample->data.size();
                 pRTS->m_LibassContext.SetFilterGraphFromFilter(m_pFilter);
-                pRTS->m_LibassContext.LoadASSSample((char*)data, dataSize, pSample->rtStart, pSample->rtStop);
+                if (pRTS->m_LibassContext.LoadASSSample((char*)data, dataSize, pSample->rtStart, pSample->rtStop)) {
+                    bInvalidate = true;
+                }
             } else
 #endif
             {
@@ -527,7 +539,9 @@ REFERENCE_TIME CSubtitleInputPin::DecodeSample(const std::unique_ptr<SubtitleSam
             CRenderedTextSubtitle* pRTS = (CRenderedTextSubtitle*)(ISubStream*)m_pSubStream;
 #if USE_LIBASS
             if (pRTS->m_LibassContext.IsLibassActive()) {
-                ass_process_chunk(pRTS->m_LibassContext.m_track.get(), (char*)pSample->data.data(), (int)pSample->data.size(), pSample->rtStart / 10000, (pSample->rtStop - pSample->rtStart) / 10000);
+                if (pRTS->m_LibassContext.ProcessChunk((const char*)pSample->data.data(), (int)pSample->data.size(), pSample->rtStart, pSample->rtStop)) {
+                    bInvalidate = true;
+                }
             } else
 #endif
             {

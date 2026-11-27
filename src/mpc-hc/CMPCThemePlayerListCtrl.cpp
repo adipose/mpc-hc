@@ -30,7 +30,7 @@ void CMPCThemePlayerListCtrl::PreSubclassWindow()
     if (!AppNeedsThemedControls()) {
         EnableToolTips(TRUE);
     } else {
-        if (CMPCThemeUtil::canUseWin10DarkTheme()) {
+        if (CMPCThemeUtil::canUseExplorerTheme()) {
             //SetWindowTheme(GetSafeHwnd(), L"DarkMode_Explorer", NULL);
         } else {
             SetWindowTheme(GetSafeHwnd(), L"", NULL);
@@ -47,6 +47,7 @@ void CMPCThemePlayerListCtrl::PreSubclassWindow()
 IMPLEMENT_DYNAMIC(CMPCThemePlayerListCtrl, CListCtrl)
 
 BEGIN_MESSAGE_MAP(CMPCThemePlayerListCtrl, CListCtrl)
+    ON_MPCTHEMECHANGED()
     ON_WM_PAINT()
     ON_WM_NCPAINT()
     ON_WM_CREATE()
@@ -415,6 +416,26 @@ int CMPCThemePlayerListCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
     return 0;
 }
 
+//owners that want a background of their own set it again when they get this message, which comes to them after their children
+LRESULT CMPCThemePlayerListCtrl::OnMPCThemeChanged(WPARAM wParam, LPARAM lParam)
+{
+    if (AppNeedsThemedControls()) {
+        SetWindowTheme(GetSafeHwnd(), CMPCThemeUtil::canUseExplorerTheme() ? nullptr : L"", nullptr);
+        if (nullptr == lvsToolTip.m_hWnd) {
+            CToolTipCtrl* t = GetToolTips();
+            if (nullptr != t) {
+                lvsToolTip.SubclassWindow(t->m_hWnd);
+            }
+        }
+        subclassHeader();
+        SetBkColor(CMPCTheme::ContentBGColor);
+    } else {
+        SetWindowTheme(GetSafeHwnd(), nullptr, nullptr);
+        SetBkColor(GetSysColor(COLOR_WINDOW));
+    }
+    return 0;
+}
+
 LRESULT CMPCThemePlayerListCtrl::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
     if (AppNeedsThemedControls() && !CMPCThemeUtil::IsBasicMode()) {
@@ -503,13 +524,20 @@ void CMPCThemePlayerListCtrl::drawItem(CDC* pDC, int nItem, int nSubItem, CRect 
             }
         }
 
+        if (!IsWindowEnabled()) { //a disabled list fades all of its text, so it wins over any subclass color
+            textColor = CMPCTheme::ContentTextDisabledFGColorFade;
+            bgColor = CMPCTheme::ListCtrlDisabledBGColor;
+        }
+
         pDC->SetTextColor(textColor);
         pDC->SetBkColor(bgColor);
 
         rectDC = rRow;
 
-        if (!IsWindowEnabled() && 0 == nSubItem) { //no gridlines, bg for full row
-            pDC->FillSolidRect(rRow, CMPCTheme::ListCtrlDisabledBGColor);
+        if (!IsWindowEnabled()) { //no gridlines when disabled
+            //every subitem fills with the disabled color, or the ones after the first paint the content color back over it
+            CRect rFill = (0 == nSubItem) ? rRow : rect; //full row on the first, so the area right of the last column is covered
+            pDC->FillSolidRect(rFill, CMPCTheme::ListCtrlDisabledBGColor);
         } else {
             pDC->FillSolidRect(rect, CMPCTheme::ContentBGColor); //no flicker because we have a memory dc
         }
@@ -547,7 +575,7 @@ void CMPCThemePlayerListCtrl::drawItem(CDC* pDC, int nItem, int nSubItem, CRect 
                         rIcon.DeflateRect(0, (rIcon.Height() - rIcon.Width()) / 2); //as tall as wide
                     }
 
-                    CMPCThemeUtil::drawCheckBox(GetParent(), imageIndex, false, false, rIcon, pDC);
+                    CMPCThemeUtil::drawCheckBox(GetParent(), imageIndex, false, false, rIcon, pDC, false, 0, !IsWindowEnabled());
                 } else {
                     if (dwStyle == LVS_ICON) {
                     } else if (smallImageList) {
@@ -569,7 +597,7 @@ void CMPCThemePlayerListCtrl::drawItem(CDC* pDC, int nItem, int nSubItem, CRect 
                 int cbYMargin = (rect.Height() - cbSize - 1) / 2;
                 int cbXMargin = (contentLeft - rect.left - cbSize) / 2;
                 CRect rcb = { rect.left + cbXMargin, rect.top + cbYMargin, rect.left + cbXMargin + cbSize, rect.top + cbYMargin + cbSize };
-                CMPCThemeUtil::drawCheckBox(GetParent(), isChecked, false, true, rcb, pDC, false, cbResID);
+                CMPCThemeUtil::drawCheckBox(GetParent(), isChecked, false, true, rcb, pDC, false, cbResID, !IsWindowEnabled());
             }
         }
 
@@ -720,7 +748,8 @@ BOOL CMPCThemePlayerListCtrl::EraseBkgnd(CDC* pDC, CRect updateRect) {
             pDC->ExcludeClipRect(region);
         }
 
-        pDC->FillSolidRect(r, CMPCTheme::ContentBGColor);
+        //a disabled list fills uniformly, as a native one does, so the area below the last row matches the rows
+        pDC->FillSolidRect(r, IsWindowEnabled() ? CMPCTheme::ContentBGColor : CMPCTheme::ListCtrlDisabledBGColor);
 
         // Grid line drawing remains the same...
         if (themeGridLines || (nullptr != customThemeInterface && customThemeInterface->UseCustomGrid())) {

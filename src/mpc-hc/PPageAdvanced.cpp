@@ -24,6 +24,7 @@
 #include "MainFrm.h"
 #include "EventDispatcher.h"
 #include <strsafe.h>
+#include "VersionHelpersInternal.h"
 #include "CrashReporter.h"
 #include "ExceptionHandler.h"
 
@@ -32,6 +33,7 @@ IMPLEMENT_DYNAMIC(CPPageAdvanced, CMPCThemePPageBase)
 CPPageAdvanced::CPPageAdvanced()
     : CMPCThemePPageBase(IDD, IDD)
 {
+    GetEventd().Connect(m_eventc, { MpcEvent::CHANGING_THEME });
 }
 
 void CPPageAdvanced::DoDataExchange(CDataExchange* pDX)
@@ -154,6 +156,12 @@ void CPPageAdvanced::InitSettings()
         { StrRes(IDS_STARTUP_PRESET_REMEMBER), StrRes(IDS_AG_VIEW_MINIMAL), StrRes(IDS_AG_VIEW_COMPACT), StrRes(IDS_AG_VIEW_NORMAL), StrRes(IDS_AG_VIEW_CUSTOM) },
         StrRes(IDS_PPAGEADVANCED_STARTUP_PRESET));
     addBoolItem(ALWAYS_USE_SHORT_MENU, IDS_RS_ALWAYS_USE_SHORT_MENU, false, s.bAlwaysUseShortMenu, StrRes(IDS_PPAGEADVANCED_ALWAYS_USE_SHORT_MENU));
+    if (IsWindowsVersionOrGreaterBuild(10, 0, 22000)) { //native menus are windows 11 only
+        addBoolItem(WIN11_NATIVE_MENUS, IDS_RS_WIN11_NATIVE_MENUS, false, s.bWin11NativeMenus, StrRes(IDS_PPAGEADVANCED_WIN11_NATIVE_MENUS));
+    }
+    addComboItem(MODERN_THEME_STYLE, IDS_RS_MODERNTHEMESTYLE, static_cast<int>(CMPCTheme::ModernThemeStyle::WINDOWSDEFAULT), s.iModernThemeStyle,
+        { StrRes(IDS_MODERN_THEME_STYLE_FOLLOW_OS), StrRes(IDS_MODERN_THEME_STYLE_WINDOWS10), StrRes(IDS_MODERN_THEME_STYLE_WINDOWS11) },
+        StrRes(IDS_PPAGEADVANCED_MODERN_THEME_STYLE));
     addIntItem(MOUSE_LEFTUP_DELAY, IDS_RS_MOUSE_LEFTUP_DELAY, 0, s.iMouseLeftUpDelay, std::make_pair(0, 1000), StrRes(IDS_PPAGEADVANCED_MOUSE_LEFTUP_DELAY));
     addIntItem(COVER_SIZE_LIMIT, IDS_RS_COVER_ART_SIZE_LIMIT, 600, s.nCoverArtSizeLimit, std::make_pair(0, INT_MAX), StrRes(IDS_PPAGEADVANCED_COVER_SIZE_LIMIT));
     addBoolItem(OPEN_REC_PANEL_WHEN_OPENING_DEVICE, IDS_RS_OPEN_REC_PANEL_WHEN_OPENING_DEVICE, true, s.bOpenRecPanelWhenOpeningDevice, StrRes(IDS_PPAGEADVANCED_OPEN_REC_PANEL_WHEN_OPENING_DEVICE));
@@ -170,6 +178,7 @@ void CPPageAdvanced::InitSettings()
     addIntItem(STREAMPOSPOLLER_INTERVAL, IDS_RS_TIME_REFRESH_INTERVAL, 100, s.nStreamPosPollerInterval, std::make_pair(40, 500), StrRes(IDS_PPAGEADVANCED_TIME_REFRESH_INTERVAL));
     addIntItem(REDIR_OPEN_TO_APPEND, IDS_RS_REDIRECT_OPEN_TO_APPEND_THRESHOLD, 1000, s.iRedirectOpenToAppendThreshold, std::make_pair(250, 5000), StrRes(IDS_PPAGEADVANCED_REDIRECT_OPEN_TO_APPEND_THRESHOLD));
     addBoolItem(PAUSE_WHILE_DRAGGING_SEEKBAR, IDS_RS_PAUSE_WHILE_DRAGGING_SEEKBAR, true, s.bPauseWhileDraggingSeekbar, StrRes(IDS_PPAGEADVANCED_PAUSE_WHILE_DRAGGING_SEEKBAR));
+    addBoolItem(PAUSE_WHEN_MINIMIZED, IDS_RS_PAUSE_WHEN_MINIMIZED, false, s.bPauseWhenMinimized, StrRes(IDS_PPAGEADVANCED_PAUSE_WHEN_MINIMIZED));
     addBoolItem(BLOCK_VSFILTER, IDS_RS_BLOCKVSFILTER, true, s.fBlockVSFilter, StrRes(IDS_PPAGEADVANCED_BLOCK_VSFILTER));
     addBoolItem(BLOCK_RDP, IDS_RS_BLOCKRDP, true, s.bBlockRDP, StrRes(IDS_PPAGEADVANCED_BLOCKRDP));
     addBoolItem(CAPTURE_DEINTERLACE, IDS_RS_CAPTURE_DEINTERLACE, false, s.bCaptureDeinterlace, StrRes(IDS_PPAGEADVANCED_CAPTURE_DEINTERLACE));
@@ -191,6 +200,7 @@ void CPPageAdvanced::InitSettings()
     addBoolItem(ADD_LANGCODE_WHEN_SAVE_SUBTITLES, IDS_RS_ADD_LANGCODE_WHEN_SAVE_SUBTITLES, false, s.bAddLangCodeWhenSaveSubtitles, StrRes(IDS_PPAGEADVANCED_ADD_LANGCODE_WHEN_SAVE_SUBTITLES));
     addBoolItem(LIBASS_FOR_SRT, IDS_RS_LIBASS_FOR_SRT, false, s.bRenderSRTUsingLibass, StrRes(IDS_PPAGEADVANCED_LIBASS_FOR_SRT));
     addBoolItem(USE_FREETYPE, IDS_RS_USE_FREETYPE, false, s.bUseFreeType, StrRes(IDS_PPAGEADVANCED_USE_FREETYPE));
+    addIntItem(SUB_GLYPH_CACHE_MB, IDS_RS_SUB_GLYPH_CACHE_MB, 64, s.m_RenderersSettings.iSubGlyphCacheMB, std::make_pair(16, 1024), StrRes(IDS_PPAGEADVANCED_SUB_GLYPH_CACHE_MB));
     addIntItem(AUTO_DOWNLOAD_SCORE_MOVIES, IDS_RS_AUTODOWNLOADSCOREMOVIES, 0x16, s.nAutoDownloadScoreMovies,
         std::make_pair(10, 30), StrRes(IDS_PPAGEADVANCED_SCORE));
     addIntItem(AUTO_DOWNLOAD_SCORE_SERIES, IDS_RS_AUTODOWNLOADSCORESERIES, 0x18, s.nAutoDownloadScoreSeries,
@@ -306,6 +316,8 @@ BOOL CPPageAdvanced::OnApply()
 {
     auto& s = AfxGetAppSettings();
     int oldHistoryMaxAgeDays = s.iHistoryMaxAgeDays;
+    int oldModernThemeStyle = s.iModernThemeStyle;
+    bool oldWin11NativeMenus = s.bWin11NativeMenus;
 
     for (int i = 0; i < m_list.GetItemCount(); i++) {
         if (IsHeaderRow(i)) {
@@ -319,6 +331,9 @@ BOOL CPPageAdvanced::OnApply()
     if (s.iHistoryMaxAgeDays != oldHistoryMaxAgeDays && s.iHistoryMaxAgeDays > 0) {
         s.MRU.rfe_last_added = 0; // force reload so the new age limit is applied immediately
         s.MRU.ReadMediaHistory();
+    }
+    if (s.iModernThemeStyle != oldModernThemeStyle || s.bWin11NativeMenus != oldWin11NativeMenus) {
+        m_eventc.FireEvent(MpcEvent::CHANGING_THEME);
     }
 
 #if !defined(_DEBUG) && USE_DRDUMP_CRASH_REPORTER

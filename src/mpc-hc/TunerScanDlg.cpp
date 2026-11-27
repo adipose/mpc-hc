@@ -161,7 +161,7 @@ void CTunerScanDlg::OnBnClickedSave()
             e->Delete();
         }
     }
-    m_pMainFrame->SetChannel(0);
+    m_pMainFrame->m_capture.SetChannel(0);
 
     OnOK();
 }
@@ -170,7 +170,7 @@ void CTunerScanDlg::OnBnClickedStart()
 {
     if (!m_bInProgress) {
         UpdateData(true);
-        CAutoPtr<TunerScanData> pTSD(DEBUG_NEW TunerScanData);
+        std::unique_ptr<TunerScanData> pTSD(DEBUG_NEW TunerScanData);
         pTSD->Hwnd           = m_hWnd;
         pTSD->FrequencyStart = m_ulFrequencyStart;
         pTSD->FrequencyStop  = m_ulFrequencyEnd;
@@ -180,20 +180,20 @@ void CTunerScanDlg::OnBnClickedStart()
         SaveScanSettings();
 
         m_ChannelList.DeleteAllItems();
-        m_pMainFrame->StartTunerScan(pTSD);
+        m_pMainFrame->m_capture.StartTunerScan(std::move(pTSD));
 
         SetProgress(true);
     } else {
-        m_pMainFrame->StopTunerScan();
+        m_pMainFrame->m_capture.StopTunerScan();
     }
 }
 
 void CTunerScanDlg::OnBnClickedCancel()
 {
     if (m_bInProgress) {
-        m_pMainFrame->StopTunerScan();
+        m_pMainFrame->m_capture.StopTunerScan();
     }
-    m_pMainFrame->SetChannel(AfxGetAppSettings().nDVBLastChannel);
+    m_pMainFrame->m_capture.SetChannel(AfxGetAppSettings().nDVBLastChannel);
 
     OnCancel();
 }

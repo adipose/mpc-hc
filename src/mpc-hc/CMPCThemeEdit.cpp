@@ -19,6 +19,7 @@ CMPCThemeEdit::~CMPCThemeEdit()
 
 IMPLEMENT_DYNAMIC(CMPCThemeEdit, CEdit)
 BEGIN_MESSAGE_MAP(CMPCThemeEdit, CEdit)
+    ON_MPCTHEMECHANGED()
     ON_WM_NCPAINT()
     ON_WM_ERASEBKGND()
     ON_REGISTERED_MESSAGE(WMU_RESIZESUPPORT, ResizeSupport)
@@ -109,7 +110,7 @@ void CMPCThemeEdit::SetCompWindowPos(HIMC himc, UINT start) {
 }
 
 LRESULT CMPCThemeEdit::OnContextMenu(WPARAM wParam, LPARAM lParam) {
-    if (AppIsThemeLoaded()) {
+    if (AppNeedsThemedMenus()) {
         if (GetFocus() != this) {
             SetFocus();
         }
@@ -282,9 +283,12 @@ LRESULT CMPCThemeEdit::OnContextMenu(WPARAM wParam, LPARAM lParam) {
                     if (himc) {
                         ::ImmReleaseContext(this->m_hWnd, himc);
                     }
+                    editMenu->Detach(); //popup belongs to menu, which destroys it below
+                    DestroyMenu(menu);
                     editMenu.reset();
                     return 0;
                 }
+                DestroyMenu(menu);
             }
         }
     }
@@ -316,17 +320,19 @@ void CMPCThemeEdit::PreSubclassWindow()
         GetClientRect(r);
         r.DeflateRect(2, 2); //some default padding for those spaceless fonts
         SetRect(r);
-        if (CMPCThemeUtil::canUseWin10DarkTheme()) {
-            SetWindowTheme(GetSafeHwnd(), L"DarkMode_Explorer", NULL);
-        } else {
-            SetWindowTheme(GetSafeHwnd(), L"", NULL);
-        }
+        SetWindowTheme(GetSafeHwnd(), CMPCThemeUtil::explorerThemeName(), NULL);
     } else {
         __super::PreSubclassWindow();
     }
 }
 
 
+
+LRESULT CMPCThemeEdit::OnMPCThemeChanged(WPARAM wParam, LPARAM lParam)
+{
+    CMPCThemeUtil::applyExplorerTheme(GetSafeHwnd());
+    return 0;
+}
 
 void CMPCThemeEdit::OnNcPaint()
 {

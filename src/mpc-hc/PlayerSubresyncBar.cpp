@@ -354,6 +354,10 @@ void CPlayerSubresyncBar::ResetSubtitle()
 
 void CPlayerSubresyncBar::SaveSubtitle()
 {
+    if (!m_pSubStream) {
+        return;
+    }
+
     if (CMainFrame* pMainFrame = AfxGetMainFrame()) {
         CLSID clsid;
         m_pSubStream->GetClassID(&clsid);
@@ -387,7 +391,7 @@ void CPlayerSubresyncBar::SaveSubtitle()
             return;
         }
 
-        pMainFrame->InvalidateSubtitle();
+        pMainFrame->m_subs.InvalidateSubtitle();
     }
 }
 
@@ -1082,7 +1086,7 @@ void CPlayerSubresyncBar::OnRclickList(NMHDR* pNMHDR, LRESULT* pResult)
         CPoint p = lpnmlv->ptAction;
         ::MapWindowPoints(pNMHDR->hwndFrom, HWND_DESKTOP, &p, 1);
 
-        if (AppNeedsThemedControls()) {
+        if (AppIsThemeLoaded()) {
             m.fulfillThemeReqs();
         }
         SetHasActivePopup(true);
@@ -1559,6 +1563,10 @@ int CPlayerSubresyncBar::FindNearestSub(REFERENCE_TIME& rtPos, bool bForward)
 bool CPlayerSubresyncBar::ShiftSubtitle(int nItem, long lValue, REFERENCE_TIME& rtPos)
 {
     bool bRet = false;
+
+    if (!m_pSubStream || nItem < 0 || (size_t)nItem >= m_subtimes.size()) {
+        return bRet;
+    }
 
     if ((nItem == 0) || (m_subtimes[nItem - 1].newEnd < m_subtimes[nItem].newStart + lValue)) {
         for (size_t i = nItem; i < m_sts.GetCount(); i++) {

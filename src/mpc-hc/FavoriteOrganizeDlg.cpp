@@ -25,6 +25,7 @@
 #include "FavoriteOrganizeDlg.h"
 #include "mplayerc.h"
 #include "MainFrm.h"
+#include "FavoritesRecent.h"
 #include "CMPCTheme.h"
 #undef SubclassWindow
 
@@ -175,9 +176,15 @@ BOOL CFavoriteOrganizeDlg::OnInitDialog()
 
 void CFavoriteOrganizeDlg::LoadList() {
     const CAppSettings& s = AfxGetAppSettings();
-    s.GetFav(FAV_FILE, m_sl[0]);
-    s.GetFav(FAV_DVD, m_sl[1]);
-    s.GetFav(FAV_DEVICE, m_sl[2]);
+    const favtype types[] = { FAV_FILE, FAV_DVD, FAV_DEVICE };
+    for (int i = 0; i < 3; i++) {
+        std::list<CString> favs;
+        s.GetFav(types[i], favs);
+        m_sl[i].RemoveAll();
+        for (const CString& fav : favs) {
+            m_sl[i].AddTail(fav);
+        }
+    }
 
     SetupList(false);
     m_bModified = false;
@@ -344,10 +351,10 @@ void CFavoriteOrganizeDlg::PlayFavorite(int nItem)
 {
     switch (m_tab.GetCurSel()) {
         case 0: // Files
-            ((CMainFrame*)GetParentFrame())->PlayFavoriteFile(m_sl[0].GetAt((POSITION)m_list.GetItemData(nItem)));
+            ((CMainFrame*)GetParentFrame())->m_favorites.PlayFavoriteFile(m_sl[0].GetAt((POSITION)m_list.GetItemData(nItem)));
             break;
         case 1: // DVDs
-            ((CMainFrame*)GetParentFrame())->PlayFavoriteDVD(m_sl[1].GetAt((POSITION)m_list.GetItemData(nItem)));
+            ((CMainFrame*)GetParentFrame())->m_favorites.PlayFavoriteDVD(m_sl[1].GetAt((POSITION)m_list.GetItemData(nItem)));
             break;
         case 2: // Devices
             break;
@@ -510,9 +517,14 @@ void CFavoriteOrganizeDlg::SaveChanges()
     SetupList(true);
 
     CAppSettings& s = AfxGetAppSettings();
-    s.SetFav(FAV_FILE, m_sl[0]);
-    s.SetFav(FAV_DVD, m_sl[1]);
-    s.SetFav(FAV_DEVICE, m_sl[2]);
+    const favtype types[] = { FAV_FILE, FAV_DVD, FAV_DEVICE };
+    for (int i = 0; i < 3; i++) {
+        std::list<CString> favs;
+        for (POSITION pos = m_sl[i].GetHeadPosition(); pos;) {
+            favs.push_back(m_sl[i].GetNext(pos));
+        }
+        s.SetFav(types[i], favs);
+    }
 
     m_bModified = false;
 }
@@ -619,10 +631,10 @@ void CFavoriteOrganizeDlg::CopyToClipboard()
     for(POSITION pos = m_list.GetFirstSelectedItemPosition(); pos; ) {
         int iItem = m_list.GetNextSelectedItem(pos);
         const CString& fav = pSL->GetAt((POSITION)m_list.GetItemData(iItem));
-        CAtlList<CString> args;
-        ((CMainFrame*)GetParentFrame())->ParseFavoriteFile(fav, args);
+        std::list<CString> args;
+        ((CMainFrame*)GetParentFrame())->m_favorites.ParseFavoriteFile(fav, args);
 
-        CString path = args.GetHead().Trim();
+        CString path = args.front().Trim();
         if (!path.IsEmpty()) {
             favorites.Append(path);
             favorites.Append(_T("\r\n"));

@@ -49,6 +49,8 @@
 #include "SyncRenderer.h"
 #include "Utils.h"
 #include "Variables.h"
+#include "HLGInput.h"
+#include "HLGToSDR.h"
 
 #if (0)     // Set to 1 to activate SyncRenderer traces
 #define TRACE_SR   TRACE
@@ -70,6 +72,7 @@ extern bool LoadResource(UINT resid, CStringA& str, LPCTSTR restype);
 
 CBaseAP::CBaseAP(HWND hWnd, bool bFullscreen, HRESULT& hr, CString& _Error)
     : CSubPicAllocatorPresenterImpl(hWnd, hr, &_Error)
+    , m_nRenderState(Shutdown)
     , m_hDWMAPI(nullptr)
     , m_pDwmIsCompositionEnabled(nullptr)
     , m_pDwmEnableComposition(nullptr)
@@ -442,6 +445,7 @@ HRESULT CBaseAP::CreateDXDevice(CString& _Error)
         CExternalPixelShader& Shader = m_pPixelShaders.GetNext(pos);
         Shader.m_pPixelShader = nullptr;
     }
+    m_HLGToSDRShader.m_pPixelShader = nullptr;
 
     if (!m_pD3D) {
         _Error += L"Failed to create Direct3D device\n";
@@ -453,6 +457,7 @@ HRESULT CBaseAP::CreateDXDevice(CString& _Error)
         if (hr == D3DERR_DEVICELOST || hr == D3DERR_DEVICEREMOVED || hr == D3DERR_DEVICEHUNG || hr == D3DERR_OUTOFVIDEOMEMORY) {
             m_pD3DDevEx.Release();
             m_pD3DDev.Release();
+            /*
             m_pD3DEx.Release();
             m_pD3D.Release();
             Direct3DCreate9Ex(D3D_SDK_VERSION, &m_pD3DEx);
@@ -461,7 +466,8 @@ HRESULT CBaseAP::CreateDXDevice(CString& _Error)
             } else {
                 return E_UNEXPECTED;
             }
-        } else if (FAILED(hr)) {
+            */
+        } else if (hr == S_PRESENT_MODE_CHANGED || FAILED(hr)) {
             m_pD3DDevEx.Release();
             m_pD3DDev.Release();
         }
@@ -809,6 +815,7 @@ HRESULT CBaseAP::ResetDXDevice(CString& _Error)
         CExternalPixelShader& Shader = m_pPixelShaders.GetNext(pos);
         Shader.m_pPixelShader = nullptr;
     }
+    m_HLGToSDRShader.m_pPixelShader = nullptr;
 
     D3DDISPLAYMODE d3ddm;
     ZeroMemory(&d3ddm, sizeof(d3ddm));
@@ -1626,7 +1633,7 @@ STDMETHODIMP_(bool) CBaseAP::Paint(bool bAll)
         if (m_pVideoTexture[m_nCurSurface]) {
             CComPtr<IDirect3DTexture9> pVideoTexture = m_pVideoTexture[m_nCurSurface];
 
-            if (m_pVideoTexture[m_nDXSurface] && m_pVideoTexture[m_nDXSurface + 1] && !m_pPixelShaders.IsEmpty()) {
+            if (m_pVideoTexture[m_nDXSurface] && m_pVideoTexture[m_nDXSurface + 1] && (!m_pPixelShaders.IsEmpty() || HLGToSDRActive())) {
                 static __int64 counter = 0;
                 static long start = clock();
 
@@ -1652,12 +1659,20 @@ STDMETHODIMP_(bool) CBaseAP::Paint(bool bAll)
                 CComPtr<IDirect3DSurface9> pRT;
                 hr = m_pD3DDev->GetRenderTarget(0, &pRT);
 
-                POSITION pos = m_pPixelShaders.GetHeadPosition();
+                CAtlList<CExternalPixelShader*> passes;
+                if (HLGToSDRActive()) {
+                    passes.AddTail(&m_HLGToSDRShader);
+                }
+                for (POSITION p = m_pPixelShaders.GetHeadPosition(); p;) {
+                    passes.AddTail(&m_pPixelShaders.GetNext(p));
+                }
+
+                POSITION pos = passes.GetHeadPosition();
                 while (pos) {
                     pVideoTexture = m_pVideoTexture[dst];
 
                     hr = m_pD3DDev->SetRenderTarget(0, m_pVideoSurface[dst]);
-                    CExternalPixelShader& Shader = m_pPixelShaders.GetNext(pos);
+                    CExternalPixelShader& Shader = *passes.GetNext(pos);
                     if (!Shader.m_pPixelShader) {
                         Shader.Compile(m_pPSC);
                     }
@@ -2507,6 +2522,36 @@ STDMETHODIMP CBaseAP::SetPixelShader(LPCSTR pSrcData, LPCSTR pTarget)
     return SetPixelShader2(pSrcData, pTarget, false);
 }
 
+bool CBaseAP::InputPinIsHLGNow()
+{
+    CComPtr<IPin> pPin;
+    CMediaType    mt;
+    if (SUCCEEDED(m_pOuterEVR->FindPin(L"EVR Input0", &pPin)) && SUCCEEDED(pPin->ConnectionMediaType(&mt))) {
+        if (mt.formattype == FORMAT_VideoInfo2 || mt.formattype == FORMAT_MPEG2_VIDEO) {
+            VIDEOINFOHEADER2& vih2 = *(VIDEOINFOHEADER2*)mt.pbFormat;
+            if (vih2.dwControlFlags & AMCONTROL_COLORINFO_PRESENT) {
+                DXVA2_ExtendedFormat exfmt;
+                exfmt.value = vih2.dwControlFlags;
+                return exfmt.VideoTransferFunction == TRANSFER_FUNCTION_HLG;
+            }
+        }
+    }
+    return false;
+}
+
+bool CBaseAP::HLGToSDRActive()
+{
+    if (!m_bHLGInput || !GetRenderersSettings().m_AdvRendSets.bHLGToSDR
+            || m_caps.PixelShaderVersion < D3DPS_VERSION(3, 0)) {
+        return false;
+    }
+    if (m_HLGToSDRShader.m_SourceData.IsEmpty()) {
+        m_HLGToSDRShader.m_SourceData = HLG_TO_SDR_SHADER;
+        m_HLGToSDRShader.m_SourceTarget = "ps_3_0";
+    }
+    return true;
+}
+
 STDMETHODIMP CBaseAP::SetPixelShader2(LPCSTR pSrcData, LPCSTR pTarget, bool bScreenSpace)
 {
     CAutoLock cRenderLock(&m_allocatorLock);
@@ -2563,7 +2608,6 @@ CSyncAP::CSyncAP(HWND hWnd, bool bFullscreen, HRESULT& hr, CString& _Error)
     , m_bPrerolled(false)
     , m_hRenderThread(nullptr)
     , m_hMixerThread(nullptr)
-    , m_nRenderState(Shutdown)
     , m_bStepping(false)
     , m_nCurrentGroupId(0)
     , m_nResetToken(0)
@@ -3030,6 +3074,9 @@ STDMETHODIMP CSyncAP::ProcessMessage(MFVP_MESSAGE_TYPE eMessage, ULONG_PTR ulPar
             break;
 
         case MFVP_MESSAGE_INVALIDATEMEDIATYPE:
+            // Read the input pin here, where the EVR already holds its filter lock. The render
+            // thread must not: it would wait for that lock while the loop below waits for it.
+            m_bHLGInputPin = InputPinIsHLGNow();
             m_bPendingRenegotiate = true;
             while (m_bPendingRenegotiate) {
                 Sleep(1);
@@ -3101,6 +3148,9 @@ HRESULT CSyncAP::CreateOptimalOutputType(IMFMediaType* pMixerProposedType, IMFMe
             TRACE(_T("Copying color attribute %s failed: 0x%08x\n"), static_cast<LPCTSTR>(CComBSTR(guidKey)), hr);
         }
     }
+
+    // HLG input: converted to SDR from the very first frame (see HLGToSDR.h).
+    m_bHLGInput = MixerTypeIsHLG(pMixerInputType) || m_bHLGInputPin;
 
     pOptimalMediaType->SetUINT32(MF_MT_PAN_SCAN_ENABLED, 0);
 

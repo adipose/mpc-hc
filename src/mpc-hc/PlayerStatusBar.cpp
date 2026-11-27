@@ -26,8 +26,13 @@
 #include "DSUtil.h"
 #include "CMPCTheme.h"
 #include "DpiHelper.h"
+#include "ImageGrayer.h"
+#include "SVGImage.h"
 
 // CPlayerStatusBar
+
+// tooltip tool for the audio channel icon, which is painted rather than a control
+static constexpr UINT_PTR AUDIO_ICON_TOOL = 1;
 
 IMPLEMENT_DYNAMIC(CPlayerStatusBar, CDialogBar)
 
@@ -35,7 +40,8 @@ CPlayerStatusBar::CPlayerStatusBar(CMainFrame* pMainFrame)
     : m_pMainFrame(pMainFrame)
     , m_status(pMainFrame->m_dpi, false, true)
     , m_time(pMainFrame->m_dpi, true, false)
-    , m_bmid(0)
+    , m_nAudioChannels(-1)
+    , m_audioRect(0, 0, 0, 0)
     , m_hIcon(0)
     , m_rtNow(0LL)
     , m_rtDur(0LL)
@@ -61,23 +67,32 @@ BOOL CPlayerStatusBar::Create(CWnd* pParentWnd)
 
     // Should never be RTLed
     ModifyStyleEx(WS_EX_LAYOUTRTL, WS_EX_NOINHERITLAYOUT);
-    if (AppIsThemeLoaded()) {
-        themedToolTip.Create(this, TTS_NOPREFIX | TTS_ALWAYSTIP);
-        themedToolTip.SetDelayTime(TTDT_INITIAL, 0);
-        themedToolTip.SetDelayTime(TTDT_AUTOPOP, 2500);
-        themedToolTip.SetDelayTime(TTDT_RESHOW, 0);
-        themedToolTip.AddTool(&m_time, IDS_TOOLTIP_REMAINING_TIME);
-        themedToolTip.AddTool(&m_status);
-    } else {
-        m_tooltip.Create(this, TTS_NOPREFIX | TTS_ALWAYSTIP);
-        m_tooltip.SetDelayTime(TTDT_INITIAL, 0);
-        m_tooltip.SetDelayTime(TTDT_AUTOPOP, 2500);
-        m_tooltip.SetDelayTime(TTDT_RESHOW, 0);
-        m_tooltip.AddTool(&m_time, IDS_TOOLTIP_REMAINING_TIME);
-        m_tooltip.AddTool(&m_status);
-    }
+    CreateToolTip();
 
     return ret;
+}
+
+void CPlayerStatusBar::CreateToolTip()
+{
+    CToolTipCtrl& tip = AppIsThemeLoaded() ? themedToolTip : m_tooltip;
+    tip.Create(this, TTS_NOPREFIX | TTS_ALWAYSTIP);
+    tip.SetDelayTime(TTDT_INITIAL, 0);
+    tip.SetDelayTime(TTDT_AUTOPOP, 2500);
+    tip.SetDelayTime(TTDT_RESHOW, 0);
+    tip.AddTool(&m_time, IDS_TOOLTIP_REMAINING_TIME);
+    tip.AddTool(&m_status);
+    tip.AddTool(this, LPSTR_TEXTCALLBACK, m_audioRect, AUDIO_ICON_TOOL);
+}
+
+//the tooltip and the audio channel icon are the ones made for the theme, so swap them
+LRESULT CPlayerStatusBar::OnMPCThemeChanged(WPARAM wParam, LPARAM lParam)
+{
+    themedToolTip.DestroyWindow();
+    m_tooltip.DestroyWindow();
+    CreateToolTip();
+    LoadStatusBitmap();
+    Relayout();
+    return 0;
 }
 
 BOOL CPlayerStatusBar::PreCreateWindow(CREATESTRUCT& cs)
@@ -143,7 +158,9 @@ void CPlayerStatusBar::EventCallback(MpcEvent ev)
     switch (ev) {
         case MpcEvent::DPI_CHANGED:
             ScaleFont();
+            LoadStatusBitmap();
             SetMediaTypeIcon();
+            Relayout();
             break;
 
         default:
@@ -159,11 +176,9 @@ void CPlayerStatusBar::Relayout()
 
     if (s.bShowAudioFormatInStatusbar) {
         rfull.DeflateRect(8, 4, 8, 4);
+        m_audioRect.SetRectEmpty();
     } else {
-        BITMAP bm{};
-        if (m_bm.m_hObject) {
-            m_bm.GetBitmap(&bm);
-        }
+        int iconWidth = GetAudioIconWidth();
 #if 0
         if (m_type.GetIcon()) {
             CRect rtype;
@@ -171,10 +186,16 @@ void CPlayerStatusBar::Relayout()
             m_type.MoveWindow(rtype);
         }
 
-        rfull.DeflateRect(11 + m_pMainFrame->m_dpi.ScaleX(16), 5, bm.bmWidth + 8, 4);
+        rfull.DeflateRect(11 + m_pMainFrame->m_dpi.ScaleX(16), 5, iconWidth + 8, 4);
 #else
-        rfull.DeflateRect(8, 4, bm.bmWidth + 8, 4);
+        rfull.DeflateRect(8, 4, iconWidth + 8, 4);
 #endif
+        GetClientRect(m_audioRect);
+        m_audioRect.left = m_audioRect.right - iconWidth - 1;
+    }
+    CToolTipCtrl& tip = AppIsThemeLoaded() ? themedToolTip : m_tooltip;
+    if (tip.m_hWnd) {
+        tip.SetToolRect(this, AUDIO_ICON_TOOL, m_audioRect);
     }
 
     if (CDC* pDC = m_time.GetDC()) {
@@ -201,7 +222,8 @@ void CPlayerStatusBar::Relayout()
     }
     m_status.MoveWindow(&rstatus, FALSE);
 
-    InvalidateRect(rfull);
+    // rfull excludes the strip the audio channel icon sits in, so invalidate everything
+    Invalidate();
     UpdateWindow();
 }
 
@@ -211,28 +233,82 @@ void CPlayerStatusBar::Clear()
     m_time.SetWindowText(_T(""));
     m_typeExt.Empty();
     SetMediaTypeIcon();
-    SetStatusBitmap(0);
+    SetAudioChannels(-1);
 }
 
-void CPlayerStatusBar::SetStatusBitmap(UINT id)
+void CPlayerStatusBar::SetAudioChannels(int nChannels)
 {
-    if (m_bmid == id) {
+    if (m_nAudioChannels == nChannels) {
         return;
     }
 
+    m_nAudioChannels = nChannels;
+    LoadStatusBitmap();
+
+    Invalidate();
+    Relayout();
+}
+
+// The modern theme draws a speaker from an SVG scaled to the current DPI and tinted like the
+// status text, flattened onto the bar colour so OnPaint can BitBlt it like the classic bitmap,
+// with the channel count written beside it. Rebuilt whenever the channels, the theme colours
+// or the DPI change.
+void CPlayerStatusBar::LoadStatusBitmap()
+{
     if (m_bm.m_hObject) {
         m_bm.DeleteObject();
     }
-    if (id) {
+    if (m_nAudioChannels < 0) {
+        return;
+    }
+
+    if (AppIsThemeLoaded()) {
+        UINT svgid = m_nAudioChannels > 0 ? IDF_SVG_AUDIOTYPE_SPEAKER : IDF_SVG_AUDIOTYPE_NOAUDIO;
+        CImage svg, tinted;
+        // the SVGs are 16 high with 2px clear on either side, like the bitmaps, and differ in width
+        if (SUCCEEDED(SVGImage::Load(svgid, svg, m_pMainFrame->m_dpi.ScaleY(16) / 16.0f))
+                && ImageGrayer::Colorize(svg, tinted, CMPCTheme::InfoBarTextColor, CMPCTheme::InfoBarBGColor, false)) {
+            m_bm.Attach(tinted.Detach());
+        }
+    } else {
+        UINT id = m_nAudioChannels == 0 ? IDB_AUDIOTYPE_NOAUDIO
+                  : m_nAudioChannels == 1 ? IDB_AUDIOTYPE_MONO
+                  : IDB_AUDIOTYPE_STEREO;
         // We can't use m_bm.LoadBitmap(id) directly since we want to load the bitmap from the main executable
         CImage img;
         img.LoadFromResource(AfxGetInstanceHandle(), id);
         m_bm.Attach(img.Detach());
     }
-    m_bmid = id;
+}
 
-    Invalidate();
-    Relayout();
+CString CPlayerStatusBar::GetAudioChannelsLabel() const
+{
+    CString label;
+    if (AppIsThemeLoaded() && m_nAudioChannels > 0) {
+        label.Format(_T("%dch"), m_nAudioChannels);
+    }
+    return label;
+}
+
+// The speaker and the channel count after it
+int CPlayerStatusBar::GetAudioIconWidth()
+{
+    int width = 0;
+    if (m_bm.m_hObject) {
+        BITMAP bm;
+        m_bm.GetBitmap(&bm);
+        width = bm.bmWidth;
+    }
+    CString label = GetAudioChannelsLabel();
+    if (!label.IsEmpty()) {
+        if (CDC* pDC = GetDC()) {
+            CFont* pOld = pDC->SelectObject(&m_status.GetFont());
+            width += pDC->GetTextExtent(label).cx + m_pMainFrame->m_dpi.ScaleX(2);
+            pDC->SelectObject(pOld);
+            ReleaseDC(pDC);
+        }
+    }
+    return width;
 }
 
 void CPlayerStatusBar::SetMediaType(CString ext)
@@ -405,6 +481,7 @@ BEGIN_MESSAGE_MAP(CPlayerStatusBar, CDialogBar)
     ON_WM_CTLCOLOR()
     ON_WM_CONTEXTMENU()
     ON_NOTIFY_EX(TTN_NEEDTEXT, 0, OnToolTipNotify)
+    ON_MPCTHEMECHANGED()
 END_MESSAGE_MAP()
 
 
@@ -457,7 +534,7 @@ void CPlayerStatusBar::OnPaint()
     }
 
     if (AppIsThemeLoaded()) {
-        dc.FillSolidRect(&r, CMPCTheme::NoBorderColor);
+        dc.FillSolidRect(&r, CMPCTheme::InfoBarBorderColor);
         CRect top(r.left, r.top, r.right, r.top + 1);
         dc.FillSolidRect(&top, CMPCTheme::WindowBGColor);
     } else {
@@ -466,7 +543,7 @@ void CPlayerStatusBar::OnPaint()
 
     r.DeflateRect(1, 1);
 
-    dc.FillSolidRect(&r, 0);
+    dc.FillSolidRect(&r, CMPCTheme::InfoBarBGColor);
 
     // Only draw the audio-channel bitmap when Relayout actually reserves room for it (Audio Info off).
     // When Audio Info is on, no space is reserved and the time control overlaps this area; drawing the
@@ -482,9 +559,19 @@ void CPlayerStatusBar::OnPaint()
         CRect statusRect;
         m_status.GetWindowRect(statusRect);
         ScreenToClient(statusRect);
-        dc.BitBlt(clientRect.right - bm.bmWidth - 1,
-                  statusRect.CenterPoint().y - bm.bmHeight / 2,
+        int x = clientRect.right - GetAudioIconWidth() - 1;
+        dc.BitBlt(x, statusRect.CenterPoint().y - bm.bmHeight / 2,
                   bm.bmWidth, bm.bmHeight, &memdc, 0, 0, SRCCOPY);
+
+        CString label = GetAudioChannelsLabel();
+        if (!label.IsEmpty()) {
+            CFont* pOld = dc.SelectObject(&m_status.GetFont());
+            dc.SetTextColor(CMPCTheme::InfoBarTextColor);
+            dc.SetBkMode(TRANSPARENT);
+            CRect textRect(x + bm.bmWidth, statusRect.top, clientRect.right - 1, statusRect.bottom);
+            dc.DrawText(label, textRect, DT_SINGLELINE | DT_NOPREFIX | DT_VCENTER | DT_LEFT);
+            dc.SelectObject(pOld);
+        }
     }
 }
 
@@ -544,7 +631,8 @@ HBRUSH CPlayerStatusBar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
     HBRUSH hbr = CDialogBar::OnCtlColor(pDC, pWnd, nCtlColor);
 
     if (*pWnd == m_type) {
-        hbr = GetStockBrush(BLACK_BRUSH);
+        pDC->SetDCBrushColor(CMPCTheme::InfoBarBGColor);
+        hbr = (HBRUSH)GetStockObject(DC_BRUSH);
     }
 
     // TODO:  Return a different brush if the default is not desired
@@ -625,6 +713,16 @@ void CPlayerStatusBar::ShowTimerOptionsMenu(CWnd* pOwner, CPoint screenPt)
 BOOL CPlayerStatusBar::OnToolTipNotify(UINT id, NMHDR* pNMHDR, LRESULT* pResult)
 {
     TOOLTIPTEXT* pTTT = reinterpret_cast<LPTOOLTIPTEXT>(pNMHDR);
+    if (!(pTTT->uFlags & TTF_IDISHWND) && pNMHDR->idFrom == AUDIO_ICON_TOOL) {
+        // the icon stands in for Audio Info, so its tooltip shows what that would have added
+        m_audioTip = m_pMainFrame->GetAudioInfo();
+        if (!m_audioTip.IsEmpty()) {
+            pTTT->lpszText = const_cast<LPTSTR>(m_audioTip.GetString());
+            *pResult = 0;
+            return TRUE;
+        }
+        return FALSE;
+    }
     if (pTTT->uFlags & TTF_IDISHWND) {
         UINT_PTR nID = pNMHDR->idFrom;
         if (::GetDlgCtrlID((HWND)nID) == IDC_PLAYERSTATUS) {
